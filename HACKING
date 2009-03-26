@@ -1,0 +1,9 @@
+Note to developers: be sure that you use etc/git/hook/pre-commit as your pre-commit hook.
+
+Recommended git config values (you may wish to add --global to some of them):
+
+git config user.name <Your name in AUTHORS file (add one if needed)>
+git config user.email <Your e-mail in AUTHORS file>
+git config core.autocrlf auto
+git config rerere.enabled true
+git config color.ui auto
