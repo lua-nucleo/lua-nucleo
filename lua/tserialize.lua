@@ -30,7 +30,7 @@ do
         if not vis[t] then
           visited.has_recursion=true
           vis[t]=true
-          add=[#add+1]=t
+          add[#add+1]=t
         end
       end
     end
