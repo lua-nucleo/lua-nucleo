@@ -2,7 +2,7 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-local tserialize=nil
+local serializator=nil
 do
   local lua51_keywords =
   {
@@ -16,9 +16,9 @@ do
   }
   local function explode_rec(t,add,visited,added)
     local vis={}
-    local rec_count=1 -- TODO: only for debugging
+    --local rec_count=1 -- TODO: only for debugging
     local function explode_rec_internal(t)
-      rec_count = rec_count + 1 -- TODO: only for debugging
+      --rec_count = rec_count + 1 -- TODO: only for debugging
       local t_type = type(t)
       if t_type == "table" then
         if not (visited[t] or added[t] or vis[t]) then
@@ -38,13 +38,13 @@ do
       end
     end
     explode_rec_internal(t)
-    print("explode_rec: "..rec_count.." calls")-- TODO: only for debugging
+    --print("explode_rec: "..rec_count.." calls")-- TODO: only for debugging
   end
   local function parse_rec(t,visited,rec_info)
     local initial = t
-    local rec_count=1 -- TODO: only for debugging
+    --local rec_count=1 -- TODO: only for debugging
     local function parse_rec_internal(t)
-      rec_count = rec_count + 1 -- TODO: only for debugging
+     -- rec_count = rec_count + 1 -- TODO: only for debugging
       local t_type = type(t)
       local rec=false
       if t_type == "table" then
@@ -63,7 +63,7 @@ do
       return rec
     end
     parse_rec_internal(initial)
-    print("parse_rec: "..rec_count.." calls")-- TODO: only for debugging
+    --print("parse_rec: "..rec_count.." calls")-- TODO: only for debugging
   end
   local function recursive_proceed(t,buf,visited,num,rec_info)
     local initial = t
@@ -71,9 +71,9 @@ do
     local needs_locals
     local declare = visited.declare
     local cat = function(v) buf[#buf + 1] = v end
-    local rec_count=1 -- TODO: only for debugging
+    --local rec_count=1 -- TODO: only for debugging
     local function recursive_proceed_internal(t)
-      rec_count = rec_count + 1 -- TODO: only for debugging
+      --rec_count = rec_count + 1 -- TODO: only for debugging
       local t_type = type(t)
       if t_type == "table" then
         if not visited[t] then
@@ -106,7 +106,7 @@ do
                 if not lua51_keywords[k] and string.match(k, "^[%a_][%a%d_]*$") then
                   cat(k); cat("=")
                 else
-                  cat(string_format("[%q]", k)) cat("=")
+                  cat(string.format("[%q]", k)) cat("=")
                 end
                   recursive_proceed_internal(v)
               elseif
@@ -130,9 +130,11 @@ do
           visited[t].buf_end=#buf
         else -- already visited!
           cat(visited[t].name)
-          declare[t]=visited[t]
+          declare[#declare+1]=visited[t]
           need_locals=true
         end
+      elseif t_type == "string" then
+        cat(string.format("%q", t))
       elseif t_type == "number" or t_type == "boolean" then
         cat(tostring(t))
       elseif t == nil then
@@ -143,7 +145,7 @@ do
       return true
     end
     if recursive_proceed_internal(initial) then
-      print("recursive_proceed: "..rec_count.." calls")-- TODO: only for debugging
+      --print("recursive_proceed: "..rec_count.." calls")-- TODO: only for debugging
       visited.need_locals=need_locals
       return true
     else
@@ -162,18 +164,16 @@ do
     recursive_proceed(v,buf,visited,num,rec_buf)
     cat(" ")
   end
-  tserialize = function (...)
+  serializator = function (...)
   --===================================--
   --===========THE MAIN PART===========--
   --===================================--
-
     --PREPARATORY WORK: LOCATE THE RECURSIVE PARTS--
-
+    local narg=#arg
     local additional_vars={} -- table, containing recursive parts of our variables
     local added={}
-    local narg=#arg
     local visit={}
-    for i=1,narg do
+    for i,v in pairs(arg) do
       local v=arg[i]
       explode_rec(v, additional_vars,visit,added) -- discover recursive subtables
     end
@@ -209,16 +209,14 @@ do
     end
 
     --DECLARE THE VARIABLES THAT ARE USED MULTIPLE TIMES --
-
-    local lindex=0
-    for k,v in pairs(visited.declare) do
+    local prevbuf={}
+    for i,v in ipairs(visited.declare) do
       if not v.is_recursive then --skip recursive fields
-        buf[lindex] = " local "..v.name.."="..table.concat(buf[v.var_num],"",v.buf_start,v.buf_end)
+        prevbuf[#prevbuf+1] = " local "..v.name.."="..table.concat(buf[v.var_num],"",v.buf_start,v.buf_end)
         buf[v.var_num][v.buf_start]=v.name
         for i=v.buf_start+1,v.buf_end do
           buf[v.var_num][i]=""
         end
-        lindex = lindex -1
       end
     end
 
@@ -246,7 +244,7 @@ do
     else
       local rez={
         "do ",
-        table.concat(buf,"",lindex+1,0),
+        table.concat(prevbuf,""),
         table.concat(buf,"",1,nadd),
         " return ",
         table.concat(buf,",",nadd+1),
@@ -256,6 +254,7 @@ do
     end
   end
 end
+tserialize = {tserialize=serializator}
 --examples
 --local t = {}
 --t[1] = t
@@ -281,3 +280,9 @@ print(tserialize(t2,t3))--]]
 --[[t1={1,2,3}
 t1[{[{[t1]=t1}]=t1,t1}]=t1
 print(tserialize(t1))--]]
+
+--[[local a={}
+local b={a}
+local c={b}
+print(tserialize.tserialize(a,b,c))--]]
+return tserialize
