@@ -2,7 +2,7 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-local serializator=nil
+local tserialize=nil
 do
   local lua51_keywords =
   {
@@ -14,6 +14,10 @@ do
     ["repeat"] = true, ["return"] = true, ["then"] = true,
     ["true"] = true,    ["until"] = true,  ["while"] = true
   }
+  local pairs, type, ipairs, tostring = pairs, type, ipairs, tostring
+  local table_concat = table.concat
+  local string_format, string_match = string.format,string.match
+
   local function explode_rec(t,add,visited,added)
     local vis={}
     --local rec_count=1 -- TODO: only for debugging
@@ -51,8 +55,15 @@ do
         if not visited[t] then
           visited[t]=true
           for k,v in pairs(t) do
-            if parse_rec_internal(k) then rec=true if t==initial then rec_info[k]=true end  end
-            if parse_rec_internal(v) then rec=true end
+            if parse_rec_internal(k) then
+              rec=true
+              if t==initial then
+                rec_info[k]=true
+              end
+            end
+            if parse_rec_internal(v) then
+              rec=true
+            end
           end
         else
           if t==initial then
@@ -95,18 +106,16 @@ do
           for k, v in pairs(t) do
             local k_type = type(k)
             if not (rec_info[k] or v==initial) then
-            --[[
-            that means, if the value is not a recursive link to the table itself
-            and the index does not CONTAIN a recursive link...
-            --]]
+            --that means, if the value is not a recursive link to the table itself
+            --and the index does not CONTAIN a recursive link...
               if k_type == "string" then
                 cat(comma)
                 comma = ","
                 --check if we can use the short notation eg {a=3,b=5} istead of {["a"]=3,["b"]=5}
-                if not lua51_keywords[k] and string.match(k, "^[%a_][%a%d_]*$") then
+                if not lua51_keywords[k] and string_match(k, "^[%a_][%a%d_]*$") then
                   cat(k); cat("=")
                 else
-                  cat(string.format("[%q]", k)) cat("=")
+                  cat(string_format("[%q]", k)) cat("=")
                 end
                   recursive_proceed_internal(v)
               elseif
@@ -134,7 +143,7 @@ do
           need_locals=true
         end
       elseif t_type == "string" then
-        cat(string.format("%q", t))
+        cat(string_format("%q", t))
       elseif t_type == "number" or t_type == "boolean" then
         cat(tostring(t))
       elseif t == nil then
@@ -212,7 +221,7 @@ do
     local prevbuf={}
     for i,v in ipairs(visited.declare) do
       if not v.is_recursive then --skip recursive fields
-        prevbuf[#prevbuf+1] = " local "..v.name.."="..table.concat(buf[v.var_num],"",v.buf_start,v.buf_end)
+        prevbuf[#prevbuf+1] = " local "..v.name.."="..table_concat(buf[v.var_num],"",v.buf_start,v.buf_end)
         buf[v.var_num][v.buf_start]=v.name
         for i=v.buf_start+1,v.buf_end do
           buf[v.var_num][i]=""
@@ -227,62 +236,32 @@ do
       for j=1,#(buf[i].afterwork) do
         afterwork(buf[i].afterwork[j][1],buf[i].afterwork[j][2],buf[i],visited[v].name,visited,rec_info)
       end
-      buf[i]=table.concat(buf[i])
+      buf[i]=table_concat(buf[i])
       buf[i]="local "..visited[v].name.."="..buf[i]
     end
 
     --CONCAT MAIN PART
 
     for i=nadd+1,nadd+narg do
-      buf[i]=table.concat(buf[i])
+      buf[i]=table_concat(buf[i])
     end
 
     --RETURN THE RESULT--
 
     if not visited.has_recursion and not visited.need_locals then
-      return "return "..table.concat(buf,",")
+      return "return "..table_concat(buf,",")
     else
       local rez={
         "do ",
-        table.concat(prevbuf,""),
-        table.concat(buf,"",1,nadd),
+        table_concat(prevbuf,""),
+        table_concat(buf,"",1,nadd),
         " return ",
-        table.concat(buf,",",nadd+1),
+        table_concat(buf,",",nadd+1),
         " end"
       }
-      return table.concat(rez)
+      return table_concat(rez)
     end
   end
 end
-tserialize = {tserialize=serializator}
---examples
---local t = {}
---t[1] = t
-
---local t = {{}}
---t[t]=t
---[[t1={1}
-t1[{2,t1}]=t1
-t1[2]=t1
-print(tserialize(t1,{1,3,t1}))--]]
---[[t={{1},{2}}
-t[1][2]=t[2]
-t[2][2]=t[1]--]]
---[[t1={}
-t1[t1]=t1
-t2={2,3,4,5,t1}
-t2[t2]=t2
-t3={t2,t1}
-t3[t3]=t2
-print(tserialize(t2,t3))--]]
-
---sophisticated recursion
---[[t1={1,2,3}
-t1[{[{[t1]=t1}]=t1,t1}]=t1
-print(tserialize(t1))--]]
-
---[[local a={}
-local b={a}
-local c={b}
-print(tserialize.tserialize(a,b,c))--]]
+tserialize = {tserialize=tserialize}
 return tserialize
