@@ -20,9 +20,7 @@ do
 
   local function explode_rec(t,add,visited,added)
     local vis={}
-    --local rec_count=1 -- TODO: only for debugging
     local function explode_rec_internal(t)
-      --rec_count = rec_count + 1 -- TODO: only for debugging
       local t_type = type(t)
       if t_type == "table" then
         if not (visited[t] or added[t] or vis[t]) then
@@ -42,13 +40,10 @@ do
       end
     end
     explode_rec_internal(t)
-    --print("explode_rec: "..rec_count.." calls")-- TODO: only for debugging
   end
   local function parse_rec(t,visited,rec_info)
     local initial = t
-    --local rec_count=1 -- TODO: only for debugging
     local function parse_rec_internal(t)
-     -- rec_count = rec_count + 1 -- TODO: only for debugging
       local t_type = type(t)
       local rec=false
       if t_type == "table" then
@@ -74,7 +69,6 @@ do
       return rec
     end
     parse_rec_internal(initial)
-    --print("parse_rec: "..rec_count.." calls")-- TODO: only for debugging
   end
   local function recursive_proceed(t,buf,visited,num,rec_info)
     local initial = t
@@ -82,9 +76,7 @@ do
     local needs_locals
     local declare = visited.declare
     local cat = function(v) buf[#buf + 1] = v end
-    --local rec_count=1 -- TODO: only for debugging
     local function recursive_proceed_internal(t)
-      --rec_count = rec_count + 1 -- TODO: only for debugging
       local t_type = type(t)
       if t_type == "table" then
         if not visited[t] then
@@ -154,7 +146,6 @@ do
       return true
     end
     if recursive_proceed_internal(initial) then
-      --print("recursive_proceed: "..rec_count.." calls")-- TODO: only for debugging
       visited.need_locals=need_locals
       return true
     else
@@ -263,5 +254,4 @@ do
     end
   end
 end
-tserialize = {tserialize=tserialize}
-return tserialize
+return {tserialize=tserialize}
