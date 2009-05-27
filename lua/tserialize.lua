@@ -18,29 +18,26 @@ do
   local table_concat = table.concat
   local string_format, string_match = string.format,string.match
 
-  local function explode_rec(t,add,visited,added)
-    local vis={}
-    local function explode_rec_internal(t)
-      local t_type = type(t)
-      if t_type == "table" then
-        if not (visited[t] or added[t] or vis[t]) then
-          visited[t]=true
-          vis[t]=true
-          for k,v in pairs(t) do
-            explode_rec_internal(k)
-            explode_rec_internal(v)
-          end
-          vis[t]=nil
-        else
-          if not added[t] and vis[t] then
-            added[t]=true
-            add[#add+1]=t
-          end
+  local function explode_rec(t,add,visited,added,vis)
+    local t_type = type(t)
+    if t_type == "table" then
+      if not (visited[t] or added[t] or vis[t]) then
+        visited[t]=true
+        vis[t]=true
+        for k,v in pairs(t) do
+          explode_rec(k,add,visited,added,vis)
+          explode_rec(v,add,visited,added,vis)
+        end
+        vis[t]=nil
+      else
+        if not added[t] and vis[t] then
+          added[t]=true
+          add[#add+1]=t
         end
       end
     end
-    explode_rec_internal(t)
   end
+
   local function parse_rec(t,visited,rec_info)
     local initial = t
     local function parse_rec_internal(t)
@@ -70,101 +67,89 @@ do
     end
     parse_rec_internal(initial)
   end
-  local function recursive_proceed(t,buf,visited,num,rec_info)
-    local initial = t
-    local afterwork = buf.afterwork
-    local needs_locals
-    local declare = visited.declare
-    local cat = function(v) buf[#buf + 1] = v end
-    local function recursive_proceed_internal(t)
-      local t_type = type(t)
-      if t_type == "table" then
-        if not visited[t] then
-          visited[t] = {var_num = num,buf_start=#buf+1,name="var"..visited.n, rec_links={}}
-          visited.n = visited.n+1
-          cat("{")
-          -- Serialize numeric indices
-          local next_i=#t+1
-          for i=1,next_i-1 do
-            local v=t[i]
-            if v~=initial then
-              if i~=1 then cat(",") end
-              recursive_proceed_internal(v)
-            end
+  local function recursive_proceed(t,buf,visited,num,rec_info,initial, afterwork,declare,cat)
+    local t_type = type(t)
+    if t_type == "table" then
+      if not visited[t] then
+        visited[t] = {var_num = num,buf_start=#buf+1,name="var"..visited.n, rec_links={}}
+        visited.n = visited.n+1
+        cat("{")
+        -- Serialize numeric indices
+        local next_i=#t+1
+        for i=1,next_i-1 do
+          local v=t[i]
+          if v~=initial then
+            if i~=1 then cat(",") end
+            recursive_proceed(v,buf,visited,num,rec_info,initial, afterwork,declare,cat)
           end
-          -- Serialize hash part
-          -- Skipping comma only at first element if there is no numeric part.
-          local comma = (next_i > 1) and "," or ""
-          for k, v in pairs(t) do
-            local k_type = type(k)
-            if not (rec_info[k] or v==initial) then
-            --that means, if the value is not a recursive link to the table itself
-            --and the index does not CONTAIN a recursive link...
-              if k_type == "string" then
-                cat(comma)
-                comma = ","
-                --check if we can use the short notation eg {a=3,b=5} istead of {["a"]=3,["b"]=5}
-                if not lua51_keywords[k] and string_match(k, "^[%a_][%a%d_]*$") then
-                  cat(k); cat("=")
-                else
-                  cat(string_format("[%q]", k)) cat("=")
-                end
-                  recursive_proceed_internal(v)
-              elseif
-                k_type ~= "number" or -- non-string non-number
-                k >= next_i or k < 1 or -- integer key in hash part of the table
-                k % 1 ~= 0 -- non-integral key.
-              then
-                cat(comma)
-                comma=","
-                cat("[")
-                recursive_proceed_internal(k)
-                cat("]")
-                cat("=")
-                recursive_proceed_internal(v)
-              end
-            else
-              afterwork[#afterwork+1]={k,v}
-            end
-          end
-          cat("}")
-          visited[t].buf_end=#buf
-        else -- already visited!
-          cat(visited[t].name)
-          declare[#declare+1]=visited[t]
-          need_locals=true
         end
-      elseif t_type == "string" then
-        cat(string_format("%q", t))
-      elseif t_type == "number" or t_type == "boolean" then
-        cat(tostring(t))
-      elseif t == nil then
-        cat("nil")
-      else
-        return nil
+        -- Serialize hash part
+        -- Skipping comma only at first element if there is no numeric part.
+        local comma = (next_i > 1) and "," or ""
+        for k, v in pairs(t) do
+          local k_type = type(k)
+          if not (rec_info[k] or v==initial) then
+          --that means, if the value is not a recursive link to the table itself
+          --and the index does not CONTAIN a recursive link...
+            if k_type == "string" then
+              cat(comma)
+              comma = ","
+              --check if we can use the short notation eg {a=3,b=5} istead of {["a"]=3,["b"]=5}
+              if not lua51_keywords[k] and string_match(k, "^[%a_][%a%d_]*$") then
+                cat(k); cat("=")
+              else
+                cat(string_format("[%q]", k)) cat("=")
+              end
+                recursive_proceed(v,buf,visited,num,rec_info,initial, afterwork,declare,cat)
+            elseif
+              k_type ~= "number" or -- non-string non-number
+              k >= next_i or k < 1 or -- integer key in hash part of the table
+              k % 1 ~= 0 -- non-integral key.
+            then
+              cat(comma)
+              comma=","
+              cat("[")
+              recursive_proceed(k,buf,visited,num,rec_info,initial, afterwork,declare,cat)
+              cat("]")
+              cat("=")
+              recursive_proceed(v,buf,visited,num,rec_info,initial, afterwork,declare,cat)
+            end
+          else
+            afterwork[#afterwork+1]={k,v}
+          end
+        end
+        cat("}")
+        visited[t].buf_end=#buf
+      else -- already visited!
+        cat(visited[t].name)
+        if not visited[t].declared then
+          declare[#declare+1]=visited[t]
+          visited[t].declared=true
+        end
       end
-      return true
-    end
-    if recursive_proceed_internal(initial) then
-      visited.need_locals=need_locals
-      return true
+    elseif t_type == "string" then
+      cat(string_format("%q", t))
+    elseif t_type == "number" or t_type == "boolean" then
+      cat(tostring(t))
+    elseif t == nil then
+      cat("nil")
     else
-      return false
+      return nil
     end
+    return true
   end
-
 
   local function afterwork(k,v,buf,name,visited,rec_buf)
     local cat = function(v) buf[#buf + 1] = v end
     cat(" ")
     cat(name)
     cat("[")
-    recursive_proceed(k,buf,visited,num,rec_buf)
+    recursive_proceed(k,buf,visited,num,rec_buf,k, buf.afterwork,visited.declare,cat)
     cat("]=")
-    recursive_proceed(v,buf,visited,num,rec_buf)
+    recursive_proceed(v,buf,visited,num,rec_buf,v, buf.afterwork,visited.declare,cat)
     cat(" ")
   end
-  serializator = function (...)
+  tserialize = function (...)
   --===================================--
   --===========THE MAIN PART===========--
   --===================================--
@@ -175,7 +160,7 @@ do
     local visit={}
     for i,v in pairs(arg) do
       local v=arg[i]
-      explode_rec(v, additional_vars,visit,added) -- discover recursive subtables
+      explode_rec(v, additional_vars,visit,added,{}) -- discover recursive subtables
     end
     added=nil  --need no more
     visit=nil--need no more
@@ -191,7 +176,7 @@ do
       local v=additional_vars[i]
       parse_rec(v, visit, rec_info)
       buf[i]={afterwork={}}
-      if not recursive_proceed(v, buf[i],visited,i,rec_info) then
+      if not recursive_proceed(v, buf[i],visited,i,rec_info,v, buf[i].afterwork,visited.declare,function(v) buf[i][#buf[i] + 1] = v end) then
         return nil, "Unserializable data in parameter #"..i
       end
       visited[v].is_recursive=true
@@ -203,7 +188,7 @@ do
       local v=arg[i]
       --print(v)
       buf[i+nadd]={afterwork={}}
-      if not recursive_proceed(v, buf[i+nadd],visited,i+nadd,rec_info) then
+      if not recursive_proceed(v, buf[i+nadd],visited,i+nadd,rec_info,v, buf[i+nadd].afterwork,visited.declare,function(v) buf[i+nadd][#(buf[i+nadd]) + 1] = v end) then
         return nil, "Unserializable data in parameter #"..i
       end
     end
@@ -239,7 +224,7 @@ do
 
     --RETURN THE RESULT--
 
-    if not visited.has_recursion and not visited.need_locals then
+    if not visited.has_recursion and #visited.declare==0 then
       return "return "..table_concat(buf,",")
     else
       local rez={

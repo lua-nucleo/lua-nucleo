@@ -1,12 +1,12 @@
 -- ----------------------------------------------------------------------------
--- test.lua
--- tserialize tests
+-- tserialize.lua - tests for tserialize module
+-- This file is a part of lua-nucleo library
+-- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 -- ----------------------------------------------------------------------------
 
 local randomseed = 1235134892
 --local randomseed = os.time()
 
-print("===== BEGIN TSERIALIZE TEST SUITE (seed " .. randomseed .. ") =====")
 math.randomseed(randomseed)
 -- ----------------------------------------------------------------------------
 -- Utility functions
@@ -71,10 +71,12 @@ end
 -- ----------------------------------------------------------------------------
 -- Test helper functions
 -- ----------------------------------------------------------------------------
+local make_suite = select(1, ...)
 
-local tserialize_local = require 'tserialize'
-assert(tserialize_local == tserialize)
-
+--dofile("../lua/strict.lua")
+dofile("lua/import.lua")
+assert(type(make_suite) == "function")
+local tserialize = assert((assert(import 'lua/tserialize.lua' ))())
 
 local check_fn_ok = function(eq, ...)
   local saved = tserialize.tserialize(...)
@@ -127,69 +129,62 @@ end
 -- ----------------------------------------------------------------------------
 -- Basic tests
 -- ----------------------------------------------------------------------------
+local test = make_suite("syntetic basic tests")
 
-print("===== BEGIN SYNTETIC BASIC TESTS =====")
+test "1" ( function() check_ok() end)
+test "2" ( function() check_ok(true) end)
+test "3" ( function() check_ok(false) end)
+test "4" ( function() check_ok(42) end)
+test "5" ( function() check_ok(math.pi) end)
+test "6" ( function() check_ok("serialize") end)
+test "7" ( function() check_ok({ }) end)
+test "8" ( function() check_ok({ a = 1, 2 }) end)
+test "9" ( function() check_ok("") end)
+test "10" ( function() check_ok("Embedded\0Zero") end)
+test "11" ( function() check_ok(("longstring"):rep(1024000)) end)
+test "12" ( function() check_ok({ 1 }) end)
+test "13" ( function() check_ok({ a = 1 }) end)
+test "14" ( function() check_ok({ a = 1, 2, [42] = true, [math.pi] = 2 }) end)
+test "15" ( function() check_ok({ { } }) end)
+test "16" ( function() check_ok({ a = {}, b = { c = 7 } }) end)
+test "17" ( function() check_ok(nil, false, true, 42, "Embedded\0Zero", { { [{3}] = 54 } }) end)
+test "18" ( function() check_ok({ a = {}, b = { c = 7 } }, nil, { { } }, 42) end)
+test "19" ( function() check_ok({ ["1"] = "str", [1] = "num" }) end)
+test "20" ( function() check_ok({ [true] = true }) end)
+test "21" ( function() check_ok({ [true] = true, [false] = false, 1 }) end)
+assert (test:run())
 
+local test = make_suite("syntetic link tests")
+test "1" (function()
+  do
+    local a={}
+    local b={a}
+    check_ok_link({{"[1]","[2][1]"}},a,b)
+  end
+end)
+test "2" (function()
+  do
+    local a={}
+    local b={a}
+    local c={b}
+    check_ok_link({{"[1]","[2][1]"},{"[2]","[3][1]"},{"[1]","[3][1][1]"}},a,b,c)
+  end
+end)
+test "3" (function()
+  do
+    local a={1,2,3}
+    local b={[true]=a}
+    local c={[true]=a}
+    check_ok_link({{"[1]","[2][true]"},{"[1]","[3][true]"},{"[2][true]","[3][true]"}},a,b,c)
+  end
+end)
+test "4" (function()
+  do
+    local a={1,2,3}
+    local b={a,a,a,a}
+    local c={a}
+    check_ok_link({{"[1]","[2][1]"},{"[1]","[2][2]"},{"[1]","[2][3]"},{"[1]","[2][4]"},{"[3][1]","[1]"}},a,b,c)
+  end
+end)
 
-do
-  local s
-  s = check_ok()
- --s = check_ok(nil)
-  s = check_ok(true)
-  s = check_ok(false)
-  s = check_ok(42)
-  s = check_ok(math.pi)
-  s = check_ok("serialize")
-  s = check_ok({ })
-  s = check_ok({ a = 1, 2 })
-end
-
-check_ok("")
-check_ok("Embedded\0Zero")
-check_ok(("longstring"):rep(1024000))
-check_ok({ 1 })
-check_ok({ a = 1 })
-check_ok({ a = 1, 2, [42] = true, [math.pi] = 2 })
-check_ok({ { } })
-check_ok({ a = {}, b = { c = 7 } })
---check_ok(nil, nil)
-
-do
-  local s = check_ok(nil, false, true, 42, "Embedded\0Zero", { { [{3}] = 54 } })
-end
-
-check_ok({ a = {}, b = { c = 7 } }, nil, { { } }, 42)
-check_ok({ ["1"] = "str", [1] = "num" })
-check_ok({ [true] = true })
-check_ok({ [true] = true, [false] = false, 1 })
-
-print("===== BASIC SYNTETIC TESTS OK =====")
-
-
-print("===== BEGIN SYNTETIC LINK TESTS =====")
-do
-  local a={}
-  local b={a}
-  check_ok_link({{"[1]","[2][1]"}},a,b)
-end
-do
-  local a={}
-  local b={a}
-  local c={b}
-  check_ok_link({{"[1]","[2][1]"},{"[2]","[3][1]"},{"[1]","[3][1][1]"}},a,b,c)
-end
-
-do
-  local a={1,2,3}
-  local b={[true]=a}
-  local c={[true]=a}
-  check_ok_link({{"[1]","[2][true]"},{"[1]","[3][true]"},{"[2][true]","[3][true]"}},a,b,c)
-end
-
-do
-  local a={1,2,3}
-  local b={a,a,a,a}
-  check_ok_link({{"[1]","[2][1]"},{"[1]","[2][2]"},{"[1]","[2][3]"},{"[1]","[2][4]"},},a,b)
-end
-
-print("===== BASIC SYNTETIC LINK TESTS OK =====")
+assert (test:run())
