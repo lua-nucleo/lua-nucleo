@@ -73,7 +73,7 @@ end
 -- ----------------------------------------------------------------------------
 local make_suite = select(1, ...)
 
---dofile("../lua/strict.lua")
+dofile("lua/strict.lua")
 dofile("lua/import.lua")
 assert(type(make_suite) == "function")
 local tserialize = assert((assert(import 'lua/tserialize.lua' ))())
@@ -107,10 +107,10 @@ end
 
 local check_fn_ok_link = function(links, ...)
   local saved = tserialize.tserialize(...)
-  loaded = {assert(loadstring(saved))()}
+  local loaded = {assert(loadstring(saved))()}
   for i=1,#links do
     local link=links[i]
-    assert(loadstring("return loaded"..link[1].."==loaded"..link[2])(), "broken link!")
+    assert(loadstring("return (...)"..link[1].."==(...)"..link[2]))(loaded)
   end
   return saved
 end
