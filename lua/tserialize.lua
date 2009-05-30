@@ -2,21 +2,13 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-local tserialize=nil
+local pairs, type, ipairs, tostring = pairs, type, ipairs, tostring
+local table_concat = table.concat
+local string_format, string_match = string.format,string.match
+
+local tserialize
 do
-  local lua51_keywords =
-  {
-    ["and"] = true,    ["break"] = true,  ["do"] = true,
-    ["else"] = true,   ["elseif"] = true, ["end"] = true,
-    ["false"] = true,  ["for"] = true,    ["function"] = true,
-    ["if"] = true,     ["in"] = true,     ["local"] = true,
-    ["nil"] = true,    ["not"] = true,    ["or"] = true,
-    ["repeat"] = true, ["return"] = true, ["then"] = true,
-    ["true"] = true,    ["until"] = true,  ["while"] = true
-  }
-  local pairs, type, ipairs, tostring = pairs, type, ipairs, tostring
-  local table_concat = table.concat
-  local string_format, string_match = string.format,string.match
+  local lua51_keywords = assert(dofile("lua/lua51_keywords.lua"))
 
   local function explode_rec(t,add,visited,added,vis)
     local t_type = type(t)
@@ -239,4 +231,7 @@ do
     end
   end
 end
-return {tserialize=tserialize}
+return
+{
+  tserialize=tserialize
+}
