@@ -53,6 +53,18 @@ do
   assert(t.a == 1)
 
   do
+    local t2 = import 'test/data/import/good.lua'
+    assert(type(t2) == "table")
+    assert(type(t2.x) == "table")
+    assert(t2.a == 1)
+
+    local x, a, t3 = t2 {'x', 'a'}
+    assert(type(x) == "table")
+    assert(a == 1)
+    assert(t2 == t3)
+  end
+
+  do
     local y, z = import 'test/data/import/good.lua' ()
     assert(y == t)
     assert(z == nil)
