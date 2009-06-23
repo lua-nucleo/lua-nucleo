@@ -4,8 +4,8 @@
 
 if exports then exports 'import' end
 
-local type, assert, loadfile, ipairs, tostring, error, unpack
-    = type, assert, loadfile, ipairs, tostring, error, unpack
+local type, assert, loadfile, ipairs, tostring, error, unpack, getmetatable, setmetatable
+    = type, assert, loadfile, ipairs, tostring, error, unpack, getmetatable, setmetatable
 
 do
   local import_cache = {}
