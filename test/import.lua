@@ -2,22 +2,27 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
+-- NOTE: We can't use test suite here, import() functionality is too low-lewel.
+
+local assert, pcall, dofile, type =
+      assert, pcall, dofile, type
+
 dofile('lua/strict.lua') -- Import module requires strict
 dofile('lua/import.lua') -- Import module should be loaded manually
 
 assert(pcall(function() import() end) == false)
 assert(pcall(function() import 'badfile' end) == false)
 assert(pcall(function() import 'test/data/import/bad.lua' end) == false)
+assert(pcall(function() import 'test/data/import/bad_mt.lua' end) == false)
 
 do
-  local t = {x = {}, a = 1}
-
+  local t = {x = setmetatable({}, { __metatable = true }), a = 1}
   do
     local y, z = import(t) ()
     assert(y == t)
     assert(z == nil)
   end
-
+  
   do
     local x, y, z = import(t) 'x'
     assert(x == t.x)
@@ -44,16 +49,20 @@ do
   assert(pcall(function() import(t) {'y'} end) == false)
   assert(pcall(function() import(t) {'y', 'x'} end) == false)
   assert(pcall(function() import(t) {'x', 'y'} end) == false)
+
+  assert(pcall(function() import(setmetatable({}, {__metatable = true})) end) == false)
 end
 
 do
   local t = assert(import 'test/data/import/good.lua' ())
   assert(type(t) == "table")
+  assert(getmetatable(t)[1] == "import")
   assert(type(t.x) == "table")
   assert(t.a == 1)
 
   do
     local t2 = import 'test/data/import/good.lua'
+    assert(getmetatable(t) == getmetatable(t2))
     assert(type(t2) == "table")
     assert(type(t2.x) == "table")
     assert(t2.a == 1)
