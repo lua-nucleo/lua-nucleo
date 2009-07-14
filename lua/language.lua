@@ -1,4 +1,5 @@
-return
+
+local lua51_keywords =
 {
   ["and"] = true,    ["break"] = true,  ["do"] = true,
   ["else"] = true,   ["elseif"] = true, ["end"] = true,
@@ -8,3 +9,4 @@ return
   ["repeat"] = true, ["return"] = true, ["then"] = true,
   ["true"] = true,    ["until"] = true,  ["while"] = true
 }
+return { lua51_keywords = lua51_keywords };

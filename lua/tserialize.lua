@@ -8,7 +8,7 @@ local string_format, string_match = string.format,string.match
 
 local tserialize
 do
-  local lua51_keywords = assert(dofile("lua/lua51_keywords.lua"))
+  local lua51_keywords = import 'lua/language.lua' { 'lua51_keywords' }
 
   local function explode_rec(t,add,visited,added,vis)
     local t_type = type(t)
@@ -67,14 +67,15 @@ do
         visited.n = visited.n+1
         cat("{")
         -- Serialize numeric indices
-        local next_i=#t+1
-        for i=1,next_i-1 do
-          local v=t[i]
+        local next_i=0
+        for i,v in ipairs(t) do
+          next_i = i
           if v~=initial then
             if i~=1 then cat(",") end
             recursive_proceed(v,buf,visited,num,rec_info,initial, afterwork,declare,cat)
           end
         end
+        next_i = next_i + 1
         -- Serialize hash part
         -- Skipping comma only at first element if there is no numeric part.
         local comma = (next_i > 1) and "," or ""

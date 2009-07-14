@@ -10,5 +10,7 @@ run_tests
  'suite';
  'strict';
  'import';
- 'tserialize';
+ 'tserialize-basic';
+ 'tserialize-link';
+ 'tserialize-metatables';
 }
