@@ -13,4 +13,6 @@ run_tests
  'tserialize-basic';
  'tserialize-link';
  'tserialize-metatables';
+ 'tdeepequals-basic-types';
+ 'tdeepequals-basic-tables'
 }
