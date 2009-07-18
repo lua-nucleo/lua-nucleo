@@ -5,7 +5,7 @@
 local pairs, type, ipairs, tostring = pairs, type, ipairs, tostring
 local table_concat = table.concat
 local string_format, string_match = string.format,string.match
-
+dofile('lua/import.lua')
 local tserialize
 do
   local lua51_keywords = import 'lua/language.lua' { 'lua51_keywords' }
@@ -132,7 +132,7 @@ do
     return true
   end
 
-  local function afterwork(k,v,buf,name,visited,rec_buf)
+  local function afterwork(k,v,buf,name,num,visited,rec_buf)
     local cat = function(v) buf[#buf + 1] = v end
     cat(" ")
     cat(name)
@@ -158,7 +158,7 @@ do
     added=nil  --need no more
     visit=nil--need no more
 
-    local visited={n=0,declare={}}
+    local visited={n=1,declare={}}
     local nadd=#additional_vars
     local visit={}
     --SERIALIZE RECURSIVE FIRST--
@@ -174,6 +174,7 @@ do
       end
       visited[v].is_recursive=true
     end
+    print(visited.n)
     visit=nil --no more needed
     --SERIALIZE GIVEN VARS--
 
@@ -199,14 +200,20 @@ do
     end
 
     --CONCAT RECURSIVE PART--
-
+    local prevrbuf={}
+    for i=1,nadd do
+      local aw=buf[i].afterwork
+      local v=additional_vars[i]
+      buf[i]=table_concat(buf[i])
+      prevrbuf[i]="local "..visited[v].name.."="..buf[i]
+      buf[i]={afterwork=aw}
+    end
     for i=1,nadd do
       local v=additional_vars[i]
       for j=1,#(buf[i].afterwork) do
-        afterwork(buf[i].afterwork[j][1],buf[i].afterwork[j][2],buf[i],visited[v].name,visited,rec_info)
+        afterwork(buf[i].afterwork[j][1],buf[i].afterwork[j][2],buf[i],visited[v].name,visited[v].var_num,visited,rec_info)
       end
       buf[i]=table_concat(buf[i])
-      buf[i]="local "..visited[v].name.."="..buf[i]
     end
 
     --CONCAT MAIN PART
@@ -222,8 +229,11 @@ do
     else
       local rez={
         "do ",
-        table_concat(prevbuf,""),
-        table_concat(buf,"",1,nadd),
+        table_concat(prevbuf," "),
+        " ",
+        table_concat(prevrbuf," "),
+        " ",
+        table_concat(buf," ",1,nadd),
         " return ",
         table_concat(buf,",",nadd+1),
         " end"
@@ -232,6 +242,11 @@ do
     end
   end
 end
+  local t1={}
+  local t2={}
+  t1[t1]=t2
+  local u={t1,t2}
+  print(tserialize(u))
 return
 {
   tserialize=tserialize

@@ -9,7 +9,7 @@ local string_match, string_format = string.match, string.format
 local tstr
 do
 
-  local lua51_keywords = assert(dofile("lua/lua51_keywords.lua"))
+  local lua51_keywords = import "lua/language.lua" {'lua51_keywords'}
 
   local function impl(t, cat, visited)
     local t_type = type(t)

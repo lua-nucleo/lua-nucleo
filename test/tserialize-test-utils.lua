@@ -72,9 +72,6 @@ end
 -- Test helper functions
 -- ----------------------------------------------------------------------------
 
-
-dofile("lua/strict.lua")
-dofile("lua/import.lua")
 local tserialize = assert((assert(import 'lua/tserialize.lua' ))())
 
 local check_fn_ok = function(eq, ...)

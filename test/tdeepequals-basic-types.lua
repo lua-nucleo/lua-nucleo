@@ -1,14 +1,14 @@
 dofile("lua/strict.lua")
 dofile("lua/import.lua")
 local tdeepequals = assert(import "lua/tdeepequals.lua" {'tdeepequals'})
-local tserialize = assert(import "lua/tserialize.lua" {'tserialize'})
+local tstr = assert(import "lua/tstr.lua" {'tstr'})
 assert(type(tdeepequals) == "function")
 
 local function check_ok(t1,t2,rez)
   assert(type(rez)=="number","Result type must be a number")
   local r=assert(tdeepequals(t1,t2))
-  print("First  = ",tserialize(t1))
-  print("Second = ",tserialize(t2))
+  print("First  = ",tstr(t1))
+  print("Second = ",tstr(t2))
   print("Result = ",r)
   assert( r==0 and rez==0 or r~=0 and rez~=0, "Expected:"..rez)
 end

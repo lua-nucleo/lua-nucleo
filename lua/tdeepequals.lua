@@ -55,7 +55,7 @@ do
     end
     if not p_table[t2] then
       p_table.n=p_table.n+1
-      p_table[t2]=n
+      p_table[t2]=p_table.n
     end
     return (p_table[t1]-p_table[t2])
   end
@@ -75,12 +75,10 @@ do
   local tmore --more for tables, will be described later
   local function table_comp(visited)
     return function(t1,t2)
-      vis1=table_dup(visited)
-      vis2=table_dup(visited)
+      local vis1=table_dup(visited)
+      local vis2=table_dup(visited)
       local m=tmore(t1[1],t2[1],vis1,vis2)
       if m==0 then
-        vis1=table_dup(visited)
-        vis2=table_dup(visited)
         m = tmore(t1[2],t2[2],vis1,vis2)
       end
       return m<0
@@ -124,13 +122,23 @@ do
     table_sort(strkeys);
     table_sort(boolkeys,bool_comp);
     table_sort(pkeys,p_comp)
-    table_sort(tkeys,table_comp(visited));
     return ikeys, strkeys,boolkeys, pkeys, tkeys;
   end
 
+  local function pr(t)
+    local buf="{"
+    for k,v in pairs(t) do
+      buf = buf.."["..tostring(k).."]".."="..tostring(v)..","
+    end
+    buf = buf.."}"
+    return buf
+  end
   -- compares two generic pieces of lua data - first and second
   -- vis1 and vis2 are hashes of visited tables for first and second
   tmore = function (first,second,vis1,vis2)
+    --[[print(first,"=",tserialize(first),pr(vis1))
+    print(second,"=",tserialize(second),pr(vis2))
+    print ()--]]
     local type1, type2 = type(first), type(second)
     if type1~=type2 then
       return more(type1,type2)
@@ -235,6 +243,8 @@ do
         end
         -- table keys
         if tkeys1 or tkeys2 then
+          table_sort(tkeys1,table_comp(vis1));
+          table_sort(tkeys2,table_comp(vis2));
           i=1
           while i<=#tkeys1 and i<=#tkeys2 do
             local m=tmore(tkeys1[i][1],tkeys2[i][1],vis1,vis2)
@@ -261,29 +271,13 @@ do
 
   tdeepequals = function(t1,t2)
     p_table={n=0}
-    return tmore(t1,t2,{n=0},{n=0})
+    local r = tmore(t1,t2,{n=0},{n=0})
+    p_table=nil
+    return r
   end
 end
+
 return
 {
   tdeepequals = tdeepequals
 }
-
---[[dofile("lua/import.lua")
-local tserialize = import 'lua/tserialize.lua' {'tserialize'}
-
-
-local t1={1,2,{1,2,3}}
-local t2={1,2,2}
-visited1={};
-visited2={};
-print(tserialize(t1),tserialize(t2), tdeepequals(t1,t2))
-
-t1={}
-t2={}
-t3={}
-t4={}
-u={t1,t2,{t1,t2}}
-v={t3,t4,{t3,t4}}
-
-print(tserialize(u),tserialize(v),  tdeepequals(u,v))--]]

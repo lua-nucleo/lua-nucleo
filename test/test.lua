@@ -7,12 +7,14 @@ local run_tests = assert(assert(assert(loadfile('lua/suite.lua'))()).run_tests)
 
 run_tests
 {
- 'suite';
+ --[['suite';
  'strict';
- 'import';
+ 'import';--]]
  'tserialize-basic';
  'tserialize-link';
  'tserialize-metatables';
  'tdeepequals-basic-types';
- 'tdeepequals-basic-tables'
+ 'tdeepequals-basic-tables';
+ 'tdeepequals-shared-subtables';
+ 'tdeepequals-userdata-functions-threads'
 }
