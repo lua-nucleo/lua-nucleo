@@ -26,34 +26,43 @@ test "2" ( function() check_ok({1},{2},1) end)
 test "3" ( function() check_ok({1,2},{2,1},1) end)
 test "4" ( function() check_ok({1,2,4,7},{1,2,4,7},0) end)
 test "5" ( function() check_ok({1,2,{1,2}},{1,{1,2},2},1) end)
-do
+
+test "6" ( function()
   local t1={[{}]=1,[{}]=2}
   local t2={[{}]=2,[{}]=1}
-  test "6" ( function() check_ok(t1,t2,0) end)
-end
-do
+  check_ok(t1,t2,0)
+end)
+
+test "7" ( function()
   local t1={[{}]=1,[{}]=2}
   local t2={[{}]=1,[{}]=1}
-  test "7" ( function() check_ok(t1,t2,1) end)
-end
+  check_ok(t1,t2,1)
+end)
 
-do
+test "8" ( function()
   local t1={[{1,2}]=1,[{1,2}]=1}
   local t2={[{1,2}]=1,[{1,2}]=1}
-  test "8" ( function() check_ok(t1,t2,0) end)
-end
+  check_ok(t1,t2,0)
+end)
 
-do
+test "9" ( function()
   local t1={[{1,2,[{true}]=4}]=3,[{1,2,[{1}]=2}]=2,[{1,2}]=1}
   local t2={[{1,2}]=1,[{1,2,[{1}]=2}]=2,[{1,2,[{true}]=4}]=3}
-  test "8" ( function() check_ok(t1,t2,0) end)
-end
+  check_ok(t1,t2,0)
+end)
 
-do
+
+test "10" ( function()
   local t1={[{1,2,[{true}]=4}]=3,[{1,2,[{1}]=2}]=2,[{1,2}]=1}
   local t2={[{1,2}]=1,[{1,2,[{2}]=2}]=2,[{1,2,[{true}]=4}]=3}
-  test "9" ( function() check_ok(t1,t2,1) end)
-end
+  check_ok(t1,t2,1)
+end)
 
+
+test "11" ( function()
+  local t1={1,2,3}
+  local t2={1,2}
+  check_ok(t1,t2,1)
+end)
 
 assert (test:run())

@@ -25,10 +25,24 @@ test "2" ( function() check_ok(1,0,1) end)
 test "3" ( function() check_ok(1,"",1) end)
 test "4" ( function() check_ok("1","",1) end)
 test "5" ( function() check_ok("1",function () end,1) end)
-local t=function () end
-test "6" ( function() check_ok(t,t,0) end)
+
+test "6" ( function()
+  local t=function () end
+  check_ok(t,t,0)
+end)
+
 test "7" ( function() check_ok(true,true,0) end)
-test "8" ( function() check_ok(true,t,1) end)
+
+test "8" ( function()
+  local t=function () end
+  check_ok(true,t,1)
+end)
+
 test "9" ( function() check_ok(true,{},1) end)
-test "10" ( function() check_ok(t,{},1) end)
+
+test "10" ( function()
+  local t=function () end
+  check_ok(t,{},1)
+end)
+
 assert (test:run())

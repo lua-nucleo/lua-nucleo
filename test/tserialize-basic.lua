@@ -2,7 +2,7 @@ dofile("lua/strict.lua")
 dofile("lua/import.lua")
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
-local check_ok , check_ok_link = import 'test/tserialize-test-utils.lua' { 'check_ok' , 'check_ok_link'}
+local check_ok  = import 'test/tserialize-test-utils.lua' { 'check_ok' }
 -- ----------------------------------------------------------------------------
 -- Basic tests
 -- ----------------------------------------------------------------------------

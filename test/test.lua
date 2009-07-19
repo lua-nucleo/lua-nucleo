@@ -5,11 +5,10 @@
 -- Note: can't use import here for the test purity reasons.
 local run_tests = assert(assert(assert(loadfile('lua/suite.lua'))()).run_tests)
 
-run_tests
-{
- --[['suite';
+local tests_pr={
+ 'suite';
  'strict';
- 'import';--]]
+ 'import';
  'tserialize-basic';
  'tserialize-link';
  'tserialize-metatables';
@@ -18,3 +17,15 @@ run_tests
  'tdeepequals-shared-subtables';
  'tdeepequals-userdata-functions-threads'
 }
+
+local pattern=arg[1]or ""
+assert(type(pattern)=="string")
+
+local test_r={}
+for _,v in ipairs(tests_pr) do
+  if(string.match(v,pattern)) then
+    table.insert(test_r,v)
+  end
+end
+
+run_tests(test_r)

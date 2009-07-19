@@ -242,11 +242,11 @@ do
     end
   end
 end
-  local t1={}
+ --[[ local t1={}
   local t2={}
   t1[t1]=t2
   local u={t1,t2}
-  print(tserialize(u))
+  print(tserialize(u))--]]
 return
 {
   tserialize=tserialize

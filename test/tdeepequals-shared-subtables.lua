@@ -20,25 +20,25 @@ assert(type(make_suite) == "function")
 -- Basic tests
 -- ----------------------------------------------------------------------------
 local test = make_suite("shared subtables and recursion")
-  test "1" ( function()
-    local t1={}
-    local t2={}
-    local t3={}
-    local t4={}
-    local u={t1,t2,[t1]=t1,[t2]=t2}
-    local v={t3,t4,[t4]=t4,[t3]=t3}
-    check_ok(u,v,0)
-  end)
+test "1" ( function()
+  local t1={}
+  local t2={}
+  local t3={}
+  local t4={}
+  local u={t1,t2,[t1]=t1,[t2]=t2}
+  local v={t3,t4,[t4]=t4,[t3]=t3}
+  check_ok(u,v,0)
+end)
 
-  test "2" ( function()
-    local t1={}
-    local t2={}
-    local t3={}
-    local t4={}
-    local u={{{{t1}}},{{{t2}}},[t1]=t1,[t2]=t2}
-    local v={{{{t3}}},{{{t4}}},[t4]=t4,[t3]=t3}
-    check_ok(u,v,0)
-  end)
+test "2" ( function()
+  local t1={}
+  local t2={}
+  local t3={}
+  local t4={}
+  local u={{{{t1}}},{{{t2}}},[t1]=t1,[t2]=t2}
+  local v={{{{t3}}},{{{t4}}},[t4]=t4,[t3]=t3}
+  check_ok(u,v,0)
+end)
 
 test "3" ( function()
   local t1={}
@@ -98,5 +98,25 @@ test "8" ( function()
   check_ok(u,v,1)
 end)
 
+test "9" ( function()
+  local a={1,2,3}
+  local u={[a]=a,[{a,a}]={a,a}, { {a,{a,{a}},{[a]=a}} } }
+  check_ok(u,u,0)
+end)
+
+test "10" ( function()
+  local a={1,2,3}
+  local u={[a]=a,[{a,a}]={a,a}, { {a,{a,{a}},{[a]=a}} } }
+  local v={[a]=a,[{a,a}]={a,a}, { {a,{a,{{a}}},{[a]=a}} } }
+  check_ok(u,v,1)
+end)
+
+test "10" ( function()
+  local a={}
+  a[a]=a a[{a,a}]={a,a} a[3]={ {a,{a,{a}},{[a]=a}} }
+  local b={}
+  b[b]=b b[{b,b}]={b,b,b} b[3]={ {b,{b,{b}},{[b]=b}} }
+  check_ok(a,b,1)
+end)
 
 assert (test:run())

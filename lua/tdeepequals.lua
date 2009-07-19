@@ -47,8 +47,17 @@ do
     return 1
   end
 
-  --3.More for threads, functions and userdata(using hash table p_table)
+  --3.More for threads, functions and userdata(using hash table p_table) and also nil
   local function p_more(t1,t2)
+    if not t1 and not t2 then
+      return 0
+    end
+    if not t1 then
+      return -1
+    end
+    if not t2 then
+      return 1
+    end
     if not p_table[t1] then
       p_table.n=p_table.n+1
       p_table[t1]=p_table.n
