@@ -7,6 +7,8 @@ local table_concat, table_sort = table.concat, table.sort
 local string_format, string_match = string.format,string.match
 
 local tdeepequals
+local tmore
+
 do
   local p_table -- table, containing hashes of pointer-like data - functions, threads, userdata
 
@@ -81,7 +83,7 @@ do
 
 
   --6. Compare (less) utility generator for key-value pairs, where key is a table.
-  local tmore --more for tables, will be described later
+
   local function table_comp(visited)
     return function(t1,t2)
       local vis1=table_dup(visited)
@@ -130,9 +132,6 @@ do
   -- compares two generic pieces of lua data - first and second
   -- vis1 and vis2 are hashes of visited tables for first and second
   tmore = function (first,second,vis1,vis2)
-    --[[print(first,"=",tserialize(first),pr(vis1))
-    print(second,"=",tserialize(second),pr(vis2))
-    print ()--]]
     local type1, type2 = type(first), type(second)
     if type1~=type2 then
       return more(type1,type2)
@@ -216,5 +215,6 @@ end
 
 return
 {
-  tdeepequals = tdeepequals
+  tdeepequals = tdeepequals,
+  tmore=tmore
 }

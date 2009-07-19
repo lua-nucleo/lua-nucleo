@@ -34,7 +34,12 @@ test "1" ( function()
   userdata2=nil
   u=nil
   v=nil
-  collectgarbage("collect")
+  local now = collectgarbage("count")
+  local prev=0
+  while prev~=now do
+    collectgarbage("collect")
+    prev,now=now,collectgarbage("count")
+  end
   assert(changed==1,"Garbage not collected!!!")
 end)
 
