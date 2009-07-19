@@ -41,7 +41,7 @@ do
     if not t1 and  t2 then
       return -1
     end
-    if not t1 and  not t2 or t1 and t2 then
+    if ((not t1) and (not t2)) or (t1 and t2) then
       return 0
     end
     return 1
@@ -80,7 +80,7 @@ do
   end
 
 
-  --6. Compare (less) utility generator for tables
+  --6. Compare (less) utility generator for key-value pairs, where key is a table.
   local tmore --more for tables, will be described later
   local function table_comp(visited)
     return function(t1,t2)
@@ -93,6 +93,11 @@ do
       return m<0
     end
   end
+
+  --7. Generic compare for everything except tables
+  local function nontable_comp(t1,t2)
+    return tmore(t1,t2)<0
+  end
   ------------------------------------------------------------
   ------------------------  MAIN WORK  -----------------------
   ------------------------------------------------------------
@@ -104,44 +109,24 @@ do
   --recursive tables and tables having shared sub_tables:
   --e.g. 1 (recursive): local t={} t[t]=1
   --e.g. 2 (shared)   : local t1={} local t={t1,t1}
-  local function analyze (t,visited)
-    local ikeys={};
-    local strkeys={};
-    local boolkeys={}
+  local function analyze (t)
     local tkeys={};
-    local pkeys={};
+    local keys={};
     for k, v in pairs(t) do
-      local k_type = type(k)
-      if k_type=="number" then
-        ikeys[#ikeys + 1] = k
-      elseif k_type=="string" then
-        strkeys[#strkeys + 1] = k
-      elseif k_type=="boolean" then
-        boolkeys[#boolkeys + 1] = k
-      elseif k_type=="table" then
+      local k_type=type(k)
+      if k_type=="table" then
         local ind=#tkeys + 1
         tkeys[ind]={}
         tkeys[ind][1] = k
         tkeys[ind][2] = t[k]
       else
-        pkeys[#pkeys + 1] = k
+        keys[#keys + 1] = k
       end
     end
-    table_sort(ikeys);
-    table_sort(strkeys);
-    table_sort(boolkeys,bool_comp);
-    table_sort(pkeys,p_comp)
-    return ikeys, strkeys,boolkeys, pkeys, tkeys;
+    table_sort(keys,nontable_comp)
+    return keys, tkeys;
   end
 
-  local function pr(t)
-    local buf="{"
-    for k,v in pairs(t) do
-      buf = buf.."["..tostring(k).."]".."="..tostring(v)..","
-    end
-    buf = buf.."}"
-    return buf
-  end
   -- compares two generic pieces of lua data - first and second
   -- vis1 and vis2 are hashes of visited tables for first and second
   tmore = function (first,second,vis1,vis2)
@@ -170,82 +155,25 @@ do
         vis1[first]=vis1.n
         vis2.n=vis2.n+1
         vis2[second]=vis2.n
-        local ikeys1, strkeys1,boolkeys1, pkeys1, tkeys1 = analyze(first,vis1)
-        local ikeys2, strkeys2,boolkeys2, pkeys2, tkeys2 = analyze(second,vis2)
+        local keys1, tkeys1 = analyze(first)
+        local keys2, tkeys2 = analyze(second)
         local i
         local m
-        -- numeric keys
+        -- nontable keys
         i=1
-        if ikeys1 or ikeys2 then
-          while i<=#ikeys1 and i<=#ikeys2 do
-            m=more(ikeys1[i],ikeys2[i])
+        if keys1 or keys2 then
+          while i<=#keys1 and i<=#keys2 do
+            m=tmore(keys1[i],keys2[i])
             if m~=0 then
               return m
             end
-            m=tmore(first[ikeys1[i]],second[ikeys2[i]],vis1,vis2)
-            if m~=0 then
-              return m
-            end
-            i = i+1
-          end
-          m=more(#ikeys1-i,#ikeys2-i)
-          if m~=0 then
-            return m
-          end
-        end
-        -- string keys
-        if strkeys1 or strkeys2 then
-          i=1
-          while i<=#strkeys1 and i<=#strkeys2 do
-            local m=more(strkeys1[i],strkeys2[i])
-            if m~=0 then
-              return m
-            end
-            m=tmore(first[strkeys1[i]],second[strkeys2[i]],vis1,vis2)
+            m=tmore(first[keys1[i]],second[keys2[i]],vis1,vis2)
             if m~=0 then
               return m
             end
             i = i+1
           end
-          m=more(#strkeys1-i,#strkeys2-i)
-          if m~=0 then
-            return m
-          end
-        end
-        -- bool keys
-        if boolkeys1 or boolkeys2 then
-          i=1
-          while i<=#boolkeys1 and i<=#boolkeys2 do
-            local m=bool_more(boolkeys1[i],boolkeys2[i])
-            if m~=0 then
-              return m
-            end
-            m=tmore(first[boolkeys1[i]],second[boolkeys2[i]],vis1,vis2)
-            if m~=0 then
-              return m
-            end
-            i = i+1
-          end
-          m=more(#boolkeys1-i,#boolkeys2-i)
-          if m~=0 then
-            return m
-          end
-        end
-        -- p keys(userdata, functions, etc
-        if pkeys1 or pkeys2 then
-          i=1
-          while i<=#pkeys1 and i<=#pkeys2 do
-            local m=p_more(pkeys1[i],pkeys2[i])
-            if m~=0 then
-              return m
-            end
-            m=tmore(first[pkeys1[i]],second[pkeys2[i]],vis1,vis2)
-            if m~=0 then
-              return m
-            end
-            i = i+1
-          end
-          m=more(#pkeys1-i,#pkeys2-i)
+          m=more(#keys1-i,#keys2-i)
           if m~=0 then
             return m
           end
