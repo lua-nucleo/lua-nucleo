@@ -38,9 +38,24 @@ test "5" (function()
   check_ok(u)
 end)
 
+test "6" (function()
+  local t1={}
+  local t2={}
+  t1[1]=t2
+  t2[1]=t1
+  local u={t1,t2}
+  check_ok(u)
+end)
+
 test "Complex recursive table" (function()
   local a={}
   a[a]=a a[{a,a}]={a,a}
+  check_ok(a)
+end)
+
+test "Recursive table #0" (function()
+  local a={}
+  a[1]={a}
   check_ok(a)
 end)
 
@@ -51,10 +66,16 @@ test "Recursive table #1" (function()
 end)
 
 
-
 test "Recursive table #2" (function()
   local a={}
   a[1]={ a,{a} }
+  check_ok(a)
+end)
+
+test "Recursive table #2" (function()
+  local a={}
+  a[{{a}}]={ a,{a} }
+  a[a]=a
   check_ok(a)
 end)
 

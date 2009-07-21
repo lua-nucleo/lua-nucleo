@@ -47,6 +47,9 @@ do
             end
             if parse_rec_internal(v) then
               rec=true
+              if t==initial then
+                rec_info[v]=true
+              end
             end
           end
         else
@@ -70,9 +73,12 @@ do
         local next_i=0
         for i,v in ipairs(t) do
           next_i = i
-          if v~=initial then
+          if not  (rec_info[i] or rec_info[v]) then
             if i~=1 then cat(",") end
             recursive_proceed(v,buf,visited,num,rec_info,initial, afterwork,declare,cat)
+          else
+            next_i=i-1
+            break
           end
         end
         next_i = next_i + 1
@@ -81,9 +87,9 @@ do
         local comma = (next_i > 1) and "," or ""
         for k, v in pairs(t) do
           local k_type = type(k)
-          if not (rec_info[k] or v==initial) then
-          --that means, if the value is not a recursive link to the table itself
-          --and the index does not CONTAIN a recursive link...
+          if not (rec_info[k] or rec_info[v]) then
+          --that means, if the value does not contain a recursive link to the table itself
+          --and the index does not contain a recursive link...
             if k_type == "string" then
               cat(comma)
               comma = ","
@@ -175,6 +181,18 @@ do
         return nil, "Unserializable data in parameter #"..i
       end
       visited[v].is_recursive=true
+    end
+
+    rec_info={}
+    local prevrbuf={}
+    for i=1,nadd do
+      local aw=buf[i].afterwork
+      local v=additional_vars[i]
+      buf[i]=table_concat(buf[i])
+      prevrbuf[i]="local "..visited[v].name.."="..buf[i]
+      buf[i]={afterwork=aw}
+    end
+    for i=1,nadd do
       local v=additional_vars[i]
       for j=1,#(buf[i].afterwork) do
         afterwork(buf[i].afterwork[j][1],buf[i].afterwork[j][2],buf[i],visited[v].name,visited[v].var_num,visited,rec_info)
@@ -207,14 +225,6 @@ do
     end
 
     --CONCAT RECURSIVE PART--
-    local prevrbuf={}
-    for i=1,nadd do
-      local aw=buf[i].afterwork
-      local v=additional_vars[i]
-      buf[i]=table_concat(buf[i])
-      prevrbuf[i]="local "..visited[v].name.."="..buf[i]
-      buf[i]={afterwork=aw}
-    end
     for i=1,nadd do
       buf[i]=table_concat(buf[i])
     end
@@ -232,9 +242,9 @@ do
     else
       local rez={
         "do ",
-        table_concat(prevbuf," "),
-        " ",
         table_concat(prevrbuf," "),
+        " ",
+        table_concat(prevbuf," "),
         " ",
         table_concat(buf," ",1,nadd),
         " return ",
@@ -246,8 +256,6 @@ do
   end
 end
 
-local a={} a[1]={a}
-print(tserialize(a))
 return
 {
   tserialize=tserialize
