@@ -209,7 +209,7 @@ do
     p_table={n=0}
     local r = tmore(t1,t2,{n=0},{n=0})
     p_table=nil
-    return r
+    return r==0
   end
 end
 

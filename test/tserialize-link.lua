@@ -37,9 +37,31 @@ test "5" (function()
   local u={t1,t2}
   check_ok(u)
 end)
-test "6" (function()
+
+test "Complex recursive table" (function()
+  local a={}
+  a[a]=a a[{a,a}]={a,a}
+  check_ok(a)
+end)
+
+test "Recursive table #1" (function()
+  local a={}
+  a[1]={ {a} }
+  check_ok(a)
+end)
+
+
+
+test "Recursive table #2" (function()
+  local a={}
+  a[1]={ a,{a} }
+  check_ok(a)
+end)
+
+test "Very sophisticated recursive table" (function()
   local a={}
   a[a]=a a[{a,a}]={a,a} a[3]={ {a,{a,{a}},{[a]=a}} }
   check_ok(a)
 end)
+
 assert (test:run())

@@ -18,7 +18,7 @@ local tests_pr={
  'tdeepequals-userdata-functions-threads'
 }
 
-local pattern=arg[1]or ""
+local pattern=select(1,...) or ""
 assert(type(pattern)=="string")
 
 local test_r={}

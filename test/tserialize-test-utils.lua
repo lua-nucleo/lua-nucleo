@@ -60,7 +60,7 @@ local check_fn_ok = function(eq, ...)
   print(saved:sub(1, 200))
   local expected = { ... }
   local loaded = { assert(loadstring(saved))() }
-  assert(eq(expected, loaded))
+  assert(eq(expected, loaded), "tserialize produced wrong table!")
   return saved
 end
 

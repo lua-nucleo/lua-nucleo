@@ -1,22 +1,10 @@
 dofile("lua/strict.lua")
 dofile("lua/import.lua")
-local tdeepequals = assert(import "lua/tdeepequals.lua" {'tdeepequals'})
-local tstr = assert(import "lua/tstr.lua" {'tstr'})
-assert(type(tdeepequals) == "function")
-
-local function check_ok(t1,t2,rez)
-  assert(type(rez)=="number","Result type must be a number")
-  local r=assert(tdeepequals(t1,t2))
-  print("First  = ",tstr(t1))
-  print("Second = ",tstr(t2))
-  print("Result = ",r)
-  assert( r==0 and rez==0 or r~=0 and rez~=0, "Expected:"..rez)
-end
-
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
+local check_ok  = import 'test/tdeepequals-test-utils.lua' { 'check_ok' }
 -- ----------------------------------------------------------------------------
--- Basic tests
+-- userdata, functions, threads
 -- ----------------------------------------------------------------------------
 local test = make_suite("userdata,functions, threads")
 
@@ -29,7 +17,7 @@ test "1" ( function()
   debug.setmetatable(userdata2,mt)
   local u={userdata1,userdata2}
   local v={userdata2,userdata1}
-  check_ok(u,v,1)
+  check_ok(u,v,false)
   userdata1=nil
   userdata2=nil
   u=nil
@@ -48,7 +36,7 @@ test "2" ( function()
   local userdata2 = newproxy()
   local u={userdata1,userdata1}
   local v={userdata1,userdata1}
-  check_ok(u,v,0)
+  check_ok(u,v,true)
 end)
 
 test "3" ( function()
@@ -56,7 +44,7 @@ test "3" ( function()
   local thr = coroutine.create(function() end)
   local u={udt}
   local v={thr}
-  check_ok(u,v,1)
+  check_ok(u,v,false)
 end)
 
 test "4" ( function()
@@ -65,7 +53,7 @@ test "4" ( function()
   local fnc = function() end
   local u={udt}
   local v={fnc}
-  check_ok(u,v,1)
+  check_ok(u,v,false)
 end)
 
 test "5" ( function()
@@ -74,7 +62,7 @@ test "5" ( function()
   local fnc = function() end
   local u={[udt]=fnc}
   local v={[fnc]=thr}
-  check_ok(u,v,1)
+  check_ok(u,v,false)
 end)
 
 test "6" ( function()
@@ -82,7 +70,7 @@ test "6" ( function()
   local thr = coroutine.create(function() end)
   local u={[udt]=thr,[thr]=udt}
   local v={[thr]=udt,[udt]=thr}
-  check_ok(u,v,0)
+  check_ok(u,v,true)
 end)
 
 test "7" ( function()
@@ -91,7 +79,7 @@ test "7" ( function()
   local fnc = function() end
   local u={[udt]=fnc,[fnc]=udt,[thr]=udt}
   local v={[fnc]=udt,[thr]=udt,[udt]=fnc}
-  check_ok(u,v,0)
+  check_ok(u,v,true)
 end)
 
 test "8" ( function()
@@ -100,7 +88,7 @@ test "8" ( function()
   local fnc = function() end
   local u={[{}]=thr,[{}]=udt,[{}]=fnc}
   local v={[{}]=udt,[{}]=fnc,[{}]=thr}
-  check_ok(u,v,0)
+  check_ok(u,v,true)
 end)
 
 test "9" ( function()
@@ -109,7 +97,7 @@ test "9" ( function()
   local fnc = function() end
   local u={[{}]=thr,[{}]=thr,[{}]=fnc}
   local v={[{}]=udt,[{}]=fnc,[{}]=thr}
-  check_ok(u,v,1)
+  check_ok(u,v,false)
 end)
 
 

@@ -122,7 +122,9 @@ do
       end
     elseif t_type == "string" then
       cat(string_format("%q", t))
-    elseif t_type == "number" or t_type == "boolean" then
+    elseif t_type == "number" then
+      cat(string.format("%.55g",t))
+    elseif t_type == "boolean" then
       cat(tostring(t))
     elseif t == nil then
       cat("nil")
@@ -173,8 +175,12 @@ do
         return nil, "Unserializable data in parameter #"..i
       end
       visited[v].is_recursive=true
+      local v=additional_vars[i]
+      for j=1,#(buf[i].afterwork) do
+        afterwork(buf[i].afterwork[j][1],buf[i].afterwork[j][2],buf[i],visited[v].name,visited[v].var_num,visited,rec_info)
+      end
     end
-    print(visited.n)
+
     visit=nil --no more needed
     --SERIALIZE GIVEN VARS--
 
@@ -186,7 +192,8 @@ do
         return nil, "Unserializable data in parameter #"..i
       end
     end
-
+    --print(#visited.declare)
+    --print(visited.declare[1].name)
     --DECLARE THE VARIABLES THAT ARE USED MULTIPLE TIMES --
     local prevbuf={}
     for i,v in ipairs(visited.declare) do
@@ -209,10 +216,6 @@ do
       buf[i]={afterwork=aw}
     end
     for i=1,nadd do
-      local v=additional_vars[i]
-      for j=1,#(buf[i].afterwork) do
-        afterwork(buf[i].afterwork[j][1],buf[i].afterwork[j][2],buf[i],visited[v].name,visited[v].var_num,visited,rec_info)
-      end
       buf[i]=table_concat(buf[i])
     end
 
@@ -242,11 +245,9 @@ do
     end
   end
 end
- --[[ local t1={}
-  local t2={}
-  t1[t1]=t2
-  local u={t1,t2}
-  print(tserialize(u))--]]
+
+local a={} a[1]={a}
+print(tserialize(a))
 return
 {
   tserialize=tserialize

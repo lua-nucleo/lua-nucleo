@@ -1,2 +1,2 @@
 #!/bin/sh
-lua "test/test.lua" $1
+lua "test/test.lua" $@
