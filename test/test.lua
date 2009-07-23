@@ -12,10 +12,12 @@ local tests_pr={
  'tserialize-basic';
  'tserialize-link';
  'tserialize-metatables';
+ 'tserialize-autogen';
  'tdeepequals-basic-types';
  'tdeepequals-basic-tables';
  'tdeepequals-shared-subtables';
- 'tdeepequals-userdata-functions-threads'
+ 'tdeepequals-userdata-functions-threads';
+ 'tdeepequals-autogen';
 }
 
 local pattern=select(1,...) or ""

@@ -3,6 +3,7 @@ dofile("lua/import.lua")
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 local check_ok  = import 'test/tserialize-test-utils.lua' { 'check_ok' }
+
 -- ----------------------------------------------------------------------------
 -- Basic tests
 -- ----------------------------------------------------------------------------
@@ -29,4 +30,5 @@ test "18" ( function() check_ok({ a = {}, b = { c = 7 } }, nil, { { } }, 42) end
 test "19" ( function() check_ok({ ["1"] = "str", [1] = "num" }) end)
 test "20" ( function() check_ok({ [true] = true }) end)
 test "21" ( function() check_ok({ [true] = true, [false] = false, 1 }) end)
+
 assert (test:run())

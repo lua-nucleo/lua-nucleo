@@ -3,71 +3,64 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
 local pairs, type, ipairs, tostring = pairs, type, ipairs, tostring
-local table_concat = table.concat
+local table_concat,table_remove = table.concat,table.remove
 local string_format, string_match = string.format,string.match
 dofile('lua/import.lua')
 local tserialize
 do
   local lua51_keywords = import 'lua/language.lua' { 'lua51_keywords' }
 
-  local function explode_rec(t,add,visited,added,vis)
+  local function explode_rec(t,add,added,vis)
     local t_type = type(t)
     if t_type == "table" then
-      if not (visited[t] or added[t] or vis[t]) then
-        visited[t]=true
+      if not (added[t] or vis[t]) then
         vis[t]=true
         for k,v in pairs(t) do
-          explode_rec(k,add,visited,added,vis)
-          explode_rec(v,add,visited,added,vis)
+          explode_rec(k,add,added,vis)
+          explode_rec(v,add,added,vis)
         end
-        vis[t]=nil
       else
         if not added[t] and vis[t] then
-          added[t]=true
+          added[t]={declared=true}
           add[#add+1]=t
         end
       end
     end
   end
 
-  local function parse_rec(t,visited,rec_info)
+  local function parse_rec(t,visited,rec_info,added)
     local initial = t
+    local started=false
     local function parse_rec_internal(t)
       local t_type = type(t)
       local rec=false
       if t_type == "table" then
-        if not visited[t] then
-          visited[t]=true
+        if not added[t]or not started then
+          started = true
           for k,v in pairs(t) do
-            if parse_rec_internal(k) then
+            if parse_rec_internal(k) or parse_rec_internal(v) then
               rec=true
-              if t==initial then
+              if type(k)=="table" then
                 rec_info[k]=true
               end
-            end
-            if parse_rec_internal(v) then
-              rec=true
-              if t==initial then
+              if type(v)=="table" then
                 rec_info[v]=true
               end
             end
           end
         else
-          if t==initial then
-            return true
-          end
+          return true
         end
       end
       return rec
     end
+    rec_info[initial]=true
     parse_rec_internal(initial)
   end
-  local function recursive_proceed(t,buf,visited,num,rec_info,initial, afterwork,declare,cat)
+  local function recursive_proceed(t,buf,added,num,rec_info, afterwork,cat)
     local t_type = type(t)
     if t_type == "table" then
-      if not visited[t] then
-        visited[t] = {var_num = num,buf_start=#buf+1,name="var"..visited.n, rec_links={}}
-        visited.n = visited.n+1
+      if not added[t] then
         cat("{")
         -- Serialize numeric indices
         local next_i=0
@@ -75,7 +68,7 @@ do
           next_i = i
           if not  (rec_info[i] or rec_info[v]) then
             if i~=1 then cat(",") end
-            recursive_proceed(v,buf,visited,num,rec_info,initial, afterwork,declare,cat)
+            recursive_proceed(v,buf,added,num,rec_info, afterwork,cat)
           else
             next_i=i-1
             break
@@ -99,7 +92,7 @@ do
               else
                 cat(string_format("[%q]", k)) cat("=")
               end
-                recursive_proceed(v,buf,visited,num,rec_info,initial, afterwork,declare,cat)
+                recursive_proceed(v,buf,added,num,rec_info, afterwork,cat)
             elseif
               k_type ~= "number" or -- non-string non-number
               k >= next_i or k < 1 or -- integer key in hash part of the table
@@ -108,23 +101,18 @@ do
               cat(comma)
               comma=","
               cat("[")
-              recursive_proceed(k,buf,visited,num,rec_info,initial, afterwork,declare,cat)
+              recursive_proceed(k,buf,added,num,rec_info, afterwork,cat)
               cat("]")
               cat("=")
-              recursive_proceed(v,buf,visited,num,rec_info,initial, afterwork,declare,cat)
+              recursive_proceed(v,buf,added,num,rec_info, afterwork,cat)
             end
           else
             afterwork[#afterwork+1]={k,v}
           end
         end
         cat("}")
-        visited[t].buf_end=#buf
       else -- already visited!
-        cat(visited[t].name)
-        if not visited[t].declared then
-          declare[#declare+1]=visited[t]
-          visited[t].declared=true
-        end
+        cat(added[t].name)
       end
     elseif t_type == "string" then
       cat(string_format("%q", t))
@@ -140,112 +128,103 @@ do
     return true
   end
 
-  local function afterwork(k,v,buf,name,num,visited,rec_buf)
+  local function afterwork(k,v,buf,name,num,added,rec_buf)
     local cat = function(v) buf[#buf + 1] = v end
     cat(" ")
     cat(name)
     cat("[")
-    recursive_proceed(k,buf,visited,num,rec_buf,k, buf.afterwork,visited.declare,cat)
+    if not recursive_proceed(k,buf,added,num,rec_buf, buf.afterwork,cat) then
+      return false
+    end
     cat("]=")
-    recursive_proceed(v,buf,visited,num,rec_buf,v, buf.afterwork,visited.declare,cat)
+    if not recursive_proceed(v,buf,added,num,rec_buf, buf.afterwork,cat) then
+      return false
+    end
     cat(" ")
+    return true
   end
   tserialize = function (...)
   --===================================--
   --===========THE MAIN PART===========--
   --===================================--
-    --PREPARATORY WORK: LOCATE THE RECURSIVE PARTS--
+    --PREPARATORY WORK: LOCATE THE RECURSIVE AND SHARED PARTS--
     local narg=#arg
     local additional_vars={} -- table, containing recursive parts of our variables
     local added={}
     local visit={}
     for i,v in pairs(arg) do
       local v=arg[i]
-      explode_rec(v, additional_vars,visit,added,{}) -- discover recursive subtables
+      explode_rec(v, additional_vars,added,visit) -- discover recursive subtables
     end
-    added=nil  --need no more
     visit=nil--need no more
-
-    local visited={n=1,declare={}}
     local nadd=#additional_vars
     local visit={}
-    --SERIALIZE RECURSIVE FIRST--
-    local rec_info={}
+
+    --SERIALIZE ADDITIONAL FIRST--
+
     local buf={}
-    if nadd~=0 then visited.has_recursion=true end
+    local rec_info={}
+
     for i=1,nadd do
       local v=additional_vars[i]
-      parse_rec(v, visit, rec_info)
+      parse_rec(v, visit, rec_info,added)
+    end
+    visit = nil
+    added={}
+    for i=1,nadd do
+      local v=additional_vars[i]
       buf[i]={afterwork={}}
-      if not recursive_proceed(v, buf[i],visited,i,rec_info,v, buf[i].afterwork,visited.declare,function(v) buf[i][#buf[i] + 1] = v end) then
+      if not recursive_proceed(v, buf[i],added,i,rec_info, buf[i].afterwork,function(v) buf[i][#(buf[i]) + 1] = v end) then
         return nil, "Unserializable data in parameter #"..i
       end
-      visited[v].is_recursive=true
+      added[v]={name="var"..i,num=i}
     end
 
     rec_info={}
-    local prevrbuf={}
-    for i=1,nadd do
-      local aw=buf[i].afterwork
-      local v=additional_vars[i]
-      buf[i]=table_concat(buf[i])
-      prevrbuf[i]="local "..visited[v].name.."="..buf[i]
-      buf[i]={afterwork=aw}
-    end
     for i=1,nadd do
       local v=additional_vars[i]
+      buf[i].afterstart=#buf[i]
       for j=1,#(buf[i].afterwork) do
-        afterwork(buf[i].afterwork[j][1],buf[i].afterwork[j][2],buf[i],visited[v].name,visited[v].var_num,visited,rec_info)
-      end
-    end
-
-    visit=nil --no more needed
-    --SERIALIZE GIVEN VARS--
-
-    for i=1,narg do
-      local v=arg[i]
-      --print(v)
-      buf[i+nadd]={afterwork={}}
-      if not recursive_proceed(v, buf[i+nadd],visited,i+nadd,rec_info,v, buf[i+nadd].afterwork,visited.declare,function(v) buf[i+nadd][#(buf[i+nadd]) + 1] = v end) then
-        return nil, "Unserializable data in parameter #"..i
-      end
-    end
-    --print(#visited.declare)
-    --print(visited.declare[1].name)
-    --DECLARE THE VARIABLES THAT ARE USED MULTIPLE TIMES --
-    local prevbuf={}
-    for i,v in ipairs(visited.declare) do
-      if not v.is_recursive then --skip recursive fields
-        prevbuf[#prevbuf+1] = " local "..v.name.."="..table_concat(buf[v.var_num],"",v.buf_start,v.buf_end)
-        buf[v.var_num][v.buf_start]=v.name
-        for i=v.buf_start+1,v.buf_end do
-          buf[v.var_num][i]=""
+        if not afterwork(buf[i].afterwork[j][1],buf[i].afterwork[j][2],buf[i],added[v].name,i,added,rec_info)then
+          return nil, "Unserializable data in parameter #"..i
         end
       end
     end
 
-    --CONCAT RECURSIVE PART--
-    for i=1,nadd do
-      buf[i]=table_concat(buf[i])
+    --SERIALIZE GIVEN VARS--
+
+    for i=1,narg do
+      local v=arg[i]
+      buf[i+nadd]={afterwork={}}
+      if not recursive_proceed(v, buf[i+nadd],added,i+nadd,rec_info, buf[i+nadd].afterwork,function(v) buf[i+nadd][#(buf[i+nadd]) + 1] = v end) then
+        return nil, "Unserializable data in parameter #"..i
+      end
     end
 
-    --CONCAT MAIN PART
+    --DECLARE ADDITIONAL VARS--
 
+    local prevbuf={}
+    for v,inf in pairs(added) do
+        prevbuf[#prevbuf+1] = " local "..inf.name.."="..table_concat(buf[inf.num],"",1,buf[inf.num].afterstart)
+    end
+
+    --CONCAT PARTS--
+    for i=1,nadd do
+      buf[i]=table_concat(buf[i],"",buf[i].afterstart+1)
+    end
     for i=nadd+1,nadd+narg do
       buf[i]=table_concat(buf[i])
     end
 
     --RETURN THE RESULT--
 
-    if not visited.has_recursion and #visited.declare==0 then
+    if  nadd==0 then
       return "return "..table_concat(buf,",")
     else
       local rez={
         "do ",
-        table_concat(prevrbuf," "),
-        " ",
         table_concat(prevbuf," "),
-        " ",
+        ' ',
         table_concat(buf," ",1,nadd),
         " return ",
         table_concat(buf,",",nadd+1),
@@ -255,6 +234,7 @@ do
     end
   end
 end
+
 
 return
 {

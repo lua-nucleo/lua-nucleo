@@ -56,8 +56,8 @@ local tserialize = import 'lua/tserialize.lua' {"tserialize"}
 local check_fn_ok = function(eq, ...)
   local saved = tserialize(...)
   assert(type(saved) == "string")
-  print("saved length", #saved, "(display truncated to 200 chars)")
-  print(saved:sub(1, 200))
+  print("saved length", #saved, "(display truncated to 1000 chars)")
+  print(saved:sub(1, 1000))
   local expected = { ... }
   local loaded = { assert(loadstring(saved))() }
   assert(eq(expected, loaded), "tserialize produced wrong table!")
