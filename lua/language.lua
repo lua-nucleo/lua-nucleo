@@ -1,4 +1,6 @@
-
+-- language.lua -- lua keywords
+-- This file is a part of lua-nucleo library
+-- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 local lua51_keywords =
 {
   ["and"] = true,    ["break"] = true,  ["do"] = true,
@@ -9,4 +11,7 @@ local lua51_keywords =
   ["repeat"] = true, ["return"] = true, ["then"] = true,
   ["true"] = true,    ["until"] = true,  ["while"] = true
 }
-return { lua51_keywords = lua51_keywords };
+return
+{
+  lua51_keywords = lua51_keywords;
+};

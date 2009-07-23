@@ -1,8 +1,8 @@
--- ----------------------------------------------------------------------------
--- tserialize.lua - tests for tserialize module
+-- tserialize-test-utils.lua -- utility functions for tserialize testing
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
--- ----------------------------------------------------------------------------
+
+
 
 local randomseed = 1235134892
 --local randomseed = os.time()
@@ -11,6 +11,7 @@ math.randomseed(randomseed)
 -- ----------------------------------------------------------------------------
 -- Utility functions
 -- ----------------------------------------------------------------------------
+assert(type(import)=="function","Import is required to run")
 local tdeepequals = import("lua/tdeepequals.lua") {'tdeepequals'}
 local invariant = function(v)
   return function()

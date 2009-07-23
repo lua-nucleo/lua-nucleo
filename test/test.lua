@@ -4,18 +4,18 @@
 
 -- Note: can't use import here for the test purity reasons.
 local run_tests = assert(assert(assert(loadfile('lua/suite.lua'))()).run_tests)
-
+dofile('lua/import.lua')
 local tests_pr={
  'suite';
  'strict';
  'import';
  'tserialize-basic';
- 'tserialize-link';
+ 'tserialize-recursive';
  'tserialize-metatables';
  'tserialize-autogen';
  'tdeepequals-basic-types';
  'tdeepequals-basic-tables';
- 'tdeepequals-shared-subtables';
+ 'tdeepequals-recursive';
  'tdeepequals-userdata-functions-threads';
  'tdeepequals-autogen';
 }

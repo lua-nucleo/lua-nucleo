@@ -1,7 +1,12 @@
+-- tserialize-recursive.lua -- recursive tests for tserialize
+-- This file is a part of lua-nucleo library
+-- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+
+
 dofile("lua/strict.lua")
-dofile("lua/import.lua")
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
+assert(type(import)=="function","Import is required to run")
 local check_ok = import 'test/tserialize-test-utils.lua' { 'check_ok' }
 -- ----------------------------------------------------------------------------
 -- Link tests

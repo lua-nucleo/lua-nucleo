@@ -1,5 +1,10 @@
+-- tdeepequals-userdata-functions-threads.lua -- checks support of nonstandard types in tdeepequals
+-- This file is a part of lua-nucleo library
+-- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+
+
 dofile("lua/strict.lua")
-dofile("lua/import.lua")
+assert(type(import)=="function","Import is required to run")
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 local check_ok  = import 'test/tdeepequals-test-utils.lua' { 'check_ok' }
