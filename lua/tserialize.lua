@@ -2,6 +2,13 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
+-- Serializes arbitrary lua tables to lua code that can be loaded back via loadstring()
+-- Functions, threads, userdata are not supported
+-- Metatables are ignored
+-- Usage:
+-- str = tserialize(explist) --> to serialize data
+-- =(loadstring(str)()) --> to load it back
+
 local pairs, type, ipairs, tostring = pairs, type, ipairs, tostring
 local table_concat,table_remove = table.concat,table.remove
 local string_format, string_match = string.format,string.match

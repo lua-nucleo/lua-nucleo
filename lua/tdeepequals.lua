@@ -2,6 +2,15 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
+-- Tests arbitrary lua tables for equality.
+-- Functions, threads, etc. are supported
+-- Metatables are ignored.
+-- The tmore function introduces linear ordering in the set of all lua tables.
+-- That is, for two arbitrary tables we can define an ordering  '>=' : t1>=t2 <=> tmore(t1,t2)>=0 ,  the following statements are hold for all tables a, b and c:
+-- If a ≤ b and b ≤ a then a = b (antisymmetry); (if tmore(a,b)=0 then a=b)
+-- If a ≤ b and b ≤ c then a ≤ c (transitivity); (tmore(a,b)*tmore(b,c)*tmore(c,a)<=0)
+-- a ≤ b or b ≤ a (totality).
+
 local pairs, type, ipairs, tostring = pairs, type, ipairs, tostring
 local table_concat, table_sort = table.concat, table.sort
 local string_format, string_match = string.format,string.match
