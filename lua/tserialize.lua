@@ -16,15 +16,22 @@ dofile('lua/import.lua')
 local tserialize
 do
   local lua51_keywords = import 'lua/language.lua' { 'lua51_keywords' }
-
-  local function explode_rec(t,add,added,vis)
+  local cur_buf
+  local num
+  local added = {}
+  local rec_info = {}
+  local after
+  local function cat(v)
+    cur_buf[#cur_buf + 1] = v
+  end
+  local function explode_rec(t,add,vis)
     local t_type = type(t)
     if t_type == "table" then
       if not (added[t] or vis[t]) then
         vis[t]=true
         for k,v in pairs(t) do
-          explode_rec(k,add,added,vis)
-          explode_rec(v,add,added,vis)
+          explode_rec(k,add,vis)
+          explode_rec(v,add,vis)
         end
       else
         if not added[t] and vis[t] then
@@ -35,7 +42,7 @@ do
     end
   end
 
-  local function parse_rec(t,visited,rec_info,added)
+  local function parse_rec(t)
     local initial = t
     local started=false
     local function parse_rec_internal(t)
@@ -64,7 +71,7 @@ do
     rec_info[initial]=true
     parse_rec_internal(initial)
   end
-  local function recursive_proceed(t,buf,added,num,rec_info, afterwork,cat)
+  local function recursive_proceed(t)
     local t_type = type(t)
     if t_type == "table" then
       if not added[t] then
@@ -75,7 +82,7 @@ do
           next_i = i
           if not  (rec_info[i] or rec_info[v]) then
             if i~=1 then cat(",") end
-            recursive_proceed(v,buf,added,num,rec_info, afterwork,cat)
+            recursive_proceed(v)
           else
             next_i=i-1
             break
@@ -90,7 +97,7 @@ do
           if not (rec_info[k] or rec_info[v]) then
           --that means, if the value does not contain a recursive link to the table itself
           --and the index does not contain a recursive link...
-            if k_type == "string" then
+            if k_type == "string"  then
               cat(comma)
               comma = ","
               --check if we can use the short notation eg {a=3,b=5} istead of {["a"]=3,["b"]=5}
@@ -99,7 +106,7 @@ do
               else
                 cat(string_format("[%q]", k)) cat("=")
               end
-                recursive_proceed(v,buf,added,num,rec_info, afterwork,cat)
+                recursive_proceed(v)
             elseif
               k_type ~= "number" or -- non-string non-number
               k >= next_i or k < 1 or -- integer key in hash part of the table
@@ -108,13 +115,13 @@ do
               cat(comma)
               comma=","
               cat("[")
-              recursive_proceed(k,buf,added,num,rec_info, afterwork,cat)
+              recursive_proceed(k)
               cat("]")
               cat("=")
-              recursive_proceed(v,buf,added,num,rec_info, afterwork,cat)
+              recursive_proceed(v)
             end
           else
-            afterwork[#afterwork+1]={k,v}
+            after[#after+1]={k,v}
           end
         end
         cat("}")
@@ -135,16 +142,17 @@ do
     return true
   end
 
-  local function afterwork(k,v,buf,name,num,added,rec_buf)
-    local cat = function(v) buf[#buf + 1] = v end
+  local function afterwork(k,v,buf,name)
+    cur_buf=buf
     cat(" ")
     cat(name)
     cat("[")
-    if not recursive_proceed(k,buf,added,num,rec_buf, buf.afterwork,cat) then
+    after = buf.afterwork
+    if not recursive_proceed(k) then
       return false
     end
     cat("]=")
-    if not recursive_proceed(v,buf,added,num,rec_buf, buf.afterwork,cat) then
+    if not recursive_proceed(v) then
       return false
     end
     cat(" ")
@@ -157,31 +165,29 @@ do
     --PREPARATORY WORK: LOCATE THE RECURSIVE AND SHARED PARTS--
     local narg=#arg
     local additional_vars={} -- table, containing recursive parts of our variables
-    local added={}
     local visit={}
     for i,v in pairs(arg) do
       local v=arg[i]
-      explode_rec(v, additional_vars,added,visit) -- discover recursive subtables
+      explode_rec(v, additional_vars,visit) -- discover recursive subtables
     end
     visit=nil--need no more
     local nadd=#additional_vars
-    local visit={}
-
     --SERIALIZE ADDITIONAL FIRST--
-
-    local buf={}
-    local rec_info={}
 
     for i=1,nadd do
       local v=additional_vars[i]
-      parse_rec(v, visit, rec_info,added)
+      parse_rec(v)
     end
-    visit = nil
+
     added={}
+    local buf={}
     for i=1,nadd do
       local v=additional_vars[i]
       buf[i]={afterwork={}}
-      if not recursive_proceed(v, buf[i],added,i,rec_info, buf[i].afterwork,function(v) buf[i][#(buf[i]) + 1] = v end) then
+      cur_buf=buf[i]
+      num = i + nadd
+      after = buf[i].afterwork
+      if not recursive_proceed(v) then
         return nil, "Unserializable data in parameter #"..i
       end
       added[v]={name="var"..i,num=i}
@@ -191,8 +197,9 @@ do
     for i=1,nadd do
       local v=additional_vars[i]
       buf[i].afterstart=#buf[i]
+      num = i
       for j=1,#(buf[i].afterwork) do
-        if not afterwork(buf[i].afterwork[j][1],buf[i].afterwork[j][2],buf[i],added[v].name,i,added,rec_info)then
+        if not afterwork(buf[i].afterwork[j][1],buf[i].afterwork[j][2],buf[i],added[v].name)then
           return nil, "Unserializable data in parameter #"..i
         end
       end
@@ -203,7 +210,10 @@ do
     for i=1,narg do
       local v=arg[i]
       buf[i+nadd]={afterwork={}}
-      if not recursive_proceed(v, buf[i+nadd],added,i+nadd,rec_info, buf[i+nadd].afterwork,function(v) buf[i+nadd][#(buf[i+nadd]) + 1] = v end) then
+      cur_buf=buf[i+nadd]
+      num = i + nadd
+      after = buf[i+nadd].afterwork
+      if not recursive_proceed(v) then
         return nil, "Unserializable data in parameter #"..i
       end
     end
