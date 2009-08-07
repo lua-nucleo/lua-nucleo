@@ -26,6 +26,8 @@ local tests_pr =
   'coro';
   'functional';
   'algorithm';
+  --
+  'util/anim/interpolator';
 }
 
 local pattern = select(1, ...) or ""
