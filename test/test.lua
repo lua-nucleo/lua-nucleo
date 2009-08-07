@@ -8,24 +8,24 @@ dofile('lua/import.lua')
 
 local tests_pr =
 {
- 'suite';
- 'strict';
- 'import';
- --
- 'tserialize-basic';
- 'tserialize-recursive';
- 'tserialize-metatables';
- 'tserialize-autogen';
- --
- 'tdeepequals-basic-types';
- 'tdeepequals-basic-tables';
- 'tdeepequals-recursive';
- 'tdeepequals-userdata-functions-threads';
- 'tdeepequals-autogen';
- --
- 'coro';
- 'functional';
- 'algorithm';
+  'suite';
+  'strict';
+  'import';
+  --
+  'tserialize-basic';
+  'tserialize-recursive';
+  'tserialize-metatables';
+  'tserialize-autogen';
+  --
+  'tdeepequals-basic-types';
+  'tdeepequals-basic-tables';
+  'tdeepequals-recursive';
+  'tdeepequals-userdata-functions-threads';
+  'tdeepequals-autogen';
+  --
+  'coro';
+  'functional';
+  'algorithm';
 }
 
 local pattern = select(1, ...) or ""
