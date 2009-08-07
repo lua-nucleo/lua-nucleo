@@ -25,6 +25,7 @@ local tests_pr =
  --
  'coro';
  'functional';
+ 'algorithm';
 }
 
 local pattern = select(1, ...) or ""
