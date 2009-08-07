@@ -18,6 +18,7 @@ local tests_pr={
  'tdeepequals-recursive';
  'tdeepequals-userdata-functions-threads';
  'tdeepequals-autogen';
+ 'coroutine';
 }
 
 local pattern=select(1,...) or ""
