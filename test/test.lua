@@ -5,7 +5,9 @@
 -- Note: can't use import here for the test purity reasons.
 local run_tests = assert(assert(assert(loadfile('lua/suite.lua'))()).run_tests)
 dofile('lua/import.lua')
-local tests_pr={
+
+local tests_pr = 
+{
  'suite';
  'strict';
  'import';
@@ -21,13 +23,13 @@ local tests_pr={
  'coroutine';
 }
 
-local pattern=select(1,...) or ""
-assert(type(pattern)=="string")
+local pattern = select(1,...) or ""
+assert(type(pattern) == "string")
 
-local test_r={}
-for _,v in ipairs(tests_pr) do
-  if(string.match(v,pattern)) then
-    table.insert(test_r,v)
+local test_r = {}
+for _, v in ipairs(tests_pr) do
+  if string.match(v, pattern) then
+    test_r[#test_r + 1] = v
   end
 end
 
