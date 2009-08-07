@@ -6,21 +6,25 @@
 local run_tests = assert(assert(assert(loadfile('lua/suite.lua'))()).run_tests)
 dofile('lua/import.lua')
 
-local tests_pr = 
+local tests_pr =
 {
  'suite';
  'strict';
  'import';
+ --
  'tserialize-basic';
  'tserialize-recursive';
  'tserialize-metatables';
  'tserialize-autogen';
+ --
  'tdeepequals-basic-types';
  'tdeepequals-basic-tables';
  'tdeepequals-recursive';
  'tdeepequals-userdata-functions-threads';
  'tdeepequals-autogen';
+ --
  'coro';
+ 'functional';
 }
 
 local pattern = select(1,...) or ""
