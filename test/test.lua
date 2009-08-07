@@ -20,7 +20,7 @@ local tests_pr =
  'tdeepequals-recursive';
  'tdeepequals-userdata-functions-threads';
  'tdeepequals-autogen';
- 'coroutine';
+ 'coro';
 }
 
 local pattern = select(1,...) or ""

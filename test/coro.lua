@@ -1,4 +1,4 @@
--- coroutine.lua -- tests for alternative coroutine module
+-- coro.lua -- tests for coroutine module extensions
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
@@ -23,7 +23,7 @@ assert(type(make_suite) == "function")
 -- Note global coroutine variable gets shadowed
 -- by local one with our implementation.
 local coroutine = coroutine
-local coro = import 'lua/coroutine.lua' ()
+local coro = import 'lua/coro.lua' ()
 
 local ensure_equals = import 'lua/ensure.lua' { 'ensure_equals' }
 
