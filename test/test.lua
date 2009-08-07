@@ -27,7 +27,7 @@ local tests_pr =
  'functional';
 }
 
-local pattern = select(1,...) or ""
+local pattern = select(1, ...) or ""
 assert(type(pattern) == "string")
 
 local test_r = {}
