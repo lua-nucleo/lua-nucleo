@@ -2,9 +2,11 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
--- Note: can't use import here for the test purity reasons.
+-- WARNING: do not use import in this file for the test purity reasons.
 local run_tests = assert(assert(assert(loadfile('lua/suite.lua'))()).run_tests)
-dofile('lua/import.lua')
+
+-- TODO: Ensure each test is run in pristine environment!
+--       In particular that import does not leak in from other tests.
 
 local tests_pr =
 {
