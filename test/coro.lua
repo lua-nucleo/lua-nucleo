@@ -14,18 +14,17 @@
 dofile('lua/strict.lua') -- Import module requires strict
 dofile('lua/import.lua') -- Import module should be loaded manually
 
-local select, assert, type = select, assert, type
+local select, assert, type, tostring = select, assert, type, tostring
 local table_concat = table.concat
+local coroutine_create, coroutine_yield, coroutine_status, coroutine_resume =
+      coroutine.create, coroutine.yield, coroutine.status, coroutine.resume
 
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
--- Note global coroutine variable gets shadowed
--- by local one with our implementation.
-local coroutine = coroutine
-local coro = import 'lua/coro.lua' ()
-
 local ensure_equals = import 'lua/ensure.lua' { 'ensure_equals' }
+
+local coro = import 'lua/coro.lua' ()
 
 --------------------------------------------------------------------------------
 
@@ -75,69 +74,69 @@ local test = make_suite("coroutine_tests")
 --------------------------------------------------------------------------------
 
 test "yield_inner" (function()
-  local co = coroutine.create(function(A)
+  local co = coroutine_create(function(A)
     ensure_equals("A", A, "A")
-    ensure_equals("C", coroutine.yield("B"), "C")
+    ensure_equals("C", coroutine_yield("B"), "C")
     return "D"
   end)
 
   ensure_equals("B", eat_true(coro.resume_inner(co, "A")), "B")
   ensure_equals("D", eat_true(coro.resume_inner(co, "C")), "D")
-  ensure_equals("coroutine dead", coroutine.status(co), "dead")
+  ensure_equals("coroutine dead", coroutine_status(co), "dead")
 end)
 
 --------------------------------------------------------------------------------
 
 test "yield_outer" (function()
-  local co = coroutine.create(function(A)
+  local co = coroutine_create(function(A)
     ensure_equals("A", A, "A")
     ensure_equals("C", coro.yield_outer("B"), "C")
     return "D"
   end)
 
-  ensure_equals("B", eat_true_tag(coroutine.resume(co, "A")), "B")
+  ensure_equals("B", eat_true_tag(coroutine_resume(co, "A")), "B")
   ensure_equals("D", eat_true(coro.resume_inner(co, "C")), "D")
-  ensure_equals("coroutine dead", coroutine.status(co), "dead")
+  ensure_equals("coroutine dead", coroutine_status(co), "dead")
 end)
 
 --------------------------------------------------------------------------------
 
 test "inner-inner-yield_inner" (function()
 
-  local inner1 = coroutine.create(function(A)
+  local inner1 = coroutine_create(function(A)
     assert(A == "A")
 
-    local inner2 = coroutine.create(function(B)
+    local inner2 = coroutine_create(function(B)
       assert(B == "B")
 
-      assert(coroutine.yield("C") == "D")
+      assert(coroutine_yield("C") == "D")
 
       return "E"
     end)
 
     assert(eat_true(coro.resume_inner(inner2, "B")) == "C")
     assert(eat_true(coro.resume_inner(inner2, "D")) == "E")
-    assert(coroutine.status(inner2) == "dead")
+    assert(coroutine_status(inner2) == "dead")
 
     return "F"
   end)
 
   assert(eat_true(coro.resume_inner(inner1, "A")) == "F")
-  assert(coroutine.status(inner1) == "dead")
-  
+  assert(coroutine_status(inner1) == "dead")
+
 end)
 
 --------------------------------------------------------------------------------
 
 test "outer-inner-inner-yield_outer" (function()
 
-  local outer = coroutine.create(function(A)
+  local outer = coroutine_create(function(A)
     ensure_equals("A", A, "A")
 
-    local inner1 = coroutine.create(function(B)
+    local inner1 = coroutine_create(function(B)
       ensure_equals("B", B, "B")
 
-      local inner2 = coroutine.create(function(C)
+      local inner2 = coroutine_create(function(C)
         ensure_equals("C", C, "C")
 
         ensure_equals("E", coro.yield_outer("D"), "E")
@@ -146,20 +145,20 @@ test "outer-inner-inner-yield_outer" (function()
       end)
 
       ensure_equals("F", eat_true(coro.resume_inner(inner2, "C")), "F")
-      ensure_equals("inner2 dead", coroutine.status(inner2), "dead")
+      ensure_equals("inner2 dead", coroutine_status(inner2), "dead")
 
       return "G"
     end)
 
     ensure_equals("G", eat_true(coro.resume_inner(inner1, "B")), "G")
-    ensure_equals("inner1 dead", coroutine.status(inner1), "dead")
+    ensure_equals("inner1 dead", coroutine_status(inner1), "dead")
 
     return "H"
   end)
 
-  ensure_equals("D", eat_true_tag(coroutine.resume(outer, "A")),"D")
-  ensure_equals("H", eat_true(coroutine.resume(outer, "E")), "H")
-  ensure_equals("outer dead", coroutine.status(outer), "dead")
+  ensure_equals("D", eat_true_tag(coroutine_resume(outer, "A")),"D")
+  ensure_equals("H", eat_true(coroutine_resume(outer, "E")), "H")
+  ensure_equals("outer dead", coroutine_status(outer), "dead")
 
 end)
 
@@ -167,13 +166,13 @@ end)
 
 test "outer-inner-inner-yield_outer-twice" (function()
 
-  local outer = coroutine.create(function(A)
+  local outer = coroutine_create(function(A)
     ensure_equals("A", A, "A")
 
-    local inner1 = coroutine.create(function(B)
+    local inner1 = coroutine_create(function(B)
       ensure_equals("B", B, "B")
 
-      local inner2 = coroutine.create(function(C)
+      local inner2 = coroutine_create(function(C)
         ensure_equals("C", C, "C")
 
         ensure_equals("E", coro.yield_outer("D"), "E")
@@ -183,21 +182,21 @@ test "outer-inner-inner-yield_outer-twice" (function()
       end)
 
       ensure_equals("H", eat_true(coro.resume_inner(inner2, "C")), "H")
-      ensure_equals("inner2 dead", coroutine.status(inner2), "dead")
+      ensure_equals("inner2 dead", coroutine_status(inner2), "dead")
 
       return "I"
     end)
 
     ensure_equals("F", eat_true(coro.resume_inner(inner1, "B")), "I")
-    ensure_equals("inner1 dead", coroutine.status(inner1), "dead")
+    ensure_equals("inner1 dead", coroutine_status(inner1), "dead")
 
     return "J"
   end)
 
-  ensure_equals("D", eat_true_tag(coroutine.resume(outer, "A")), "D")
-  ensure_equals("J", eat_true_tag(coroutine.resume(outer, "E")), "F")
-  ensure_equals("J", eat_true(coroutine.resume(outer, "G")), "J")
-  ensure_equals("outer dead", coroutine.status(outer), "dead")
+  ensure_equals("D", eat_true_tag(coroutine_resume(outer, "A")), "D")
+  ensure_equals("J", eat_true_tag(coroutine_resume(outer, "E")), "F")
+  ensure_equals("J", eat_true(coroutine_resume(outer, "G")), "J")
+  ensure_equals("outer dead", coroutine_status(outer), "dead")
 
 end)
 
@@ -235,10 +234,10 @@ end)
 test "yield_outer-across-pcall" (function()
   local pcall = coro.pcall
 
-  local outer = coroutine.create(function(A)
+  local outer = coroutine_create(function(A)
     ensure_equals("A", A, "A")
 
-    local inner = coroutine.create(function(B)
+    local inner = coroutine_create(function(B)
       ensure_equals("B", B, "B")
 
       ensure_equals(
@@ -258,14 +257,14 @@ test "yield_outer-across-pcall" (function()
     end)
 
     ensure_equals("G", eat_true(coro.resume_inner(inner, "B")), "G")
-    ensure_equals("inner dead", coroutine.status(inner), "dead")
+    ensure_equals("inner dead", coroutine_status(inner), "dead")
 
     return "H"
   end)
 
-  ensure_equals("H", eat_true_tag(coroutine.resume(outer, "A")), "D")
-  ensure_equals("H", eat_true(coroutine.resume(outer, "E")), "H")
-  ensure_equals("outer dead", coroutine.status(outer), "dead")
+  ensure_equals("H", eat_true_tag(coroutine_resume(outer, "A")), "D")
+  ensure_equals("H", eat_true(coroutine_resume(outer, "E")), "H")
+  ensure_equals("outer dead", coroutine_status(outer), "dead")
 
 end)
 
@@ -319,26 +318,26 @@ test "basic" (function()
   local cat, concat = make_concatter()
 
   do
-    local outer = coroutine.create(function(A)
+    local outer = coroutine_create(function(A)
       cat(A) --> A
 
       cat(coro.yield_outer("B")) --> C
 
       -- Outer coroutines may do inner yields
       -- (in case they're held by inner corouines).
-      cat(coroutine.yield("D")) --> E
+      cat(coroutine_yield("D")) --> E
 
-      local inner1 = coroutine.create(function(F)
+      local inner1 = coroutine_create(function(F)
         cat(F) --> F
 
         cat(coro.yield_outer("G")) --> H
-        cat(coroutine.yield("I")) --> J
+        cat(coroutine_yield("I")) --> J
 
-        local inner2 = coroutine.create(function(K)
+        local inner2 = coroutine_create(function(K)
           cat(K)
 
           cat(coro.yield_outer("L")) --> M
-          cat(coroutine.yield("N")) --> O
+          cat(coroutine_yield("N")) --> O
 
           return "P"
         end)
@@ -346,7 +345,7 @@ test "basic" (function()
         cat(eat_true(coro.resume_inner(inner2, "K"))) --> N
         cat(eat_true(coro.resume_inner(inner2, "O"))) --> P
 
-        assert(coroutine.status(inner2) == "dead")
+        assert(coroutine_status(inner2) == "dead")
 
         return "Q"
       end)
@@ -354,18 +353,18 @@ test "basic" (function()
       cat(eat_true(coro.resume_inner(inner1, "F"))) --> I
       cat(eat_true(coro.resume_inner(inner1, "J"))) --> Q
 
-      assert(coroutine.status(inner1) == "dead")
+      assert(coroutine_status(inner1) == "dead")
 
       return "R"
     end)
 
-    cat(eat_true_tag(coroutine.resume(outer, "A"))) --> B
-    cat(eat_true(coroutine.resume(outer, "C"))) --> D
-    cat(eat_true_tag(coroutine.resume(outer, "E"))) --> G
-    cat(eat_true_tag(coroutine.resume(outer, "H"))) --> L
-    cat(eat_true(coroutine.resume(outer, "M"))) --> R
+    cat(eat_true_tag(coroutine_resume(outer, "A"))) --> B
+    cat(eat_true(coroutine_resume(outer, "C"))) --> D
+    cat(eat_true_tag(coroutine_resume(outer, "E"))) --> G
+    cat(eat_true_tag(coroutine_resume(outer, "H"))) --> L
+    cat(eat_true(coroutine_resume(outer, "M"))) --> R
 
-    assert(coroutine.status(outer) == "dead")
+    assert(coroutine_status(outer) == "dead")
   end
 
   assert(concat() == "ABCDEFGHIJKLMNOPQR")
