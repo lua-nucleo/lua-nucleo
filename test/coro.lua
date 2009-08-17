@@ -9,8 +9,6 @@
 
 -- TODO: Benchmark coroutine.pcall against regular pcall.
 
--- TODO: Test eat_tag and is_outer_yield_tag
-
 dofile('lua/strict.lua') -- Import module requires strict
 dofile('lua/import.lua') -- Import module should be loaded manually
 
@@ -22,7 +20,19 @@ local coroutine_create, coroutine_yield, coroutine_status, coroutine_resume =
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
-local ensure_equals = import 'lua/ensure.lua' { 'ensure_equals' }
+local ensure,
+      ensure_equals,
+      ensure_tequals,
+      ensure_fails_with_substring
+      = import 'lua/ensure.lua'
+      {
+        'ensure',
+        'ensure_equals',
+        'ensure_tequals',
+        'ensure_fails_with_substring'
+      }
+
+local make_concatter = import 'lua/string.lua' { 'make_concatter' }
 
 local coro = import 'lua/coro.lua' ()
 
@@ -48,28 +58,17 @@ end
 
 --------------------------------------------------------------------------------
 
--- TODO: Generalize.
-local make_concatter
-do
-  make_concatter = function()
-    local buf = {}
-
-    local function cat(v)
-      buf[#buf + 1] = v
-      return cat
-    end
-
-    local concat = function()
-      return table_concat(buf, "")
-    end
-
-    return cat, concat
-  end
-end
+local test = make_suite("coro", coro)
 
 --------------------------------------------------------------------------------
 
-local test = make_suite("coroutine_tests")
+-- NOTE: Tests below check all these functions in conjunction,
+--       so we're simply declaring them here as tested.
+--       When adding function to this list, make sure it has tests first.
+
+test:tests_for 'resume_inner'
+               'yield_outer'
+               'pcall'
 
 --------------------------------------------------------------------------------
 
@@ -368,6 +367,55 @@ test "basic" (function()
   end
 
   assert(concat() == "ABCDEFGHIJKLMNOPQR")
+end)
+
+--------------------------------------------------------------------------------
+
+-- NOTE: Tests below check all these functions in conjunction,
+--       so we're simply declaring them here as tested.
+--       When adding function to this list, make sure it has tests first.
+
+test:tests_for 'eat_tag'
+               'is_outer_yield_tag'
+
+--------------------------------------------------------------------------------
+
+test:test "eat_tag-is_outer_yield_tag-not-tag" (function()
+  ensure_equals("that is not the tag", coro.is_outer_yield_tag(42), false)
+  ensure_tequals(
+      "do not eat non-tag true",
+      { coro.eat_tag(true, 42) },
+      { true, 42 }
+    )
+  ensure_tequals(
+      "do not eat non-tag false",
+      { coro.eat_tag(false, 42) },
+      { false, 42 }
+    )
+end)
+
+test:test "eat_tag-is_outer_yield_tag-actual-tag" (function()
+  local tag
+  do
+    local co = coroutine_create(function()
+      coro.yield_outer()
+    end)
+
+    local _
+    _, tag = assert(coroutine.resume(co))
+  end
+
+  ensure_equals("that is the tag", coro.is_outer_yield_tag(tag), true)
+  ensure_tequals(
+      "eat tag true",
+      { coro.eat_tag(true, tag, 42) },
+      { true, 42 }
+    )
+  ensure_tequals(
+      "eat tag false",
+      { coro.eat_tag(false, tag, 42) },
+      { false, 42 }
+    )
 end)
 
 --------------------------------------------------------------------------------
