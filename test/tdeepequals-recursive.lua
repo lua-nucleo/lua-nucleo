@@ -1,15 +1,22 @@
--- tdeepequals-recursion.lua -- recursive tables  tests for tdeepequals package
+-- tdeepequals-recursion.lua: recursive tables tests for tdeepequals
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-dofile("lua/strict.lua")
-assert(type(import)=="function","Import is required to run")
+dofile('lua/strict.lua')
+dofile('lua/import.lua')
+
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
 local check_ok  = import 'test/lib/tdeepequals-test-utils.lua' { 'check_ok' }
+
+--------------------------------------------------------------------------------
+
 local test = make_suite("shared subtables and recursion")
-test "1" ( function()
+
+--------------------------------------------------------------------------------
+
+test "1" (function()
   local t1={}
   local t2={}
   local t3={}
@@ -19,7 +26,7 @@ test "1" ( function()
   check_ok(u,v,true)
 end)
 
-test "2" ( function()
+test "2" (function()
   local t1={}
   local t2={}
   local t3={}
@@ -29,7 +36,7 @@ test "2" ( function()
   check_ok(u,v,true)
 end)
 
-test "3" ( function()
+test "3" (function()
   local t1={}
   local t2={}
   local t3={}
@@ -39,7 +46,7 @@ test "3" ( function()
   check_ok(u,v,true)
 end)
 
-test "4" ( function()
+test "4" (function()
   local t1={}
   local t2={}
   local t3={}
@@ -49,7 +56,7 @@ test "4" ( function()
   check_ok(u,v,false)
 end)
 
-test "5" ( function()
+test "5" (function()
   local u={}
   local v={}
   u[u]=u
@@ -57,7 +64,7 @@ test "5" ( function()
   check_ok(u,v,true)
 end)
 
-test "6" ( function()
+test "6" (function()
   local u={}
   local v={}
   u[v]=u
@@ -65,7 +72,7 @@ test "6" ( function()
   check_ok(u,v,true)
 end)
 
-test "7" ( function()
+test "7" (function()
   local t1={}
   local t2={}
   t1[t1]=t2
@@ -75,7 +82,7 @@ test "7" ( function()
   check_ok(u,v,false)
 end)
 
-test "8" ( function()
+test "8" (function()
   local t1={}
   local t2={}
   t1[t1]=t2
@@ -87,20 +94,20 @@ test "8" ( function()
   check_ok(u,v,false)
 end)
 
-test "9" ( function()
+test "9" (function()
   local a={1,2,3}
   local u={[a]=a,[{a,a}]={a,a}, { {a,{a,{a}},{[a]=a}} } }
   check_ok(u,u,true)
 end)
 
-test "10" ( function()
+test "10" (function()
   local a={1,2,3}
   local u={[a]=a,[{a,a}]={a,a}, { {a,{a,{a}},{[a]=a}} } }
   local v={[a]=a,[{a,a}]={a,a}, { {a,{a,{{a}}},{[a]=a}} } }
   check_ok(u,v,false)
 end)
 
-test "10" ( function()
+test "10" (function()
   local a={}
   a[a]=a a[{a,a}]={a,a} a[3]={ {a,{a,{a}},{[a]=a}} }
   local b={}
@@ -108,14 +115,13 @@ test "10" ( function()
   check_ok(a,b,false)
 end)
 
-
-test "11" ( function()
+test "11" (function()
   local var1={} var1[1]=var1
   local a={}
   a[1]={ {a} }
   check_ok(var1,a,false)
 end)
 
-
+--------------------------------------------------------------------------------
 
 assert (test:run())

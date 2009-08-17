@@ -1,13 +1,20 @@
--- tdeepequals-basic-tables.lua -- basic table tests for tdeepequals package
+-- tdeepequals-basic-tables.lua: basic table tests for tdeepequals
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-dofile("lua/strict.lua")
-assert(type(import)=="function","Import is required to run")
+dofile('lua/strict.lua')
+dofile('lua/import.lua')
+
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
+
 local check_ok  = import 'test/lib/tdeepequals-test-utils.lua' { 'check_ok' }
+
+--------------------------------------------------------------------------------
+
 local test = make_suite("basic tables")
+
+--------------------------------------------------------------------------------
 
 test "1" ( function() check_ok({},{},true) end)
 test "2" ( function() check_ok({1},{2},false) end)
@@ -52,5 +59,7 @@ test "11" ( function()
   local t2={1,2}
   check_ok(t1,t2,false)
 end)
+
+--------------------------------------------------------------------------------
 
 assert (test:run())

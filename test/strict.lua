@@ -1,9 +1,10 @@
--- strict.lua -- tests for global environment protection
+-- strict.lua: tests for global environment protection
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
 -- Testing that if global variable was there before strict is enabled,
 -- it is accessible, but not declared.
+
 allowed_global = 1
 dofile('lua/strict.lua')
 allowed_global = 2

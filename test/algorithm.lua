@@ -1,9 +1,9 @@
--- algorithm.lua -- tests for various common algorithms
+-- algorithm.lua: tests for various common algorithms
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-dofile("lua/strict.lua")
-dofile('lua/import.lua') -- Import module should be loaded manually
+dofile('lua/strict.lua')
+dofile('lua/import.lua')
 
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")

@@ -1,40 +1,48 @@
--- tserialize-recursive.lua -- recursive tests for tserialize
+-- tserialize-recursive.lua: recursive tests for tserialize
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
+dofile('lua/strict.lua')
+dofile('lua/import.lua')
 
-dofile("lua/strict.lua")
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
+
 local check_ok = import 'test/lib/tserialize-test-utils.lua' { 'check_ok' }
-assert(type(import)=="function","Import is required to run")
--- ----------------------------------------------------------------------------
--- Link tests
--- ----------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+
 local test = make_suite("syntetic link tests")
+
+--------------------------------------------------------------------------------
+
 test "1" (function()
   local a={}
   local b={a}
   check_ok(a,b)
 end)
+
 test "2" (function()
   local a={}
   local b={a}
   local c={b}
   check_ok(a,b,c)
 end)
+
 test "3" (function()
   local a={1,2,3}
   local b={[true]=a}
   local c={[true]=a}
   check_ok(a,b,c)
 end)
+
 test "4" (function()
   local a={1,2,3}
   local b={a,a,a,a}
   local c={a}
   check_ok(a,b,c)
 end)
+
 test "5" (function()
   local t1={}
   local t2={}
@@ -58,26 +66,25 @@ test "Complex recursive table" (function()
   check_ok(a)
 end)
 
-test "Recursive table #0" (function()
+test "Recursive table #1" (function()
   local a={}
   a[1]={a}
   check_ok(a)
 end)
 
-test "Recursive table #1" (function()
+test "Recursive table #2" (function()
   local a={}
   a[1]={ {a} }
   check_ok(a)
 end)
 
-
-test "Recursive table #2" (function()
+test "Recursive table #3" (function()
   local a={}
   a[1]={ a,{a} }
   check_ok(a)
 end)
 
-test "Recursive table #2" (function()
+test "Recursive table #4" (function()
   local a={}
   a[{{a}}]={ a,{a} }
   a[a]=a
@@ -89,6 +96,7 @@ test "Very sophisticated recursive table #1" (function()
   a[a]=a a[{a,a}]={a,a} a[3]={ {a,{a,{a}},{[a]=a}} }
   check_ok(a)
 end)
+
 test "Very sophisticated recursive table #2" (function()
   local a={}
   local d={a}
@@ -96,6 +104,7 @@ test "Very sophisticated recursive table #2" (function()
   a[{d}]=2
   check_ok(a)
 end)
+
 test "Very sophisticated recursive table #3" (function()
   local a={}
   local b={}
@@ -121,6 +130,7 @@ test "recursion deep in keys" (function()
   c[{[{b,a}]=3}]=a
   check_ok(a)
 end)
+
 test "Autogen failed#1" (function()
   local c={}
   local b={[{c}]=1}
@@ -195,6 +205,7 @@ test "My3" (function()
   a[1]=v
   check_ok(v)
 end)
+
 test "My4" (function()
   local var4={}
   local var1={1,[{[{}]="l",var4=1}]=-10}
@@ -212,4 +223,7 @@ test "My5" (function()
   a[1]=b
   check_ok(b)
 end)
+
+--------------------------------------------------------------------------------
+
 assert (test:run())

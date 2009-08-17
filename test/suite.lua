@@ -1,10 +1,11 @@
--- suite.lua -- a simple test suite test
+-- suite.lua: a simple test suite test
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
 local make_suite = select(1, ...)
 
 dofile("lua/strict.lua")
+-- Note we do not use import() here.
 
 assert(type(make_suite) == "function")
 

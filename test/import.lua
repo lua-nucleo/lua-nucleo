@@ -1,6 +1,8 @@
--- import.lua -- tests for import module
+-- import.lua: tests for import module
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+
+-- Intentionally not using test suite to avoid circular dependency questions.
 
 dofile('lua/strict.lua') -- Import module requires strict
 dofile('lua/import.lua') -- Import module should be loaded manually

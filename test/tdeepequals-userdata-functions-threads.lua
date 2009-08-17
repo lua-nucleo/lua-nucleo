@@ -1,19 +1,23 @@
--- tdeepequals-userdata-functions-threads.lua -- checks support of nonstandard types in tdeepequals
+-- tdeepequals-userdata-functions-threads.lua:
+-- tests for support of nonstandard types in tdeepequals
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
+dofile('lua/strict.lua')
+dofile('lua/import.lua')
 
-dofile("lua/strict.lua")
-assert(type(import)=="function","Import is required to run")
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
--- ----------------------------------------------------------------------------
--- userdata, functions, threads
--- ----------------------------------------------------------------------------
-local test = make_suite("userdata,functions, threads")
 
 local check_ok  = import 'test/lib/tdeepequals-test-utils.lua' { 'check_ok' }
-test "1" ( function()
+
+--------------------------------------------------------------------------------
+
+local test = make_suite("userdata, functions, threads")
+
+--------------------------------------------------------------------------------
+
+test "1" (function()
   local changed=0
   local mt={__gc=function() changed = 1 end}
   local userdata1 = newproxy()
@@ -36,7 +40,7 @@ test "1" ( function()
   assert(changed==1,"Garbage not collected!!!")
 end)
 
-test "2" ( function()
+test "2" (function()
   local userdata1 = newproxy()
   local userdata2 = newproxy()
   local u={userdata1,userdata1}
@@ -44,7 +48,7 @@ test "2" ( function()
   check_ok(u,v,true)
 end)
 
-test "3" ( function()
+test "3" (function()
   local udt = newproxy()
   local thr = coroutine.create(function() end)
   local u={udt}
@@ -52,7 +56,7 @@ test "3" ( function()
   check_ok(u,v,false)
 end)
 
-test "4" ( function()
+test "4" (function()
   local udt = newproxy()
   local thr = coroutine.create(function() end)
   local fnc = function() end
@@ -61,7 +65,7 @@ test "4" ( function()
   check_ok(u,v,false)
 end)
 
-test "5" ( function()
+test "5" (function()
   local udt = newproxy()
   local thr = coroutine.create(function() end)
   local fnc = function() end
@@ -70,7 +74,7 @@ test "5" ( function()
   check_ok(u,v,false)
 end)
 
-test "6" ( function()
+test "6" (function()
   local udt = newproxy()
   local thr = coroutine.create(function() end)
   local u={[udt]=thr,[thr]=udt}
@@ -78,7 +82,7 @@ test "6" ( function()
   check_ok(u,v,true)
 end)
 
-test "7" ( function()
+test "7" (function()
   local udt = newproxy()
   local thr = coroutine.create(function() end)
   local fnc = function() end
@@ -87,7 +91,7 @@ test "7" ( function()
   check_ok(u,v,true)
 end)
 
-test "8" ( function()
+test "8" (function()
   local udt = newproxy()
   local thr = coroutine.create(function() end)
   local fnc = function() end
@@ -96,7 +100,7 @@ test "8" ( function()
   check_ok(u,v,true)
 end)
 
-test "9" ( function()
+test "9" (function()
   local udt = newproxy()
   local thr = coroutine.create(function() end)
   local fnc = function() end
@@ -105,6 +109,6 @@ test "9" ( function()
   check_ok(u,v,false)
 end)
 
-
+--------------------------------------------------------------------------------
 
 assert (test:run())
