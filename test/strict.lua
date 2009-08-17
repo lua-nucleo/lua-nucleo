@@ -2,8 +2,13 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
+-- NOTE: Intentionally not using test suite,
+--       as the code is too low level for that.
+
+--
 -- Testing that if global variable was there before strict is enabled,
 -- it is accessible, but not declared.
+--
 
 allowed_global = 1
 dofile('lua/strict.lua')

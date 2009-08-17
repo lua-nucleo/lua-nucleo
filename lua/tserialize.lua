@@ -2,20 +2,22 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
--- Serializes arbitrary lua tables to lua code that can be loaded back via loadstring()
+-- Serializes arbitrary lua tables to lua code
+-- that can be loaded back via loadstring()
 -- Functions, threads, userdata are not supported
 -- Metatables are ignored
 -- Usage:
--- str = tserialize(explist) --> to serialize data
--- =(loadstring(str)()) --> to load it back
+--     str = tserialize(explist) --> to serialize data
+--     =(loadstring(str)()) --> to load it back
 
 local pairs, type, ipairs, tostring = pairs, type, ipairs, tostring
-local table_concat,table_remove = table.concat,table.remove
-local string_format, string_match = string.format,string.match
-dofile('lua/import.lua')
+local table_concat, table_remove = table.concat, table.remove
+local string_format, string_match = string.format, string.match
+
+local lua51_keywords = import 'lua/language.lua' { 'lua51_keywords' }
+
 local tserialize
 do
-  local lua51_keywords = import 'lua/language.lua' { 'lua51_keywords' }
   local cur_buf
   local num
   local added = {}
@@ -95,13 +97,17 @@ do
         for k, v in pairs(t) do
           local k_type = type(k)
           if not (rec_info[k] or rec_info[v]) then
-          --that means, if the value does not contain a recursive link to the table itself
+          --that means, if the value does not contain a recursive link
+          -- to the table itself
           --and the index does not contain a recursive link...
             if k_type == "string"  then
               cat(comma)
               comma = ","
-              --check if we can use the short notation eg {a=3,b=5} istead of {["a"]=3,["b"]=5}
-              if not lua51_keywords[k] and string_match(k, "^[%a_][%a%d_]*$") then
+              --check if we can use the short notation
+              -- eg {a=3,b=5} istead of {["a"]=3,["b"]=5}
+              if
+                not lua51_keywords[k] and string_match(k, "^[%a_][%a%d_]*$")
+              then
                 cat(k); cat("=")
               else
                 cat(string_format("[%q]", k)) cat("=")
@@ -164,7 +170,8 @@ do
   --===================================--
     --PREPARATORY WORK: LOCATE THE RECURSIVE AND SHARED PARTS--
     local narg=#arg
-    local additional_vars={} -- table, containing recursive parts of our variables
+    -- table, containing recursive parts of our variables
+    local additional_vars = { }
     local visit={}
     for i,v in pairs(arg) do
       local v=arg[i]
@@ -199,7 +206,14 @@ do
       buf[i].afterstart=#buf[i]
       num = i
       for j=1,#(buf[i].afterwork) do
-        if not afterwork(buf[i].afterwork[j][1],buf[i].afterwork[j][2],buf[i],added[v].name)then
+        if
+          not afterwork(
+              buf[i].afterwork[j][1],
+              buf[i].afterwork[j][2],
+              buf[i],
+              added[v].name
+            )
+        then
           return nil, "Unserializable data in parameter #"..i
         end
       end
@@ -221,8 +235,10 @@ do
     --DECLARE ADDITIONAL VARS--
 
     local prevbuf={}
-    for v,inf in pairs(added) do
-        prevbuf[#prevbuf+1] = " local "..inf.name.."="..table_concat(buf[inf.num],"",1,buf[inf.num].afterstart)
+    for v, inf in pairs(added) do
+      prevbuf[#prevbuf+1] =
+           " local " .. inf.name
+        .. "=" .. table_concat(buf[inf.num], "", 1, buf[inf.num].afterstart)
     end
 
     --CONCAT PARTS--
@@ -252,8 +268,7 @@ do
   end
 end
 
-
 return
 {
-  tserialize=tserialize
+  tserialize = tserialize;
 }

@@ -6,11 +6,10 @@ local pairs, ipairs, type, tostring = pairs, ipairs, type, tostring
 local table_concat = table.concat
 local string_match, string_format = string.match, string.format
 
+local lua51_keywords = import 'lua/language.lua' { 'lua51_keywords' }
+
 local tstr
 do
-
-  local lua51_keywords = import "lua/language.lua" {'lua51_keywords'}
-
   local function impl(t, cat, visited)
     local t_type = type(t)
     if t_type == "table" then
@@ -100,9 +99,6 @@ end
 
 local tstr_verbose
 do
-
-  local lua51_keywords = import "lua/language.lua" {'lua51_keywords'}
-
   local function impl(t, cat, visited)
     local t_type = type(t)
     if t_type == "table" then

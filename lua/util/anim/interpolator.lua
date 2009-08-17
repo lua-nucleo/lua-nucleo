@@ -42,7 +42,7 @@ local times_and_values_looped = function(time_offset, time_scale)
         keyframe.time = keyframe.time % period
       else
         -- TODO: ?! Preserving borderline value to get proper width
-        keyframe.time = (keyframe.time % period) + period 
+        keyframe.time = (keyframe.time % period) + period
       end
     end
 
@@ -112,9 +112,9 @@ local looped_linear_interpolator = function(keyframes, time, interval_hint)
   local prev_value, next_value = prev_frame.value, next_frame.value
   local prev_time, next_time = prev_frame.time, next_frame.time
 
-  local value = 
-    prev_value + 
-    (time - prev_time) * 
+  local value =
+    prev_value +
+    (time - prev_time) *
     (next_value - prev_value) / (next_time - prev_time)
 
   return value, next_pos

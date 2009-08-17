@@ -6,21 +6,24 @@
 -- Functions, threads, etc. are supported
 -- Metatables are ignored.
 -- The tmore function introduces linear ordering in the set of all lua tables.
--- That is, for two arbitrary tables we can define an ordering  '>=' : t1>=t2 <=> tmore(t1,t2)>=0 ,  the following statements are hold for all tables a, b and c:
+-- That is, for two arbitrary tables we can define an ordering
+--     '>=' : t1>=t2 <=> tmore(t1,t2)>=0 ,
+-- the following statements are hold for all tables a, b and c:
 -- If a ≤ b and b ≤ a then a = b (antisymmetry); (if tmore(a,b)=0 then a=b)
--- If a ≤ b and b ≤ c then a ≤ c (transitivity); (tmore(a,b)*tmore(b,c)*tmore(c,a)<=0)
+-- If a ≤ b and b ≤ c then a ≤ c (transitivity);
+-- (tmore(a,b)*tmore(b,c)*tmore(c,a)<=0)
 -- a ≤ b or b ≤ a (totality).
 
 local pairs, type, ipairs, tostring = pairs, type, ipairs, tostring
 local table_concat, table_sort = table.concat, table.sort
-local string_format, string_match = string.format,string.match
+local string_format, string_match = string.format, string.match
 
 local tdeepequals
 local tmore
 
 do
-  local p_table -- table, containing hashes of pointer-like data - functions, threads, userdata
-
+  -- table, containing hashes of pointer-like data: functions, threads, userdata
+  local p_table
 
   ------------------------------------------------------------
   --------------------  UTILITY FUNCTIONS  -------------------
@@ -58,7 +61,8 @@ do
     return 1
   end
 
-  --3.More for threads, functions and userdata(using hash table p_table) and also nil
+  --4.More for threads, functions and userdata
+  --  (using hash table p_table) and also nil
   local function p_more(t1,t2)
     if not t1 and not t2 then
       return 0
@@ -80,18 +84,18 @@ do
     return (p_table[t1]-p_table[t2])
   end
 
-  --4.Compare (less) utility for boolean
+  --5.Compare (less) utility for boolean
   local function bool_comp(t1,t2)
     return not t1 and  t2
   end
 
-  --5.Compare (less) utility for userdata, threads, functions
+  --6.Compare (less) utility for userdata, threads, functions
   local function p_comp(t1,t2)
     return p_more(t1,t2)<0
   end
 
-
-  --6. Compare (less) utility generator for key-value pairs, where key is a table.
+  --7. Compare (less) utility generator for key-value pairs,
+  --   where key is a table.
 
   local function table_comp(visited)
     return function(t1,t2)
@@ -105,10 +109,11 @@ do
     end
   end
 
-  --7. Generic compare for everything except tables
+  --8. Generic compare for everything except tables
   local function nontable_comp(t1,t2)
     return tmore(t1,t2)<0
   end
+
   ------------------------------------------------------------
   ------------------------  MAIN WORK  -----------------------
   ------------------------------------------------------------
@@ -224,6 +229,6 @@ end
 
 return
 {
-  tdeepequals = tdeepequals,
-  tmore=tmore
+  tdeepequals = tdeepequals;
+  tmore = tmore;
 }

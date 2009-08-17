@@ -2,9 +2,13 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
+-- TODO: Test run_tests
+-- TODO: Test make_suite with imports_list argument and related methods.
+-- TODO: Test strict mode
+
 local make_suite = select(1, ...)
 
-dofile("lua/strict.lua")
+dofile('lua/strict.lua')
 -- Note we do not use import() here.
 
 assert(type(make_suite) == "function")
@@ -42,4 +46,3 @@ do
   assert(next_i == true)
   assert(next(to_call) == nil)
 end
-

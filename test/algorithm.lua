@@ -11,8 +11,9 @@ assert(type(make_suite) == "function")
 local ensure_equals = import 'lua/ensure.lua' { 'ensure_equals' }
 local tdeepequals = import 'lua/tdeepequals.lua' { 'tdeepequals' }
 
-local lower_bound =
-      import 'lua/algorithm.lua'
+local lower_bound,
+      algorithm
+      = import 'lua/algorithm.lua'
       {
         'lower_bound'
       }

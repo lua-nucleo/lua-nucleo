@@ -2,17 +2,17 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
--- TODO: Test nearest_left_interpolator.
+-- TODO: Test times_and_values_looped, nearest_left_interpolator.
 
-dofile("lua/strict.lua")
+dofile('lua/strict.lua')
 dofile('lua/import.lua') -- Import module should be loaded manually
 
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
 local times_and_values_looped,
+      = import 'lua/util/anim/interpolator.lua'
       looped_linear_interpolator =
-      import 'lua/util/anim/interpolator.lua' 
       { 
         'times_and_values_looped',
         'looped_linear_interpolator' 

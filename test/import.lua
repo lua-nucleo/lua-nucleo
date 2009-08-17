@@ -83,7 +83,13 @@ do
   end
 
   assert(pcall(function() import 'test/data/import/good.lua' 'y' end) == false)
-  assert(pcall(function() import 'test/data/import/good.lua' {'y'} end) == false)
-  assert(pcall(function() import 'test/data/import/good.lua' {'y', 'x'} end) == false)
-  assert(pcall(function() import 'test/data/import/good.lua' {'x', 'y'} end) == false)
+  assert(pcall(function()
+      import 'test/data/import/good.lua' {'y'} end
+    ) == false)
+  assert(pcall(function()
+      import 'test/data/import/good.lua' {'y', 'x'} end
+    ) == false)
+  assert(pcall(function()
+      import 'test/data/import/good.lua' {'x', 'y'} end
+    ) == false)
 end
