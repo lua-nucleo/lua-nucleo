@@ -36,6 +36,7 @@ local tests_pr =
   'tdeepequals-autogen';
   --
   'table-utils';
+  'table';
   --
   'coro';
   'functional';
