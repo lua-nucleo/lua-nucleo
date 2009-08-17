@@ -6,7 +6,7 @@ dofile("lua/strict.lua")
 assert(type(import)=="function","Import is required to run")
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
-local check_ok  = import 'test/tdeepequals-test-utils.lua' { 'check_ok' }
+local check_ok  = import 'test/lib/tdeepequals-test-utils.lua' { 'check_ok' }
 local test = make_suite("basic types")
 
 test "1" ( function() check_ok(1,1,true) end)

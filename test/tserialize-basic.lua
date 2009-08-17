@@ -7,8 +7,8 @@ dofile("lua/strict.lua")
 assert(type(import)=="function","Import is required to run")
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
-local check_ok  = import 'test/tserialize-test-utils.lua' { 'check_ok' }
 
+local check_ok  = import 'test/lib/tserialize-test-utils.lua' { 'check_ok' }
 
 local test = make_suite("syntetic basic tests")
 

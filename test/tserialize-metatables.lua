@@ -7,10 +7,10 @@ dofile("lua/strict.lua")
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 assert(type(import)=="function","Import is required to run")
-local check_ok = import 'test/tserialize-test-utils.lua' { 'check_ok' }
 -- ----------------------------------------------------------------------------
 -- Link tests
 -- ----------------------------------------------------------------------------
+local check_ok = import 'test/lib/tserialize-test-utils.lua' { 'check_ok' }
 local test = make_suite("metatables test")
 
 test "1" (function()

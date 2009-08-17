@@ -6,8 +6,8 @@ dofile("lua/strict.lua")
 assert(type(import)=="function","Import is required to run")
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
-local check_ok  = import 'test/tdeepequals-test-utils.lua' { 'check_ok' }
 
+local check_ok  = import 'test/lib/tdeepequals-test-utils.lua' { 'check_ok' }
 local test = make_suite("shared subtables and recursion")
 test "1" ( function()
   local t1={}
