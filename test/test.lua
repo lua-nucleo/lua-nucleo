@@ -40,6 +40,7 @@ local tests_pr =
   'coro';
   'functional';
   'algorithm';
+  'math';
   --
   'util/anim/interpolator';
 }
