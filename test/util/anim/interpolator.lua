@@ -11,20 +11,26 @@ local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
 local times_and_values_looped,
+      looped_linear_interpolator,
+      nearest_left_interpolator,
+      interpolator_imports
       = import 'lua/util/anim/interpolator.lua'
-      looped_linear_interpolator =
-      { 
+      {
         'times_and_values_looped',
-        'looped_linear_interpolator' 
+        'looped_linear_interpolator',
+        'nearest_left_interpolator'
       }
 
 --------------------------------------------------------------------------------
 
-local test = make_suite("interpolator_tests")
+local test = make_suite("interpolator_tests", interpolator_imports)
+
+test:UNTESTED "times_and_values_looped"
+test:UNTESTED "nearest_left_interpolator"
 
 --------------------------------------------------------------------------------
 
-test "looped_linear_interpolator" (function()
+test:test_for "looped_linear_interpolator" (function()
   local check = function(
       keyframes,
       time,

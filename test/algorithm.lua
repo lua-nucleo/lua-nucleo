@@ -20,11 +20,11 @@ local lower_bound,
 
 --------------------------------------------------------------------------------
 
-local test = make_suite("algorithm_tests")
+local test = make_suite("algorithm", algorithm)
 
 --------------------------------------------------------------------------------
 
-test "lower_bound" (function()
+test:test_for "lower_bound" (function()
   -- TODO: Test it better
 
   local check = function(t, k, expected_value)

@@ -13,7 +13,8 @@ local tdeepequals = import 'lua/tdeepequals.lua' { 'tdeepequals' }
 
 local do_nothing,
       identity,
-      invariant =
+      invariant,
+      functional =
       import 'lua/functional.lua'
       {
         'do_nothing',
@@ -23,17 +24,17 @@ local do_nothing,
 
 --------------------------------------------------------------------------------
 
-local test = make_suite("functional_tests")
+local test = make_suite("functional", functional)
 
 --------------------------------------------------------------------------------
 
-test "do_nothing" (function()
+test:test_for "do_nothing" (function()
   do_nothing() -- Just a smoke test
 end)
 
 --------------------------------------------------------------------------------
 
-test "identity" (function()
+test:test_for "identity" (function()
   local e_nil,
         e_boolean,
         e_number,
@@ -85,7 +86,7 @@ end)
 
 --------------------------------------------------------------------------------
 
-test "invariant" (function()
+test:test_for "invariant" (function()
   local data =
   {
     n = 8; -- Storing size explicitly due to hole in table.
