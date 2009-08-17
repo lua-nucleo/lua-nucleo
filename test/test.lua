@@ -41,6 +41,7 @@ local tests_pr =
   'functional';
   'algorithm';
   'math';
+  'string';
   --
   'util/anim/interpolator';
 }
