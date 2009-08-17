@@ -35,6 +35,8 @@ local tests_pr =
   'tdeepequals-userdata-functions-threads';
   'tdeepequals-autogen';
   --
+  'table-utils';
+  --
   'coro';
   'functional';
   'algorithm';
