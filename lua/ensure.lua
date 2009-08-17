@@ -7,9 +7,9 @@ local error, tostring, pcall, type =
 
 -- TODO: Write tests for this one
 local ensure = function(msg, value, ...)
-  return value 
+  return value
     or error(
-        msg 
+        msg
         .. ((...) and (": " .. (tostring(...) or "?")) or ""),
         2
       )
@@ -17,12 +17,12 @@ end
 
 -- TODO: Write tests for this one
 local ensure_equals = function(msg, actual, expected)
-  return 
+  return
       (actual ~= expected)
       and error(
-          msg 
+          msg
           .. ": actual `" .. tostring(actual)
-          .. "', expected `" .. tostring(expected) 
+          .. "', expected `" .. tostring(expected)
           .. "'",
           2
         )
@@ -33,8 +33,8 @@ end
 local ensure_tequals = function(msg, actual, expected)
   if type(expected) ~= "table" then
     error(
-        msg 
-        .. ": bad expected type, must be `table', got `" 
+        msg
+        .. ": bad expected type, must be `table', got `"
         .. type(expected) .. "'",
         2
       )
@@ -42,35 +42,35 @@ local ensure_tequals = function(msg, actual, expected)
 
   if type(actual) ~= "table" then
     error(
-        msg 
-        .. ": bad actual type, expected `table', got `" 
+        msg
+        .. ": bad actual type, expected `table', got `"
         .. type(actual) .. "'",
         2
       )
   end
-  
+
   -- TODO: Employ tdiff() (when it would be written)
-  
+
   for k, expected_v in pairs(expected) do
     local actual_v = actual[k]
     if actual_v ~= expected_v then
       error(
           msg
           .. ": bad actual value at key `" .. tostring(k)
-          .. "': got `" .. tostring(actual_v) 
+          .. "': got `" .. tostring(actual_v)
           .. "', expected `" .. tostring(expected_v)
           .. "'",
           2
         )
     end
   end
-  
+
   for k, actual_v in pairs(actual) do
     if expected[k] == nil then
       error(
           msg
           .. ": unexpected actual value at key `" .. tostring(k)
-          .. "': got `" .. tostring(actual_v) 
+          .. "': got `" .. tostring(actual_v)
           .. "', should be nil",
           2
         )
@@ -87,15 +87,15 @@ local ensure_fails_with_substring = function(msg, fn, substring)
   if res ~= false then
     error(msg .. ": call not failed as expected")
   end
-  
+
   if type(err) ~= "string" then
     error(msg .. ": call failed with non-string error")
   end
 
   if not err:find(substring) then
     error(
-        msg 
-        .. ": can't find expected substring `" .. tostring(substring) 
+        msg
+        .. ": can't find expected substring `" .. tostring(substring)
         .. "' in error message:\n" .. err
       )
   end
