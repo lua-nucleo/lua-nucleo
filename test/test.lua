@@ -3,7 +3,7 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
 -- WARNING: do not use import in this file for the test purity reasons.
-local run_tests = assert(assert(assert(loadfile('lua/suite.lua'))()).run_tests)
+local run_tests = assert(assert(assert(loadfile('lua-nucleo/suite.lua'))()).run_tests)
 
 -- TODO: Ensure each test is run in pristine environment!
 --       In particular that import does not leak in from other tests.

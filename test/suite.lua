@@ -8,7 +8,7 @@
 
 local make_suite = select(1, ...)
 
-dofile('lua/strict.lua')
+dofile('lua-nucleo/strict.lua')
 -- Note we do not use import() here.
 
 assert(type(make_suite) == "function")

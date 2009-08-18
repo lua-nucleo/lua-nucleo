@@ -14,7 +14,7 @@ local pairs, type, ipairs, tostring = pairs, type, ipairs, tostring
 local table_concat, table_remove = table.concat, table.remove
 local string_format, string_match = string.format, string.match
 
-local lua51_keywords = import 'lua/language.lua' { 'lua51_keywords' }
+local lua51_keywords = import 'lua-nucleo/language.lua' { 'lua51_keywords' }
 
 local tserialize
 do

@@ -11,7 +11,7 @@
 --
 
 allowed_global = 1
-dofile('lua/strict.lua')
+dofile('lua-nucleo/strict.lua')
 allowed_global = 2
 
 local a0 = allowed_global

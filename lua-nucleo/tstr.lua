@@ -6,7 +6,7 @@ local pairs, ipairs, type, tostring = pairs, ipairs, type, tostring
 local table_concat = table.concat
 local string_match, string_format = string.match, string.format
 
-local lua51_keywords = import 'lua/language.lua' { 'lua51_keywords' }
+local lua51_keywords = import 'lua-nucleo/language.lua' { 'lua51_keywords' }
 
 local tstr
 do

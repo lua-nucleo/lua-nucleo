@@ -3,9 +3,9 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
 assert(type(import)=="function","Import is required to run")
-local tdeepequals = assert(import "lua/tdeepequals.lua" {'tdeepequals'})
-local tstr = assert(import "lua/tstr.lua" {'tstr'})
-local tserialize = assert(import "lua/tserialize.lua" {'tserialize'})
+local tdeepequals = assert(import "lua-nucleo/tdeepequals.lua" {'tdeepequals'})
+local tstr = assert(import "lua-nucleo/tstr.lua" {'tstr'})
+local tserialize = assert(import "lua-nucleo/tserialize.lua" {'tserialize'})
 assert(type(tdeepequals) == "function")
 
 local function check_ok_ser(t1,t2,rez,ser)

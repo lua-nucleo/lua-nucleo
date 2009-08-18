@@ -2,20 +2,20 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-dofile('lua/strict.lua')
-dofile('lua/import.lua')
+dofile('lua-nucleo/strict.lua')
+dofile('lua-nucleo/import.lua')
 
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
-local ensure_equals = import 'lua/ensure.lua' { 'ensure_equals' }
-local tdeepequals = import 'lua/tdeepequals.lua' { 'tdeepequals' }
+local ensure_equals = import 'lua-nucleo/ensure.lua' { 'ensure_equals' }
+local tdeepequals = import 'lua-nucleo/tdeepequals.lua' { 'tdeepequals' }
 
 local do_nothing,
       identity,
       invariant,
       functional =
-      import 'lua/functional.lua'
+      import 'lua-nucleo/functional.lua'
       {
         'do_nothing',
         'identity',

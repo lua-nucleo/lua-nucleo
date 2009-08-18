@@ -8,7 +8,7 @@ local assert, next, ipairs = assert, next, ipairs
 local math_min, math_max, math_huge = math.min, math.max, math.huge
 local table_sort = table.sort
 
-local lower_bound = import 'lua/algorithm.lua' { 'lower_bound' }
+local lower_bound = import 'lua-nucleo/algorithm.lua' { 'lower_bound' }
 
 -- Need to check value to preserve ordering (table.sort() does not preserve
 -- ordering for equal values).

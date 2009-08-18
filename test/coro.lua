@@ -9,8 +9,8 @@
 
 -- TODO: Benchmark coroutine.pcall against regular pcall.
 
-dofile('lua/strict.lua') -- Import module requires strict
-dofile('lua/import.lua') -- Import module should be loaded manually
+dofile('lua-nucleo/strict.lua') -- Import module requires strict
+dofile('lua-nucleo/import.lua') -- Import module should be loaded manually
 
 local select, assert, type, tostring = select, assert, type, tostring
 local table_concat = table.concat
@@ -24,7 +24,7 @@ local ensure,
       ensure_equals,
       ensure_tequals,
       ensure_fails_with_substring
-      = import 'lua/ensure.lua'
+      = import 'lua-nucleo/ensure.lua'
       {
         'ensure',
         'ensure_equals',
@@ -32,9 +32,9 @@ local ensure,
         'ensure_fails_with_substring'
       }
 
-local make_concatter = import 'lua/string.lua' { 'make_concatter' }
+local make_concatter = import 'lua-nucleo/string.lua' { 'make_concatter' }
 
-local coro = import 'lua/coro.lua' ()
+local coro = import 'lua-nucleo/coro.lua' ()
 
 --------------------------------------------------------------------------------
 

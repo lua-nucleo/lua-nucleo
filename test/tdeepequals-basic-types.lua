@@ -5,8 +5,8 @@
 -- TODO: Employ test:tests_for idiom to check that all exports from
 --       tdeepequals.lua are covered with tests.
 
-dofile('lua/strict.lua')
-dofile('lua/import.lua')
+dofile('lua-nucleo/strict.lua')
+dofile('lua-nucleo/import.lua')
 
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")

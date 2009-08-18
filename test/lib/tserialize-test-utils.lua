@@ -12,7 +12,7 @@ math.randomseed(randomseed)
 -- Utility functions
 -- ----------------------------------------------------------------------------
 assert(type(import)=="function","Import is required to run")
-local tdeepequals = import("lua/tdeepequals.lua") {'tdeepequals'}
+local tdeepequals = import("lua-nucleo/tdeepequals.lua") {'tdeepequals'}
 local invariant = function(v)
   return function()
     return v
@@ -52,7 +52,7 @@ end
 -- Test helper functions
 -- ----------------------------------------------------------------------------
 
-local tserialize = import 'lua/tserialize.lua' {"tserialize"}
+local tserialize = import 'lua-nucleo/tserialize.lua' {"tserialize"}
 
 local check_fn_ok = function(eq, ...)
   local saved = tserialize(...)

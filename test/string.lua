@@ -2,15 +2,15 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-dofile('lua/strict.lua')
-dofile('lua/import.lua')
+dofile('lua-nucleo/strict.lua')
+dofile('lua-nucleo/import.lua')
 
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
 local ensure,
       ensure_equals
-      = import 'lua/ensure.lua'
+      = import 'lua-nucleo/ensure.lua'
       {
         'ensure',
         'ensure_equals'
@@ -18,7 +18,7 @@ local ensure,
 
 local make_concatter,
       string_imports
-      = import 'lua/string.lua'
+      = import 'lua-nucleo/string.lua'
       {
         'make_concatter'
       }

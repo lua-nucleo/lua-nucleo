@@ -4,8 +4,8 @@
 
 -- TODO: Test times_and_values_looped, nearest_left_interpolator.
 
-dofile('lua/strict.lua')
-dofile('lua/import.lua') -- Import module should be loaded manually
+dofile('lua-nucleo/strict.lua')
+dofile('lua-nucleo/import.lua') -- Import module should be loaded manually
 
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
@@ -14,7 +14,7 @@ local times_and_values_looped,
       looped_linear_interpolator,
       nearest_left_interpolator,
       interpolator_imports
-      = import 'lua/util/anim/interpolator.lua'
+      = import 'lua-nucleo/util/anim/interpolator.lua'
       {
         'times_and_values_looped',
         'looped_linear_interpolator',

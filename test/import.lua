@@ -4,8 +4,8 @@
 
 -- Intentionally not using test suite to avoid circular dependency questions.
 
-dofile('lua/strict.lua') -- Import module requires strict
-dofile('lua/import.lua') -- Import module should be loaded manually
+dofile('lua-nucleo/strict.lua') -- Import module requires strict
+dofile('lua-nucleo/import.lua') -- Import module should be loaded manually
 
 assert(pcall(function() import() end) == false)
 assert(pcall(function() import 'badfile' end) == false)

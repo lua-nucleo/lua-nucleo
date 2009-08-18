@@ -4,7 +4,7 @@
 
 local tappend_many,
       table_utils
-      = import 'lua/table-utils.lua'
+      = import 'lua-nucleo/table-utils.lua'
       {
         'tappend_many'
       }
@@ -12,7 +12,7 @@ local tappend_many,
 return tappend_many(
     { }, -- Appending to empty table, to avoid changing any existing namespaces
     table_utils,
-    import 'lua/tdeepequals.lua' (),
-    import 'lua/tserialize.lua' (),
-    import 'lua/tstr.lua' ()
+    import 'lua-nucleo/tdeepequals.lua' (),
+    import 'lua-nucleo/tserialize.lua' (),
+    import 'lua-nucleo/tstr.lua' ()
   )
