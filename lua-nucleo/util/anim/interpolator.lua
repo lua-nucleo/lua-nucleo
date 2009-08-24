@@ -24,7 +24,7 @@ local times_and_values_looped = function(time_offset, time_scale)
     assert(next(data))
 
     local min_time = math_huge
-    local max_time = 00.0
+    local max_time = -math_huge
     for time, value in pairs(data) do
       time = (time + time_offset) * time_scale -- Normalize time
       min_time = math_min(time, min_time)
@@ -39,10 +39,13 @@ local times_and_values_looped = function(time_offset, time_scale)
       -- Ensure we always use first loop of our period.
       -- Looks like this properly handles negative numbers as well.
       if keyframe.time ~= max_time then
-        keyframe.time = keyframe.time % period
+        keyframe.time = (keyframe.time - min_time) % period
+                      + (min_time % period)
       else
         -- TODO: ?! Preserving borderline value to get proper width
-        keyframe.time = (keyframe.time % period) + period
+        keyframe.time = (keyframe.time - min_time) % period
+                      + (min_time % period)
+                      + period
       end
     end
 
