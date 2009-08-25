@@ -182,6 +182,10 @@ local tequals = function(lhs, rhs)
   return true
 end
 
+local tiunique = function(t)
+  return tkeys(tiflip(t))
+end
+
 return
 {
   empty_table = empty_table;
@@ -200,4 +204,5 @@ return
   tiwalk = tiwalk;
   tiwalker = tiwalker;
   tequals = tequals;
+  tiunique = tiunique;
 }

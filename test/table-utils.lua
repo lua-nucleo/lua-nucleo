@@ -36,6 +36,7 @@ local empty_table,
       tiwalk,
       tiwalker,
       tequals,
+      tiunique,
       table_utils_imports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -54,7 +55,8 @@ local empty_table,
         'timap_sliding',
         'tiwalk',
         'tiwalker',
-        'tequals'
+        'tequals',
+        'tiunique'
       }
 
 --------------------------------------------------------------------------------
@@ -1059,6 +1061,53 @@ test "tiwalker-counter-args" (function()
   local r = tiwalker(fn)(t, k)
   ensure_equals("function called", c, 3)
   ensure_equals("returned nil", r, nil)
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tiunique"
+
+--------------------------------------------------------------------------------
+
+test "tiunique-empty" (function()
+  ensure_tequals("empty", tiunique({ }), { })
+end)
+
+test "tiunique-single" (function()
+  ensure_tequals("simple", tiunique({ [1] = 42 }), { [1] = 42 })
+end)
+
+test "tiunique-hole" (function()
+  ensure_tequals("hole ignored", tiunique({ [42] = 1 }), { })
+end)
+
+test "tiunique-hash" (function()
+  ensure_tequals("hash ignored", tiunique({ ["a"] = 42 }), { })
+end)
+
+test "tiunique-duplicate" (function()
+  ensure_tequals("duplicate", tiunique({ [1] = 42, [2] = 42 }), { [1] = 42 })
+end)
+
+test "tiunique-duplicate-hash" (function()
+  ensure_tequals(
+      "duplicate hash ignored",
+      tiunique({ [1] = 42, ["a"] = 42 }),
+      { [1] = 42 }
+    )
+end)
+
+test "tiunique-recursive" (function()
+  local t = { }
+  t[1] = t
+  ensure_tequals("recursive", tiunique(t), t)
+end)
+
+test "tiunique-many" (function()
+  local k = { }
+  local t = { [1] = 42, [2] = 42, a = k, [k] = 42 }
+
+   ensure_tequals("many", tiunique(t), { [1] = 42 })
 end)
 
 --------------------------------------------------------------------------------
