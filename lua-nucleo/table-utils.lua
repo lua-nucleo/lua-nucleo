@@ -152,6 +152,20 @@ local timap_sliding = function(fn, t, ...)
   return r
 end
 
+local tiwalk = function(fn, t, ...)
+  for i = 1, #t do
+    fn(t[i], ...)
+  end
+end
+
+local tiwalker = function(fn)
+  return function(t)
+    for i = 1, #t do
+      fn(t[i])
+    end
+  end
+end
+
 local tequals = function(lhs, rhs)
   for k, v in pairs(lhs) do
     if v ~= rhs[k] then
@@ -183,5 +197,7 @@ return
   tiinsert_args = tiinsert_args;
   timap_inplace = timap_inplace;
   timap_sliding = timap_sliding;
+  tiwalk = tiwalk;
+  tiwalker = tiwalker;
   tequals = tequals;
 }
