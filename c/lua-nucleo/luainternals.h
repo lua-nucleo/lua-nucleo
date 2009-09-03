@@ -27,11 +27,16 @@
 
 /*
 * BEGIN COPY-PASTE FROM Lua 5.1.4 lobject.h
+* MODIFIED: Added preprocessor conditional.
+* MODIFIED: Renamed from luaO_log2 to avoid name collision:
+*           it is not static in Lua.
 */
 
-int luaO_log2 (unsigned int x);
+int luanucleoO_log2 (unsigned int x);
 
-#define ceillog2(x)       (luaO_log2((x)-1) + 1)
+#ifndef ceillog2
+  #define ceillog2(x)       (luanucleoO_log2((x)-1) + 1)
+#endif /* ceillog2 */
 
 /*
 * END COPY-PASTE FROM Lua 5.1.4 lobject.h
@@ -39,18 +44,24 @@ int luaO_log2 (unsigned int x);
 
 /*
 * BEGIN COPY-PASTE FROM Lua 5.1.4 ltable.c
+* MODIFIED: Added preprocessor conditionals
 */
 
 /*
 ** max size of array part is 2^MAXBITS
 */
-#if LUAI_BITSINT > 26
-#define MAXBITS		26
-#else
-#define MAXBITS		(LUAI_BITSINT-2)
-#endif
 
-#define MAXASIZE	(1 << MAXBITS)
+#ifndef MAXBITS
+  #if LUAI_BITSINT > 26
+  #define MAXBITS		26
+  #else
+  #define MAXBITS		(LUAI_BITSINT-2)
+  #endif
+#endif /* MAXBITS */
+
+#ifndef MAXASIZE
+  #define MAXASIZE	(1 << MAXBITS)
+#endif
 
 /*
 * END COPY-PASTE FROM Lua 5.1.4 ltable.c
@@ -66,10 +77,9 @@ int luaB_tostring (lua_State *L);
  * END COPY-PASTE FROM Lua 5.1.4 lbaselib.c
  */
 
-/* debug.traceback() implementation for pcall()'s error handler */
-
 /*
  * BEGIN COPY-PASTE FROM Lua 5.1.4 ldblib.c
+ * debug.traceback() implementation for pcall()'s error handler
  */
 
 int db_errorfb (lua_State * L);
