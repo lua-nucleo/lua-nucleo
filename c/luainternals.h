@@ -4,8 +4,8 @@
 * See copyright notice in lua.h
 */
 
-#ifndef LUABINS_LUAINTERNALS_H_
-#define LUABINS_LUAINTERNALS_H_
+#ifndef LUANUCLEO_LUAINTERNALS_H_
+#define LUANUCLEO_LUAINTERNALS_H_
 
 /*
 * BEGIN COPY-PASTE FROM Lua 5.1.4 luaconf.h
@@ -78,4 +78,4 @@ int db_errorfb (lua_State * L);
  * END COPY-PASTE FROM Lua 5.1.4 ldblib.c
  */
 
-#endif /* LUABINS_LUAINTERNALS_H_ */
+#endif /* LUANUCLEO_LUAINTERNALS_H_ */
