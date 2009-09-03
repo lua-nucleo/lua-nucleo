@@ -15,7 +15,7 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#include "luainternals.h"
+#include "lua-nucleo/luainternals.h"
 
 /*
 * BEGIN COPY-PASTE FROM Lua 5.1.4 llimits.h
