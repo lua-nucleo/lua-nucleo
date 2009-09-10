@@ -1,14 +1,10 @@
-local table_concat = table.concat
 local loadstring, assert = loadstring, assert
-local pairs, type, tostring = pairs, type, tostring
 dofile('lua-nucleo/import.lua')
-local gen_random_dataset=loadfile("test/lib/table.lua")()[ "gen_random_dataset"]
-local tserialize=loadfile("lua-nucleo/tserialize.lua")() ["tserialize"]
+local gen_random_dataset=import "test/lib/table.lua"{ "gen_random_dataset"}
+local tserialize=import "test/lib/table.lua" {"tserialize"}
 dofile("bench/metalua_serialize.lua")
-local lua = "return {"..("true,false,134,"):rep(1024).."}"local data = gen_random_dataset(1)
 
---print("lua", #lua)
---print("saved", #saved)
+local data = gen_random_dataset(1)
 
 local bench = {}
 
@@ -19,6 +15,5 @@ end
 bench.metalua_serialize = function()
   assert(serialize(data))
 end
-
 
 return bench
