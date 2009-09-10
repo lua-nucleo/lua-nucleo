@@ -1,4 +1,5 @@
 --This file is included to perform the comparison between tserialize and metalua serialize. See tserializebench*.lua
+-- File originates from the commit fcee97b : http://github.com/fab13n/metalua/commit/fcee97b8d0091ceb471902ee457dbccaab98234e
 
 --------------------------------------------------------------------------------
 -- Metalua

@@ -1,4 +1,9 @@
 #!/bin/sh
+
+# bench.sh -- script that starts benchmarks
+# This file is a part of lua-nucleo library
+# Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+
 echo "=====BEGINNING LUA-NUCLEO BENCHMARKS====="
 echo "========================================="
 echo "==========TSERIALIZE BENCHMARKS=========="

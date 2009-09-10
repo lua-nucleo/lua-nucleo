@@ -1,3 +1,7 @@
+-- kbenchparse.lua -- the part of benchmarking utilities collection
+-- This file is a part of lua-nucleo library
+-- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+
 local data = setmetatable(
     {},
     { __index = function(t, k) local v = {} rawset(t, k, v) return v end; }

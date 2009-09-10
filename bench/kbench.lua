@@ -1,3 +1,7 @@
+-- kbench.lua -- the part of benchmarking utilities collection
+-- This file is a part of lua-nucleo library
+-- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+
 --[[ Shell script to call all benchmarks at once:
 #! /bin/sh
 

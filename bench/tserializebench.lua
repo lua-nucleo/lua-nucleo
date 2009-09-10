@@ -1,3 +1,7 @@
+-- tserializebench.lua -- benchmark, comparing tserialize, metalua serialize, luabins on moderate(~5 kBytes) amount of simple data(no tables)
+-- This file is a part of lua-nucleo library
+-- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+
 local luabins = require("luabins")
 local loadstring, assert = loadstring, assert
 dofile('lua-nucleo/import.lua')

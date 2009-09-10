@@ -1,3 +1,7 @@
+-- bench.lua -- the part of benchmarking utilities collection
+-- This file is a part of lua-nucleo library
+-- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+
 local num_iter_default = 1000000
 
 local filename = tostring(select(1, ...) or "")
