@@ -3,49 +3,10 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
 -- ----------------------------------------------------------------------------
--- Utility functions
+-- Test helper functions
 -- ----------------------------------------------------------------------------
 assert(type(import)=="function","Import is required to run")
 local tdeepequals = import("lua-nucleo/tdeepequals.lua") {'tdeepequals'}
-local invariant = function(v)
-  return function()
-    return v
-  end
-end
-
-local escape_string = function(str)
-  return str:gsub(
-      "[^0-9A-Za-z_%- :]",
-      function(c)
-        return ("%%%02X"):format(c:byte())
-      end
-    )
-end
-
-local ensure_equals = function(msg, actual, expected)
-  if actual ~= expected then
-    error(
-        msg..": actual `"..escape_string(tostring(actual))
-        .."` expected `"..escape_string(tostring(expected)).."'"
-      )
-  end
-end
-
-
-
-local nargs = function(...)
-  return select("#", ...), ...
-end
-
-local pack = function(...)
-  return select("#", ...), { ... }
-end
-
-
--- ----------------------------------------------------------------------------
--- Test helper functions
--- ----------------------------------------------------------------------------
-
 local tserialize = import 'lua-nucleo/tserialize.lua' {"tserialize"}
 
 local check_fn_ok = function(eq, ...)
@@ -54,7 +15,7 @@ local check_fn_ok = function(eq, ...)
   print("saved length", #saved, "(display truncated to 1000 chars)")
   print(saved:sub(1, 1000))
   local expected = { ... }
-  local loaded = { assert(loadstring(saved))() }
+  local loaded = { assert(assert(loadstring(saved))()) }
   assert(eq(expected, loaded), "tserialize produced wrong table!")
   return saved
 end
