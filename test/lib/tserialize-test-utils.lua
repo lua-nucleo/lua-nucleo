@@ -15,7 +15,7 @@ local check_fn_ok = function(eq, ...)
   print("saved length", #saved, "(display truncated to 1000 chars)")
   print(saved:sub(1, 1000))
   local expected = { ... }
-  local loaded = { assert(assert(loadstring(saved))()) }
+  local loaded = { assert(loadstring(saved))() }
   assert(eq(expected, loaded), "tserialize produced wrong table!")
   return saved
 end

@@ -69,53 +69,57 @@ local function gen_random_dataset(num,nesting,visited)
   return unpack(t, 1, num)
 end
 
-local function mutate(t)
-  local mutated = false
-  local function mutate(t,visited,vis)
-    visited = visited or {}
-    vis=vis or {}
-    if type(t)==table then
-      if not vis[t] then
-        visited[#visited+1]=t
-        vis[t]=true
-      end
-      local n=math.random(0,2)
-      if n==0 then
-        for k,v in pairs(t) do
-          t[k]=nil
-          local v_1=mutate(v,visited,vis)
-          local k_1=mutate(k,visited,vis)
-          if k_1~=k or v_1~=v then
-            mutated = true
-          end
-          k=k_1
-          v=v_1
-        end
-      elseif n==1 then
-        local n=math.random(1,#visited)
-        local t1=visited[n]
-        if t1~=t then
-          mutated = true
-        end
+local mutate
+do
+  local impl
+  mutate = function(t)
+    local mutated = false
+    impl = function(t,visited,vis)
+      visited = visited or {}
+      vis=vis or {}
+      if type(t)==table then
+	if not vis[t] then
+	  visited[#visited+1]=t
+	  vis[t]=true
+	end
+	local n=math.random(0,2)
+	if n==0 then
+	  for k,v in pairs(t) do
+	    t[k]=nil
+	    local v_1=impl(v,visited,vis)
+	    local k_1=impl(k,visited,vis)
+	    if k_1~=k or v_1~=v then
+	      mutated = true
+	    end
+	    k=k_1
+	    v=v_1
+	  end
+	elseif n==1 then
+	  local n=math.random(1,#visited)
+	  local t1=visited[n]
+	  if t1~=t then
+	    mutated = true
+	  end
+	else
+	  local t1=gen_random_dataset()
+	  if t1~=t then
+	    mutated = true
+	  end
+	  t=t1
+	end
       else
-        local t1=gen_random_dataset()
-        if t1~=t then
-          mutated = true
-        end
-        t=t1
+	local t1=gen_random_dataset()
+	if t1~=t then
+	  mutated = true
+	end
+	t=t1
       end
-    else
-        local t1=gen_random_dataset()
-        if t1~=t then
-          mutated = true
-        end
-        t=t1
-    end
 
-    return t
+      return t
+    end
+    local r=impl(t)
+    return mutated,r
   end
-  local r=mutate(t)
-  return mutated,r
 end
 
 return
