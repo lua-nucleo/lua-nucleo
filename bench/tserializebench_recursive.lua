@@ -1,7 +1,7 @@
 local loadstring, assert = loadstring, assert
 dofile('lua-nucleo/import.lua')
 local gen_random_dataset=import "test/lib/table.lua"{ "gen_random_dataset"}
-local tserialize=import "test/lib/table.lua" {"tserialize"}
+local tserialize=import "lua-nucleo/tserialize.lua" {"tserialize"}
 dofile("bench/metalua_serialize.lua")
 
 local lua = [[
