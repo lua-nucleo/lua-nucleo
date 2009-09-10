@@ -8,12 +8,13 @@
 assert(type(import)=="function","Import is required to run")
 local tdeepequals = import("lua-nucleo/tdeepequals.lua") {'tdeepequals'}
 local tserialize = import 'lua-nucleo/tserialize.lua' {"tserialize"}
+local escape_string = import 'lua-nucleo/string.lua' {'escape_string'}
 
 local check_fn_ok = function(eq, ...)
   local saved = tserialize(...)
   assert(type(saved) == "string")
   print("saved length", #saved, "(display truncated to 1000 chars)")
-  print(saved:sub(1, 1000))
+  print(escape_string(saved:sub(1, 1000)))
   local expected = { ... }
   local loaded = { assert(loadstring(saved))() }
   assert(eq(expected, loaded), "tserialize produced wrong table!")
