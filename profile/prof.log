@@ -1,0 +1,32 @@
+   calls     own time      subs     sub time function
+-------------------------------------
+   16010       0.0944     16010       0.0830 @lua/table.lua.25:?
+   89954       0.7561    240036       0.4593 @lua/tserialize.lua.27:explode_rec
+    1472       0.0170      5888       0.0214 @lua/table.lua.12:gen_str
+  186102       0.6502         0       0.0000 =[C].-1:random
+       1       0.0000         0       0.0000 =[C].-1:stop
+    7800       0.2049     77206       2.4817 @lua/table.lua.49:?
+   16692       0.0586         0       0.0000 =[C].-1:string_format
+    7987       0.0383         0       0.0000 =[C].-1:string_match
+   25238       0.0813         0       0.0000 =[C].-1:char
+   23957       0.1405     23957       0.0641 @lua/table.lua.20:?
+  284472       0.8447         0       0.0000 =[C].-1:type
+   58734       0.5377    188416       0.4053 @lua/tserialize.lua.48:parse_rec_internal
+   23766       0.2911     95064       0.3074 @lua/table.lua.12:?
+   74942       1.2645    511879       1.6850 @lua/tserialize.lua.74:recursive_proceed
+   21106       0.0721         0       0.0000 =[C].-1:tostring
+   49430       0.1648         0       0.0000 =[C].-1:pairs
+  200009       0.5762         0       0.0000 =[C].-1:(for generator)
+  206792       0.8523         0       0.0000 @lua/tserialize.lua.24:cat
+   25238       0.0946         0       0.0000 =[C].-1:concat
+    5622       0.0966     39354       1.5503 @lua/tserialize.lua.145:afterwork
+   23502       0.1498         0       0.0000 =[C].-1:table_concat
+   71406       1.0602    232270       1.9135 @lua/table.lua.8:gen_random_dataset
+    2000       0.2325     85617       5.5591 @lua/tserialize.lua.161:tserialize
+    9465       0.0619         0       0.0000 =[C].-1:format
+    7899       0.0451      7899       0.0220 @lua/table.lua.37:?
+    4805       0.0302      4805       0.9430 @lua/tserialize.lua.45:parse_rec
+   71406       0.2944         0       0.0000 =[C].-1:unpack
+   16595       0.0553         0       0.0000 =[C].-1:ipairs
+-------------------------------------
+  Total:       8.7654
