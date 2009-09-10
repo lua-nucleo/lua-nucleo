@@ -2,10 +2,6 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
--- TODO: Remove this ASAP!!!
-local randomseed = 32453245*os.time()
-math.randomseed(randomseed)
-
 local function gen_random_dataset(num,nesting,visited)
   nesting = nesting or 1
   visited = visited or {}

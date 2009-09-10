@@ -2,12 +2,6 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-
-
-local randomseed = 1235134892
---local randomseed = os.time()
-
-math.randomseed(randomseed)
 -- ----------------------------------------------------------------------------
 -- Utility functions
 -- ----------------------------------------------------------------------------
