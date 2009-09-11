@@ -171,12 +171,12 @@ do
   --===========THE MAIN PART===========--
   --===================================--
     --PREPARATORY WORK: LOCATE THE RECURSIVE AND SHARED PARTS--
-    local narg=#arg
+    local narg=select("#",...)
+    local arg={...}
     -- table, containing recursive parts of our variables
     local additional_vars = { }
     local visit={}
-    for i,v in pairs(arg) do
-      local v=arg[i]
+    for _,v in ipairs(arg) do
       explode_rec(v, additional_vars,visit) -- discover recursive subtables
     end
     visit=nil--need no more

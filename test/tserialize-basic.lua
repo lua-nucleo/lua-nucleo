@@ -18,7 +18,7 @@ local check_ok  = import 'test/lib/tserialize-test-utils.lua' { 'check_ok' }
 local test = make_suite("syntetic basic tests")
 
 --------------------------------------------------------------------------------
-
+test "nil" (function() check_ok(nil) end)
 test "1" (function() check_ok() end)
 test "2" (function() check_ok(true) end)
 test "3" (function() check_ok(false) end)
