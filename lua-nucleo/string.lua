@@ -28,10 +28,9 @@ local trim = function(s)
   return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
--- TODO: tests...
 local escape_string = function(str)
   return str:gsub(
-      "[^0-9A-Za-z_%- :]",
+      "[%c]",
       function(c)
         return ("%%%02X"):format(c:byte())
       end
