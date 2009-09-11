@@ -1,0 +1,5 @@
+Profiling notes:
+I used profiler from here: http://wolfgang.oertl.at/en/project/luaprofiler
+To use it you should download the package, compile the profiler.so, and
+place it to lua-nucleo/profile or to the path where lua stores packages,
+so that the script can load it with require.
