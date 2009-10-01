@@ -28,6 +28,7 @@ return
   'math';
   'string';
   'args';
+  'misc';
   --
   'util/anim/interpolator';
 }
