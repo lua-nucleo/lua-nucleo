@@ -186,6 +186,14 @@ local tiunique = function(t)
   return tkeys(tiflip(t))
 end
 
+local tgenerate_n = function(n, generator, ...)
+  local r = { }
+  for i = 1, n do
+    r[i] = generator(...)
+  end
+  return r
+end
+
 return
 {
   empty_table = empty_table;
@@ -205,4 +213,5 @@ return
   tiwalker = tiwalker;
   tequals = tequals;
   tiunique = tiunique;
+  tgenerate_n = tgenerate_n;
 }

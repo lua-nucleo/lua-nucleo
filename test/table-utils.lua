@@ -37,6 +37,7 @@ local empty_table,
       tiwalker,
       tequals,
       tiunique,
+      tgenerate_n,
       table_utils_imports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -56,7 +57,8 @@ local empty_table,
         'tiwalk',
         'tiwalker',
         'tequals',
-        'tiunique'
+        'tiunique',
+        'tgenerate_n'
       }
 
 --------------------------------------------------------------------------------
@@ -1108,6 +1110,44 @@ test "tiunique-many" (function()
   local t = { [1] = 42, [2] = 42, a = k, [k] = 42 }
 
    ensure_tequals("many", tiunique(t), { [1] = 42 })
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tgenerate_n"
+
+--------------------------------------------------------------------------------
+
+test "tgenerate_n_0" (function()
+  ensure_tequals("zero", tgenerate_n(0, function() return 42 end), { })
+end)
+
+test "tgenerate_n_1" (function()
+  ensure_tequals("one", tgenerate_n(1, function() return 42 end), { 42 })
+end)
+
+test "tgenerate_n_multret" (function()
+  ensure_tequals("one", tgenerate_n(1, function() return 42, 1 end), { 42 })
+end)
+
+test "tgenerate_n_args" (function()
+  ensure_tequals("args", tgenerate_n(1, function(a) return a end, 42), { 42 })
+end)
+
+test "tgenerate_n_5" (function()
+  ensure_tequals(
+      "five",
+      tgenerate_n(5, function() return 42 end),
+      { 42, 42, 42, 42, 42 }
+    )
+end)
+
+test "tgenerate_n_nil" (function()
+  ensure_tequals(
+      "nil",
+      tgenerate_n(5, function() return nil end),
+      { nil, nil, nil, nil, nil }
+    )
 end)
 
 --------------------------------------------------------------------------------
