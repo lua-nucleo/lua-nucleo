@@ -29,6 +29,7 @@ return
   'string';
   'args';
   'misc';
+  'type';
   --
   'util/anim/interpolator';
 }
