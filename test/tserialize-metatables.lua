@@ -18,12 +18,10 @@ local test = make_suite("metatables test")
 
 test "Collectgarbage" (function()
   local changed = 0
-  local mt = {__gc = function() changed = 1 end}
   local tbl1 = {}
-  debug.setmetatable(tbl1, mt)
   local tbl2 = {}
-  debug.setmetatable(tbl2, mt)
   local u={tbl1, tbl2}
+  local probe = setmetatable({ [tbl1] = true, [tbl2] = true }, { __mode = "k" })
   check_ok(u)
   tbl1 = nil
   tbl2 = nil
@@ -34,7 +32,7 @@ test "Collectgarbage" (function()
     collectgarbage("collect")
     prev, now = now, collectgarbage("count")
   end
-  assert(changed == 1,"Garbage not collected!!!")
+  assert(not next(probe), "Garbage not collected")
 end)
 
 test "1" (function()
