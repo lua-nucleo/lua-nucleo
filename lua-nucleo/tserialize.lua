@@ -37,8 +37,8 @@ do
         end
       else
         if not added[t] and vis[t] then
-          added[t] = true
           add[#add+1] = t
+          added[t] = { name = "var"..#add, num = #add}
         end
       end
     end
@@ -79,10 +79,11 @@ do
     end
 
   end
-  local function recursive_proceed(t, added, rec_info, after)
+  local function recursive_proceed(t, added, rec_info, after, started)
     local t_type = type(t)
     if t_type == "table" then
-      if not added[t] then
+      if not started or not added[t] then
+	local started = true
         cat("{")
         -- Serialize numeric indices
         local next_i = 0
@@ -90,7 +91,7 @@ do
           next_i = i
           if not (rec_info[i] or rec_info[v]) then
             if i ~= 1 then cat(",") end
-            recursive_proceed(v, added, rec_info, after)
+            recursive_proceed(v, added, rec_info, after, started)
           else
             next_i = i - 1
             break
@@ -118,7 +119,7 @@ do
               else
                 cat(string_format("[%q]=", k))
               end
-                recursive_proceed(v, added, rec_info, after)
+                recursive_proceed(v, added, rec_info, after, started)
             elseif
               k_type ~= "number" or -- non-string non-number
               k >= next_i or k < 1 or -- integer key in hash part of the table
@@ -127,10 +128,10 @@ do
               cat(comma)
               comma = ","
               cat("[")
-              recursive_proceed(k, added, rec_info, after)
+              recursive_proceed(k, added, rec_info, after, started)
               cat("]")
               cat("=")
-              recursive_proceed(v, added, rec_info, after)
+              recursive_proceed(v, added, rec_info, after, started)
             end
           else
             after[#after + 1] = {k,v}
@@ -245,10 +246,10 @@ do
     local visited = {}
     -- table, containing recursive parts of our variables
     local additional_vars = { }
-    local add_hash = {}
+    local added = {}
     for i = 1, narg do
       local v = select(i, ...)
-      explode_rec(v, additional_vars, visited, add_hash) -- discover recursive subtables
+      explode_rec(v, additional_vars, visited, added) -- discover recursive subtables
     end
     visited = nil -- no more needed
     local nadd = #additional_vars
@@ -257,10 +258,8 @@ do
 
     for i = 1, nadd do
       local v = additional_vars[i]
-      parse_rec(v, add_hash, rec_info)
+      parse_rec(v, added, rec_info)
     end
-    add_hash = nil -- no more needed
-    local added = {}
     local buf = {}
     for i = 1, nadd do
       local v = additional_vars[i]
@@ -270,7 +269,6 @@ do
       if not recursive_proceed(v, added, rec_info, after) then
         return nil, "Unserializable data in parameter #" .. i
       end
-      added[v] = {name = "var" .. i, num = i}
     end
 
     rec_info = {}
