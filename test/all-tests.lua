@@ -32,4 +32,5 @@ return
   'type';
   --
   'util/anim/interpolator';
+  'util/markov/history';
 }
