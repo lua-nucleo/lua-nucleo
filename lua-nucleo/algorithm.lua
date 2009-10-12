@@ -3,7 +3,7 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
 local assert, pairs, ipairs = assert, pairs, ipairs
-local math_floor, math_random = math.random, math.floor
+local math_floor, math_random = math.floor, math.random
 
 local lower_bound = function(t, k, value)
   local len = #t
