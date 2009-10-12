@@ -79,8 +79,6 @@ do
     end
 
   end
-
---  local after -- where to put afterwork info. This var is reused.
   local function recursive_proceed(t, added, rec_info, after)
     local t_type = type(t)
     if t_type == "table" then
@@ -156,17 +154,82 @@ do
     return true
   end
 
-  local afterwork = function(k, v, buf, name, added, rec_info)
+  local function recursive_proceed_simple(t, added)
+    local t_type = type(t)
+    if t_type == "table" then
+      if not added[t] then
+        cat("{")
+        -- Serialize numeric indices
+        local next_i = 0
+        for i, v in ipairs(t) do
+          next_i = i
+          if i ~= 1 then cat(",") end
+          recursive_proceed_simple(v, added)
+        end
+        next_i = next_i + 1
+        -- Serialize hash part
+        -- Skipping comma only at first element if there is no numeric part.
+        local comma = (next_i > 1) and "," or ""
+        for k, v in pairs(t) do
+          local k_type = type(k)
+          if k_type == "string"  then
+            cat(comma)
+            comma = ","
+            --check if we can use the short notation
+            -- eg {a=3,b=5} istead of {["a"]=3,["b"]=5}
+            if
+              not lua51_keywords[k] and string_match(k, "^[%a_][%a%d_]*$")
+            then
+              cat(k); cat("=")
+            else
+              cat(string_format("[%q]=", k))
+            end
+              recursive_proceed_simple(v, added)
+          elseif
+            k_type ~= "number" or -- non-string non-number
+            k >= next_i or k < 1 or -- integer key in hash part of the table
+            k % 1 ~= 0 -- non-integral key.
+          then
+            cat(comma)
+            comma = ","
+            cat("[")
+            recursive_proceed_simple(k, added)
+            cat("]")
+            cat("=")
+            recursive_proceed_simple(v, added)
+          end
+        end
+        cat("}")
+      else -- already visited!
+        cat(added[t].name)
+      end
+    elseif t_type == "string" then
+      cat(string_format("%q", t))
+    elseif t_type == "number" then
+      cat(string_format("%.55g",t))
+    elseif t_type == "boolean" then
+      cat(tostring(t))
+    elseif t == nil then
+      cat("nil")
+    else
+      return nil
+    end
+    return true
+  end
+
+
+
+  local afterwork = function(k, v, buf, name, added)
     cur_buf = buf
     cat(" ")
     cat(name)
     cat("[")
     local after = buf.afterwork
-    if not recursive_proceed(k, added, rec_info, after) then
+    if not recursive_proceed_simple(k, added) then
       return false
     end
     cat("]=")
-    if not recursive_proceed(v, added, rec_info, after) then
+    if not recursive_proceed_simple(v, added) then
       return false
     end
     cat(" ")
@@ -220,8 +283,7 @@ do
               buf[i].afterwork[j][2],
               buf[i],
               added[v].name,
-	      added,
-	      rec_info
+	      added
             )
         then
           return nil, "Unserializable data in parameter #" .. i
@@ -233,10 +295,9 @@ do
 
     for i = 1, narg do
       local v = select(i, ...)
-      buf[i + nadd] = {afterwork = {}}
-      local after = buf[i + nadd].afterwork
+      buf[i + nadd] = {}
       cur_buf = buf[i + nadd]
-      if not recursive_proceed(v, added, rec_info, after) then
+      if not recursive_proceed_simple(v, added) then
         return nil, "Unserializable data in parameter #" .. i
       end
     end
