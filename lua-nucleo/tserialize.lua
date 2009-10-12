@@ -40,25 +40,26 @@ do
         end
       else
         if not added[t] and vis[t] then
-          added[t] = {declared = true}
+          added[t] = true
           add[#add+1] = t
         end
       end
     end
   end
 
-  local parse_rec = function(t)
-    local initial = t
-    local started = false
+  local parse_rec
+  do
+    local initial
+    local started
 
-    local function parse_rec_internal(t)
+    local function impl(t)
       local t_type = type(t)
       local rec = false
       if t_type == "table" then
         if not added[t]or not started then
           started = true
           for k, v in pairs(t) do
-            if parse_rec_internal(k) or parse_rec_internal(v) then
+            if impl(k) or impl(v) then
               rec = true
               if type(k) == "table" then
                 rec_info[k] = true
@@ -75,8 +76,14 @@ do
       return rec
     end
 
-    rec_info[initial] = true
-    parse_rec_internal(initial)
+    parse_rec = function(t)
+      initial = t
+      started = false
+      rec_info[initial] = true
+      impl(initial)
+      initial = nil
+    end
+
   end
 
   local after -- where to put afterwork info. This var is reused.
@@ -144,7 +151,7 @@ do
     elseif t_type == "string" then
       cat(string_format("%q", t))
     elseif t_type == "number" then
-      cat(string.format("%.55g",t))
+      cat(string_format("%.55g",t))
     elseif t_type == "boolean" then
       cat(tostring(t))
     elseif t == nil then
@@ -178,14 +185,14 @@ do
   --===================================--
     --PREPARATORY WORK: LOCATE THE RECURSIVE AND SHARED PARTS--
     local narg = select("#", ...)
-    local arg = {...}
+    local visited = {}
     -- table, containing recursive parts of our variables
     local additional_vars = { }
-    local visit = {}
-    for _, v in ipairs(arg) do
-      explode_rec(v, additional_vars, visit) -- discover recursive subtables
+    for i = 1, narg do
+      local v = select(i, ...)
+      explode_rec(v, additional_vars, visited) -- discover recursive subtables
     end
-    visit = nil--need no more
+    visited = nil -- no more needed
     local nadd = #additional_vars
     --SERIALIZE ADDITIONAL FIRST--
 
@@ -228,7 +235,7 @@ do
     --SERIALIZE GIVEN VARS--
 
     for i = 1, narg do
-      local v = arg[i]
+      local v = select(i, ...)
       buf[i + nadd] = {afterwork = {}}
       cur_buf = buf[i + nadd]
       after = buf[i + nadd].afterwork
