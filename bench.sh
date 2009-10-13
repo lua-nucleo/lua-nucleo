@@ -14,3 +14,5 @@ echo "2. Simple recursive table"
 bench/kbench.sh 'bench/bench.lua bench/tserializebench_recursive.lua ' 1e6 2>&1 |  luajit -O bench/kbenchparse.lua
 echo "3. Random generated data"
 bench/kbench.sh 'bench/bench.lua bench/tserializebench_random.lua ' 1e6 2>&1 |  luajit -O bench/kbenchparse.lua
+echo "4. Sample metalua dump"
+bench/kbench.sh 'bench/bench.lua bench/tserializebench_metalua.lua ' 1e3 2>&1 |  luajit -O bench/kbenchparse.lua
