@@ -226,6 +226,19 @@ test "My5" (function()
   a[1] = b
   check_ok(b)
 end)
+
+test "200 locals limitation" (function()
+  local str = string.rep("{};",600)
+  str = "do local a = {" .. str.. "} "
+  for i=1,600 do
+    str = str .. "a[" .. i+600 .. "]=a[" .. i .. "]"
+  end
+  str = str .. "a[a]=a return a end"
+  local b = loadstring(str)()
+  check_ok(b)
+end)
+
+
 ---------------------------------------------------------------------------
 
 assert (test:run())

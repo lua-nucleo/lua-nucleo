@@ -38,7 +38,7 @@ do
       else
         if not added[t] and vis[t] then
           add[#add+1] = t
-          added[t] = { name = "var"..#add, num = #add}
+          added[t] = { name = "_["..#add.."]", num = #add}
         end
       end
     end
@@ -305,8 +305,7 @@ do
     local prevbuf = {}
     for v, inf in pairs(added) do
       prevbuf[ #prevbuf + 1] =
-           " local " .. inf.name
-        .. "=" .. table_concat(buf[inf.num], "", 1, buf[inf.num].afterstart)
+	"[" .. inf.num .. "]=" .. table_concat(buf[inf.num], "", 1, buf[inf.num].afterstart)..";"
     end
 
     --CONCAT PARTS--
@@ -323,9 +322,9 @@ do
       return "return " .. table_concat(buf,",")
     else
       local rez = {
-        "do ";
+        "do local _={";
         table_concat(prevbuf, " ");
-        ' ';
+        '}';
         table_concat(buf, " ", 1, nadd);
         " return ";
         table_concat(buf, ",", nadd+1);
