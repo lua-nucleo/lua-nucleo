@@ -6,19 +6,19 @@
 -- TODO: Actually this is a ring buffer!
 
 local assert, ipairs, unpack = assert, ipairs, unpack
-local table_remove, table_insert, table_concat 
+local table_remove, table_insert, table_concat
     = table.remove, table.insert, table.concat
 
-local is_table, 
-      is_number, 
-      is_string, 
+local is_table,
+      is_number,
+      is_string,
       is_self,
       is_nil
       = import 'lua-nucleo/type.lua'
-      { 
-        'is_table', 
-        'is_number', 
-        'is_string', 
+      {
+        'is_table',
+        'is_number',
+        'is_string',
         'is_self',
         'is_nil'
       }
