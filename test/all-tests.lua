@@ -7,6 +7,7 @@ return
   'suite';
   'strict';
   'import';
+  'import-base_path';
   --
   'tserialize-basic';
   'tserialize-recursive';
