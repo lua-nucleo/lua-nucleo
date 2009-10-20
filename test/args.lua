@@ -11,16 +11,17 @@ assert(type(make_suite) == "function")
 local ensure_equals = import 'lua-nucleo/ensure.lua' { 'ensure_equals' }
 
 local nargs,
-      pack
+      pack,
+      args_exports
       = import 'lua-nucleo/args.lua'
       {
-	'nargs',
-	'pack'
+        'nargs',
+        'pack'
       }
 
 -------------------------------------------------------------------------
 
-local test = make_suite("args")
+local test = make_suite("args", args_exports)
 
 -------------------------------------------------------------------------
 
