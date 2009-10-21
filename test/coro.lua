@@ -22,14 +22,12 @@ assert(type(make_suite) == "function")
 
 local ensure,
       ensure_equals,
-      ensure_tequals,
-      ensure_fails_with_substring
+      ensure_tequals
       = import 'lua-nucleo/ensure.lua'
       {
         'ensure',
         'ensure_equals',
-        'ensure_tequals',
-        'ensure_fails_with_substring'
+        'ensure_tequals'
       }
 
 local make_concatter = import 'lua-nucleo/string.lua' { 'make_concatter' }
