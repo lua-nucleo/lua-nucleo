@@ -240,9 +240,7 @@ local run_test = function(name, strict_mode)
 
   local gmt = getmetatable(_G) -- Preserve metatable
 
-  -- TODO: ?! Too concrete to be in the generic library!
-  --       Generalize or move run_test[s] to test/test.lua.
-  local fn, load_err = loadfile("test/"..name..".lua")
+  local fn, load_err = loadfile(name)
   if not fn then
     result, stage, msg = false, "load", load_err
   else

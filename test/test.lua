@@ -35,7 +35,7 @@ for _, v in ipairs(tests_pr) do
   -- Checking directly to avoid escaping special characters (like '-')
   -- when running specific test
   if v == pattern or string.match(v, pattern) then
-    test_r[#test_r + 1] = v
+    test_r[#test_r + 1] = "test/"..v..".lua"
   end
 end
 
