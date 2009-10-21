@@ -8,15 +8,27 @@ dofile('lua-nucleo/import.lua')
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
-local ensure_equals = import 'lua-nucleo/ensure.lua' { 'ensure_equals' }
+local ensure,
+      ensure_equals,
+      ensure_fails_with_substring
+      = import 'lua-nucleo/ensure.lua'
+      {
+        'ensure',
+        'ensure_equals',
+        'ensure_fails_with_substring'
+      }
 
 local nargs,
       pack,
+      arguments,
+      method_arguments,
       args_exports
       = import 'lua-nucleo/args.lua'
       {
         'nargs',
-        'pack'
+        'pack',
+        'arguments',
+        'method_arguments'
       }
 
 -------------------------------------------------------------------------
@@ -25,9 +37,7 @@ local test = make_suite("args", args_exports)
 
 -------------------------------------------------------------------------
 
-test:tests_for "nargs"
-
-test "nargs minimal" (function()
+test:test_for "nargs" (function()
   local t1 = "a"
   local t2 = "b"
   local t3 = "c"
@@ -37,9 +47,8 @@ test "nargs minimal" (function()
 end)
 
 --------------------------------------------------------------------------
-test:tests_for "pack"
 
-test "pack minimal" (function()
+test:test_for "pack" (function()
   local t1 = "a"
   local t2 = "b"
   local t3 = "c"
@@ -48,7 +57,41 @@ test "pack minimal" (function()
   local num, tbl = pack(t1, t2, t3)
   ensure_equals("args", table.concat(tbl), "abc")
 end)
+
 ---------------------------------------------------------------------------
 
+test:test_for "arguments" (function()
+  local check_arguments = function(name, ...)
+    -- TODO: Use name in error message
+    arguments(...)
+  end
+
+  local check_arguments_fail = function(name, expected_msg, ...)
+    local n, args = pack(...)
+    ensure_fails_with_substring(
+        name,
+        function() arguments(unpack(args, 1, n)) end,
+        expected_msg
+      )
+  end
+
+  check_arguments("empty")
+  check_arguments_fail("bad type", "TODO: ERR", "bad type")
+  check_arguments_fail("bad type: false", "TODO: ERR", false)
+  check_arguments_fail("bad type with value", "TODO: ERR", "bad type", "value")
+  check_arguments("nil", "nil", nil)
+  check_arguments_fail("bad type tail", "TODO: ERR", "nil", nil, "bad type tail")
+  check_arguments("boolean", "boolean", false)
+  check_arguments("many args", "boolean", false, "nil", nil, "number", 42)
+  check_arguments_fail("bad in the middle", "TODO: ERR", "boolean", false, "nil", 42, "number", 42)
+  check_arguments_fail("bad at the end", "TODO: ERR", "boolean", false, "nil", nil, "number", {})
+end)
+
+---------------------------------------------------------------------------
+
+--test:test_for "method_arguments" (function()
+--end)
+
+---------------------------------------------------------------------------
 
 assert(test:run())
