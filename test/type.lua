@@ -32,8 +32,6 @@ test:tests_for 'is_nil'
                'is_function'
                'is_thread'
                'is_userdata'
-               'is_coroutine'
-               'is_bool'
                'is_self'
                'is_type'
 
@@ -54,12 +52,13 @@ test "all_predicates" (function()
     ["userdata"] = newproxy();
   }
   
-  assert(is.is_coroutine == is.is_thread)
-  assert(is.is_bool == is.is_boolean)
   assert(is.is_self == is.is_table)
   
   assert(is.is_nil(nil) == true)
   
+  assert(is.is_type(42) == false)
+  assert(is.is_type("") == false)
+
   for name1, value1 in pairs(values) do
     assert(is.is_type(name1) == true)
     assert(is.is_nil(value1) == false)

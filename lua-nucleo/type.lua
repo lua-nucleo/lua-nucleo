@@ -4,31 +4,19 @@
 
 local type, pairs, assert = type, pairs, assert
 
-local type_names =
-{
-  ["nil"] = true;
-  ["number"] = true;
-  ["string"] = true;
-  ["boolean"] = true;
-  ["table"] = true;
-  ["function"] = true;
-  ["thread"] = true;
-  ["userdata"] = true;
-}
+local lua51_types = import 'lua-nucleo/language.lua' { 'lua51_types' }
 
 local type_aliases =
 {
-  ["coroutine"] = "is_thread";
-  ["bool"] = "is_boolean";
   ["self"] = "is_table";
 }
 
 local result =
 {
-  is_type = function(v) return type_names[v] == true end;
+  is_type = function(v) return lua51_types[v] == true end;
 }
 
-for type_name, _ in pairs(type_names) do
+for type_name, _ in pairs(lua51_types) do
   result["is_"..type_name] = function(v) return type(v) == type_name end
 end
 
