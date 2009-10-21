@@ -31,6 +31,7 @@ return
   'args';
   'misc';
   'type';
+  'typeassert';
   --
   'util/anim/interpolator';
   'util/markov/history';
