@@ -20,6 +20,7 @@ local lua51_types =
   ["number"] = true;
   ["string"] = true;
   ["table"] = true;
+  ["function"] = true;
   ["thread"] = true;
   ["userdata"] = true;
 }
