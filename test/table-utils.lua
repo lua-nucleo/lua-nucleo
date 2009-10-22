@@ -38,7 +38,10 @@ local empty_table,
       tequals,
       tiunique,
       tgenerate_n,
-      table_utils_imports
+      taccumulate,
+      tnormalize,
+      tnormalize_inplace,
+      table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
         'empty_table',
@@ -58,12 +61,15 @@ local empty_table,
         'tiwalker',
         'tequals',
         'tiunique',
-        'tgenerate_n'
+        'tgenerate_n',
+        'taccumulate',
+        'tnormalize',
+        'tnormalize_inplace'
       }
 
 --------------------------------------------------------------------------------
 
-local test = make_suite("table-utils", table_utils_imports)
+local test = make_suite("table-utils", table_utils_exports)
 
 --------------------------------------------------------------------------------
 
@@ -1148,6 +1154,124 @@ test "tgenerate_n_nil" (function()
       tgenerate_n(5, function() return nil end),
       { nil, nil, nil, nil, nil }
     )
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "taccumulate"
+
+--------------------------------------------------------------------------------
+
+test "taccumulate-empty" (function()
+  ensure_equals("empty default", taccumulate({}), 0)
+  ensure_equals("empty 0", taccumulate({}, 0), 0)
+  ensure_equals("empty 1", taccumulate({}, 1), 1)
+end)
+
+test "taccumulate-array" (function()
+  ensure_equals("array", taccumulate({1, 2, 3}), 6)
+end)
+
+test "taccumulate-array-hole" (function()
+  ensure_equals("array", taccumulate({1, 2, nil, nil, nil, 3}), 6)
+end)
+
+test "taccumulate-hash" (function()
+  ensure_equals("hash", taccumulate({a = 1, b = 2, c = 3}), 6)
+end)
+
+test "taccumulate-mixed" (function()
+  ensure_equals("mixed", taccumulate({ 3, -1, a = -1, b = 2, c = 3}), 6)
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tnormalize"
+
+--------------------------------------------------------------------------------
+
+test "tnormalize-empty" (function()
+  local data = { }
+  local expected_default, expected_sum = { }, { }
+  local result_default = tnormalize(data)
+  local result_sum = tnormalize(data, 30)
+
+  ensure_tequals("empty default", result_default, expected_default)
+  ensure("not inplace default", data ~= result_default)
+
+  ensure_tequals("empty sum", result_sum, expected_sum)
+  ensure("not inplace sum", data ~= result_sum)
+end)
+
+test "tnormalize-simple" (function()
+  local data = { 3 }
+  local expected_default, expected_sum = { 3 / 3 }, { 3 / 30 }
+  local result_default = tnormalize(data)
+  local result_sum = tnormalize(data, 30)
+
+  ensure_tequals("empty default", result_default, expected_default)
+  ensure("not inplace default", data ~= result_default)
+
+  ensure_tequals("empty sum", result_sum, expected_sum)
+  ensure("not inplace sum", data ~= result_sum)
+end)
+
+test "tnormalize-mixed" (function()
+  local data = { a = 2, 3 }
+  local expected_default, expected_sum = { a = 2 / 5, 3 / 5 }, { a = 2 / 30, 3 / 30 }
+  local result_default = tnormalize(data)
+  local result_sum = tnormalize(data, 30)
+
+  ensure_tequals("empty default", result_default, expected_default)
+  ensure("not inplace default", data ~= result_default)
+
+  ensure_tequals("empty sum", result_sum, expected_sum)
+  ensure("not inplace sum", data ~= result_sum)
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tnormalize_inplace"
+
+--------------------------------------------------------------------------------
+
+test "tnormalize_inplace-empty" (function()
+  local data_default, data_sum = { }, { }
+  local expected_default, expected_sum = { }, { }
+  local result_default = tnormalize_inplace(data_default)
+  local result_sum = tnormalize_inplace(data_sum, 30)
+
+  ensure_tequals("empty default", result_default, expected_default)
+  ensure("inplace default", data_default == result_default)
+
+  ensure_tequals("empty sum", result_sum, expected_sum)
+  ensure("inplace sum", data_sum == result_sum)
+end)
+
+test "tnormalize_inplace-simple" (function()
+  local data_default, data_sum = { 3 }, { 3 }
+  local expected_default, expected_sum = { 3 / 3 }, { 3 / 30 }
+  local result_default = tnormalize_inplace(data_default)
+  local result_sum = tnormalize_inplace(data_sum, 30)
+
+  ensure_tequals("empty default", result_default, expected_default)
+  ensure("inplace default", data_default == result_default)
+
+  ensure_tequals("empty sum", result_sum, expected_sum)
+  ensure("inplace sum", data_sum == result_sum)
+end)
+
+test "tnormalize_inplace-mixed" (function()
+  local data_default, data_sum = { a = 2, 3 }, { a = 2, 3 }
+  local expected_default, expected_sum = { a = 2 / 5, 3 / 5 }, { a = 2 / 30, 3 / 30 }
+  local result_default = tnormalize_inplace(data_default)
+  local result_sum = tnormalize_inplace(data_sum, 30)
+
+  ensure_tequals("empty default", result_default, expected_default)
+  ensure("inplace default", data_default == result_default)
+
+  ensure_tequals("empty sum", result_sum, expected_sum)
+  ensure("inplace sum", data_sum == result_sum)
 end)
 
 --------------------------------------------------------------------------------
