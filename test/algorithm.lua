@@ -5,22 +5,67 @@
 dofile('lua-nucleo/strict.lua')
 dofile('lua-nucleo/import.lua')
 
+math.randomseed(12345)
+
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
-local ensure_equals = import 'lua-nucleo/ensure.lua' { 'ensure_equals' }
-local tdeepequals = import 'lua-nucleo/tdeepequals.lua' { 'tdeepequals' }
+local assert_is_table,
+      assert_is_number
+      = import 'lua-nucleo/typeassert.lua'
+      {
+        'assert_is_table',
+        'assert_is_number'
+      }
+
+local ensure,
+      ensure_equals
+      = import 'lua-nucleo/ensure.lua'
+      {
+        'ensure',
+        'ensure_equals'
+      }
+
+local invariant
+      = import 'lua-nucleo/functional.lua'
+      {
+        'invariant'
+      }
+
+local tdeepequals,
+      tstr,
+      taccumulate,
+      tnormalize,
+      tgenerate_n
+      = import 'lua-nucleo/table.lua'
+      {
+        'tdeepequals',
+        'tstr',
+        'taccumulate',
+        'tnormalize',
+        'tgenerate_n'
+      }
 
 local lower_bound,
-      algorithm
+      pick_init,
+      pick_one,
+      algorithm_exports
       = import 'lua-nucleo/algorithm.lua'
       {
-        'lower_bound'
+        'lower_bound',
+        'pick_init',
+        'pick_one'
+      }
+
+local ensure_aposteriori_probability
+      = import 'test/lib/random.lua'
+      {
+        'ensure_aposteriori_probability'
       }
 
 --------------------------------------------------------------------------------
 
-local test = make_suite("algorithm", algorithm)
+local test = make_suite("algorithm", algorithm_exports)
 
 --------------------------------------------------------------------------------
 
@@ -43,6 +88,107 @@ test:test_for "lower_bound" (function()
   check({ {1}, {2} }, 1, 1)
   check({ {1}, {2} }, 2, 2)
   check({ {1}, {2} }, 3, 3)
+end)
+
+--------------------------------------------------------------------------------
+
+test:tests_for "pick_init"
+               "pick_one"
+
+--------------------------------------------------------------------------------
+
+test "pick-empty" (function()
+  local probs = {}
+  local data = assert_is_table(pick_init(probs))
+  local result = pick_one(data)
+  ensure_equals("no data picked", result, nil)
+end)
+
+test "pick-single-one" (function()
+  local probs = { single = 1 }
+  local data = assert_is_table(pick_init(probs))
+  local result = pick_one(data)
+  ensure_equals("single picked", result, "single")
+end)
+
+test "pick-single-zero-ignored" (function()
+  local probs = { zero = 0 }
+  local data = assert_is_table(pick_init(probs))
+  local result = pick_one(data)
+  ensure_equals("single zero not picked", result, nil)
+end)
+
+test "pick-zero-ignored-nonzero-picked" (function()
+  local probs = { zero = 0, nonzero = 1 }
+  local data = assert_is_table(pick_init(probs))
+  local result = pick_one(data)
+  ensure_equals("no data picked", result, "nonzero")
+end)
+
+local HACK_ACCEPTABLE_DIFF = 0.02 -- Should be calculated automatically!
+
+test "pick-equal-weights" (function()
+  local num_runs = 1e5
+
+  local probs = { alpha = 1, beta = 1 }
+  local data = assert_is_table(pick_init(probs))
+  local stats = { alpha = 0, beta = 0 }
+
+  print("generating stats...")
+  for i = 1, num_runs do
+    local result = pick_one(data)
+    assert(stats[result])
+    stats[result] = stats[result] + 1
+  end
+  print("done generating stats")
+
+  ensure_aposteriori_probability(num_runs, probs, stats, HACK_ACCEPTABLE_DIFF)
+end)
+
+test "pick-non-equal-weights" (function()
+  local num_runs = 1e5
+
+  local probs = { alpha = 0.5, beta = 2 }
+  local data = assert_is_table(pick_init(probs))
+  local stats = { alpha = 0, beta = 0 }
+
+  print("generating stats...")
+  for i = 1, num_runs do
+    local result = pick_one(data)
+    assert(stats[result])
+    stats[result] = stats[result] + 1
+  end
+  print("done generating stats")
+
+  ensure_aposteriori_probability(num_runs, probs, stats, HACK_ACCEPTABLE_DIFF)
+end)
+
+test "pick-non-equal-weights" (function()
+  local num_keys = 1e2
+  local num_runs = 1e5
+
+  local probs = tgenerate_n(
+      num_keys,
+      function()
+        -- We want large non-integer numbers
+        -- TODO: Looks funny
+        return math.random(10, 100) + math.random()
+      end
+    )
+
+  local data = assert_is_table(pick_init(probs))
+  local stats = tgenerate_n(num_keys, invariant(0))
+
+  print("generating stats...")
+  for i = 1, num_runs do
+    local result = pick_one(data)
+    assert(stats[result])
+    stats[result] = stats[result] + 1
+  end
+  print("done generating stats")
+
+  local tuned_diff = HACK_ACCEPTABLE_DIFF * 10 -- HACK!
+  ensure_aposteriori_probability(num_runs, probs, stats, tuned_diff)
 end)
 
 --------------------------------------------------------------------------------

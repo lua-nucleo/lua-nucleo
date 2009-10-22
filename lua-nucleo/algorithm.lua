@@ -33,7 +33,7 @@ local pick_one = function(data)
   local probs = data.probs
 
   local pos = math_random() * data.prob_sum
-  for k, v in ipairs(probs) do -- TODO: Use binary search (lower_bound)
+  for k, v in ipairs(probs) do -- TODO: Use binary search (lower_bound)!
     if pos <= v then
       result = keys[k]
       break
@@ -47,18 +47,13 @@ local pick_init = function(probs)
   local norm_probs = { }
   local key_index = { }
   local prob_sum = 0.0
-  local max_prob = 0
-  local max_key
 
   for key, prob in pairs(probs) do
-    local i = #norm_probs + 1
-    prob_sum = prob_sum + prob
-    norm_probs[i] = prob_sum
-    key_index[i] = key
-
-    if prob > max_prob then
-      max_prob = prob
-      max_key = key
+    if prob > 0 then
+      local i = #norm_probs + 1
+      prob_sum = prob_sum + prob
+      norm_probs[i] = prob_sum
+      key_index[i] = key
     end
   end
 
@@ -67,7 +62,6 @@ local pick_init = function(probs)
     probs = norm_probs;
     keys = key_index;
     prob_sum = prob_sum;
-    max_key = max_key;
   }
 end
 
