@@ -22,7 +22,7 @@ do
       local imports_set = self.imports_set_
       if imports_set then
         if not imports_set[import_name] then
-          error("unknown import `" .. import_name .. "'", 2)
+          error("suite: unknown import `" .. import_name .. "'", 2)
         end
         imports_set[import_name] = nil
       end
