@@ -76,15 +76,15 @@ test:test_for "arguments" (function()
   end
 
   check_arguments("empty")
-  check_arguments_fail("bad type", "TODO: ERR", "bad type")
-  check_arguments_fail("bad type: false", "TODO: ERR", false)
-  check_arguments_fail("bad type with value", "TODO: ERR", "bad type", "value")
+  check_arguments_fail("bad type", "argument #1: bad expected type `garbage'", "garbage")
+  check_arguments_fail("bad type: false", "argument #1: bad expected type `false'", false)
+  check_arguments_fail("bad type with value", "argument #1: bad expected type `garbage'", "garbage", "value")
   check_arguments("nil", "nil", nil)
-  check_arguments_fail("bad type tail", "TODO: ERR", "nil", nil, "bad type tail")
+  check_arguments_fail("bad type tail", "argument #2: bad expected type `tail garbage'", "nil", nil, "tail garbage")
   check_arguments("boolean", "boolean", false)
   check_arguments("many args", "boolean", false, "nil", nil, "number", 42)
-  check_arguments_fail("bad in the middle", "TODO: ERR", "boolean", false, "nil", 42, "number", 42)
-  check_arguments_fail("bad at the end", "TODO: ERR", "boolean", false, "nil", nil, "number", {})
+  check_arguments_fail("bad in the middle", "argument #2: expected `nil', got `number'", "boolean", false, "nil", 42, "number", 42)
+  check_arguments_fail("bad at the end", "argument #3: expected `number', got `table'", "boolean", false, "nil", nil, "number", {})
 end)
 
 ---------------------------------------------------------------------------

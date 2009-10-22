@@ -23,12 +23,12 @@ do
       if not lua51_types[expected_type] then
         error(
             "argument #"..arg_n..": bad expected type `"..tostring(expected_type).."'",
-            2 + arg_n
+            3 + arg_n -- Point on function, calling function which calls *arguments()
           )
       end
       error(
           "argument #"..arg_n..": expected `"..tostring(expected_type).."', got `"..type(value).."'",
-          2 + arg_n
+          3 + arg_n
         )
     end
 
