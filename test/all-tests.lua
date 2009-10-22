@@ -32,6 +32,7 @@ return
   'misc';
   'type';
   'typeassert';
+  'checker';
   --
   'util/anim/interpolator';
 }
