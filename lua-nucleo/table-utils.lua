@@ -245,4 +245,5 @@ return
   tgenerate_n = tgenerate_n;
   taccumulate = taccumulate;
   tnormalize = tnormalize;
+  tnormalize_inplace = tnormalize_inplace;
 }
