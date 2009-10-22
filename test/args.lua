@@ -60,37 +60,60 @@ end)
 
 ---------------------------------------------------------------------------
 
+local check_arguments = function(arguments_fn, name, self, ...)
+  -- Note self is ignored
+  -- TODO: Use name in error message
+  arguments_fn(self, ...)
+end
+
+local check_arguments_fail = function(arguments_fn, name, expected_msg, self, ...)
+  -- Note self is ignored
+  local n, args = pack(...)
+  ensure_fails_with_substring(
+      name,
+      function() arguments_fn(self, unpack(args, 1, n)) end,
+      expected_msg
+    )
+end
+
+local run_arguments_tests = function(arguments, check_arguments, check_arguments_fail)
+  local self = {} -- Note only good self is tested
+
+       check_arguments(arguments, "empty", self)
+  check_arguments_fail(arguments, "bad type", "argument #1: bad expected type `garbage'", self, "garbage")
+  check_arguments_fail(arguments, "bad type: false", "argument #1: bad expected type `false'", self, false)
+  check_arguments_fail(arguments, "bad type with value", "argument #1: bad expected type `garbage'", self, "garbage", "value")
+       check_arguments(arguments, "nil", self, "nil", nil)
+  check_arguments_fail(arguments, "bad type tail", "argument #2: bad expected type `tail garbage'", self, "nil", nil, "tail garbage")
+       check_arguments(arguments, "boolean", self, "boolean", false)
+       check_arguments(arguments, "many args", self, "boolean", false, "nil", nil, "number", 42)
+  check_arguments_fail(arguments, "bad in the middle", "argument #2: expected `nil', got `number'", self, "boolean", false, "nil", 42, "number", 42)
+  check_arguments_fail(arguments, "bad at the end", "argument #3: expected `number', got `table'", self, "boolean", false, "nil", nil, "number", {})
+end
+
 test:test_for "arguments" (function()
-  local check_arguments = function(name, ...)
-    -- TODO: Use name in error message
-    arguments(...)
-  end
-
-  local check_arguments_fail = function(name, expected_msg, ...)
-    local n, args = pack(...)
-    ensure_fails_with_substring(
-        name,
-        function() arguments(unpack(args, 1, n)) end,
-        expected_msg
-      )
-  end
-
-  check_arguments("empty")
-  check_arguments_fail("bad type", "argument #1: bad expected type `garbage'", "garbage")
-  check_arguments_fail("bad type: false", "argument #1: bad expected type `false'", false)
-  check_arguments_fail("bad type with value", "argument #1: bad expected type `garbage'", "garbage", "value")
-  check_arguments("nil", "nil", nil)
-  check_arguments_fail("bad type tail", "argument #2: bad expected type `tail garbage'", "nil", nil, "tail garbage")
-  check_arguments("boolean", "boolean", false)
-  check_arguments("many args", "boolean", false, "nil", nil, "number", 42)
-  check_arguments_fail("bad in the middle", "argument #2: expected `nil', got `number'", "boolean", false, "nil", 42, "number", 42)
-  check_arguments_fail("bad at the end", "argument #3: expected `number', got `table'", "boolean", false, "nil", nil, "number", {})
+  run_arguments_tests(
+      function(self, ...) return arguments(...) end, -- Filter out self
+      check_arguments,
+      check_arguments_fail
+    )
 end)
 
 ---------------------------------------------------------------------------
 
---test:test_for "method_arguments" (function()
---end)
+test:test_for "method_arguments" (function()
+  run_arguments_tests(
+      method_arguments,
+      check_arguments,
+      check_arguments_fail
+    )
+
+  -- Additional tests for bad self
+
+  check_arguments_fail(method_arguments, "missing self", "bad self %(got `nil'%); use `:'")
+  check_arguments_fail(method_arguments, "missing self, have args", "bad self %(got `string'%); use `:'", "number", 42)
+  check_arguments_fail(method_arguments, "missing self, have args", "bad self %(got `nil'%); use `:'", nil, "number", 42)
+end)
 
 ---------------------------------------------------------------------------
 

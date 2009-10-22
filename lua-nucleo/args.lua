@@ -19,11 +19,12 @@ end
 local arguments, method_arguments
 do
   local function impl(arg_n, expected_type, value, ...)
+    -- Points error on function, calling function which calls *arguments()
     if type(value) ~= expected_type then
       if not lua51_types[expected_type] then
         error(
             "argument #"..arg_n..": bad expected type `"..tostring(expected_type).."'",
-            3 + arg_n -- Point on function, calling function which calls *arguments()
+            3 + arg_n
           )
       end
       error(
@@ -41,8 +42,9 @@ do
   end
 
   method_arguments = function(self, ...)
+    -- Points error on function, calling function which calls method_arguments()
     return (type(self) ~= "table")
-       and error("bad self (got `"..type(self).."'); use `:'", 2)
+       and error("bad self (got `"..type(self).."'); use `:'", 3)
         or (((...) ~= nil) and impl(1, ...))
   end
 end
