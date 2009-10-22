@@ -34,5 +34,4 @@ return
   'typeassert';
   --
   'util/anim/interpolator';
-  'util/markov/history';
 }
