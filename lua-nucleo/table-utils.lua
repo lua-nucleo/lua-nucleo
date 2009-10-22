@@ -194,6 +194,35 @@ local tgenerate_n = function(n, generator, ...)
   return r
 end
 
+local taccumulate = function(t, init)
+  local sum = init or 0
+  for k, v in pairs(t) do
+    sum = sum + v
+  end
+  return sum
+end
+
+local tnormalize, tnormalize_inplace
+do
+  local impl = function(t, r, sum)
+    sum = sum or taccumulate(t)
+
+    for k, v in pairs(t) do
+      r[k] = v / sum
+    end
+
+    return r
+  end
+
+  tnormalize = function(t, sum)
+    return impl(t, { }, sum)
+  end
+
+  tnormalize_inplace = function(t, sum)
+    return impl(t, t, sum)
+  end
+end
+
 return
 {
   empty_table = empty_table;
@@ -214,4 +243,6 @@ return
   tequals = tequals;
   tiunique = tiunique;
   tgenerate_n = tgenerate_n;
+  taccumulate = taccumulate;
+  tnormalize = tnormalize;
 }
