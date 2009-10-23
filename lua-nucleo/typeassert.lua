@@ -13,7 +13,8 @@ local result =
        and val
         or error(
              (msg or "assertion failed")
-             .. ": bad typename `" .. tostring(val) .. "'"
+             .. ": bad typename `" .. tostring(val) .. "'",
+             2
            )
   end;
 
@@ -22,7 +23,8 @@ local result =
        and val
         or error(
              (msg or "assertion failed")
-             .. ": bad self (got `" .. type(val) .. "'); use `:'"
+             .. ": bad self (got `" .. type(val) .. "'); use `:'",
+             2
            )
   end;
 
@@ -30,7 +32,8 @@ local result =
     return (val ~= nil) -- Note reverse order
        and error(
              (msg or "assertion failed")
-             .. ": `nil' expected, got `" .. type(val) .. "'"
+             .. ": `nil' expected, got `" .. type(val) .. "'",
+             2
            )
         or nil
   end;
@@ -39,7 +42,8 @@ local result =
     return (val ~= false and val ~= true) -- Note reverse order
        and error(
              (msg or "assertion failed")
-             .. ": `boolean' expected, got `" .. type(val) .. "'"
+             .. ": `boolean' expected, got `" .. type(val) .. "'",
+             2
            )
         or val
   end;
@@ -54,7 +58,8 @@ for type_name, _ in pairs(lua51_types) do
          and val
           or error(
              (msg or "assertion failed")
-             .. ": `" .. type_name .. "' expected, got `" .. type(val) .. "'"
+             .. ": `" .. type_name .. "' expected, got `" .. type(val) .. "'",
+             2
            )
     end
 
