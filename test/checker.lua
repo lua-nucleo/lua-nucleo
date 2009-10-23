@@ -68,19 +68,19 @@ test "fail" (function()
 
   checker:fail("my message 1")
 
-  ensure_equals("1: fail is bad", checker:good(), false)
+  ensure_equals("1: fail is bad", checker:good(), nil)
   ensure_equals("1: fail message default", checker:msg(), "\nmy message 1")
   ensure_equals("1: fail message custom", checker:msg("p:", ":s"), "p:my message 1")
-  ensure_tequals("1: fail result default", { checker:result() }, { false, "\nmy message 1" })
-  ensure_tequals("1: fail result custom", { checker:result("p:", ":s") }, { false, "p:my message 1" })
+  ensure_tequals("1: fail result default", { checker:result() }, { nil, "\nmy message 1" })
+  ensure_tequals("1: fail result custom", { checker:result("p:", ":s") }, { nil, "p:my message 1" })
 
   checker:fail("my message 2")
 
-  ensure_equals("2: fail is bad", checker:good(), false)
+  ensure_equals("2: fail is bad", checker:good(), nil)
   ensure_equals("2: fail message default", checker:msg(), "\nmy message 1\nmy message 2")
   ensure_equals("2: fail message custom", checker:msg("p:", ":s"), "p:my message 1:smy message 2")
-  ensure_tequals("2: fail result default", { checker:result() }, { false, "\nmy message 1\nmy message 2" })
-  ensure_tequals("2: fail result custom", { checker:result("p:", ":s") }, { false, "p:my message 1:smy message 2" })
+  ensure_tequals("2: fail result default", { checker:result() }, { nil, "\nmy message 1\nmy message 2" })
+  ensure_tequals("2: fail result custom", { checker:result("p:", ":s") }, { nil, "p:my message 1:smy message 2" })
 end)
 
 test "ensure-fails" (function()
@@ -94,11 +94,11 @@ test "ensure-fails" (function()
       { false, 42 }
     )
 
-  ensure_equals("1: is bad", checker:good(), false)
+  ensure_equals("1: is bad", checker:good(), nil)
   ensure_equals("1: message default", checker:msg(), "\nmy message 1: 42")
   ensure_equals("1: message custom", checker:msg("p:", ":s"), "p:my message 1: 42")
-  ensure_tequals("1: result default", { checker:result() }, { false, "\nmy message 1: 42" })
-  ensure_tequals("1: result custom", { checker:result("p:", ":s") }, { false, "p:my message 1: 42" })
+  ensure_tequals("1: result default", { checker:result() }, { nil, "\nmy message 1: 42" })
+  ensure_tequals("1: result custom", { checker:result("p:", ":s") }, { nil, "p:my message 1: 42" })
 
   ensure_tequals(
       "failed ensure still returns arguments with nil",
@@ -106,11 +106,11 @@ test "ensure-fails" (function()
       { nil, nil, 42 }
     )
 
-  ensure_equals("2: is bad", checker:good(), false)
+  ensure_equals("2: is bad", checker:good(), nil)
   ensure_equals("2: message default", checker:msg(), "\nmy message 1: 42\nmy message 2: nil")
   ensure_equals("2: message custom", checker:msg("p:", ":s"), "p:my message 1: 42:smy message 2: nil")
-  ensure_tequals("2: result default", { checker:result() }, { false, "\nmy message 1: 42\nmy message 2: nil" })
-  ensure_tequals("2: result custom", { checker:result("p:", ":s") }, { false, "p:my message 1: 42:smy message 2: nil" })
+  ensure_tequals("2: result default", { checker:result() }, { nil, "\nmy message 1: 42\nmy message 2: nil" })
+  ensure_tequals("2: result custom", { checker:result("p:", ":s") }, { nil, "p:my message 1: 42:smy message 2: nil" })
 end)
 
 --------------------------------------------------------------------------------

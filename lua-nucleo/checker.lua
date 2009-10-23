@@ -43,7 +43,7 @@ do
   local good = function(self)
     assert(is_self(self))
 
-    return #self.errors_ == 0
+    return (#self.errors_ == 0) and true or nil
   end
 
   local msg = function(self, prefix, glue)
