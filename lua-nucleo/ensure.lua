@@ -5,6 +5,9 @@
 local error, tostring, pcall, type =
       error, tostring, pcall, type
 
+local math_min = math.min
+local string_char = string.char
+
 -- TODO: Write tests for this one
 local ensure = function(msg, value, ...)
   return value
@@ -127,8 +130,7 @@ local ensure_strequals = function(msg, actual, expected, ...)
   end
 
   error(
-      "ensure_strequals: " .. msg .. ":\n"
-      .. strdiff_msg(actual, expected)
+      "ensure_strequals: " .. msg .. ":\n" .. strdiff_msg(actual, expected)
     )
 end
 
