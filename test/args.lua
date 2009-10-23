@@ -89,6 +89,22 @@ local run_arguments_tests = function(arguments, check_arguments, check_arguments
        check_arguments(arguments, "many args", self, "boolean", false, "nil", nil, "number", 42)
   check_arguments_fail(arguments, "bad in the middle", "argument #2: expected `nil', got `number'", self, "boolean", false, "nil", 42, "number", 42)
   check_arguments_fail(arguments, "bad at the end", "argument #3: expected `number', got `table'", self, "boolean", false, "nil", nil, "number", {})
+
+  do
+    local called = false
+    local fn = function() called = true end
+
+    check_arguments(arguments, "function", self, "function", fn)
+    ensure_equals("function should be not called", called, false)
+  end
+
+  do
+    local called = false
+    local fn = function() called = true end
+
+    check_arguments_fail(arguments, "bad function", "argument #1: expected `number', got `function'", self, "number", fn)
+    ensure_equals("function as bad argument should be not called", called, false)
+  end
 end
 
 test:test_for "arguments" (function()
