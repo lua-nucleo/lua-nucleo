@@ -80,6 +80,58 @@ local ensure_tequals = function(msg, actual, expected)
   return actual
 end
 
+-- TODO: ?! Improve and generalize!
+local strdiff_msg
+do
+  local nl_byte = ("\n"):byte()
+  strdiff_msg = function(actual, expected)
+    local result = false
+
+    --print(("%q"):format(expected))
+    --print(("%q"):format(actual))
+
+    if type(actual) ~= "string" or type(expected) ~= "string" then
+      result = "(bad input)"
+    else
+      local nactual, nexpected = #actual, #expected
+      local len = math_min(nactual, nexpected)
+
+      local lineno, lineb = 1, 1
+      for i = 1, len do
+        local ab, eb = expected:byte(i), actual:byte(i)
+        --print(string_char(eb), string_char(ab))
+        if ab ~= eb then
+          result = "different at byte " .. i .. " (line " .. lineno .. ", offset " .. lineb .. "): `"
+                .. string_char(eb) .. "' vs. `" .. string_char(ab) .. "'"
+          break
+        end
+        if eb == nl_byte then
+          lineno, lineb = lineno + 1, 1
+        end
+      end
+
+      if nactual > nexpected then
+        result = (result or "different:") .. " actual has " .. (nactual - nexpected) .. " extra characters"
+      elseif nactual < nexpected then
+        result = (result or "different:") .. " expected has " .. (nexpected - nactual) .. " extra characters"
+      end
+    end
+
+    return result or "(identical)"
+  end
+end
+
+local ensure_strequals = function(msg, actual, expected, ...)
+  if actual == expected then
+    return actual, expected, ...
+  end
+
+  error(
+      "ensure_strequals: " .. msg .. ":\n"
+      .. strdiff_msg(actual, expected)
+    )
+end
+
 -- TODO: Write tests for this one
 local ensure_fails_with_substring = function(msg, fn, substring)
   local res, err = pcall(fn)
@@ -106,5 +158,6 @@ return
   ensure = ensure;
   ensure_equals = ensure_equals;
   ensure_tequals = ensure_tequals;
+  ensure_strequals = ensure_strequals;
   ensure_fails_with_substring = ensure_fails_with_substring;
 }
