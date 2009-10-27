@@ -123,10 +123,10 @@ do
         --print(string_char(eb), string_char(ab))
         if ab ~= eb then
           -- TODO: Do not want to have \n-s here. Too low level?!
-          result = "different at byte " .. i .. " (line " .. lineno .. ", offset " .. lineb .. "):\n`"
+          result = "different at byte " .. i .. " (line " .. lineno .. ", offset " .. lineb .. "):\n\n`"
                 .. string_window(expected, i, window_radius)
-                .. "'\n  vs. \n`"
-                .. string_window(actual, i, window_radius)  .. "'"
+                .. "'vs. \n`"
+                .. string_window(actual, i, window_radius)  .. "'\n"
           break
         end
         if eb == nl_byte then
