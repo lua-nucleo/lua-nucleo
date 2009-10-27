@@ -8,7 +8,7 @@ local string_match, string_format = string.match, string.format
 
 
 local lua51_keywords = import 'lua-nucleo/language.lua' { 'lua51_keywords' }
-local create_prettifier = import 'lua-nucleo/prettifier.lua' { 'create_prettifier' }
+local make_prettifier = import 'lua-nucleo/prettifier.lua' { 'make_prettifier' }
 
 local tpretty
 do
@@ -94,7 +94,7 @@ do
     local buf = {}
     local sptable = {};
     local cat = function(v) buf[#buf + 1] = v end
-    local pr = create_prettifier(indent, buf, cols)
+    local pr = make_prettifier(indent, buf, cols)
     impl(t, cat, pr, {})
     pr:finished()
     return table_concat(buf)
