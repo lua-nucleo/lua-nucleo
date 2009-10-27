@@ -28,6 +28,7 @@ local trim = function(s)
   return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
+-- TODO: Rename! (urlencode?)
 local escape_string = function(str)
   return str:gsub(
       "[%c]",
@@ -37,9 +38,26 @@ local escape_string = function(str)
     )
 end
 
+local htmlspecialchars = nil
+do
+  local subst =
+  {
+    ["&"] = "&amp;";
+    ['"'] = "&quot;";
+    ["'"] = "&apos;";
+    ["<"] = "&lt;";
+    [">"] = "&gt;";
+  }
+
+  htmlspecialchars = function(value)
+    return (value:gsub("[&\"'<>]", subst))
+  end
+end
+
 return
 {
   escape_string = escape_string;
   make_concatter = make_concatter;
   trim = trim;
+  htmlspecialchars = htmlspecialchars;
 }
