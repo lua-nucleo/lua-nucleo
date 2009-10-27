@@ -13,26 +13,22 @@ do
   end
 
   --named constants...
-  local const={
-    SEPARATOR = 1;
-    OPTIONAL_NEWLINE =2;
-    TERMINATING_SEPARATOR = 3;
-    TABLE_END = 4;
-    TABLE_BEGIN_LINE = 5;
-    TABLE_BEGIN_MULTILINE = 6;
-    MODE_LINE = 7;
-    MODE_MULTILINE = 8;
-  }
-  local subst =
-  {
-    [const.MODE_LINE] = {", ", "", "", " = "};--linear mode separators
-    [const.MODE_MULTILINE] = {";\n", "\n", ";\n", " =\n"};--multiline mode separators
-  }
+  local SEPARATOR = 1;
+  local OPTIONAL_NEWLINE =2;
+  local TERMINATING_SEPARATOR = 3;
+  local TABLE_END = 4;
+  local TABLE_BEGIN_LINE = 5;
+  local TABLE_BEGIN_MULTILINE = 6;
+  local MODE_LINE = 7;
+  local MODE_MULTILINE = 8;
 
-
+  local subst_multiline = {";\n", "\n", ";\n", " =\n"}
+  local subst_line = {", ", "", "", " = "}
 
   local level = 0
-  local septable = {}
+  local positions = {}
+  local levels = {}
+  local types = {}
   local father_table_pos = -1
   local prev_table_pos = -1
   local prev_table_len = 0
@@ -47,31 +43,35 @@ do
 
   local separator = function(self)
     local pos = #self.buffer + 1
-    self.buffer[pos] = subst[const.MODE_LINE][const.SEPARATOR]
-    septable[#septable + 1] = {pos, level, const.SEPARATOR}
+    self.buffer[pos] = subst_line[SEPARATOR]
+    local num = #positions + 1
+    positions[num], levels[num], types[num] = pos, level, SEPARATOR
   end
 
   local optional_nl = function(self)
     local pos = #self.buffer + 1
-    self.buffer[pos] = subst[const.MODE_LINE][const.OPTIONAL_NEWLINE]
-    septable[#septable + 1] = {pos, level, const.OPTIONAL_NEWLINE}
+    self.buffer[pos] = subst_line[OPTIONAL_NEWLINE]
+    local num = #positions + 1
+    positions[num], levels[num], types[num] = pos, level, OPTIONAL_NEWLINE
   end
 
   local terminating_sep = function(self)
     local pos = #self.buffer + 1
-    self.buffer[pos] = subst[const.MODE_LINE][const.TERMINATING_SEPARATOR]
-    septable[#septable + 1] = {pos, level, const.TERMINATING_SEPARATOR}
+    self.buffer[pos] = subst_line[TERMINATING_SEPARATOR]
+    local num = #positions + 1
+    positions[num], levels[num], types[num] = pos, level, TERMINATING_SEPARATOR
   end
 
   local table_start = function(self)
     self:increase_indent()
     local pos = #self.buffer + 1
     self.buffer[pos] = "{"
-    septable[#septable + 1] = {pos, level, const.TABLE_BEGIN_LINE}
+    local num = #positions + 1
+    positions[num], levels[num], types[num] = pos, level, TABLE_BEGIN_LINE
     if father_table_pos > 0 then
-      septable[father_table_pos][3] = const.TABLE_BEGIN_MULTILINE
+      types[father_table_pos] = TABLE_BEGIN_MULTILINE
     end
-    father_table_pos = #septable
+    father_table_pos = #types
     prev_table_pos = father_table_pos
     prev_table_len = 0
     self:optional_nl()
@@ -82,14 +82,15 @@ do
     self:terminating_sep()
     local pos = #self.buffer + 1
     self.buffer[pos] = "}"
-    if father_table_pos > 0 and septable[father_table_pos][3] == const.TABLE_BEGIN_LINE then
-      prev_table_len = countlen(self.buffer,septable[father_table_pos][1],pos)
+    if father_table_pos > 0 and types[father_table_pos] == TABLE_BEGIN_LINE then
+      prev_table_len = countlen(self.buffer,positions[father_table_pos],pos)
       local len = prev_table_len + level*string.len(self.indent)
       if len > self.cols then
-        septable[father_table_pos][3] = const.TABLE_BEGIN_MULTILINE
+        types[father_table_pos] = TABLE_BEGIN_MULTILINE
       end
     end
-    septable[#septable + 1] = {pos, level, const.TABLE_END}
+    local num = #positions + 1
+    positions[num], levels[num], types[num] = pos, level, TABLE_END
     father_table_pos = -1
   end
 
@@ -103,7 +104,7 @@ do
     if prev_table_pos == -1 then
       len = #(self.buffer[pos - 1]);
     else
-      if septable[prev_table_pos][3] == const.TABLE_BEGIN_LINE then
+      if types[prev_table_pos] == TABLE_BEGIN_LINE then
         len = prev_table_len
       end
     end
@@ -117,17 +118,17 @@ do
   end
 
   local finished = function(self)
-    local mode = const.MODE_LINE
-    for i = 1, #septable do
-      local pos, level, stype = septable[i][1], septable[i][2], septable[i][3]
-      if stype == const.TABLE_BEGIN_LINE then
-        mode = const.MODE_LINE;
-      elseif stype == const.TABLE_BEGIN_MULTILINE then
-        mode = const.MODE_MULTILINE;
-      elseif stype == const.TABLE_END then
-        mode = const.MODE_MULTILINE;
-      elseif mode == const.MODE_MULTILINE then
-        self.buffer[pos] = subst[mode][stype]..string.rep(self.indent, level)
+    local mode = MODE_LINE
+    for i = 1, #positions do
+      local pos, level, stype = positions[i], levels[i], types[i]
+      if stype == TABLE_BEGIN_LINE then
+        mode = MODE_LINE;
+      elseif stype == TABLE_BEGIN_MULTILINE then
+        mode = MODE_MULTILINE;
+      elseif stype == TABLE_END then
+        mode = MODE_MULTILINE;
+      elseif mode == MODE_MULTILINE then
+        self.buffer[pos] = subst_multiline[stype]..string.rep(self.indent, level)
       end
     end
   end
