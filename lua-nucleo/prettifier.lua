@@ -118,6 +118,16 @@ do
   end
 
   local finished = function(self)
+    local mt = {
+      __index = function(t, k)
+        local v = string.rep(t.indent, k)
+        t[k] = v
+        return v
+      end
+    }
+    local indent_cache = setmetatable(
+      { indent = self.indent }, mt
+    )
     local mode = MODE_LINE
     for i = 1, #positions do
       local pos, level, stype = positions[i], levels[i], types[i]
@@ -128,7 +138,7 @@ do
       elseif stype == TABLE_END then
         mode = MODE_MULTILINE;
       elseif mode == MODE_MULTILINE then
-        self.buffer[pos] = subst_multiline[stype]..string.rep(self.indent, level)
+        self.buffer[pos] = subst_multiline[stype]..indent_cache[level]
       end
     end
   end
