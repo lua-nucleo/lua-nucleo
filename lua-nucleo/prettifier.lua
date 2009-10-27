@@ -33,6 +33,7 @@ do
 
   local level = 0
   local septable = {}
+  local father_table_pos = -1
   local prev_table_pos = -1
   local prev_table_len = 0
 
@@ -67,10 +68,12 @@ do
     local pos = #self.buffer + 1
     self.buffer[pos] = "{"
     septable[#septable + 1] = {pos, level, const.TABLE_BEGIN_LINE}
-    if prev_table_pos > 0 then
-      septable[prev_table_pos][3] = const.TABLE_BEGIN_MULTILINE
+    if father_table_pos > 0 then
+      septable[father_table_pos][3] = const.TABLE_BEGIN_MULTILINE
     end
-    prev_table_pos = #septable
+    father_table_pos = #septable
+    prev_table_pos = father_table_pos
+    prev_table_len = 0
     self:optional_nl()
   end
 
@@ -79,28 +82,33 @@ do
     self:terminating_sep()
     local pos = #self.buffer + 1
     self.buffer[pos] = "}"
-    if prev_table_pos > 0 and septable[prev_table_pos][3] == const.TABLE_BEGIN_LINE then
-      local len = countlen(self.buffer,septable[prev_table_pos][1],pos)
-      prev_table_len = len + level*string.len(self.indent)
-      if prev_table_len > self.cols then
-        septable[prev_table_pos][3] = const.TABLE_BEGIN_MULTILINE
-        prev_table_len = 0
+    if father_table_pos > 0 and septable[father_table_pos][3] == const.TABLE_BEGIN_LINE then
+      prev_table_len = countlen(self.buffer,septable[father_table_pos][1],pos)
+      local len = prev_table_len + level*string.len(self.indent)
+      if len > self.cols then
+        septable[father_table_pos][3] = const.TABLE_BEGIN_MULTILINE
       end
-    else
-      prev_table_len = 0
     end
     septable[#septable + 1] = {pos, level, const.TABLE_END}
-    prev_table_pos = -1
+    father_table_pos = -1
   end
 
   local key_start = function(self)
-    prev_table_len = 0
+    prev_table_pos = -1
   end
 
   local value_start = function(self)
     local pos = #self.buffer + 1
+    local len = 1
+    if prev_table_pos == -1 then
+      len = #(self.buffer[pos - 1]);
+    else
+      if septable[prev_table_pos][3] == const.TABLE_BEGIN_LINE then
+        len = prev_table_len
+      end
+    end
     self.buffer[pos] = " = "
-    if prev_table_len + 5 > self.cols then
+    if len + level*string.len(self.indent) >  self.cols then
       self:optional_nl()
     end
   end
