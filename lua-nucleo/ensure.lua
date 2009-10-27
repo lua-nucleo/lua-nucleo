@@ -86,8 +86,26 @@ end
 -- TODO: ?! Improve and generalize!
 local strdiff_msg
 do
+  -- TODO: Generalize?
+  local string_window = function(str, pos, window_radius)
+    return str:sub(
+        math.max(1, pos - window_radius),
+        math.min(pos + window_radius, #str)
+      )
+  end
+
+  -- TODO: Uncomment and move to proper tests
+--[=[
+  assert(string_window("abCde", 3, 0) == [[C]])
+  assert(string_window("abCde", 3, 1) == [[bCd]])
+  assert(string_window("abCde", 3, 2) == [[abCde]])
+  assert(string_window("abCde", 3, 3) == [[abCde]])
+--]=]
+
   local nl_byte = ("\n"):byte()
-  strdiff_msg = function(actual, expected)
+  strdiff_msg = function(actual, expected, window_radius)
+    window_radius = window_radius or 10
+
     local result = false
 
     --print(("%q"):format(expected))
@@ -104,8 +122,11 @@ do
         local ab, eb = expected:byte(i), actual:byte(i)
         --print(string_char(eb), string_char(ab))
         if ab ~= eb then
-          result = "different at byte " .. i .. " (line " .. lineno .. ", offset " .. lineb .. "): `"
-                .. string_char(eb) .. "' vs. `" .. string_char(ab) .. "'"
+          -- TODO: Do not want to have \n-s here. Too low level?!
+          result = "different at byte " .. i .. " (line " .. lineno .. ", offset " .. lineb .. "):\n`"
+                .. string_window(expected, i, window_radius)
+                .. "'\n  vs. \n`"
+                .. string_window(actual, i, window_radius)  .. "'"
           break
         end
         if eb == nl_byte then
