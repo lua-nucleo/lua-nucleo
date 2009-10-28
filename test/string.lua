@@ -16,25 +16,29 @@ local arguments
 
 local ensure,
       ensure_equals,
-      ensure_strequals
+      ensure_strequals,
+      ensure_tequals
       = import 'lua-nucleo/ensure.lua'
       {
         'ensure',
         'ensure_equals',
-        'ensure_strequals'
+        'ensure_strequals',
+        'ensure_tequals'
       }
 
 local make_concatter,
       trim,
       escape_string,
       htmlspecialchars,
+      fill_placeholders,
       string_exports
       = import 'lua-nucleo/string.lua'
       {
         'make_concatter',
         'trim',
         'escape_string',
-        'htmlspecialchars'
+        'htmlspecialchars',
+        'fill_placeholders'
       }
 
 --------------------------------------------------------------------------------
@@ -97,8 +101,7 @@ end)
 
 test:tests_for "escape_string"
 
-test "escape_string-minimal"(
-function ()
+test "escape_string-minimal" (function ()
   ensure_equals("Equal strings",escape_string("simple str without wrong chars"),"simple str without wrong chars")
   ensure_equals("escaped str",escape_string(string.char(0)..string.char(1)),"%00%01")
 end)
@@ -107,8 +110,7 @@ end)
 
 test:tests_for "htmlspecialchars"
 
-test "htmlspecialchars-minimal"(
-function ()
+test "htmlspecialchars-minimal" (function ()
   -- Uses texts from PHP 5.3.0 htmlspecialchars tests
 
   local buf = {} -- We need special cat, not using make_concatter
@@ -140,5 +142,30 @@ string(46) "A &apos;quote&apos; is &lt;b&gt;bold&lt;/b&gt;"
   ensure_strequals("escaped", table.concat(buf), expected)
 end)
 
+--------------------------------------------------------------------------------
+
+test:test_for "fill_placeholders" (function ()
+  ensure_strequals("both empty", fill_placeholders("", {}), "")
+  ensure_strequals("empty dict", fill_placeholders("test", {}), "test")
+  ensure_strequals("empty str", fill_placeholders("", { a = 42 }), "")
+  ensure_strequals("missing key", fill_placeholders("$(b)", { a = 42 }), "$(b)")
+
+  ensure_strequals("bad format", fill_placeholders("$a", { a = 42 }), "$a")
+  ensure_strequals("missing right brace", fill_placeholders("$a)", { a = 42 }), "$a)")
+  ensure_strequals("missing left brace", fill_placeholders("$(a", { a = 42 }), "$(a")
+
+  ensure_strequals("ok", fill_placeholders("a = `$(a)'", { a = 42 }), "a = `42'")
+  ensure_tequals("no extra data", { fill_placeholders("a = `$(a)'", { a = 42 }) }, { "a = `42'" })
+
+  ensure_strequals("extra key", fill_placeholders("a = `$(a)'", { a = 42, b = 43 }), "a = `42'")
+  ensure_strequals("two keys", fill_placeholders("`$(key)' = `$(value)'", { key = "a", value = 42 }), "`a' = `42'")
+
+  ensure_strequals("empty string key", fill_placeholders("`$()'", { [""] = 42 }), "`42'")
+
+  ensure_strequals("extra braces", fill_placeholders("$(a `$(a)')", { a = 42 }), "$(a `$(a)')")
+  ensure_strequals("extra right brace", fill_placeholders("`$(a)')", { a = 42 }), "`42')")
+end)
+
+--------------------------------------------------------------------------------
 
 assert(test:run())

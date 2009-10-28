@@ -54,10 +54,15 @@ do
   end
 end
 
+local fill_placeholders = function(str, dict)
+  return (str:gsub("%$%((.-)%)", dict))
+end
+
 return
 {
   escape_string = escape_string;
   make_concatter = make_concatter;
   trim = trim;
   htmlspecialchars = htmlspecialchars;
+  fill_placeholders = fill_placeholders;
 }
