@@ -123,10 +123,11 @@ do
         --print(string_char(eb), string_char(ab))
         if ab ~= eb then
           -- TODO: Do not want to have \n-s here. Too low level?!
-          result = "different at byte " .. i .. " (line " .. lineno .. ", offset " .. lineb .. "):\n\n|"
+          result = "different at byte " .. i .. " (line " .. lineno .. ", offset " .. lineb .. "):\n\n  expected   |"
                 .. string_window(expected, i, window_radius)
-                .. "|     vs. \n|"
-                .. string_window(actual, i, window_radius)  .. "|\n\n"
+                .. "|\nvs. actual   |"
+                .. string_window(actual, i, window_radius)
+                .. "|\n\n"
           break
         end
         if eb == nl_byte then
@@ -135,9 +136,9 @@ do
       end
 
       if nactual > nexpected then
-        result = (result or "different:") .. " actual has " .. (nactual - nexpected) .. " extra characters"
+        result = (result or "different: ") .. "actual has " .. (nactual - nexpected) .. " extra characters"
       elseif nactual < nexpected then
-        result = (result or "different:") .. " expected has " .. (nexpected - nactual) .. " extra characters"
+        result = (result or "different:" ) .. "expected has " .. (nexpected - nactual) .. " extra characters"
       end
     end
 
