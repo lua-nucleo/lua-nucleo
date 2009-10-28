@@ -164,7 +164,7 @@ local ensure_fails_with_substring = function(msg, fn, substring)
   local res, err = pcall(fn)
 
   if res ~= false then
-    error("ensure_fails_with_substring failed: " .. msg .. ": call not failed as expected")
+    error("ensure_fails_with_substring failed: " .. msg .. ": call was expected to fail, but did not")
   end
 
   if type(err) ~= "string" then
