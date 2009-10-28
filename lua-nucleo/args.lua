@@ -34,18 +34,34 @@ do
     end
 
     -- If have at least one more type, check it
-    return ((...) ~= nil) and impl(arg_n + 1, ...)
+    return ((...) ~= nil) and impl(arg_n + 1, ...) or true
   end
 
   arguments = function(...)
-    return ((...) ~= nil) and impl(1, ...)
+    local nargs = select('#', ...)
+    return (nargs > 0)
+       and (
+         (nargs % 2 == 0)
+           and impl(1, ...)
+            or error("arguments: bad call, dangling argument detected")
+       )
+       or true
   end
 
   method_arguments = function(self, ...)
     -- Points error on function, calling function which calls method_arguments()
+    local nargs = select('#', ...)
     return (type(self) ~= "table")
        and error("bad self (got `"..type(self).."'); use `:'", 3)
-        or (((...) ~= nil) and impl(1, ...))
+        or (
+            (nargs > 0)
+              and (
+                (nargs % 2 == 0)
+                  and impl(1, ...)
+                   or error("method_arguments: bad call, dangling argument detected")
+              )
+              or true
+          )
   end
 end
 

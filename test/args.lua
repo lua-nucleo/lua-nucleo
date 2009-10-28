@@ -80,11 +80,14 @@ local run_arguments_tests = function(arguments, check_arguments, check_arguments
   local self = {} -- Note only good self is tested
 
        check_arguments(arguments, "empty", self)
-  check_arguments_fail(arguments, "bad type", "argument #1: bad expected type `garbage'", self, "garbage")
-  check_arguments_fail(arguments, "bad type: false", "argument #1: bad expected type `false'", self, false)
+  check_arguments_fail(arguments, "bad type dangling", "arguments: bad call, dangling argument detected", self, "garbage")
+  check_arguments_fail(arguments, "bad type", "argument #1: bad expected type `garbage'", self, "garbage", nil)
+  check_arguments_fail(arguments, "bad type: false dangling", "arguments: bad call, dangling argument detected", self, false)
+  check_arguments_fail(arguments, "bad type: false", "argument #1: bad expected type `false'", self, false, nil)
   check_arguments_fail(arguments, "bad type with value", "argument #1: bad expected type `garbage'", self, "garbage", "value")
        check_arguments(arguments, "nil", self, "nil", nil)
-  check_arguments_fail(arguments, "bad type tail", "argument #2: bad expected type `tail garbage'", self, "nil", nil, "tail garbage")
+  check_arguments_fail(arguments, "bad type tail dangling", "arguments: bad call, dangling argument detected", self, "nil", nil, "tail garbage")
+  check_arguments_fail(arguments, "bad type tail", "argument #2: bad expected type `tail garbage'", self, "nil", nil, "tail garbage", nil)
        check_arguments(arguments, "boolean", self, "boolean", false)
        check_arguments(arguments, "many args", self, "boolean", false, "nil", nil, "number", 42)
   check_arguments_fail(arguments, "bad in the middle", "argument #2: expected `nil', got `number'", self, "boolean", false, "nil", 42, "number", 42)
@@ -105,6 +108,10 @@ local run_arguments_tests = function(arguments, check_arguments, check_arguments
     check_arguments_fail(arguments, "bad function", "argument #1: expected `number', got `function'", self, "number", fn)
     ensure_equals("function as bad argument should be not called", called, false)
   end
+
+  check_arguments_fail(arguments, "first extra nil", "arguments: bad call, dangling argument detected", self, nil)
+  check_arguments_fail(arguments, "second extra nil", "arguments: bad call, dangling argument detected", self, "number", 42, nil)
+  check_arguments_fail(arguments, "nil, second extra nil", "arguments: bad call, dangling argument detected", self, "nil", nil, nil)
 end
 
 test:test_for "arguments" (function()
