@@ -54,6 +54,7 @@ local ensure_tequals = function(msg, actual, expected)
 
   -- TODO: Employ tdiff() (when it would be written)
 
+  -- TODO: Use checker to get info on all bad keys!
   for k, expected_v in pairs(expected) do
     local actual_v = actual[k]
     if actual_v ~= expected_v then
