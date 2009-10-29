@@ -16,10 +16,11 @@ local pack = function(...)
   return select("#", ...), { ... }
 end
 
-local arguments, method_arguments
+local arguments, optional_arguments, method_arguments
 do
-  local function impl(arg_n, expected_type, value, ...)
+  local function impl(is_optional, arg_n, expected_type, value, ...)
     -- Points error on function, calling function which calls *arguments()
+
     if type(value) ~= expected_type then
       if not lua51_types[expected_type] then
         error(
@@ -27,14 +28,19 @@ do
             3 + arg_n
           )
       end
-      error(
-          "argument #"..arg_n..": expected `"..tostring(expected_type).."', got `"..type(value).."'",
-          3 + arg_n
-        )
+
+      if not is_optional or value ~= nil then
+        error(
+            (is_optional and "optional" or "")
+         .. "argument #"..arg_n..": expected `"..tostring(expected_type)
+         .. "', got `"..type(value).."'",
+            3 + arg_n
+          )
+      end
     end
 
     -- If have at least one more type, check it
-    return ((...) ~= nil) and impl(arg_n + 1, ...) or true
+    return ((...) ~= nil) and impl(is_optional, arg_n + 1, ...) or true
   end
 
   arguments = function(...)
@@ -42,7 +48,18 @@ do
     return (nargs > 0)
        and (
          (nargs % 2 == 0)
-           and impl(1, ...)
+           and impl(false, 1, ...) -- Not optional
+            or error("arguments: bad call, dangling argument detected")
+       )
+       or true
+  end
+
+  optional_arguments = function(...)
+    local nargs = select('#', ...)
+    return (nargs > 0)
+       and (
+         (nargs % 2 == 0)
+           and impl(true, 1, ...) -- Optional
             or error("arguments: bad call, dangling argument detected")
        )
        or true
@@ -57,7 +74,7 @@ do
             (nargs > 0)
               and (
                 (nargs % 2 == 0)
-                  and impl(1, ...)
+                  and impl(false, 1, ...) -- Not optional
                    or error("method_arguments: bad call, dangling argument detected")
               )
               or true
@@ -71,5 +88,6 @@ return
   nargs = nargs;
   --
   arguments = arguments;
+  optional_arguments = optional_arguments;
   method_arguments = method_arguments;
 }
