@@ -8,6 +8,8 @@ local error, tostring, pcall, type =
 local math_min = math.min
 local string_char = string.char
 
+local tdeepequals, tstr = import 'lua-nucleo/table.lua' { 'tdeepequals', 'tstr' }
+
 -- TODO: Write tests for this one
 local ensure = function(msg, value, ...)
   return value
@@ -82,6 +84,19 @@ local ensure_tequals = function(msg, actual, expected)
   end
 
   return actual
+end
+
+local ensure_tdeepequals = function(msg, actual, expected)
+  -- Heavy! Use ensure_tequals if possible
+  if not tdeepequals(actual, expected) then
+    -- TODO: Bad! Improve error reporting (use tdiff)
+    error(
+        "ensure_tdeepequals failed: " .. msg .. ":"
+        .. "\n  actual: " .. tstr(actual)
+        .. "\nexpected: " .. tstr(expected),
+        2
+      )
+  end
 end
 
 -- TODO: ?! Improve and generalize!
@@ -186,6 +201,7 @@ return
   ensure = ensure;
   ensure_equals = ensure_equals;
   ensure_tequals = ensure_tequals;
+  ensure_tdeepequals = ensure_tdeepequals;
   ensure_strequals = ensure_strequals;
   ensure_fails_with_substring = ensure_fails_with_substring;
 }
