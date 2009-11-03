@@ -110,7 +110,7 @@ do
       )
   end
 
-  -- TODO: Uncomment and move to proper tests
+-- TODO: Uncomment and move to proper tests
 --[=[
   assert(string_window("abCde", 3, 0) == [[C]])
   assert(string_window("abCde", 3, 1) == [[bCd]])
@@ -175,6 +175,33 @@ local ensure_strequals = function(msg, actual, expected, ...)
     )
 end
 
+local ensure_error = function(msg, expected_message, res, actual_message, ...)
+  if res ~= nil then
+    error(
+        "ensure_error failed: " .. msg .. ": failure expected, got non-nil result: `" .. tostring(res) .. "'",
+        2
+      )
+  end
+
+  -- TODO: Improve error reporting
+  ensure_strequals(msg, actual_message, expected_message)
+
+  if select("#", ...) ~= 0 then
+    error(
+        "ensure_error failed: " .. msg .. ": got extra arguments",
+        2
+      )
+  end
+end
+
+-- TODO: Uncomment and move to proper tests
+--[[
+ensure_error("ok", "a", nil, "a")
+ensure_error("bad1", "a", nil, "a", nil)
+ensure_error("bad2", "a", nil, "b")
+ensure_error("bad3", "a", true, "a")
+--]]
+
 -- TODO: Write tests for this one
 local ensure_fails_with_substring = function(msg, fn, substring)
   local res, err = pcall(fn)
@@ -203,5 +230,6 @@ return
   ensure_tequals = ensure_tequals;
   ensure_tdeepequals = ensure_tdeepequals;
   ensure_strequals = ensure_strequals;
+  ensure_error = ensure_error;
   ensure_fails_with_substring = ensure_fails_with_substring;
 }
