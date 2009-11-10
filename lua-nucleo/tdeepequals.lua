@@ -30,7 +30,7 @@ do
   ------------------------------------------------------------
 
   --1.make a duplicate(copy) of a table
-  local  table_dup = function(t)
+  local table_dup = function(t)
     assert(type(t) == "table")
     local td = {}
     for k,v in pairs(t) do
@@ -207,7 +207,7 @@ do
             end
             i = i + 1
           end
-          m = more(#tkeys1 - i,#tkeys2 - i)
+          m = more(#tkeys1 - i, #tkeys2 - i)
           if m ~= 0 then
             return m
           end
@@ -227,8 +227,13 @@ do
   end
 end
 
+local tless = function(lhs, rhs)
+  return tmore(lhs, rhs) < 0
+end
+
 return
 {
   tdeepequals = tdeepequals;
   tmore = tmore;
+  tless = tless;
 }
