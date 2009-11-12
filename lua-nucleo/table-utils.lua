@@ -223,6 +223,32 @@ do
   end
 end
 
+local tclone
+do
+  local function impl(t, visited)
+    local t_type = type(t)
+    if t_type ~= "table" then
+      return t
+    end
+
+    assert(not visited[t], "recursion detected")
+    visited[t] = true
+
+    local r = { }
+    for k, v in pairs(t) do
+      r[impl(k, visited)] = impl(v, visited)
+    end
+
+    visited[t] = nil
+
+    return r
+  end
+
+  tclone = function(t)
+    return impl(t, { })
+  end
+end
+
 return
 {
   empty_table = empty_table;
@@ -246,4 +272,5 @@ return
   taccumulate = taccumulate;
   tnormalize = tnormalize;
   tnormalize_inplace = tnormalize_inplace;
+  tclone = tclone;
 }

@@ -11,13 +11,27 @@ assert(type(make_suite) == "function")
 local ensure,
       ensure_equals,
       ensure_tequals,
+      ensure_tdeepequals,
       ensure_fails_with_substring
       = import 'lua-nucleo/ensure.lua'
       {
         'ensure',
         'ensure_equals',
         'ensure_tequals',
+        'ensure_tdeepequals',
         'ensure_fails_with_substring'
+      }
+
+local assert_is_table
+      = import 'lua-nucleo/typeassert.lua'
+      {
+        'assert_is_table'
+      }
+
+local arguments
+      = import 'lua-nucleo/args.lua'
+      {
+        'arguments'
       }
 
 local empty_table,
@@ -41,6 +55,7 @@ local empty_table,
       taccumulate,
       tnormalize,
       tnormalize_inplace,
+      tclone,
       table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -64,7 +79,8 @@ local empty_table,
         'tgenerate_n',
         'taccumulate',
         'tnormalize',
-        'tnormalize_inplace'
+        'tnormalize_inplace',
+        'tclone'
       }
 
 --------------------------------------------------------------------------------
@@ -1272,6 +1288,76 @@ test "tnormalize_inplace-mixed" (function()
 
   ensure_tequals("empty sum", result_sum, expected_sum)
   ensure("inplace sum", data_sum == result_sum)
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tclone"
+
+--------------------------------------------------------------------------------
+
+test "tclone-nontable" (function()
+  ensure_equals("noarg", tclone(), nil) -- Arbitrary limitation. This allowed to fail if is implemented in C.
+  ensure_equals("nil", tclone(nil), nil)
+  ensure_equals("boolean-false", tclone(false), false)
+  ensure_equals("boolean-true", tclone(true), true)
+  ensure_equals("number", tclone(42), 42)
+  ensure_equals("string", tclone("a"), "a")
+
+  local f = function() end
+  ensure_equals("function", tclone(f), f)
+
+  local c = coroutine.create(function() end)
+  ensure_equals("function", tclone(c), c)
+
+  local u = newproxy()
+  ensure_equals("function", tclone(u), u)
+end)
+
+do
+  local check_tclone = function(name, value, expected)
+    expected = expected or value
+
+    arguments(
+        "string", name,
+        "table", value,
+        "table", expected
+      )
+
+    local actual = tclone(value)
+
+    ensure("actual is a copy", actual ~= value)
+    ensure_tdeepequals("actual contents match original", actual, expected)
+
+    return actual
+  end
+
+  test "tclone-simple" (function()
+    check_tclone("empty table", {})
+    check_tclone("simple table", { 42, a = 1 })
+    check_tclone("subtables", { [{ 1 }] = { 2 } })
+  end)
+
+  test "tclone-links-broken" (function()
+    local t = { }
+
+    local actual = check_tclone("subtables", { t, t }, { { }, { } })
+
+    ensure("subtable copied", actual[1] ~= t and actual[2] ~= t)
+    ensure("subtable links broken", actual[1] ~= actual[2]) -- Equality is checked above
+  end)
+end
+
+test "tclone-nesting-fails" (function()
+  local t = { }
+  t[t] = t
+  t[1] = t
+
+  ensure_fails_with_substring(
+      "recursion fails",
+      function() tclone(t) end,
+      "recursion detected"
+    )
 end)
 
 --------------------------------------------------------------------------------
