@@ -17,10 +17,22 @@ local create_table = function(...)
   return { ... }
 end
 
+local make_generator_mt = function(fn)
+  return
+  {
+    __index = function(t, k)
+      local v = fn(k)
+      t[k] = v
+      return v
+    end;
+  }
+end
+
 return
 {
   do_nothing = do_nothing;
   identity = identity;
   invariant = invariant;
   create_table = create_table;
+  make_generator_mt = make_generator_mt;
 }

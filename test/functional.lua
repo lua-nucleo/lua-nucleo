@@ -20,13 +20,15 @@ local do_nothing,
       identity,
       invariant,
       create_table,
+      make_generator_mt,
       functional_exports =
       import 'lua-nucleo/functional.lua'
       {
         'do_nothing',
         'identity',
         'invariant',
-        'create_table'
+        'create_table',
+        'make_generator_mt'
       }
 
 --------------------------------------------------------------------------------
@@ -129,6 +131,61 @@ test:test_for "create_table" (function()
       create_table(nil, 1, nil, "a", nil),
       { nil, 1, nil, "a", nil }
     )
+end)
+
+--------------------------------------------------------------------------------
+
+test:tests_for "make_generator_mt"
+
+--------------------------------------------------------------------------------
+
+test "make_generator_mt-nil" (function()
+  local num_calls = 0
+
+  local mt = make_generator_mt(
+      function(k)
+        num_calls = num_calls + 1
+        return nil
+      end
+    )
+
+  local t = setmetatable({ }, mt)
+
+  ensure_equals("no calls", num_calls, 0)
+  ensure_equals("get 42", t[42], nil)
+  ensure_equals("one call", num_calls, 1)
+  ensure_equals("get A", t["A"], nil)
+  ensure_equals("two calls", num_calls, 2)
+  ensure_equals("get 42 again", t[42], nil)
+  ensure_equals("nill not cached", num_calls, 3)
+end)
+
+test "make_generator_mt-echo" (function()
+  local num_calls = 0
+
+  local mt = make_generator_mt(
+      function(k)
+        num_calls = num_calls + 1
+        return k
+      end
+    )
+
+  local t = setmetatable({ ["A"] = "B" }, mt)
+
+  ensure_equals("no calls", num_calls, 0)
+  ensure_equals("get 42", t[42], 42)
+  ensure_equals("one call", num_calls, 1)
+  ensure_equals("get 42 again", t[42], 42)
+  ensure_equals("value cached", num_calls, 1)
+
+  ensure_equals("predefined value", t["A"], "B")
+  ensure_equals("still one call", num_calls, 1)
+
+  local k = {}
+  ensure_equals("get {}", t[k], k)
+  ensure_equals("two calls", num_calls, 2)
+  ensure_equals("get {} again", t[k], k)
+  ensure_equals("still two calls", num_calls, 2)
 end)
 
 --------------------------------------------------------------------------------
