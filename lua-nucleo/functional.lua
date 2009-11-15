@@ -28,6 +28,12 @@ local make_generator_mt = function(fn)
   }
 end
 
+local arguments_ignorer = function(fn)
+  return function()
+    return fn()
+  end
+end
+
 return
 {
   do_nothing = do_nothing;
@@ -35,4 +41,5 @@ return
   invariant = invariant;
   create_table = create_table;
   make_generator_mt = make_generator_mt;
+  arguments_ignorer = arguments_ignorer;
 }

@@ -21,6 +21,7 @@ local do_nothing,
       invariant,
       create_table,
       make_generator_mt,
+      arguments_ignorer,
       functional_exports =
       import 'lua-nucleo/functional.lua'
       {
@@ -28,7 +29,8 @@ local do_nothing,
         'identity',
         'invariant',
         'create_table',
-        'make_generator_mt'
+        'make_generator_mt',
+        'arguments_ignorer'
       }
 
 --------------------------------------------------------------------------------
@@ -186,6 +188,17 @@ test "make_generator_mt-echo" (function()
   ensure_equals("two calls", num_calls, 2)
   ensure_equals("get {} again", t[k], k)
   ensure_equals("still two calls", num_calls, 2)
+end)
+
+--------------------------------------------------------------------------------
+
+test:test_for "arguments_ignorer" (function()
+  local fn = function(...)
+    ensure_equals("no args", select("#", ...), 0)
+    return 1, nil, 2
+  end
+
+  ensure_tequals("check", { arguments_ignorer(fn)(3, nil, 4) }, { 1, nil, 2 })
 end)
 
 --------------------------------------------------------------------------------
