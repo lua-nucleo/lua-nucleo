@@ -8,23 +8,30 @@ dofile('lua-nucleo/import.lua')
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
-local ensure_equals = import 'lua-nucleo/ensure.lua' { 'ensure_equals' }
-local tdeepequals = import 'lua-nucleo/tdeepequals.lua' { 'tdeepequals' }
+local ensure_equals,
+      ensure_tequals
+      = import 'lua-nucleo/ensure.lua'
+      {
+        'ensure_equals',
+        'ensure_tequals'
+      }
 
 local do_nothing,
       identity,
       invariant,
-      functional =
+      create_table,
+      functional_exports =
       import 'lua-nucleo/functional.lua'
       {
         'do_nothing',
         'identity',
-        'invariant'
+        'invariant',
+        'create_table'
       }
 
 --------------------------------------------------------------------------------
 
-local test = make_suite("functional", functional)
+local test = make_suite("functional", functional_exports)
 
 --------------------------------------------------------------------------------
 
@@ -109,6 +116,19 @@ test:test_for "invariant" (function()
         data[i]
       )
   end
+end)
+
+--------------------------------------------------------------------------------
+
+test:test_for "create_table" (function()
+  ensure_tequals("empty", create_table(), { })
+  ensure_tequals("nil", create_table(nil), { })
+  ensure_tequals("normal", create_table(1, "a"), { 1, "a" })
+  ensure_tequals(
+      "hole",
+      create_table(nil, 1, nil, "a", nil),
+      { nil, 1, nil, "a", nil }
+    )
 end)
 
 --------------------------------------------------------------------------------

@@ -13,9 +13,14 @@ local invariant = function(v)
   end
 end
 
+local create_table = function(...)
+  return { ... }
+end
+
 return
 {
   do_nothing = do_nothing;
   identity = identity;
   invariant = invariant;
+  create_table = create_table;
 }
