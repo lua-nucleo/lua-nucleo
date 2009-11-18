@@ -31,6 +31,8 @@ local make_concatter,
       escape_string,
       htmlspecialchars,
       fill_placeholders,
+      cdata_wrap,
+      cdata_cat,
       string_exports
       = import 'lua-nucleo/string.lua'
       {
@@ -38,7 +40,9 @@ local make_concatter,
         'trim',
         'escape_string',
         'htmlspecialchars',
-        'fill_placeholders'
+        'fill_placeholders',
+        'cdata_wrap',
+        'cdata_cat'
       }
 
 --------------------------------------------------------------------------------
@@ -140,6 +144,32 @@ string(46) "A &apos;quote&apos; is &lt;b&gt;bold&lt;/b&gt;"
 ]]
 
   ensure_strequals("escaped", table.concat(buf), expected)
+end)
+
+--------------------------------------------------------------------------------
+
+test:tests_for 'cdata_wrap'
+               'cdata_cat'
+
+--------------------------------------------------------------------------------
+
+test "cdata_wrap-cdata_cat" (function ()
+  local check = function(value, expected)
+    do
+      local actual = cdata_wrap(value)
+      ensure_strequals("cdata_wrap", actual, expected)
+    end
+
+    do
+      local cat, concat = make_concatter()
+      cdata_cat(cat, value)
+      ensure_strequals("cdata_cat", concat(), expected)
+    end
+  end
+
+  check("", "<![CDATA[]]>")
+  check("embedded\0zero", "<![CDATA[embedded\0zero]]>")
+  check("<![CDATA[xxx]]>", "<![CDATA[<![CDATA[xxx]]]]><![CDATA[>]]>")
 end)
 
 --------------------------------------------------------------------------------

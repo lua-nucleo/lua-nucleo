@@ -58,6 +58,16 @@ local fill_placeholders = function(str, dict)
   return (str:gsub("%$%((.-)%)", dict))
 end
 
+local cdata_wrap = function(value)
+  -- "]]>" is escaped as ("]]" + "]]><![CDATA[" + ">")
+  return '<![CDATA[' .. value:gsub("]]>", ']]]]><![CDATA[>') .. ']]>'
+end
+
+local cdata_cat = function(cat, value)
+  -- "]]>" is escaped as ("]]" + "]]><![CDATA[" + ">")
+  cat '<![CDATA[' (value:gsub("]]>", ']]]]><![CDATA[>')) ']]>'
+end
+
 return
 {
   escape_string = escape_string;
@@ -65,4 +75,6 @@ return
   trim = trim;
   htmlspecialchars = htmlspecialchars;
   fill_placeholders = fill_placeholders;
+  cdata_wrap = cdata_wrap;
+  cdata_cat = cdata_cat;
 }
