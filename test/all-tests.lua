@@ -33,6 +33,7 @@ return
   'type';
   'typeassert';
   'checker';
+  'assert';
   --
   'util/anim/interpolator';
 }
