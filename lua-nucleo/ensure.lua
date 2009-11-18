@@ -8,7 +8,23 @@ local error, tostring, pcall, type =
 local math_min = math.min
 local string_char = string.char
 
-local tdeepequals, tstr = import 'lua-nucleo/table.lua' { 'tdeepequals', 'tstr' }
+local tdeepequals,
+      tstr,
+      taccumulate,
+      tnormalize
+      = import 'lua-nucleo/table.lua'
+      {
+        'tdeepequals',
+        'tstr',
+        'taccumulate',
+        'tnormalize'
+      }
+
+local assert_is_number
+      = import 'lua-nucleo/typeassert.lua'
+      {
+        'assert_is_number'
+      }
 
 -- TODO: Write tests for this one
 local ensure = function(msg, value, ...)
@@ -223,6 +239,39 @@ local ensure_fails_with_substring = function(msg, fn, substring)
   end
 end
 
+-- We want 99.9% probability of success
+-- Would not work for high-contrast weights. Use for tests only.
+local ensure_aposteriori_probability = function(num_runs, weights, stats, max_acceptable_diff)
+  ensure_equals("total sum check", taccumulate(stats), num_runs)
+
+  local apriori_probs = tnormalize(weights)
+  local aposteriori_probs = tnormalize(stats)
+
+  for k, apriori in pairs(apriori_probs) do
+    local aposteriori = assert_is_number(aposteriori_probs[k])
+
+    ensure("apriori must be positive", apriori > 0)
+    ensure("aposteriori must be non-negative", aposteriori >= 0)
+
+    -- TODO: Lame check. Improve it.
+    local diff = math.abs(apriori - aposteriori) / apriori
+    if diff > max_acceptable_diff then
+      error(
+          "inacceptable apriori-aposteriori difference key: `" .. tostring(k) .. "'"
+          .. " num_runs: " .. num_runs
+          .. " apriori: " .. apriori
+          .. " aposteriori: " .. aposteriori
+          .. " actual_diff: " .. diff
+          .. " max_diff: " .. max_acceptable_diff
+        )
+    end
+
+    aposteriori_probs[k] = nil -- To check there is no extra data below.
+  end
+
+  ensure_equals("no extra data", next(aposteriori_probs), nil)
+end
+
 return
 {
   ensure = ensure;
@@ -232,4 +281,5 @@ return
   ensure_strequals = ensure_strequals;
   ensure_error = ensure_error;
   ensure_fails_with_substring = ensure_fails_with_substring;
+  ensure_aposteriori_probability = ensure_aposteriori_probability;
 }

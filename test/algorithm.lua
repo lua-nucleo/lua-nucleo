@@ -19,11 +19,13 @@ local assert_is_table,
       }
 
 local ensure,
-      ensure_equals
+      ensure_equals,
+      ensure_aposteriori_probability
       = import 'lua-nucleo/ensure.lua'
       {
         'ensure',
-        'ensure_equals'
+        'ensure_equals',
+        'ensure_aposteriori_probability'
       }
 
 local invariant
@@ -55,12 +57,6 @@ local lower_bound,
         'lower_bound',
         'pick_init',
         'pick_one'
-      }
-
-local ensure_aposteriori_probability
-      = import 'test/lib/random.lua'
-      {
-        'ensure_aposteriori_probability'
       }
 
 --------------------------------------------------------------------------------
