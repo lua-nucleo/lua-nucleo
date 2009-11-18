@@ -163,7 +163,7 @@ test "pick-non-equal-weights" (function()
   ensure_aposteriori_probability(num_runs, probs, stats, HACK_ACCEPTABLE_DIFF)
 end)
 
-test "pick-non-equal-weights" (function()
+test "pick-non-equal-weights-generated" (function()
   local num_keys = 1e2
   local num_runs = 1e5
 
