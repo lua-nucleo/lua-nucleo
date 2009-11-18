@@ -46,6 +46,20 @@ local function tappend_many(t, s, ...)
   return t
 end
 
+local function tijoin_many(t, s, ...)
+  if s then
+    -- Note: can't use ipairs() since we want to support tijoin_many(t, t)
+    for i = 1, #s do
+      t[#t + 1] = s[i]
+    end
+
+    -- Recursion is usually faster than calling select()
+    return tijoin_many(t, ...)
+  end
+
+  return t
+end
+
 -- Keys are ordered in undetermined order
 local tkeys = function(t)
   local r = { }
@@ -254,6 +268,7 @@ return
   empty_table = empty_table;
   toverride_many = toverride_many;
   tappend_many = tappend_many;
+  tijoin_many = tijoin_many;
   tkeys = tkeys;
   tvalues = tvalues;
   tkeysvalues = tkeysvalues;

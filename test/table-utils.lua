@@ -37,6 +37,7 @@ local arguments
 local empty_table,
       toverride_many,
       tappend_many,
+      tijoin_many,
       tkeys,
       tvalues,
       tkeysvalues,
@@ -62,6 +63,7 @@ local empty_table,
         'empty_table',
         'toverride_many',
         'tappend_many',
+        'tijoin_many',
         'tkeys',
         'tvalues',
         'tkeysvalues',
@@ -322,6 +324,88 @@ test "tappend_many-many" (function()
       r,
       { [1] = 42, [2] = 1, ["a"] = k, [k] = false, ["z"] = 2.71 }
     )
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tijoin_many"
+
+--------------------------------------------------------------------------------
+
+test "tijoin_many-noargs-empty" (function()
+  ensure_tequals("noargs-empty", tijoin_many({ }), { })
+end)
+
+test "tijoin_many-noargs" (function()
+  ensure_tequals("noargs", tijoin_many({ 42 }), { 42 })
+end)
+
+test "tijoin_many-single" (function()
+  ensure_tequals("single", tijoin_many({ 3.14 }, { 42 } ), { 3.14, 42 })
+end)
+
+test "tijoin_many-empty-append" (function()
+  ensure_tequals("single", tijoin_many({ }, { 42 }), { 42 })
+end)
+
+test "tijoin_many-ignores-hash-part" (function()
+  ensure_tequals(
+      "single ignores hash part",
+      tijoin_many({ 2.71 }, { a = 42 }),
+      { 2.71 }
+    )
+end)
+
+test "tijoin_many-returns-first-argument" (function()
+  local t = { 2.71 }
+  local r = tijoin_many(t, { 42 })
+  ensure_tequals(
+      "single append",
+      r,
+      { 2.71, 42 }
+    )
+  ensure_equals("returned first argument", r, t)
+end)
+
+test "tijoin_many-double-append" (function()
+  ensure_tequals(
+      "double append",
+      tijoin_many({ 2.71 }, { 42 }, { true }),
+      { 2.71, 42, true }
+    )
+end)
+
+test "tijoin_many-hole" (function()
+  ensure_tequals(
+      "hole stops",
+      tijoin_many({ 2.71 }, { 42 }, nil, { 0 }),
+      { 2.71, 42 }
+    )
+end)
+
+test "tijoin_many-on-self" (function()
+  local t = { 3.14, 2.71 }
+  ensure_tequals(
+      "self-join duplicates",
+      tijoin_many(t, t, t),
+      { 3.14, 2.71, 3.14, 2.71, 3.14, 2.71, 3.14, 2.71 }
+    )
+end)
+
+test "tijoin_many-recursion" (function()
+  local t = { }
+  t[1] = t
+  ensure_tequals(
+      "recursion",
+      tijoin_many(t, { t }),
+      t
+    )
+
+  ensure_equals("old value is there", t[1], t)
+  ensure_equals("and new one appeared", t[2] , t)
+
+  t[1], t[2] = nil, nil
+  ensure_equals("no extra data", next(t), nil)
 end)
 
 --------------------------------------------------------------------------------
