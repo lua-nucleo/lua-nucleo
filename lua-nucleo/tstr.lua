@@ -8,7 +8,7 @@ local string_match, string_format = string.match, string.format
 
 local lua51_keywords = import 'lua-nucleo/language.lua' { 'lua51_keywords' }
 
-local tstr
+local tstr, tstr_cat
 do
   local function impl(t, cat, visited)
     local t_type = type(t)
@@ -89,6 +89,13 @@ do
   -- do not use this function for serialization.
   -- This function intentionally loses information on nested recursive tables
   -- and on non-serializable types like functions, threads and userdata.
+
+  -- TODO: Ensure this is tested.
+  -- TODO: WTF?! It should fail now with untested imports error.
+  tstr_cat = function(cat, t)
+    impl(t, cat, {})
+  end
+
   tstr = function(t)
     local buf = {}
     local cat = function(v) buf[#buf + 1] = v end
@@ -97,6 +104,7 @@ do
   end
 end
 
+-- TODO: WTF is this?! Do we need this?!
 local tstr_verbose
 do
   local function impl(t, cat, visited)
@@ -189,5 +197,6 @@ end
 return
 {
   tstr = tstr;
+  tstr_cat = tstr_cat;
   tstr_verbose = tstr_verbose;
 }
