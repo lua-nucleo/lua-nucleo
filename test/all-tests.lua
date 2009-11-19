@@ -34,6 +34,7 @@ return
   'typeassert';
   'checker';
   'assert';
+  'log';
   --
   'util/anim/interpolator';
 }
