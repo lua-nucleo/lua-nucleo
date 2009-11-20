@@ -224,7 +224,7 @@ do
   local COMMON_LOGGERS_INFO =
   {
     { suffix = " ", level = LOG_LEVEL.LOG   };
-    { suffix = "*", level = LOG_LEVEL.DBG   };
+    { suffix = "*", level = LOG_LEVEL.DEBUG };
     { suffix = "#", level = LOG_LEVEL.SPAM  };
     { suffix = "!", level = LOG_LEVEL.ERROR };
   }
