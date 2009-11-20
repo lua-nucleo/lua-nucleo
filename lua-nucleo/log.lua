@@ -29,6 +29,12 @@ local arguments,
         'optional_arguments'
       }
 
+local assert_is_table
+      = import 'lua-nucleo/typeassert.lua'
+      {
+        'assert_is_table'
+      }
+
 local tflip,
       tstr_cat
       = import 'lua-nucleo/table.lua'
