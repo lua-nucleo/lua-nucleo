@@ -77,6 +77,22 @@ local LOG_LEVEL,
         'make_loggers'
       }
 
+
+local function tsize(t)
+  assert_is_table(t)
+  local k = next(t)
+  if k then
+    local i = 1
+    k = next(t,k)
+    local v
+    while k do
+      k, v = next(t,k) i = i + 1
+    end
+    return i
+  end
+  return 0
+end
+
 --------------------------------------------------------------------------------
 
 local test = make_suite("log", log_exports)
