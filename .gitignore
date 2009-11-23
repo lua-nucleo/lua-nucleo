@@ -8,3 +8,8 @@
 .settings
 .directory
 
+*.kdevelop.*
+*.kdevelop
+*.kdevses
+/Doxyfile
+
