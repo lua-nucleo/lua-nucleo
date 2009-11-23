@@ -263,6 +263,15 @@ do
   end
 end
 
+-- Slow
+local tcount_elements = function(t)
+  local n = 0
+  for _ in pairs(t) do
+    n = n + 1
+  end
+  return n
+end
+
 return
 {
   empty_table = empty_table;
@@ -288,4 +297,5 @@ return
   tnormalize = tnormalize;
   tnormalize_inplace = tnormalize_inplace;
   tclone = tclone;
+  tcount_elements = tcount_elements;
 }

@@ -57,6 +57,7 @@ local empty_table,
       tnormalize,
       tnormalize_inplace,
       tclone,
+      tcount_elements,
       table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -82,7 +83,8 @@ local empty_table,
         'taccumulate',
         'tnormalize',
         'tnormalize_inplace',
-        'tclone'
+        'tclone',
+        'tcount_elements'
       }
 
 --------------------------------------------------------------------------------
@@ -1441,6 +1443,32 @@ test "tclone-nesting-fails" (function()
       "recursion fails",
       function() tclone(t) end,
       "recursion detected"
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tcount_elements"
+
+--------------------------------------------------------------------------------
+
+test "tcount_elements-empty" (function()
+  ensure_equals("empty", tcount_elements({}), 0)
+end)
+
+test "tcount_elements-array-single" (function()
+  ensure_equals("array-single", tcount_elements({ 42 }), 1)
+end)
+
+test "tcount_elements-array-hole" (function()
+  ensure_equals("array-hole", tcount_elements({ 1, 2, nil, nil, 3, nil }), 3)
+end)
+
+test "tcount_elements-hash" (function()
+  ensure_equals(
+      "hash",
+      tcount_elements({ 42, a = 2, b = nil }),
+      2
     )
 end)
 
