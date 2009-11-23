@@ -88,6 +88,104 @@ local END_OF_LOG_MESSAGE = "\n"
 
 --------------------------------------------------------------------------------
 
+local make_common_logging_config
+do
+  local set_log_enabled = function(self, module_name, level, is_enabled)
+    method_arguments(
+        self,
+        "string", module_name,
+        "number", level,
+        "boolean", is_enabled
+      )
+
+    if module_name then
+      -- NOTE: Module config
+      self.config_[module_name][level] = is_enabled
+    end
+  end
+
+  local is_log_enabled = function(self, level, module_name)
+    method_arguments(
+        self,
+        "number", level,
+        "string", module_name
+      )
+
+    return self.config_[module_name][level]
+  end
+
+  local is_log_enabled_raw = function(
+      levels_config,
+      modules_config,
+      module_name,
+      level
+    )
+    method_arguments(
+        self,
+        "table", levels_config,
+        "table", modules_config,
+        "string", module_name,
+        "number", level
+      )
+
+    if levels_config[level] then -- Levels are disabled by default
+      local module_config = modules_config[module_name]
+      if module_config == true or module_config == nil then -- Modules are enabled by default
+        return true
+      elseif module_config ~= false then
+        -- Per-module levels are disabled by default as well
+        return not not assert_is_table(module_config)[level]
+      end
+    end
+
+    return false
+  end
+
+  local make_config_cache = function(levels_config, modules_config)
+    return setmetatable(
+        { },
+        {
+          __index = function(modules, module_name)
+            local level_info = setmetatable(
+                { },
+                {
+                  __index = function(levels, level)
+                    local is_enabled = is_log_enabled_raw(
+                        modules_config,
+                        levels_config,
+                        module_name,
+                        level
+                      )
+                    levels[level] = is_enabled
+                    return is_enabled
+                  end;
+                }
+              )
+            modules[module_name] = level_info
+            return level_info
+          end;
+        }
+      )
+  end
+
+  make_common_logging_config = function(levels_config, modules_config)
+    arguments(
+        "table", levels_config,
+        "table", modules_config
+      )
+
+    return
+    {
+      set_log_enabled = set_log_enabled;
+      is_log_enabled = is_log_enabled; -- Required method
+      --
+      cache_ = make_config_cache(levels_config, modules_config);
+    }
+  end
+end
+
+--------------------------------------------------------------------------------
+
 local make_logging_system
 do
   -- Private function
@@ -95,8 +193,7 @@ do
   do
     local function impl(sink, n, v, ...)
       if n > 0 then
-        local v_type = type(v)
-        if v_type ~= "table" then
+        if type(v) ~= "table" then
           sink(tostring(v))
         else
           tstr_cat(sink, v) -- Assuming this does not emit "\n"
@@ -111,41 +208,33 @@ do
       return sink(END_OF_LOG_MESSAGE)
     end
 
-    make_logger = function(sink, logger_id, suffix)
+    make_logger = function(
+        logging_config,
+        module_name,
+        level,
+        sink,
+        logger_id,
+        suffix
+      )
       arguments(
+          "table", logging_config,
+          "string", module_name,
+          "number", level,
           "function", sink,
           "string", logger_id,
           "string", suffix
         )
 
       return function(...)
-        -- NOTE: Using explicit size since we have to support holes in the vararg.
-        sink "[" (get_current_logsystem_date()) "] " (logger_id)
-             "[" (suffix) "] "
+        if logging_config:is_log_enabled(module_name, level) then
+          -- NOTE: Using explicit size since we have to support holes in the vararg.
+          sink "[" (get_current_logsystem_date()) "] " (logger_id)
+               "[" (suffix) "] "
 
-        return impl(sink, select("#", ...), ...)
+          return impl(sink, select("#", ...), ...)
+        end
       end
     end
-  end
-
-  local is_log_enabled = function(self, module_name, level)
-    method_arguments(
-        self,
-        "string", module_name,
-        "number", level
-      )
-
-    if self.levels_config_[level] then -- Levels are disabled by default
-      local module_config = self.modules_config_[module_name]
-      if module_config == true or module_config == nil then -- Modules are enabled by default
-        return true
-      elseif module_config ~= false then
-        -- Per-module levels are disabled by default as well
-        return not not assert_is_table(module_config)[level]
-      end
-    end
-
-    return false
   end
 
   local make_module_logger = function(self, module_name, level, suffix)
@@ -156,39 +245,42 @@ do
         "string", suffix
       )
 
-    return self:is_log_enabled(module_name, level)
-       and make_logger(self.sink_, self.logger_id_, suffix)
-        or do_nothing
+    return make_logger(
+        self,
+        module_name,
+        level,
+        self.sink_,
+        self.logger_id_,
+        suffix
+      )
+  end
+
+  local get_config = function(self)
+    method_arguments(self)
+    return self.config_
   end
 
   -- Sink must behave like io.write(). Newlines are explicit!
   -- However, sink may safely assume that end-of-atomic-log-message
   -- is always signalled by a single newline character.
   --
-  -- Sink also must behave like cat(), i.e. return itself.
+  -- Sink also must behave like cat(), that is, return itself.
   --
-  -- Intentionally not supporting level and module configuration changes
-  -- to enhance speed.
-  make_logging_system = function(logger_id, sink, levels_config, modules_config)
-    levels_config = levels_config or {}
-    modules_config = modules_config or {}
-
+  make_logging_system = function(logger_id, sink, logging_config)
     arguments(
         "string", logger_id,
         "function", sink,
-        "table", levels_config,
-        "table", modules_config
+        "table", logging_config
       )
 
     return
     {
-      is_log_enabled = is_log_enabled;
+      get_config = get_config;
       make_module_logger = make_module_logger;
       --
       logger_id_ = logger_id;
       sink_ = sink;
-      levels_config_ = tclone(levels_config);
-      modules_config_ = tclone(modules_config);
+      config_ = logging_config;
     }
   end
 end
@@ -280,8 +372,11 @@ return
   --
   format_logsystem_date = format_logsystem_date;
   get_current_logsystem_date = get_current_logsystem_date;
+  --
+  make_common_logging_config = make_common_logging_config;
   make_logging_system = make_logging_system;
   wrap_file_sink = wrap_file_sink;
+  --
   create_common_logging_system = create_common_logging_system;
   get_common_logging_system = get_common_logging_system;
   --

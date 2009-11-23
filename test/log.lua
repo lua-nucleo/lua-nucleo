@@ -82,6 +82,7 @@ local LOG_LEVEL,
       END_OF_LOG_MESSAGE,
       format_logsystem_date,
       get_current_logsystem_date,
+      make_common_logging_config,
       make_logging_system,
       wrap_file_sink,
       create_common_logging_system,
@@ -94,6 +95,7 @@ local LOG_LEVEL,
         'END_OF_LOG_MESSAGE',
         'format_logsystem_date',
         'get_current_logsystem_date',
+        'make_common_logging_config',
         'make_logging_system',
         'wrap_file_sink',
         'create_common_logging_system',
@@ -405,8 +407,10 @@ local check_is_log_enabled = function(
   local logging_system = make_logging_system(
       logging_system_id,
       concatter.cat,
-      levels_config,
-      modules_config
+      make_common_logging_config(
+          levels_config,
+          modules_config
+        )
     )
 
   ensure_equals(
@@ -571,6 +575,8 @@ test "is_log_enabled-modules-levels" (function()
       )
   end
 end)
+
+error("TODO: Check run-time config changes!")
 
 --------------------------------------------------------------------------------
 
