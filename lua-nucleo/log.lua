@@ -36,11 +36,13 @@ local assert_is_table
       }
 
 local tflip,
-      tstr_cat
+      tstr_cat,
+      tclone
       = import 'lua-nucleo/table.lua'
       {
         'tflip',
-        'tstr_cat'
+        'tstr_cat',
+        'tclone'
       }
 
 local do_nothing
@@ -138,7 +140,8 @@ do
       if module_config == true or module_config == nil then -- Modules are enabled by default
         return true
       elseif module_config ~= false then
-        return assert_is_table(module_config)[level] -- Per-module levels are disabled by default as well
+        -- Per-module levels are disabled by default as well
+        return not not assert_is_table(module_config)[level]
       end
     end
 
@@ -184,8 +187,8 @@ do
       --
       logger_id_ = logger_id;
       sink_ = sink;
-      levels_config_ = levels_config;
-      modules_config_ = modules_config;
+      levels_config_ = tclone(levels_config);
+      modules_config_ = tclone(modules_config);
     }
   end
 end

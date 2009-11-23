@@ -379,6 +379,201 @@ test "make_module_logger-table" (function()
 end)
 
 --------------------------------------------------------------------------------
+
+local check_is_log_enabled = function(
+    levels_config,
+    modules_config,
+    module_name,
+    log_level,
+    actually_enabled
+  )
+  optional_arguments(
+      "table", levels_config,
+      "table", modules_config
+    )
+  arguments(
+       "string", module_name,
+       "number", log_level,
+      "boolean", actually_enabled
+    )
+
+  local concatter = make_test_concatter()
+
+  local logging_system_id = "{logger_id} "
+  local module_suffix = "MOD"
+
+  local logging_system = make_logging_system(
+      logging_system_id,
+      concatter.cat,
+      levels_config,
+      modules_config
+    )
+
+  ensure_equals(
+      "is_log_enabled",
+      logging_system:is_log_enabled(module_name, log_level),
+      actually_enabled
+    )
+
+  local logger = ensure(
+      "make_module_logger",
+      logging_system:make_module_logger(
+          module_name, log_level, module_suffix
+        )
+    )
+
+  if actually_enabled then
+    check_logger(
+        concatter, logger,
+        logging_system_id, module_suffix,
+        42, "embedded\0zero", nil, true, nil
+      )
+  else
+    logger(42, "embedded\0zero", nil, true, nil)
+    ensure_equals("logging is disabled", next(concatter.buf()), nil)
+  end
+end
+
+test "is_log_enabled-levels-default" (function()
+  local module_name = "module_name"
+  local levels_config = nil -- Default
+  local modules_config = nil -- Default
+  for _, log_level in pairs(LOG_LEVEL) do
+    check_is_log_enabled(
+        levels_config,
+        modules_config,
+        module_name,
+        log_level,
+        false -- actually disabled
+      )
+  end
+end)
+
+test "is_log_enabled-modules-default" (function()
+  local module_name = "module_name"
+  local levels_config = tset(LOG_LEVEL) -- Enable all levels
+  levels_config[LOG_LEVEL.ERROR] = false
+
+  local modules_config = nil -- Default
+  for _, log_level in pairs(LOG_LEVEL) do
+    check_is_log_enabled(
+        levels_config,
+        modules_config,
+        module_name,
+        log_level,
+        levels_config[log_level]
+      )
+  end
+end)
+
+test "is_log_enabled-modules-false" (function()
+  local module_name = "module_name"
+  local other_module_name = "other_module_name"
+  local levels_config = tset(LOG_LEVEL) -- Enable all levels
+  local modules_config = { [module_name] = false }
+
+  for _, log_level in pairs(LOG_LEVEL) do
+    check_is_log_enabled(
+        levels_config,
+        modules_config,
+        module_name,
+        log_level,
+        false
+      )
+
+    check_is_log_enabled( -- To ensure defaults are the same
+        levels_config,
+        modules_config,
+        other_module_name,
+        log_level,
+        true
+      )
+  end
+end)
+
+test "is_log_enabled-modules-true" (function()
+  local module_name = "module_name"
+  local other_module_name = "other_module_name"
+  local levels_config = tset(LOG_LEVEL) -- Enable all levels
+  local modules_config = { [module_name] = true }
+
+  for _, log_level in pairs(LOG_LEVEL) do
+    check_is_log_enabled(
+        levels_config,
+        modules_config,
+        module_name,
+        log_level,
+        true
+      )
+
+    check_is_log_enabled( -- To ensure defaults are the same
+        levels_config,
+        modules_config,
+        other_module_name,
+        log_level,
+        true
+      )
+  end
+end)
+
+test "is_log_enabled-modules-empty" (function()
+  local module_name = "module_name"
+  local other_module_name = "other_module_name"
+  local levels_config = tset(LOG_LEVEL) -- Enable all levels
+  local modules_config = { [module_name] = { } }
+
+  for _, log_level in pairs(LOG_LEVEL) do
+    check_is_log_enabled(
+        levels_config,
+        modules_config,
+        module_name,
+        log_level,
+        false
+      )
+
+    check_is_log_enabled( -- To ensure defaults are the same
+        levels_config,
+        modules_config,
+        other_module_name,
+        log_level,
+        true
+      )
+  end
+end)
+
+test "is_log_enabled-modules-levels" (function()
+  local module_config = { [LOG_LEVEL.LOG] = true, [LOG_LEVEL.SPAM] = false }
+  local module_name = "module_name"
+  local other_module_name = "other_module_name"
+  local levels_config = tset(LOG_LEVEL) -- Enable all levels
+  local modules_config = { [module_name] = module_config }
+
+  for _, log_level in pairs(LOG_LEVEL) do
+    local actually_enabled = module_config[log_level]
+    if actually_enabled == nil then
+      actually_enabled = false
+    end
+
+    check_is_log_enabled(
+        levels_config,
+        modules_config,
+        module_name,
+        log_level,
+        actually_enabled
+      )
+
+    check_is_log_enabled( -- To ensure defaults are the same
+        levels_config,
+        modules_config,
+        other_module_name,
+        log_level,
+        true
+      )
+  end
+end)
+
+--------------------------------------------------------------------------------
+
 --[=[
 test "all-logging-levels-disabled-by-default" (function()
   local cat, concat = make_concatter()
