@@ -92,17 +92,16 @@ do
   local make_logger
   do
     local function impl(sink, n, v, ...)
-      local v_type = type(v)
-      if v_type ~= "table" then
-        sink(tostring(v))
-      else
-        tstr_cat(sink, v) -- Assuming this does not emit "\n"
-      end
+      if n > 0 then
+        local v_type = type(v)
+        if v_type ~= "table" then
+          sink(tostring(v))
+        else
+          tstr_cat(sink, v) -- Assuming this does not emit "\n"
+        end
 
-      if n > 1 then
-        sink(" ")
-
-        if n > 0 then
+        if n > 1 then
+          sink(" ")
           return impl(sink, n - 1, ...)
         end
       end
@@ -111,6 +110,12 @@ do
     end
 
     make_logger = function(sink, logger_id, suffix)
+      arguments(
+          "function", sink,
+          "string", logger_id,
+          "string", suffix
+        )
+
       return function(...)
         -- NOTE: Using explicit size since we have to support holes in the vararg.
         sink "[" (get_current_logsystem_date()) "] " (logger_id)
@@ -149,7 +154,7 @@ do
       )
 
     return self:is_log_enabled(module_name, level)
-       and make_logger(self.sink_, self.logger_id, suffix)
+       and make_logger(self.sink_, self.logger_id_, suffix)
         or do_nothing
   end
 

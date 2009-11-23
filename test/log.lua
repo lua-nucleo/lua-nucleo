@@ -2,8 +2,6 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
---------------------------------------------------------------------------------
-
 dofile('lua-nucleo/strict.lua')
 dofile('lua-nucleo/import.lua')
 
@@ -24,10 +22,20 @@ local assert_is_string,
         'assert_is_function'
       }
 
-local tstr
+local tstr,
+      tstr_cat,
+      tcount_elements,
+      tijoin_many,
+      tclone,
+      tset
       = import 'lua-nucleo/table.lua'
       {
         'tstr',
+        'tstr_cat',
+        'tcount_elements',
+        'tijoin_many',
+        'tclone',
+        'tset'
       }
 
 local is_table
@@ -35,7 +43,6 @@ local is_table
       {
         'is_table'
       }
-
 
 local ensure,
       ensure_equals,
@@ -93,22 +100,6 @@ local LOG_LEVEL,
         'get_common_logging_system',
         'make_loggers'
       }
-
-
-local function tsize(t)
-  assert_is_table(t)
-  local k = next(t)
-  if k then
-    local i = 1
-    k = next(t,k)
-    local v
-    while k do
-      k, v = next(t,k) i = i + 1
-    end
-    return i
-  end
-  return 0
-end
 
 --------------------------------------------------------------------------------
 
@@ -200,26 +191,195 @@ end)
 test:tests_for 'create_common_logging_system'
                'get_common_logging_system'
 
+-- WARNING: We're creating singleton here. DO NOT use it in other tests!
+-- TODO: Isolate this somehow!
 test:test "create-and-get-common-logging-system" (function()
   local cat, concat = make_concatter()
-  local logging_system = create_common_logging_system("the logger", cat)
+  local logging_system = create_common_logging_system(
+      "{logger_id} ",
+      cat
+      -- TODO: Add default arguments as well
+    )
   assert_is_table(get_common_logging_system())
+  -- TODO: Check logging system received all arguments from
+  --       create_common_logging_system
 end)
 
 --------------------------------------------------------------------------------
 
 test:group "make_logging_system"
 
-test "make-module-loggers" (function()
-  local cat, concat = make_concatter()
+--------------------------------------------------------------------------------
 
-  local logging_system = make_logging_system("the logger", cat)
+-- TODO: Generalize
+local make_test_concatter = function()
+  local concatter =
+  {
+    buf_ = { };
+  }
 
-  for _, v in pairs(LOG_LEVEL) do
-    assert(logging_system:make_module_logger("the module", v, "the suffix"))
+  concatter.cat = function(v)
+    local buf = concatter.buf_
+    buf[#buf + 1] = assert_is_string(v)
+    return concatter.cat
   end
+
+  concatter.reset = function()
+    concatter.buf_ = { }
+  end
+
+  concatter.buf = function()
+    return tclone(concatter.buf_)
+  end
+
+  return concatter
+end
+
+local check_date_str = function(date_str, time_before, time_after)
+  arguments(
+      "string", date_str,
+      "number", time_before,
+      "number", time_after
+    )
+
+  assert(time_before <= time_after)
+
+  local t = {}
+  t.year, t.month, t.day,
+  t.hour, t.min, t.sec = date_str:match(
+      "^(%d%d%d%d)-(%d%d)-(%d%d) (%d%d):(%d%d):(%d%d)$"
+    )
+
+  local timestamp = ensure("time format valid", os.time(t))
+
+  ensure("time after before", time_before <= timestamp)
+  ensure("time before after", timestamp >= time_after)
+end
+
+local check_logger = function(
+    concatter,
+    logger,
+    logging_system_id,
+    module_suffix,
+    ...
+  )
+  arguments(
+         "table", concatter,
+      "function", logger,
+        "string", logging_system_id,
+        "string", module_suffix
+    )
+
+  concatter.reset()
+
+  local ts_before = os.time()
+  logger(...)
+  local ts_after = os.time()
+
+  local actual = concatter.buf()
+
+  -- Prepend system info to expected data
+  local date = assert_is_string(actual[2])
+  check_date_str(date, ts_before, ts_after)
+
+  local expected = { "[", date, "] ", logging_system_id, "[", module_suffix, "] " }
+
+  local function expected_cat(v)
+    expected[#expected + 1] = assert_is_string(v)
+    return expected_cat
+  end
+
+  for i = 1, select("#", ...) do
+    local v = select(i, ...)
+
+    if i > 1 then
+      expected_cat(" ")
+    end
+
+    if is_table(v) then
+      tstr_cat(expected_cat, v)
+    else
+      expected_cat(tostring(v))
+    end
+  end
+
+  expected_cat(END_OF_LOG_MESSAGE)
+
+  --print("  actual", tstr(actual))
+  --print("expected", tstr(expected))
+  ensure_tequals("check_logger", actual, expected)
+
+  concatter.reset()
+end
+
+local check_make_module_logger = function(
+    concatter,
+    logging_system,
+    logging_system_id,
+    ...
+  )
+  for _, log_level in pairs(LOG_LEVEL) do
+    local logger = ensure(
+        "make_module_logger",
+        logging_system:make_module_logger(
+            "module_name", log_level, "MOD"
+          )
+      )
+
+    check_logger(
+        concatter, logger,
+        logging_system_id, "MOD",
+        ...
+      )
+  end
+end
+
+--------------------------------------------------------------------------------
+
+test "make_module_logger-empty" (function()
+  local concatter = make_test_concatter()
+  local logging_system_id = "{logger_id} "
+  local logging_system = ensure(
+      "make logging system",
+      make_logging_system(logging_system_id, concatter.cat, tset(LOG_LEVEL))
+    )
+
+  check_make_module_logger(
+      concatter, logging_system, logging_system_id
+      -- Empty
+    )
 end)
 
+test "make_module_logger-simple" (function()
+  local concatter = make_test_concatter()
+  local logging_system_id = "{logger_id} "
+  local logging_system = ensure(
+      "make logging system",
+      make_logging_system(logging_system_id, concatter.cat, tset(LOG_LEVEL))
+    )
+
+  check_make_module_logger(
+      concatter, logging_system, logging_system_id,
+      42, "embedded\0zero", nil, true, nil
+    )
+end)
+
+test "make_module_logger-table" (function()
+  local concatter = make_test_concatter()
+  local logging_system_id = "{logger_id} "
+  local logging_system = ensure(
+      "make logging system",
+      make_logging_system(logging_system_id, concatter.cat, tset(LOG_LEVEL))
+    )
+
+  check_make_module_logger(
+      concatter, logging_system, logging_system_id,
+      nil, { [{ 42, nil, 24 }] = { a = 42 } }, nil
+    )
+end)
+
+--------------------------------------------------------------------------------
+--[=[
 test "all-logging-levels-disabled-by-default" (function()
   local cat, concat = make_concatter()
 
@@ -288,7 +448,6 @@ end)
 
 --------------------------------------------------------------------------------
 
-
 test:test_for "make_loggers" (function()
   local cat, concat = make_concatter()
 
@@ -303,7 +462,7 @@ test:test_for "make_loggers" (function()
   local logging_system = make_logging_system("the logger", cat, levels_config)
 
   local loggers = { make_loggers("the module", "the module prefix", nil, logging_system) }
-  assert(#loggers == tsize(LOG_LEVEL))
+  assert(#loggers == tcount_elements(LOG_LEVEL))
   for _, logger in ipairs(loggers) do
     assert_is_function(logger)
   end
@@ -320,7 +479,7 @@ local check_loggers_output = function(loggers, concatter, ...)
   local check_output = function(output, ...)
     local nargs = select("#", ...)
 
-    print("output>>>>>>>", tstr(output))
+    --print("output>>>>>>>", tstr(output))
 
     ensure("open sqrbr of date ", concatter.buffer[1] == "[")
     --TODO: Check data is string?
@@ -414,6 +573,7 @@ test:test "log-table" (function()
       { key1 = "value"; key2 = 420 }
     )
 end)
+--]=]
 
 --------------------------------------------------------------------------------
 
