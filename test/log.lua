@@ -386,8 +386,14 @@ test:test "log-string-and-number-and-nil" (function()
 end)
 
 test:test "log-table" (function()
-  local output = {}
-  local function cat(v) output[#output + 1] = v return cat end
+  local concatter =
+  {
+    buffer = {}
+  }
+  concatter.cat = function(v)
+    concatter.buffer[#concatter.buffer + 1] = v
+    return concatter.cat
+  end
 
   local levels_config =
   {
@@ -397,14 +403,13 @@ test:test "log-table" (function()
     [LOG_LEVEL.ERROR] = true;
   }
 
-  local logging_system = make_logging_system("the logger", cat, levels_config)
+  local logging_system = make_logging_system("the logger", concatter.cat, levels_config)
 
   local loggers = { make_loggers("the module", "the module prefix", nil, logging_system) }
 
-  local expected = "TODO: All"
   check_loggers_output(
       loggers,
-      output,
+      concatter,
       {"first", 42},
       { key1 = "value"; key2 = 420 }
     )
