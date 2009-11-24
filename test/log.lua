@@ -199,7 +199,8 @@ test:test "create-and-get-common-logging-system" (function()
   local cat, concat = make_concatter()
   local logging_system = create_common_logging_system(
       "{logger_id} ",
-      cat
+      cat,
+      make_common_logging_config()
       -- TODO: Add default arguments as well
     )
   assert_is_table(get_common_logging_system())
@@ -343,7 +344,11 @@ test "make_module_logger-empty" (function()
   local logging_system_id = "{logger_id} "
   local logging_system = ensure(
       "make logging system",
-      make_logging_system(logging_system_id, concatter.cat, tset(LOG_LEVEL))
+      make_logging_system(
+          logging_system_id,
+          concatter.cat,
+          make_common_logging_config(tset(LOG_LEVEL))
+        )
     )
 
   check_make_module_logger(
@@ -357,7 +362,11 @@ test "make_module_logger-simple" (function()
   local logging_system_id = "{logger_id} "
   local logging_system = ensure(
       "make logging system",
-      make_logging_system(logging_system_id, concatter.cat, tset(LOG_LEVEL))
+      make_logging_system(
+          logging_system_id,
+          concatter.cat,
+          make_common_logging_config(tset(LOG_LEVEL))
+        )
     )
 
   check_make_module_logger(
@@ -371,7 +380,11 @@ test "make_module_logger-table" (function()
   local logging_system_id = "{logger_id} "
   local logging_system = ensure(
       "make logging system",
-      make_logging_system(logging_system_id, concatter.cat, tset(LOG_LEVEL))
+      make_logging_system(
+          logging_system_id,
+          concatter.cat,
+          make_common_logging_config(tset(LOG_LEVEL))
+        )
     )
 
   check_make_module_logger(
@@ -404,18 +417,20 @@ local check_is_log_enabled = function(
   local logging_system_id = "{logger_id} "
   local module_suffix = "MOD"
 
+  local common_logging_config = make_common_logging_config(
+      levels_config,
+      modules_config
+    )
+
   local logging_system = make_logging_system(
       logging_system_id,
       concatter.cat,
-      make_common_logging_config(
-          levels_config,
-          modules_config
-        )
+      common_logging_config
     )
 
   ensure_equals(
       "is_log_enabled",
-      logging_system:is_log_enabled(module_name, log_level),
+      common_logging_config:is_log_enabled(module_name, log_level),
       actually_enabled
     )
 
