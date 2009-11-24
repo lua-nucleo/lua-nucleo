@@ -25,6 +25,7 @@ return
   --
   'coro';
   'functional';
+  'random';
   'algorithm';
   'math';
   'string';

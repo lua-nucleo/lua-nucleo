@@ -19,13 +19,11 @@ local assert_is_table,
       }
 
 local ensure,
-      ensure_equals,
-      ensure_aposteriori_probability
+      ensure_equals
       = import 'lua-nucleo/ensure.lua'
       {
         'ensure',
-        'ensure_equals',
-        'ensure_aposteriori_probability'
+        'ensure_equals'
       }
 
 local invariant
@@ -67,6 +65,14 @@ local lower_bound,
         'upper_bound_gt',
         'pick_init',
         'pick_one'
+      }
+
+local ensure_probability_rough,
+      ensure_probability_experiment
+      = import 'lua-nucleo/random.lua'
+      {
+        'ensure_probability_rough',
+        'ensure_probability_experiment'
       }
 
 --------------------------------------------------------------------------------
@@ -293,8 +299,6 @@ test "pick-zero-ignored-nonzero-picked" (function()
   ensure_equals("no data picked", result, "nonzero")
 end)
 
-local HACK_ACCEPTABLE_DIFF = 0.02 -- Should be calculated automatically!
-
 test "pick-equal-weights" (function()
   local num_runs = 1e5
 
@@ -310,7 +314,7 @@ test "pick-equal-weights" (function()
   end
   print("done generating stats")
 
-  ensure_aposteriori_probability(num_runs, probs, stats, HACK_ACCEPTABLE_DIFF)
+  ensure_probability_rough(probs, stats)
 end)
 
 test "pick-non-equal-weights" (function()
@@ -328,7 +332,7 @@ test "pick-non-equal-weights" (function()
   end
   print("done generating stats")
 
-  ensure_aposteriori_probability(num_runs, probs, stats, HACK_ACCEPTABLE_DIFF)
+  ensure_probability_rough(probs, stats)
 end)
 
 test "pick-non-equal-weights-generated" (function()
@@ -355,8 +359,7 @@ test "pick-non-equal-weights-generated" (function()
   end
   print("done generating stats")
 
-  local tuned_diff = HACK_ACCEPTABLE_DIFF * 10 -- HACK!
-  ensure_aposteriori_probability(num_runs, probs, stats, tuned_diff)
+  ensure_probability_rough(probs, stats)
 end)
 
 --------------------------------------------------------------------------------
