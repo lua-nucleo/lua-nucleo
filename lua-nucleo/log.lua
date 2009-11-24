@@ -305,39 +305,8 @@ end
 
 --------------------------------------------------------------------------------
 
--- TODO: Generalize to make_singleton?
-local create_common_logging_system, get_common_logging_system
-do
-  local common_logging_system = nil
-
-  create_common_logging_system = function(...)
-    -- Override intentionally disabled to ensure consistency.
-    -- If needed, implement in a separate function.
-    assert(
-        common_logging_system == nil,
-        "double create_common_logging_system call"
-      )
-
-    common_logging_system = make_logging_system(...)
-  end
-
-  get_common_logging_system = function()
-    return assert(common_logging_system, "common_logging_system not created")
-  end
-end
-
---------------------------------------------------------------------------------
-
 local make_loggers
 do
-  local COMMON_LOGGERS_INFO =
-  {
-    { suffix = " ", level = LOG_LEVEL.LOG   };
-    { suffix = "*", level = LOG_LEVEL.DEBUG };
-    { suffix = "#", level = LOG_LEVEL.SPAM  };
-    { suffix = "!", level = LOG_LEVEL.ERROR };
-  }
-
   local function impl(logger, module_name, module_prefix, info, ...)
     if info then
       return
@@ -357,9 +326,6 @@ do
       loggers_info,
       logging_system
     )
-    loggers_info = loggers_info or COMMON_LOGGERS_INFO
-    logging_system = logging_system or get_common_logging_system()
-
     arguments(
         "string", module_name,
         "string", module_prefix,
@@ -389,9 +355,6 @@ return
   make_common_logging_config = make_common_logging_config;
   make_logging_system = make_logging_system;
   wrap_file_sink = wrap_file_sink;
-  --
-  create_common_logging_system = create_common_logging_system;
-  get_common_logging_system = get_common_logging_system;
   --
   make_loggers = make_loggers;
 }

@@ -85,8 +85,6 @@ local LOG_LEVEL,
       make_common_logging_config,
       make_logging_system,
       wrap_file_sink,
-      create_common_logging_system,
-      get_common_logging_system,
       make_loggers,
       log_exports
       = import 'lua-nucleo/log.lua'
@@ -98,8 +96,6 @@ local LOG_LEVEL,
         'make_common_logging_config',
         'make_logging_system',
         'wrap_file_sink',
-        'create_common_logging_system',
-        'get_common_logging_system',
         'make_loggers'
       }
 
@@ -186,26 +182,6 @@ test:test_for "wrap_file_sink" (function()
       buf,
       { "aaa", END_OF_LOG_MESSAGE, flush_tag, "bbb" }
     )
-end)
-
---------------------------------------------------------------------------------
-
-test:tests_for 'create_common_logging_system'
-               'get_common_logging_system'
-
--- WARNING: We're creating singleton here. DO NOT use it in other tests!
--- TODO: Isolate this somehow!
-test:test "create-and-get-common-logging-system" (function()
-  local cat, concat = make_concatter()
-  local logging_system = create_common_logging_system(
-      "{logger_id} ",
-      cat,
-      make_common_logging_config()
-      -- TODO: Add default arguments as well
-    )
-  assert_is_table(get_common_logging_system())
-  -- TODO: Check logging system received all arguments from
-  --       create_common_logging_system
 end)
 
 --------------------------------------------------------------------------------
@@ -636,8 +612,6 @@ test "make_loggers-complex" (function()
       concatter.cat,
       common_logging_config
     )
-
-  -- TODO: Test default values for loggers_info and logging_system
 
   local loggers_info =
   {
