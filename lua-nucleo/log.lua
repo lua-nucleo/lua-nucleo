@@ -37,12 +37,14 @@ local assert_is_table
 
 local tflip,
       tstr_cat,
-      tclone
+      tclone,
+      empty_table
       = import 'lua-nucleo/table.lua'
       {
         'tflip',
         'tstr_cat',
-        'tclone'
+        'tclone',
+        'empty_table'
       }
 
 local do_nothing
@@ -172,8 +174,8 @@ do
         "table", levels_config,
         "table", modules_config
       )
-    levels_config = levels_config or {}
-    modules_config = modules_config or {}
+    levels_config = levels_config or empty_table
+    modules_config = modules_config or empty_table
 
     return
     {
@@ -349,18 +351,28 @@ do
     return nil
   end
 
-  make_loggers = function(module_name, module_prefix, info, logger)
-    info = info or COMMON_LOGGERS_INFO
-    logger = logger or get_common_logging_system()
+  make_loggers = function(
+      module_name,
+      module_prefix,
+      loggers_info,
+      logging_system
+    )
+    loggers_info = loggers_info or COMMON_LOGGERS_INFO
+    logging_system = logging_system or get_common_logging_system()
 
     arguments(
         "string", module_name,
         "string", module_prefix,
-        "table", info,
-        "table", logger
+        "table",  loggers_info,
+        "table",  logging_system
       )
 
-    return impl(logger, module_name, module_prefix, unpack(info))
+    return impl(
+        logging_system,
+        module_name,
+        module_prefix,
+        unpack(loggers_info)
+      )
   end
 end
 

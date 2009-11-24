@@ -395,6 +395,10 @@ end)
 
 --------------------------------------------------------------------------------
 
+test:group "make_common_logging_config"
+
+--------------------------------------------------------------------------------
+
 local check_is_log_enabled = function(
     levels_config,
     modules_config,
@@ -440,6 +444,21 @@ local check_is_log_enabled = function(
           module_name, log_level, module_suffix
         )
     )
+
+  if actually_enabled then
+    check_logger(
+        concatter, logger,
+        logging_system_id, module_suffix,
+        42, "embedded\0zero", nil, true, nil
+      )
+  else
+    logger(42, "embedded\0zero", nil, true, nil)
+    ensure_equals("logging is disabled", next(concatter.buf()), nil)
+  end
+
+  actually_enabled = not actually_enabled
+
+  common_logging_config:set_log_enabled(module_name, log_level, actually_enabled)
 
   if actually_enabled then
     check_logger(
@@ -591,205 +610,81 @@ test "is_log_enabled-modules-levels" (function()
   end
 end)
 
-error("TODO: Check run-time config changes!")
+--------------------------------------------------------------------------------
+
+test:group "make_loggers"
 
 --------------------------------------------------------------------------------
 
---[=[
-test "all-logging-levels-disabled-by-default" (function()
-  local cat, concat = make_concatter()
+test "make_loggers-complex" (function()
+  local concatter = make_test_concatter()
 
-  local logging_system = make_logging_system("the logger", cat)
+  local module_name = "module_name"
+  local module_prefix = "MOD"
+  local logging_system_id = "{logger_id} "
 
-  for _, v in pairs(LOG_LEVEL) do
-    ensure(
-        "logging for module is disabled",
-        logging_system:is_log_enabled("the module", v) == false
-      )
-  end
-end)
+  local levels_config = tset(LOG_LEVEL) -- Enable all levels
+  local modules_config = nil -- Default
 
-test "all-logging-levels-enabled-and-enabled-for-module-by-default" (function()
-  local cat, concat = make_concatter()
-
-  local levels_config =
-  {
-    [LOG_LEVEL.LOG]   = true;
-    [LOG_LEVEL.DEBUG] = true;
-    [LOG_LEVEL.SPAM]  = true;
-    [LOG_LEVEL.ERROR] = true;
-  }
-
-  local logging_system = make_logging_system("the logger", cat, levels_config)
-
-  for _, v in pairs(LOG_LEVEL) do
-    ensure(
-        "logging for module is enabled",
-        logging_system:is_log_enabled("the module", v)
-      )
-  end
-end)
-
-test "all-loggers-enabled-but-disabled-for-module" (function()
-  local cat, concat = make_concatter()
-
-  local levels_config =
-  {
-    [LOG_LEVEL.LOG]   = true;
-    [LOG_LEVEL.DEBUG] = true;
-    [LOG_LEVEL.SPAM]  = true;
-    [LOG_LEVEL.ERROR] = true;
-  }
-
-  local module_config =
-  {
-    ["the module"] =
-    {
-      [LOG_LEVEL.LOG]   = false;
-      [LOG_LEVEL.DEBUG] = false;
-      [LOG_LEVEL.SPAM]  = false;
-      [LOG_LEVEL.ERROR] = false;
-    }
-  }
-
-  local logging_system = make_logging_system("the logger", cat, levels_config, module_config)
-
-  for _, v in pairs(LOG_LEVEL) do
-    ensure(
-        "logging for module is ",
-        logging_system:is_log_enabled("the module", v) == false
-      )
-  end
-end)
-
---------------------------------------------------------------------------------
-
-test:test_for "make_loggers" (function()
-  local cat, concat = make_concatter()
-
-  local levels_config =
-  {
-    [LOG_LEVEL.LOG]   = true;
-    [LOG_LEVEL.DEBUG] = true;
-    [LOG_LEVEL.SPAM]  = true;
-    [LOG_LEVEL.ERROR] = true;
-  }
-
-  local logging_system = make_logging_system("the logger", cat, levels_config)
-
-  local loggers = { make_loggers("the module", "the module prefix", nil, logging_system) }
-  assert(#loggers == tcount_elements(LOG_LEVEL))
-  for _, logger in ipairs(loggers) do
-    assert_is_function(logger)
-  end
-end)
-
---------------------------------------------------------------------------------
-
-local check_loggers_output = function(loggers, concatter, ...)
-  arguments(
-      "table",  loggers,
-      "table",  concatter
+  local common_logging_config = make_common_logging_config(
+      levels_config,
+      modules_config
     )
 
-  local check_output = function(output, ...)
-    local nargs = select("#", ...)
-
-    --print("output>>>>>>>", tstr(output))
-
-    ensure("open sqrbr of date ", concatter.buffer[1] == "[")
-    --TODO: Check data is string?
-    ensure("close sqrbr of date ", concatter.buffer[3] == "] ")
-
-    ensure("open sqrbr of module ", concatter.buffer[4] == "[")
-    --TODO: Check module name
-    ensure("close sqrbr of module ", concatter.buffer[6] == "] ")
-
-    for i = 1, nargs do
-      local arg = select(i, ...)
-
-      if is_table(arg) then
-        ensure("cat table argument " .. i, concatter.buffer[5 + i*2] == tstr(arg))
-      else
-        ensure("cat argument " .. i, concatter.buffer[5 + i*2] == tostring(arg))
-      end
-
-      if i < nargs then
-        ensure("close sqrbr of module ", concatter.buffer[5 + i*2 + 1] == " ")
-      end
-    end
-
-    local suffix_start_pos = 5 + nargs*2 + 1
-    ensure("end of log message", concatter.buffer[suffix_start_pos] == END_OF_LOG_MESSAGE)
-  end
-
-
-  for _, logger in ipairs(loggers) do
-    concatter.buffer = {}
-
-    logger(...)
-
-    --TODO: Make right 'expected'
-    check_output(concatter.buffer, ...)
-  end
-
-end
-
-test:test "log-string-and-number-and-nil" (function()
-  local concatter =
-  {
-    buffer = {}
-  }
-  concatter.cat = function(v)
-    concatter.buffer[#concatter.buffer + 1] = v
-    return concatter.cat
-  end
-
-  local levels_config =
-  {
-    [LOG_LEVEL.LOG]   = true;
-    [LOG_LEVEL.DEBUG] = true;
-    [LOG_LEVEL.SPAM]  = true;
-    [LOG_LEVEL.ERROR] = true;
-  }
-
-  local logging_system = make_logging_system("the logger", concatter.cat, levels_config)
-
-  local loggers = { make_loggers("the module", "the module prefix", nil, logging_system) }
-
-  check_loggers_output(loggers, concatter, "the string", 0, 1, nil, 42)
-end)
-
-test:test "log-table" (function()
-  local concatter =
-  {
-    buffer = {}
-  }
-  concatter.cat = function(v)
-    concatter.buffer[#concatter.buffer + 1] = v
-    return concatter.cat
-  end
-
-  local levels_config =
-  {
-    [LOG_LEVEL.LOG]   = true;
-    [LOG_LEVEL.DEBUG] = true;
-    [LOG_LEVEL.SPAM]  = true;
-    [LOG_LEVEL.ERROR] = true;
-  }
-
-  local logging_system = make_logging_system("the logger", concatter.cat, levels_config)
-
-  local loggers = { make_loggers("the module", "the module prefix", nil, logging_system) }
-
-  check_loggers_output(
-      loggers,
-      concatter,
-      {"first", 42},
-      { key1 = "value"; key2 = 420 }
+  local logging_system = make_logging_system(
+      logging_system_id,
+      concatter.cat,
+      common_logging_config
     )
+
+  -- TODO: Test default values for loggers_info and logging_system
+
+  local loggers_info =
+  {
+    { suffix = " ", level = LOG_LEVEL.LOG   };
+    { suffix = "*", level = LOG_LEVEL.DEBUG };
+    { suffix = "#", level = LOG_LEVEL.SPAM  };
+    { suffix = "!", level = LOG_LEVEL.ERROR };
+  }
+
+  local loggers =
+  {
+    make_loggers(module_name, module_prefix, loggers_info, logging_system)
+  }
+
+  ensure_equals("number of loggers", #loggers, #loggers_info)
+
+  -- Check default values
+  for i = 1, #loggers_info do
+    local logger_info = loggers_info[i]
+    ensure_equals(
+        "module logging on",
+        common_logging_config:is_log_enabled(module_name, logger_info.level),
+        true
+      )
+  end
+
+  for i = 1, #loggers_info do
+    local logger_info = loggers_info[i]
+    local logger = loggers[i]
+
+    local log_level = logger_info.level
+    local module_suffix = module_prefix .. logger_info.suffix
+
+    common_logging_config:set_log_enabled(module_name, log_level, true)
+
+    check_logger(
+        concatter, logger,
+        logging_system_id, module_suffix,
+        42, "embedded\0zero", nil, true, nil
+      )
+
+    common_logging_config:set_log_enabled(module_name, log_level, false)
+
+    logger(42, "embedded\0zero", nil, true, nil)
+    ensure_equals("logging is disabled", next(concatter.buf()), nil)
+  end
 end)
---]=]
 
 --------------------------------------------------------------------------------
 
