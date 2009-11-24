@@ -100,28 +100,27 @@ do
 
     if module_name then
       -- NOTE: Module config
-      self.config_[module_name][level] = is_enabled
+      self.cache_[module_name][level] = is_enabled
     end
   end
 
-  local is_log_enabled = function(self, level, module_name)
+  local is_log_enabled = function(self, module_name, level)
     method_arguments(
         self,
         "number", level,
         "string", module_name
       )
 
-    return self.config_[module_name][level]
+    return self.cache_[module_name][level]
   end
 
   local is_log_enabled_raw = function(
-      levels_config,
       modules_config,
+      levels_config,
       module_name,
       level
     )
-    method_arguments(
-        self,
+    arguments(
         "table", levels_config,
         "table", modules_config,
         "string", module_name,
@@ -169,10 +168,12 @@ do
   end
 
   make_common_logging_config = function(levels_config, modules_config)
-    arguments(
+    optional_arguments(
         "table", levels_config,
         "table", modules_config
       )
+    levels_config = levels_config or {}
+    modules_config = modules_config or {}
 
     return
     {
@@ -246,7 +247,7 @@ do
       )
 
     return make_logger(
-        self,
+        self.config_,
         module_name,
         level,
         self.sink_,
