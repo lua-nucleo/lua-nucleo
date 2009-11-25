@@ -32,11 +32,33 @@ local arguments,
         'optional_arguments'
       }
 
+local type_imports = import 'lua-nucleo/type.lua' ()
+
+-- main algorithm value, got 99% chance of false negative
+-- (though high chance of false positive accordingly)
+-- http://www.itl.nist.gov/div898/handbook/eda/section3/eda3674.htm
+local HI_CRITICAL_TABLE =
+{
+  006.635; 009.210; 011.345; 013.277; 015.086; 016.812; 018.475; 020.090;
+  021.666; 023.209; 024.725; 026.217; 027.688; 029.141; 030.578; 032.000;
+  033.409; 034.805; 036.191; 037.566; 038.932; 040.289; 041.638; 042.980;
+  044.314; 045.642; 046.963; 048.278; 049.588; 050.892; 052.191; 053.486;
+  054.776; 056.061; 057.342; 058.619; 059.893; 061.162; 062.428; 063.691;
+  064.950; 066.206; 067.459; 068.710; 069.957; 071.201; 072.443; 073.683;
+  074.919; 076.154; 077.386; 078.616; 079.843; 081.069; 082.292; 083.513;
+  084.733; 085.950; 087.166; 088.379; 089.591; 090.802; 092.010; 093.217;
+  094.422; 095.626; 096.828; 098.028; 099.228; 100.425; 101.621; 102.816;
+  104.010; 105.202; 106.393; 107.583; 108.771; 109.958; 111.144; 112.329;
+  113.512; 114.695; 115.876; 117.057; 118.236; 119.414; 120.591; 121.767;
+  122.942; 124.116; 125.289; 126.462; 127.633; 128.803; 129.973; 131.141;
+  132.309; 133.476; 134.642;
+}
+
 -- Function roughly determines if distribution of values in table t_stats
 -- corresponds distribution in t_weights. Max number of elements check - 100.
--- Algorythm based on Hi square Pirson's test.
-local ensure_probability_rough = function(t_weights, t_stats)
-
+-- algorithm based on Hi square Pearson's test.
+-- http://en.wikipedia.org/wiki/Pearson%27s_chi-square_test
+local validate_probability_rough = function(t_weights, t_stats)
   -- input checks
   arguments(
     "table", t_weights,
@@ -44,74 +66,48 @@ local ensure_probability_rough = function(t_weights, t_stats)
   )
   local n_length = 0
   for k, v in pairs(t_weights) do
-    if type(t_weights[k]) ~= "number" or type(t_weights[k]) ~= "number" then
-      error("Found non-numeric value in ensure_probability_rough function" ..
-            "input tables. Key: " .. k
-           )
-    end
+    assert_is_number(t_weights[k])
+    assert_is_number(t_stats[k])
     n_length = n_length + 1
   end
   if n_length > 100 or n_length < 2 then
-    error("Found wrong input table length in ensure_probability_rough " ..
-          "function. Max length: 100, min length: 2 got: " .. n_length
-         )
+    error("argument: found wrong input table length." ..
+      "Max length: 100, min length: 2 got: " .. n_length)
   end
   local n_experiments = taccumulate(t_stats)
   if n_experiments < 1000 then
-    print("Lack of experiments data! Got experiments: ".. n_experiments ..
-          ", need > 1000. Results may be false negative.")
+    error("Lack of experiments data! Got experiments: ".. n_experiments ..
+      ", need > 1000. Results may be false negative.")
   end
-
-  -- main algorythm value, got 99% chance of false negative
-  -- (though high chance of false positive accordingly)
-  local t_hi_critical =
-  {
-    006.635; 009.210; 011.345; 013.277; 015.086; 016.812; 018.475; 020.090;
-    021.666; 023.209; 024.725; 026.217; 027.688; 029.141; 030.578; 032.000;
-    033.409; 034.805; 036.191; 037.566; 038.932; 040.289; 041.638; 042.980;
-    044.314; 045.642; 046.963; 048.278; 049.588; 050.892; 052.191; 053.486;
-    054.776; 056.061; 057.342; 058.619; 059.893; 061.162; 062.428; 063.691;
-    064.950; 066.206; 067.459; 068.710; 069.957; 071.201; 072.443; 073.683;
-    074.919; 076.154; 077.386; 078.616; 079.843; 081.069; 082.292; 083.513;
-    084.733; 085.950; 087.166; 088.379; 089.591; 090.802; 092.010; 093.217;
-    094.422; 095.626; 096.828; 098.028; 099.228; 100.425; 101.621; 102.816;
-    104.010; 105.202; 106.393; 107.583; 108.771; 109.958; 111.144; 112.329;
-    113.512; 114.695; 115.876; 117.057; 118.236; 119.414; 120.591; 121.767;
-    122.942; 124.116; 125.289; 126.462; 127.633; 128.803; 129.973; 131.141;
-    132.309; 133.476; 134.642;
-  }
 
   -- data preparation
   local t_distribution_normalized = tnormalize(t_weights)
   local t_experiments_normalized = tnormalize(t_stats)
   local d_hi_square = 0
 
-  -- algorythm itself
+  -- algorithm itself
   for k, v in pairs(t_distribution_normalized) do
-    local d_delta = math.abs(t_distribution_normalized[k] -
-                             t_experiments_normalized[k])
+    local d_delta = math.abs(
+        t_distribution_normalized[k] - t_experiments_normalized[k]
+      )
     d_hi_square = d_hi_square + (100 * d_delta * d_delta) /
-                  t_distribution_normalized[k]
+      t_distribution_normalized[k]
   end
 
-  return d_hi_square < t_hi_critical[n_length - 1]
+  return d_hi_square < HI_CRITICAL_TABLE[n_length - 1]
 end
 
 -- Function precisely determines if distribution of values in table t_stats
 -- corresponds distribution in t_weights.
--- Algorythm based on experiment probability check.
-local ensure_probability_experiment = function(t_weights, f_stats_generator)
+-- algorithm based on experiment probability check.
+local validate_probability_precise = function(t_weights, f_stats_generator)
   -- input checks
   arguments(
     "table", t_weights,
     "function", f_stats_generator
   )
   for k, v in pairs(t_weights) do
-    if type(t_weights[k]) ~= "number" or type(t_weights[k]) ~= "number" then
-      error("Found non-numeric value in ensure_probability_experiment" ..
-            "input tables. Key: " .. k
-           )
-    end
+    assert_is_number(t_weights[k])
   end
 
   -- data preparation
@@ -125,7 +121,7 @@ local ensure_probability_experiment = function(t_weights, f_stats_generator)
   local n_increased = 0
   local n_decreased = 0
 
-  -- algorythm itself
+  -- algorithm itself
   while true do
     -- check if we can return
     -- experience has shown that 8 value works ok
@@ -137,8 +133,9 @@ local ensure_probability_experiment = function(t_weights, f_stats_generator)
     -- exponential experiments cycle: 10^n
     for n = n_start, n_stop do
       -- data peparation
-      local t_cur_stats = f_stats_generator(math.pow(10, n))
-      local n_experiments = math.pow(10, n)
+      local pow_number = math.pow(10, n)
+      local t_cur_stats = f_stats_generator(pow_number)
+      local n_experiments = pow_number
       local t_experiments_normalized = tnormalize(t_cur_stats)
 
       -- calculate hi_square for current experiments num
@@ -157,17 +154,42 @@ local ensure_probability_experiment = function(t_weights, f_stats_generator)
     --> print(n_true, d_temp_first, d_temp_last, d_temp_overal)
 
     -- check signs of definite hi_square dynamics
-    if d_temp_overal > 90 then n_true = n_true + 1 end
-    if d_temp_last > 9 and d_temp_first > 1 then n_true = n_true + 1  end
-    if d_temp_first > 9 and d_temp_last > 1 then n_true = n_true + 1  end
-    if d_temp_first > 1.2 then
+    -- all constants are test-based
+    local OVERALL_HI_IMPROVEMENT = 90
+    local STEP_HI_IMPROVEMENT = 9
+    local STEP_HI_STAGNATION_LOWLIMIT = 0.5
+    local STEP_HI_STAGNATION_TOPLIMIT = 2
+    local STEP_HI_STAGNATION = 1.2
+    local OVERALL_HI_STAGNATION_LOW = 0.25
+    local OVERALL_HI_STAGNATION_TOP = 4
+
+    if
+      d_temp_overal > OVERALL_HI_IMPROVEMENT
+    then
+      n_true = n_true + 1
+    end
+    if
+      d_temp_last > STEP_HI_IMPROVEMENT and d_temp_first > 1
+    then
+      n_true = n_true + 1
+    end
+    if
+      d_temp_first > STEP_HI_IMPROVEMENT and d_temp_last > 1
+    then
+      n_true = n_true + 1
+    end
+    if
+      d_temp_first > STEP_HI_STAGNATION
+    then
       n_increased = n_increased + 1
       n_decreased = 0
     else
       n_decreased = n_decreased + 1
       n_increased = 0
     end
-    if d_temp_last > 1.2 then
+    if
+      d_temp_last > STEP_HI_STAGNATION
+    then
       n_increased = n_increased + 1
       n_decreased = 0
     else
@@ -177,9 +199,24 @@ local ensure_probability_experiment = function(t_weights, f_stats_generator)
     if n_increased >= 6 then n_true = n_true + 1 end
     if n_decreased >= 4 then n_true = n_true - 1 end
 
-    if d_temp_overal > 0.25 and d_temp_overal < 4 then n_true = n_true - 1 end
-    if d_temp_last > 0.5 and d_temp_last < 2 then n_true = n_true - 1 end
-    if d_temp_first > 0.5 and d_temp_first < 2 then n_true = n_true - 1 end
+    if
+      d_temp_overal > OVERALL_HI_STAGNATION_LOW and
+      d_temp_overal < OVERALL_HI_STAGNATION_TOP
+    then
+      n_true = n_true - 1
+    end
+    if
+      d_temp_last > STEP_HI_STAGNATION_LOWLIMIT and
+      d_temp_last < STEP_HI_STAGNATION_TOPLIMIT
+    then
+      n_true = n_true - 1
+    end
+    if
+      d_temp_first > STEP_HI_STAGNATION_LOWLIMIT and
+      d_temp_first < STEP_HI_STAGNATION_TOPLIMIT
+    then
+      n_true = n_true - 1
+    end
 
     n_counter = n_counter + 1
 
@@ -200,6 +237,6 @@ end
 
 return
 {
-  ensure_probability_rough = ensure_probability_rough;
-  ensure_probability_experiment = ensure_probability_experiment;
+  validate_probability_rough = validate_probability_rough;
+  validate_probability_precise = validate_probability_precise;
 }

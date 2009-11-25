@@ -26,6 +26,12 @@ local ensure,
         'ensure_equals'
       }
 
+local validate_probability_rough
+      = import 'lua-nucleo/random.lua'
+      {
+        'validate_probability_rough'
+      }
+
 local invariant
       = import 'lua-nucleo/functional.lua'
       {
@@ -65,14 +71,6 @@ local lower_bound,
         'upper_bound_gt',
         'pick_init',
         'pick_one'
-      }
-
-local ensure_probability_rough,
-      ensure_probability_experiment
-      = import 'lua-nucleo/random.lua'
-      {
-        'ensure_probability_rough',
-        'ensure_probability_experiment'
       }
 
 --------------------------------------------------------------------------------
@@ -314,7 +312,7 @@ test "pick-equal-weights" (function()
   end
   print("done generating stats")
 
-  ensure_probability_rough(probs, stats)
+  validate_probability_rough(probs, stats)
 end)
 
 test "pick-non-equal-weights" (function()
@@ -332,9 +330,9 @@ test "pick-non-equal-weights" (function()
   end
   print("done generating stats")
 
-  ensure_probability_rough(probs, stats)
+  validate_probability_rough(probs, stats)
 end)
---
+
 test "pick-non-equal-weights-generated" (function()
   local num_keys = 1e2
   local num_runs = 1e5
@@ -359,7 +357,7 @@ test "pick-non-equal-weights-generated" (function()
   end
   print("done generating stats")
 
-  ensure_probability_rough(probs, stats)
+  validate_probability_rough(probs, stats)
 end)
 
 --------------------------------------------------------------------------------
