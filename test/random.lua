@@ -41,6 +41,8 @@ local test = make_suite("random", random_exports)
 
 --------------------------------------------------------------------------------
 
+local os_clock = os.clock
+
 local f_bubble_sort = function(t)
   for i = 2, #t do
     local b_switched = false
@@ -108,7 +110,6 @@ local f_generate_chances = function(n_number)
 end
 
 test:test_for 'validate_probability_rough' (function()
-  local os_clock = os.clock
   local start = os_clock()
 
   local f_true_checks = function(
@@ -207,7 +208,6 @@ end)
 
 -- TODO: Strict only, too long
 test:test_for 'validate_probability_precise' (function()
-  local os_clock = os.clock
   local start = os_clock()
 
   local f_generate_experiments_contrast_chances = function(
