@@ -36,6 +36,7 @@ return
   'assert';
   'log';
   'priority_queue';
+  'timed_queue';
   --
   'util/anim/interpolator';
 }
