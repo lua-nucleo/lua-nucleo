@@ -35,6 +35,7 @@ return
   'checker';
   'assert';
   'log';
+  'priority_queue';
   --
   'util/anim/interpolator';
 }
