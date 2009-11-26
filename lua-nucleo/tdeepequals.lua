@@ -14,7 +14,8 @@
 -- (tmore(a,b)*tmore(b,c)*tmore(c,a)<=0)
 -- a ≤ b or b ≤ a (totality).
 
-local pairs, type, ipairs, tostring = pairs, type, ipairs, tostring
+local pairs, type, ipairs, tostring, assert
+    = pairs, type, ipairs, tostring, assert
 local table_concat, table_sort = table.concat, table.sort
 local string_format, string_match = string.format, string.match
 

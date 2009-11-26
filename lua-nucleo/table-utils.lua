@@ -2,8 +2,8 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-local setmetatable, error, pairs, ipairs, tostring, select =
-      setmetatable, error, pairs, ipairs, tostring, select
+local setmetatable, error, pairs, ipairs, tostring, select, type, assert
+    = setmetatable, error, pairs, ipairs, tostring, select, type, assert
 
 -- Warning: it is possible to corrupt this with rawset and debug.setmetatable.
 local empty_table = setmetatable(

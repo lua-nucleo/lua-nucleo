@@ -2,11 +2,17 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-local assert = assert
+local assert, tostring = assert, tostring
 local table_concat = table.concat
 
 -- TODO: Port to method_arguments()
-local is_self, is_string = import 'lua-nucleo/type.lua' { 'is_self', 'is_string' }
+local is_self,
+      is_string
+      = import 'lua-nucleo/type.lua'
+      {
+        'is_self',
+        'is_string'
+      }
 
 local make_checker
 do

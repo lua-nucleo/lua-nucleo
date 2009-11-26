@@ -2,10 +2,10 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-local error, tostring, pcall, type =
-      error, tostring, pcall, type
+local error, tostring, pcall, type, pairs, select, next 
+    = error, tostring, pcall, type, pairs, select, next
 
-local math_min = math.min
+local math_min, math_max, math_abs = math.min, math_max, math_abs
 local string_char = string.char
 
 local tdeepequals,
@@ -121,8 +121,8 @@ do
   -- TODO: Generalize?
   local string_window = function(str, pos, window_radius)
     return str:sub(
-        math.max(1, pos - window_radius),
-        math.min(pos + window_radius, #str)
+        math_max(1, pos - window_radius),
+        math_min(pos + window_radius, #str)
       )
   end
 
@@ -254,7 +254,7 @@ local ensure_aposteriori_probability = function(num_runs, weights, stats, max_ac
     ensure("aposteriori must be non-negative", aposteriori >= 0)
 
     -- TODO: Lame check. Improve it.
-    local diff = math.abs(apriori - aposteriori) / apriori
+    local diff = math_abs(apriori - aposteriori) / apriori
     if diff > max_acceptable_diff then
       error(
           "inacceptable apriori-aposteriori difference key: `" .. tostring(k) .. "'"

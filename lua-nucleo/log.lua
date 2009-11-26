@@ -14,8 +14,11 @@
 
 --------------------------------------------------------------------------------
 
-local type = type
-local os_time, os_date = os.time, os.date
+local type, setmetatable, tostring, select, assert, unpack
+    = type, setmetatable, tostring, select, assert, unpack
+
+local os_time, os_date 
+    = os.time, os.date
 
 --------------------------------------------------------------------------------
 

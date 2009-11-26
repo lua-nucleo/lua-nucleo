@@ -2,8 +2,14 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-local print, loadfile, xpcall, error, ipairs, assert, type, next =
-      print, loadfile, xpcall, error, ipairs, assert, type, next
+local print, loadfile, xpcall, error, ipairs, assert, type, next, pairs =
+      print, loadfile, xpcall, error, ipairs, assert, type, next, pairs
+
+local getmetatable, setmetatable
+    = getmetatable, setmetatable
+
+local _G = _G -- TODO: ?!
+
 local debug_traceback = debug.traceback
 local table_concat = table.concat
 

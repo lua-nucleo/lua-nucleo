@@ -2,7 +2,7 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-local type, pairs, error = type, pairs, error
+local type, pairs, error, tostring = type, pairs, error, tostring
 
 local lua51_types = import 'lua-nucleo/language.lua' { 'lua51_types' }
 

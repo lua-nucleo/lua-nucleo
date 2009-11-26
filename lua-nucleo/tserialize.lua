@@ -10,14 +10,12 @@
 --     str = tserialize(explist) --> to serialize data
 --     =(loadstring(str)()) --> to load it back
 
-
 local tserialize
 do
-  local pairs, type, ipairs, tostring = pairs, type, ipairs, tostring
+  local pairs, type, ipairs, tostring, select 
+      = pairs, type, ipairs, tostring, select
   local table_concat, table_remove = table.concat, table.remove
   local string_format, string_match = string.format, string.match
-
-  assert(type(import)=="function", "tserialize: import is required to run")
 
   local lua51_keywords = import 'lua-nucleo/language.lua' { 'lua51_keywords' }
 
