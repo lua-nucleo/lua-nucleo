@@ -21,11 +21,13 @@ local assert_is_table,
       }
 
 local ensure,
-      ensure_equals
+      ensure_equals,
+      ensure_fails_with_substring
       = import 'lua-nucleo/ensure.lua'
       {
         'ensure',
-        'ensure_equals'
+        'ensure_equals',
+        'ensure_fails_with_substring'
       }
 
 local tdeepequals,
@@ -84,6 +86,39 @@ end)
 test "single-element" (function()
   local priority_queue = assert_is_table(make_priority_queue())
   check_insert_pop_elements(priority_queue, {{p = 42, v = function() end}})
+end)
+
+--------------------------------------------------------------------------------
+
+test "single-invalid-priority-type" (function()
+  local priority_queue = assert_is_table(make_priority_queue())
+
+  local value = 42
+
+  ensure_fails_with_substring(
+      "priority cannot be of 'nil' type",
+      function() priority_queue:insert(nil, value) end,
+      "expected `number', got `nil'"
+    )
+
+  ensure_fails_with_substring(
+      "priority cannot be of 'string' type",
+      function() priority_queue:insert("the string", value) end,
+      "expected `number', got `string'"
+    )
+
+  ensure_fails_with_substring(
+      "priority cannot be of 'table' type",
+      function() priority_queue:insert({}, value) end,
+      "expected `number', got `table'"
+    )
+
+  ensure_fails_with_substring(
+      "priority cannot be of 'function' type",
+      function() priority_queue:insert(function() end, value) end,
+      "expected `number', got `function'"
+    )
+
 end)
 
 --------------------------------------------------------------------------------
