@@ -2,6 +2,12 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
+--------------------------------------------------------------------------------
+
+local math_huge = math.huge
+
+--------------------------------------------------------------------------------
+
 local arguments,
       method_arguments
       = import 'lua-nucleo/args.lua'
@@ -25,6 +31,8 @@ do
         self,
         "number", expiration_time
       )
+    assert(expiration_time >= 0, "negative time is not supported")
+    assert(expiration_time ~= math_huge, "infinite time is not supported")
     assert(value ~= nil) -- TODO: Need *arguments metatype for that
 
     self.priority_queue_:insert(expiration_time, value)
