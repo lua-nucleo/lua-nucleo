@@ -29,11 +29,13 @@ local ensure,
 --------------------------------------------------------------------------------
 
 local EPSILON,
+      DELTA,
       trunc,
       math_exports
       = import 'lua-nucleo/math.lua'
       {
         'EPSILON',
+        'DELTA',
         'trunc'
       }
 
@@ -63,6 +65,35 @@ test:test_for "EPSILON" (function()
   -- May fail if Lua is not compiled with number as double.
   -- Change EPSILON accordingly then.
   ensure_equals("EPSILON", EPSILON, actual_epsilon)
+end)
+
+--------------------------------------------------------------------------------
+
+test:test_for "DELTA" (function()
+  assert_is_number(DELTA)
+
+  local num_iter = 0
+
+  -- http://en.wikipedia.org/wiki/Machine_epsilon
+  local actual_delta= 1
+  while true do
+    local next_value = actual_delta / 2
+    if 1 + next_value == 1 then
+      break
+    end
+
+    actual_delta = next_value
+
+    num_iter = num_iter + 1
+    assert(
+        num_iter < 1e6,
+        "no epsilon for this architecture?!"
+      )
+  end
+
+  -- May fail if Lua is not compiled with number as double.
+  -- Change DELTA accordingly then.
+  ensure_equals("DELTA", DELTA, actual_delta)
 end)
 
 --------------------------------------------------------------------------------
