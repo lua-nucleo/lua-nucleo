@@ -4,6 +4,9 @@
 
 local math_ceil, math_floor = math.ceil, math.floor
 
+-- See http://en.wikipedia.org/wiki/Machine_epsilon
+local EPSILON = 2^-53 -- Depends on how Lua is built
+
 --
 -- Drops fractional part of a number
 --
@@ -23,5 +26,6 @@ end
 
 return
 {
+  EPSILON = EPSILON;
   trunc = trunc;
 }

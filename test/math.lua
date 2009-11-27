@@ -10,6 +10,13 @@ math.randomseed(12345)
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
+--------------------------------------------------------------------------------
+
+local assert_is_number
+      = import 'lua-nucleo/typeassert.lua'
+      {
+        'assert_is_number'
+      }
 
 local ensure,
       ensure_equals
@@ -19,16 +26,44 @@ local ensure,
         'ensure_equals'
       }
 
-local trunc,
-      math_imports
+--------------------------------------------------------------------------------
+
+local EPSILON,
+      trunc,
+      math_exports
       = import 'lua-nucleo/math.lua'
       {
+        'EPSILON',
         'trunc'
       }
 
 --------------------------------------------------------------------------------
 
-local test = make_suite("math", math_imports)
+local test = make_suite("math", math_exports)
+
+--------------------------------------------------------------------------------
+
+test:test_for "EPSILON" (function()
+  assert_is_number(EPSILON)
+
+  local num_iter = 0
+
+  -- http://en.wikipedia.org/wiki/Machine_epsilon
+  local actual_epsilon = 1
+  while 1 + actual_epsilon ~= 1 do
+    actual_epsilon = actual_epsilon / 2
+
+    num_iter = num_iter + 1
+    assert(
+        num_iter < 1e6,
+        "no epsilon for this architecture?!"
+      )
+  end
+
+  -- May fail if Lua is not compiled with number as double.
+  -- Change EPSILON accordingly then.
+  ensure_equals("EPSILON", EPSILON, actual_epsilon)
+end)
 
 --------------------------------------------------------------------------------
 
