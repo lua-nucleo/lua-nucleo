@@ -6,8 +6,8 @@ local math_ceil, math_floor = math.ceil, math.floor
 
 -- See http://en.wikipedia.org/wiki/Machine_epsilon
 -- Depends on how Lua is built
-local EPSILON = 2^-53     -- { max x | 1 + x == 1 }
-local DELTA = EPSILON * 2 -- { min x | 1 + x  > 1 }
+local EPSILON = 2^-53     -- max { x | 1 + x == 1 }
+local DELTA = EPSILON * 2 -- min { x | 1 + x  > 1 }
 
 --
 -- Drops fractional part of a number
