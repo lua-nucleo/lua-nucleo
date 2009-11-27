@@ -7,7 +7,6 @@
 -- TODO: Port checker from priority queue
 -- TODO: Test invalid time
 -- TODO: Reject math.huge on put.
--- TODO: See TODOs in code!
 
 dofile('lua-nucleo/strict.lua')
 dofile('lua-nucleo/import.lua')
@@ -24,11 +23,15 @@ local assert_is_table,
       }
 
 local ensure,
-      ensure_equals
+      ensure_equals,
+      ensure_tequals,
+      ensure_fails_with_substring
       = import 'lua-nucleo/ensure.lua'
       {
         'ensure',
-        'ensure_equals'
+        'ensure_equals',
+        'ensure_tequals',
+        'ensure_fails_with_substring'
       }
 
 local tdeepequals,
@@ -59,8 +62,32 @@ test:group "make_timed_queue"
 test "empty" (function()
   local timed_queue = make_timed_queue()
   ensure("created timed queue", timed_queue)
-  ensure_equals("no elements", timed_queue:pop_next_expired(math.huge), nil) -- TODO: Non-empty queue should return object
-  ensure_equals("no expiration time", timed_queue:get_next_expiration_time(), nil) -- TODO: Math.huge!
+  ensure_equals("no elements", timed_queue:pop_next_expired(math.huge), nil)
+  ensure_equals("no expiration time", timed_queue:get_next_expiration_time(), math.huge)
+end)
+
+--------------------------------------------------------------------------------
+
+test "cant-insert-huge" (function()
+  local timed_queue = assert_is_table(make_timed_queue())
+  ensure_fails_with_substring(
+      "can't insert huge",
+      function() timed_queue:insert(math.huge, "value") end,
+      "infinite time is not supported"
+    )
+  ensure_equals("no elements", timed_queue:pop_next_expired(math.huge), nil)
+end)
+
+--------------------------------------------------------------------------------
+
+test "cant-insert-negative" (function()
+  local timed_queue = assert_is_table(make_timed_queue())
+  ensure_fails_with_substring(
+      "can't insert negative",
+      function() timed_queue:insert(-1, "value") end,
+      "negative time is not supported"
+    )
+  ensure_equals("no elements", timed_queue:pop_next_expired(math.huge), nil)
 end)
 
 --------------------------------------------------------------------------------
@@ -68,20 +95,35 @@ end)
 test "single-element" (function()
   local timed_queue = assert_is_table(make_timed_queue())
   ensure_equals("no elements", timed_queue:pop_next_expired(math.huge), nil)
-  ensure_equals("no expiration time", timed_queue:get_next_expiration_time(), nil)
+  ensure_equals("no expiration time", timed_queue:get_next_expiration_time(), math.huge)
 
   local time, value = 65, function() end
 
   timed_queue:insert(time, value)
-  ensure_equals("no first if not enough time", timed_queue:pop_next_expired(50), nil)
+  ensure_equals("no first if not enough time", timed_queue:pop_next_expired(time - 1), nil)
   ensure_equals("valid expiration time", timed_queue:get_next_expiration_time(), time)
 
-  local popped_time, popped_value = timed_queue:pop_next_expired(70)
-  ensure_equals("popped time",  popped_time,  time)
-  ensure_equals("popped value", popped_value, value)
+  ensure_tequals("pop_next_expired", { timed_queue:pop_next_expired(time) }, { time, value })
 
   ensure_equals("no elements", timed_queue:pop_next_expired(math.huge), nil)
-  ensure_equals("no expiration time", timed_queue:get_next_expiration_time(), nil)
+  ensure_equals("no expiration time", timed_queue:get_next_expiration_time(), math.huge)
+end)
+
+test "single-element-huge" (function()
+  local timed_queue = assert_is_table(make_timed_queue())
+  ensure_equals("no elements", timed_queue:pop_next_expired(math.huge), nil)
+  ensure_equals("no expiration time", timed_queue:get_next_expiration_time(), math.huge)
+
+  local time, value = 65, function() end
+
+  timed_queue:insert(time, value)
+  ensure_equals("no first if not enough time", timed_queue:pop_next_expired(time - 1), nil)
+  ensure_equals("valid expiration time", timed_queue:get_next_expiration_time(), time)
+
+  ensure_tequals("pop_next_expired", { timed_queue:pop_next_expired(math.huge) }, { time, value })
+
+  ensure_equals("no elements", timed_queue:pop_next_expired(math.huge), nil)
+  ensure_equals("no expiration time", timed_queue:get_next_expiration_time(), math.huge)
 end)
 
 -- TODO: Add more tests!
