@@ -2,7 +2,7 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-local error, tostring, pcall, type, pairs, select, next 
+local error, tostring, pcall, type, pairs, select, next
     = error, tostring, pcall, type, pairs, select, next
 
 local math_min, math_max, math_abs = math.min, math_max, math_abs
