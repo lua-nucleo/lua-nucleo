@@ -39,7 +39,7 @@ do
 
     local time_of_first_elem = (self.priority_queue_:front())
     if time_of_first_elem and time_of_first_elem <= time_current then
-        return self.priority_queue_:pop()
+      return self.priority_queue_:pop()
     end
 
     return nil
@@ -50,7 +50,7 @@ do
         self
       )
 
-    return (self.priority_queue_:front())
+    return (self.priority_queue_:front()) or math_huge
   end
 
   make_timed_queue = function()
