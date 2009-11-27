@@ -5,7 +5,7 @@
 local error, tostring, pcall, type, pairs, select, next
     = error, tostring, pcall, type, pairs, select, next
 
-local math_min, math_max, math_abs = math.min, math_max, math_abs
+local math_min, math_max, math_abs = math.min, math.max, math.abs
 local string_char = string.char
 
 local tdeepequals,
