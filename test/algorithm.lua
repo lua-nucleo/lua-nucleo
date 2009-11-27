@@ -49,12 +49,14 @@ local tdeepequals,
       }
 
 local lower_bound,
+      upper_bound,
       pick_init,
       pick_one,
       algorithm_exports
       = import 'lua-nucleo/algorithm.lua'
       {
         'lower_bound',
+        'upper_bound',
         'pick_init',
         'pick_one'
       }
@@ -74,7 +76,8 @@ test:test_for "lower_bound" (function()
       error(
           ("check lower_bound: bad actual value %q, expected %q\n"):format(
               tostring(actual_value), tostring(expected_value)
-            )
+            ),
+          2
         )
     end
   end
@@ -84,6 +87,36 @@ test:test_for "lower_bound" (function()
   check({ {1}, {2} }, 1, 1)
   check({ {1}, {2} }, 2, 2)
   check({ {1}, {2} }, 3, 3)
+
+  check({ {1}, {2}, {2}, {3} },   2, 2)
+  check({ {1}, {2}, {2}, {3} }, 2.5, 4)
+  check({ {1}, {2}, {2}, {3} }, 1.5, 2)
+end)
+
+test:test_for "upper_bound" (function()
+  -- TODO: Test it better
+
+  local check = function(t, k, expected_value)
+    local actual_value = upper_bound(t, 1, k)
+    if actual_value ~= expected_value then
+      error(
+          ("check upper_bound: bad actual value %q, expected %q\n"):format(
+              tostring(actual_value), tostring(expected_value)
+            ),
+          2
+        )
+    end
+  end
+
+  check({ {1}, {2} }, 1.5, 2)
+  check({ {1}, {2} }, 0, 1)
+  check({ {1}, {2} }, 1, 2)
+  check({ {1}, {2} }, 2, 3)
+  check({ {1}, {2} }, 3, 3)
+
+  check({ {1}, {2}, {2}, {3} },   2, 4)
+  check({ {1}, {2}, {2}, {3} }, 2.5, 4)
+  check({ {1}, {2}, {2}, {3} }, 1.5, 2)
 end)
 
 --------------------------------------------------------------------------------
