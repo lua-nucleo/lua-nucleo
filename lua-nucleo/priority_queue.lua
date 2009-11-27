@@ -60,7 +60,12 @@ do
         self
       )
 
-    return unpack(table_remove(self.queue_, 1))
+    local front_elem = table_remove(self.queue_, 1)
+    if front_elem == nil then
+      return nil
+    end
+
+    return front_elem[PRIORITY_KEY], front_elem[VALUE_KEY]
   end
 
   make_priority_queue = function()

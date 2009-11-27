@@ -5,6 +5,7 @@
 -- TODO: Add tests for invalid priority
 -- TODO: Refactor and extend tests for many objects
 -- TODO: Test on 'nil' object to be inserted???
+-- TODO: Test pop from empty queue
 
 dofile('lua-nucleo/strict.lua')
 dofile('lua-nucleo/import.lua')
