@@ -311,40 +311,42 @@ test:test_for 'validate_probability_precise' (function()
     local weights_closure_false = generate_weights(i)
     check(weights_closure_false, generate_experiments_defined, false)
 
-    -- contrast correct input
-    print("contrast:")
-    for j = 1, 3 do
-      print("1 and " .. i - 1 .. " of 10^" .. j)
-      weights_closure = generate_contrast_weights(i, j, true)
-      check(weights_closure, generate_experiments_defined, true)
-
-      if i > 2 then
-        print(i - 1 .. " of 1 and 10^" .. j)
-        weights_closure = generate_contrast_weights(i, j, false)
+    if test:in_strict_mode() then
+      -- contrast correct input
+      print("contrast:")
+      for j = 1, 3 do
+        print("1 and " .. i - 1 .. " of 10^" .. j)
+        weights_closure = generate_contrast_weights(i, j, true)
         check(weights_closure, generate_experiments_defined, true)
+
+        if i > 2 then
+          print(i - 1 .. " of 1 and 10^" .. j)
+          weights_closure = generate_contrast_weights(i, j, false)
+          check(weights_closure, generate_experiments_defined, true)
+        end
       end
-    end
 
-    -- contrast false input
-    for j = 1, 2 do
-      print("1 and " .. i - 1 .. " of 10^" .. j .. ", added +" .. i)
-      weights_closure = generate_contrast_weights(i, j, true)
-
-      -- create wrong weights (by adding small value) and check
-      local weights_closure_false = tclone(weights_closure)
-      local ran_key = math.random(i)
-      weights_closure_false[ran_key] = weights_closure_false[ran_key] + i
-      check(weights_closure_false, generate_experiments_defined, false)
-
-      if i > 2 then
-        print(i - 1 .. " of 1 and 10^" .. j .. ", +" .. i)
-        weights_closure = generate_contrast_weights(i, j, false)
+      -- contrast false input
+      for j = 1, 2 do
+        print("1 and " .. i - 1 .. " of 10^" .. j .. ", added +" .. i)
+        weights_closure = generate_contrast_weights(i, j, true)
 
         -- create wrong weights (by adding small value) and check
-        weights_closure_false = tclone(weights_closure)
-        ran_key = math.random(i)
+        local weights_closure_false = tclone(weights_closure)
+        local ran_key = math.random(i)
         weights_closure_false[ran_key] = weights_closure_false[ran_key] + i
         check(weights_closure_false, generate_experiments_defined, false)
+
+        if i > 2 then
+          print(i - 1 .. " of 1 and 10^" .. j .. ", +" .. i)
+          weights_closure = generate_contrast_weights(i, j, false)
+
+          -- create wrong weights (by adding small value) and check
+          weights_closure_false = tclone(weights_closure)
+          ran_key = math.random(i)
+          weights_closure_false[ran_key] = weights_closure_false[ran_key] + i
+          check(weights_closure_false, generate_experiments_defined, false)
+        end
       end
     end
 
