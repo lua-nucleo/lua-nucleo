@@ -1,11 +1,13 @@
--- random.lua: tests for various common algorithms
+-- random.lua: utilities for random generation
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-local assert_is_number
+local assert_is_number,
+      assert_is_table
       = import 'lua-nucleo/typeassert.lua'
       {
-        'assert_is_number'
+        'assert_is_number',
+        'assert_is_table'
       }
 
 local ensure,
@@ -17,11 +19,13 @@ local ensure,
       }
 
 local taccumulate,
-      tnormalize
+      tnormalize,
+      tcount_elements
       = import 'lua-nucleo/table.lua'
       {
         'taccumulate',
-        'tnormalize'
+        'tnormalize',
+        'tcount_elements'
       }
 
 local arguments,

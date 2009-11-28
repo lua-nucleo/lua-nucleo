@@ -1,4 +1,4 @@
--- random.lua: tests for various common algorithms
+-- random.lua: tests for utilities for random generation
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
@@ -104,15 +104,16 @@ local generate_experiments = function(
   -- filling formalized table
   for k, v in pairs(weights) do
     experiments[k] = 0
-    local cashed = probability + weights_normalized[k]
+    local cached = probability + weights_normalized[k]
     formalized[#formalized + 1] =
     {
-      cashed - probability;
-      ["name"] = k;
-      ["lowBound"] = probability;
-      ["upBound"] = cashed;
+
+      cached - probability;
+      name = k;
+      lowBound = probability;
+      upBound = cached;
     }
-    probability = cashed
+    probability = cached
   end
 
   -- sorting formalized by chance of hitting case
@@ -149,7 +150,7 @@ test:test_for 'validate_probability_rough' (function()
   -- generates data, tests function validate_probability_rough on this data
   -- and returns number of true checks
   local check = function(
-      NUM_CYCLES, -- number of cycles of testing
+      num_cycles, -- number of cycles of testing
       length, -- number of cases (keys) in weights and experiments
       weights, -- table, contains weights of each case
       experiments, -- table, contains experiments
@@ -169,7 +170,7 @@ test:test_for 'validate_probability_rough' (function()
     local true_checks = 0
     local weights_current = weights
     local experiments_current = experiments
-    for i = 1, NUM_CYCLES do
+    for i = 1, num_cycles do
       if should_generate_weights then
         weights_current = generate_weights(length)
       end
@@ -243,7 +244,6 @@ end)
 
 --------------------------------------------------------------------------------
 
--- TODO: Strict only, too long
 test:test_for 'validate_probability_precise' (function()
   local start = os_clock()
 
@@ -258,9 +258,9 @@ test:test_for 'validate_probability_precise' (function()
 
     -- filling table
     if are_low_rare then
-        weights = tgenerate_n(length, function() return powered end)
+      weights = tgenerate_n(length, function() return powered end)
     else
-        weights = tgenerate_n(length, function() return 1 end)
+      weights = tgenerate_n(length, function() return 1 end)
     end
 
     -- adding random rare value
