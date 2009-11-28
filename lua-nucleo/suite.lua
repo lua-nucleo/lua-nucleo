@@ -82,6 +82,10 @@ do
     end
   end
 
+  local in_strict_mode = function(self)
+    return self.strict_mode_
+  end
+
   local case = test -- Useful alias
 
   local run = function(self)
@@ -237,6 +241,7 @@ do
           tests_for = tests_for;
           group = group; -- Note this is an alias for tests_for().
           test_for = test_for;
+          in_strict_mode = in_strict_mode;
           test = test;
           case = case; -- Note this is an alias for test().
           run = run;
