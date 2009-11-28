@@ -357,4 +357,41 @@ test:test_for 'validate_probability_precise' (function()
   print(string.format("Time: %.3f s (slow test)", os_clock() - start))
 end)
 
+test 'validate_probability_wrong_input' (function()
+  print("Wrong inputs:")
+  ensure_fails_with_substring(
+      "wrong arguments",
+      function() validate_probability_rough("a") end,
+      "argument"
+    )
+  ensure_fails_with_substring(
+      "wrong arguments",
+      function() validate_probability_rough({1}, "b") end,
+      "argument"
+    )
+  local res, err = validate_probability_rough({1, 3}, {3, 5, 6})
+  if err ~= nil then print(err) else error("wrong input") end
+  res, err = validate_probability_rough({1}, {1})
+  if err ~= nil then print(err) else error("wrong input") end
+  res, err = validate_probability_rough({1, 2, 3}, {1, 2, 3})
+  if err ~= nil then print(err) else error("wrong input") end
+  ensure_fails_with_substring(
+      "wrong arguments",
+      function() validate_probability_precise("a") end,
+      "table"
+    )
+  ensure_fails_with_substring(
+      "wrong arguments",
+      function() validate_probability_precise({1, 2, "c"}, function() end) end,
+      "number"
+    )
+  ensure_fails_with_substring(
+      "wrong arguments",
+      function() validate_probability_precise({1, 2, 3}, function() end) end,
+      "table"
+    )
+  res, err = validate_probability_precise({1, 2, 0.9e-5}, function() end)
+  if err ~= nil then print(err) else error("wrong input") end
+end)
+
 assert(test:run())
