@@ -37,7 +37,7 @@ local type_imports = import 'lua-nucleo/type.lua' ()
 -- main algorithm value, got 99% chance of false negative
 -- (though high chance of false positive accordingly)
 -- http://www.itl.nist.gov/div898/handbook/eda/section3/eda3674.htm
-local HI_CRITICAL_TABLE =
+local CHI_CRITICAL_LIST =
 {
   006.635; 009.210; 011.345; 013.277; 015.086; 016.812; 018.475; 020.090;
   021.666; 023.209; 024.725; 026.217; 027.688; 029.141; 030.578; 032.000;
@@ -54,183 +54,191 @@ local HI_CRITICAL_TABLE =
   132.309; 133.476; 134.642;
 }
 
--- Function roughly determines if distribution of values in table t_stats
--- corresponds distribution in t_weights. Max number of elements check - 100.
+-- Function roughly determines if distribution of values in table experiments
+-- corresponds distribution in weights. Max number of elements check - 100.
 -- algorithm based on Hi square Pearson's test.
 -- http://en.wikipedia.org/wiki/Pearson%27s_chi-square_test
-local validate_probability_rough = function(t_weights, t_stats)
+local validate_probability_rough = function(weights, experiments)
   -- input checks
   arguments(
-    "table", t_weights,
-    "table", t_stats
+    "table", weights,
+    "table", experiments
   )
-  local n_length = 0
-  for k, v in pairs(t_weights) do
-    assert_is_number(t_weights[k])
-    assert_is_number(t_stats[k])
-    n_length = n_length + 1
+  local length = 0
+  for k, v in pairs(weights) do
+    assert_is_number(weights[k])
+    assert_is_number(experiments[k])
+    length = length + 1
   end
-  if n_length > 100 or n_length < 2 then
-    error("argument: found wrong input table length." ..
-      "Max length: 100, min length: 2 got: " .. n_length)
+  if length > 100 or length < 2 then
+    error("argument: wrong input table size")
   end
-  local n_experiments = taccumulate(t_stats)
-  if n_experiments < 1000 then
-    error("Lack of experiments data! Got experiments: ".. n_experiments ..
-      ", need > 1000. Results may be false negative.")
+  local experiments_num = taccumulate(experiments)
+  if experiments_num < 1000 then
+    error("argument: lack of experiments data")
   end
 
   -- data preparation
-  local t_distribution_normalized = tnormalize(t_weights)
-  local t_experiments_normalized = tnormalize(t_stats)
-  local d_hi_square = 0
+  local weights_normalized = tnormalize(weights)
+  local experiments_normalized = tnormalize(experiments)
+  local chi_square = 0
 
   -- algorithm itself
-  for k, v in pairs(t_distribution_normalized) do
-    local d_delta = math.abs(
-        t_distribution_normalized[k] - t_experiments_normalized[k]
-      )
-    d_hi_square = d_hi_square + (100 * d_delta * d_delta) /
-      t_distribution_normalized[k]
+  for k, v in pairs(weights_normalized) do
+    local delta = math.abs(weights_normalized[k] - experiments_normalized[k])
+    chi_square = chi_square + (100 * delta * delta) / weights_normalized[k]
   end
 
-  return d_hi_square < HI_CRITICAL_TABLE[n_length - 1]
+  return chi_square < CHI_CRITICAL_LIST[length - 1]
 end
 
--- Function precisely determines if distribution of values in table t_stats
--- corresponds distribution in t_weights.
+-- Function precisely determines if distribution of values in table experiments
+-- corresponds distribution in weights.
 -- algorithm based on experiment probability check.
-local validate_probability_precise = function(t_weights, f_stats_generator)
+local validate_probability_precise = function(weights, generate)
   -- input checks
   arguments(
-    "table", t_weights,
-    "function", f_stats_generator
+    "table", weights,
+    "function", generate
   )
-  for k, v in pairs(t_weights) do
-    assert_is_number(t_weights[k])
+  for k, v in pairs(weights) do
+    assert_is_number(weights[k])
+  end
+  local weights_normalized = tnormalize(weights)
+  for k, v in pairs(weights_normalized) do
+    if
+      weights_normalized[k] < 1e-5
+    then
+      error("Input below level of sensitivity")
+    end
   end
 
-  -- data preparation
-  local t_distribution_normalized = tnormalize(t_weights)
-  local n_start = 3
-  local n_stop = 5
-  local t_hi_square = {}
-  local n_counter = 1
-  local n_true = 0
-  local n_sensitivity = 0
-  local n_increased = 0
-  local n_decreased = 0
+  -- various algorithm variables initialization
+  local DECISION_VALUE = 8
+  local BASE_SENSITIVITY = 3
+  local SENSITIVITY_DELTA = 2
+  local INCREASE_LIMIT = 2
+  local sensitivity = BASE_SENSITIVITY -- power of number of experiments used
+  local chi_squares = {} -- chi square container
+  local iteration = 0 -- iteration counter
+  local decision = 0 -- decision making value
+  local tendency = 0
 
   -- algorithm itself
   while true do
     -- check if we can return
     -- experience has shown that 8 value works ok
     -- more means less chances to fail, but more time to work
-    local n_return_value = 8
-    if n_true >= n_return_value then return true
-    elseif n_true <= -n_return_value then return false end
+    if decision >= DECISION_VALUE then return true
+    elseif decision <= -DECISION_VALUE then return false end
 
     -- exponential experiments cycle: 10^n
-    for n = n_start, n_stop do
-      -- data peparation
-      local pow_number = math.pow(10, n)
-      local t_cur_stats = f_stats_generator(pow_number)
-      local n_experiments = pow_number
-      local t_experiments_normalized = tnormalize(t_cur_stats)
+    for n = 0, SENSITIVITY_DELTA do
+      -- data preparation
+      local experiments_num = math.pow(10, sensitivity + n)
+      local experiments = generate(experiments_num)
+      local experiments_normalized = tnormalize(experiments)
 
-      -- calculate hi_square for current experiments num
-      t_hi_square[n] = 0;
-      for k, v in pairs(t_distribution_normalized) do
-        local d_delta = math.abs(v - t_experiments_normalized[k])
-        t_hi_square[n] = t_hi_square[n] + (100 * d_delta * d_delta) / v
+      -- calculate chi_square for current experiments num
+      chi_squares[n] = 0;
+      for k, v in pairs(weights_normalized) do
+        local delta = math.abs(v - experiments_normalized[k])
+        chi_squares[n] = chi_squares[n] + (100 * delta * delta) / v
       end
     end
 
-    local d_temp_overal = t_hi_square[n_start] / t_hi_square[n_stop]
-    local d_temp_first = t_hi_square[n_start] / t_hi_square[n_start + 1]
-    local d_temp_last = t_hi_square[n_stop - 1] / t_hi_square[n_stop]
+    local overal_change = chi_squares[0] / chi_squares[SENSITIVITY_DELTA]
+    local first_change = chi_squares[0] / chi_squares[1]
+    local second_change = chi_squares[1] / chi_squares[SENSITIVITY_DELTA]
 
     -- TEMP! neat debug output, delete if found and do not know what it for
-    --> print(n_true, d_temp_first, d_temp_last, d_temp_overal)
+    --> print(decision, first_change, second_change, overal_change)
 
-    -- check signs of definite hi_square dynamics
+    -- check signs of definite chi_square dynamics
     -- all constants are test-based
-    local OVERALL_HI_IMPROVEMENT = 90
-    local STEP_HI_IMPROVEMENT = 9
-    local STEP_HI_STAGNATION_LOWLIMIT = 0.5
-    local STEP_HI_STAGNATION_TOPLIMIT = 2
-    local STEP_HI_STAGNATION = 1.2
-    local OVERALL_HI_STAGNATION_LOW = 0.25
-    local OVERALL_HI_STAGNATION_TOP = 4
+    local OVERALL_IMPROVEMENT = 90
+    local STEP_IMPROVEMENT = 9
+    local STEP_STAGNATION_LOW = 0.5
+    local STEP_STAGNATION_TOP = 2
+    local STEP_STAGNATION = 1.2
+    local OVERALL_STAGNATION_LOW = 0.25
+    local OVERALL_STAGNATION_TOP = 4
 
     if
-      d_temp_overal > OVERALL_HI_IMPROVEMENT
+      overal_change > OVERALL_IMPROVEMENT
     then
-      n_true = n_true + 1
+      decision = decision + 1
     end
     if
-      d_temp_last > STEP_HI_IMPROVEMENT and d_temp_first > 1
+      first_change > STEP_IMPROVEMENT and second_change > 1
     then
-      n_true = n_true + 1
+      decision = decision + 1
     end
     if
-      d_temp_first > STEP_HI_IMPROVEMENT and d_temp_last > 1
+      second_change > STEP_IMPROVEMENT and first_change > 1
     then
-      n_true = n_true + 1
+      decision = decision + 1
     end
     if
-      d_temp_first > STEP_HI_STAGNATION
+      overal_change > OVERALL_STAGNATION_LOW and
+      overal_change < OVERALL_STAGNATION_TOP
     then
-      n_increased = n_increased + 1
-      n_decreased = 0
+      decision = decision - 1
+    end
+    if
+      second_change > STEP_STAGNATION_LOW and
+      second_change < STEP_STAGNATION_TOP
+    then
+      decision = decision - 1
+    end
+    if
+      first_change > STEP_STAGNATION_LOW and
+      first_change < STEP_STAGNATION_TOP
+    then
+      decision = decision - 1
+    end
+    if
+      second_change > STEP_STAGNATION
+    then
+      if tendency < 0 then tendency = 0 end
+      tendency = tendency + 1
     else
-      n_decreased = n_decreased + 1
-      n_increased = 0
+      if tendency > 0 then tendency = 0 end
+      tendency = tendency - 1
     end
     if
-      d_temp_last > STEP_HI_STAGNATION
+      first_change > STEP_STAGNATION
     then
-      n_increased = n_increased + 1
-      n_decreased = 0
+      if tendency < 0 then tendency = 0 end
+      tendency = tendency + 1
     else
-      n_decreased = n_decreased + 1
-      n_increased = 0
-    end
-    if n_increased >= 6 then n_true = n_true + 1 end
-    if n_decreased >= 4 then n_true = n_true - 1 end
-
-    if
-      d_temp_overal > OVERALL_HI_STAGNATION_LOW and
-      d_temp_overal < OVERALL_HI_STAGNATION_TOP
-    then
-      n_true = n_true - 1
-    end
-    if
-      d_temp_last > STEP_HI_STAGNATION_LOWLIMIT and
-      d_temp_last < STEP_HI_STAGNATION_TOPLIMIT
-    then
-      n_true = n_true - 1
-    end
-    if
-      d_temp_first > STEP_HI_STAGNATION_LOWLIMIT and
-      d_temp_first < STEP_HI_STAGNATION_TOPLIMIT
-    then
-      n_true = n_true - 1
+      if tendency > 0 then tendency = 0 end
+      tendency = tendency - 1
     end
 
-    n_counter = n_counter + 1
+    -- 6 and -4 are algorithm magic constants
+    if tendency >= 6 then decision = decision + 1 end
+    if tendency <= -4 then decision = decision - 1 end
 
-    if n_counter > n_return_value * (0.5 + n_sensitivity) then
-     -- TEMP! debug output, delete if found and do not know what it for
-     --> print "Below level of sensitivity"
-     if n_sensitivity > 2 then
-        -- TODO: may be we need error here, due to uncertain output
-        return n_true > 0
-     end
-     n_start = n_start + 1
-     n_stop = n_stop + 1
-     n_counter = 0
-     n_sensitivity = n_sensitivity + 1
+    iteration = iteration + 1
+
+    -- we are too deep, and accuracy is too high, experiments matches weights
+    if
+      sensitivity == BASE_SENSITIVITY + INCREASE_LIMIT - 1
+      and chi_squares[SENSITIVITY_DELTA] < 1e-5
+    then
+      return true
+    end
+
+    if iteration > DECISION_VALUE * (0.5 + sensitivity - BASE_SENSITIVITY) then
+      -- TEMP! debug output, delete if found and do not know what it for
+      --> print("Below level of sensitivity " .. sensitivity)
+      if
+        sensitivity >= BASE_SENSITIVITY + INCREASE_LIMIT
+      then
+        error("Below level of sensitivity")
+      end
+      sensitivity = sensitivity + 1
     end
   end
 end

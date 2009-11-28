@@ -1,4 +1,4 @@
--- algorithm.lua: tests for various common algorithms
+-- random.lua: tests for various common algorithms
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
@@ -41,164 +41,195 @@ local test = make_suite("random", random_exports)
 
 --------------------------------------------------------------------------------
 
-local os_clock = os.clock
+-- test global constants, defines number of elements (cases) in tested tables
+local START_POINT = 2 -- can't be less then 2, or more then END_POINT
+local MIDDLE_POINT = 10
+local END_POINT = 100 -- cant be more then 100, or less then START_POINT
+local STEP_SMALL = 2 -- before MIDDLE_POINT
+local STEP_LARGE = 30 -- after MIDDLE_POINT
 
-local f_bubble_sort = function(t)
+-- step of tests
+local get_next_iteration = function(i)
+  if
+    i < MIDDLE_POINT
+  then
+    i = i + STEP_SMALL
+  else
+    i = i + STEP_LARGE
+  end
+  return i
+end
+
+-- sorts input table t using compare expression
+-- bubble_sort is used because its faster then table.sort
+local bubble_sort = function(t)
   for i = 2, #t do
-    local b_switched = false
+    local switched = false
     for j = #t, i, -1 do
-      if t[j][1] > t[j - 1][1] then
+      if
+        -- compare expression here
+        t[j][1] > t[j - 1][1]
+      then
         t[j], t[j - 1] = t[j - 1], t[j]
-        b_switched = true
+        switched = true
       end
     end
-    if b_switched == false then return t end
+    if
+      switched == false
+    then
+      return t
+    end
   end
   return t
 end
 
-local f_generate_experiments = function(
-    t_probability_distribution,
-    n_experiments
+-- generates distribution table, where keys are cases and
+-- values - number of experiments fallen in this case
+local generate_experiments = function(
+    num_experiments, -- number of experiments to generate
+    weights -- table, contains weights of each case
   )
-  local t_probability_distribution_normalized =
-    tnormalize(t_probability_distribution)
-  local t_experiments = {}
-  local t_formalized = {}
-  local f_temp_probability = 0
+  local weights_normalized = tnormalize(weights)
+  local experiments = {}
+  -- table, that contains formalized information on each case
+  local formalized = {}
+  local probability = 0
 
-  for k, v in pairs(t_probability_distribution) do
-    t_experiments[k] = 0
-    local f_cashed = f_temp_probability +
-      t_probability_distribution_normalized[k]
-    t_formalized[#t_formalized + 1] =
+  -- filling formalized table
+  for k, v in pairs(weights) do
+    experiments[k] = 0
+    local cashed = probability + weights_normalized[k]
+    formalized[#formalized + 1] =
     {
-      f_cashed - f_temp_probability;
+      cashed - probability;
       ["name"] = k;
-      ["probabilityWindow"] =
-      {
-        ["lowBound"] = f_temp_probability;
-        ["upBound"] =  f_cashed;
-      }
+      ["lowBound"] = probability;
+      ["upBound"] = cashed;
     }
-    f_temp_probability = f_cashed
+    probability = cashed
   end
 
-  f_bubble_sort(t_formalized)
+  -- sorting formalized by chance of hitting case
+  bubble_sort(formalized)
 
-  for i = 1, n_experiments do
-    local d_experiment_result = math.random()
-    for i, v in ipairs(t_formalized) do
+  -- carrying out experiments
+  for i = 1, num_experiments do
+    local experiment = math.random()
+    for i = 1, #formalized do
       if
-        d_experiment_result >=
-        t_formalized[i]["probabilityWindow"]["lowBound"]
-        and d_experiment_result <
-        t_formalized[i]["probabilityWindow"]["upBound"]
+        experiment >= formalized[i].lowBound
+        and experiment < formalized[i].upBound
       then
-        local name = t_formalized[i]["name"]
-        t_experiments[name] = t_experiments[name] + 1
+        local name = formalized[i].name
+        experiments[name] = experiments[name] + 1
         break
       end
     end
   end
 
-  return t_experiments
+  return experiments
 end
 
-local f_generate_chances = function(n_number)
-  return tgenerate_n(n_number, math.random)
+-- generates indexed table with length n, and random numbers in values
+local generate_weights = function(n)
+  return tgenerate_n(n, math.random)
 end
+
+local os_clock = os.clock
 
 test:test_for 'validate_probability_rough' (function()
   local start = os_clock()
 
-  local f_true_checks = function(
-      n_cycles,
-      n_length,
-      t_weights,
-      t_experiments,
-      b_generate_weights,
-      b_generate_experimants,
-      n_num_experiments,
-      t_generate_weights
+  -- generates data, tests function validate_probability_rough on this data
+  -- and returns number of true checks
+  local check = function(
+      NUM_CYCLES, -- number of cycles of testing
+      length, -- number of cases (keys) in weights and experiments
+      weights, -- table, contains weights of each case
+      experiments, -- table, contains experiments
+      should_generate_weights, -- if we generate other weights for each test
+      should_generate_experimants, -- if we generate other experiments for test
+      num_experiments, -- generated, if previous true
+      weights_to_use -- used to generate experiments if needed
     )
-    b_generate_weights = b_generate_weights or false
-    b_generate_experimants = b_generate_experimants or false
-    n_num_experiments = n_num_experiments or 10^4
-    if t_generate_weights == nil then t_generate_weights = t_weights end
 
-    local n_true_checks_current = 0
-    local t_curr_weights = t_weights
-    local t_curr_experiments = t_experiments
-    for i = 1, n_cycles do
-      if b_generate_weights then
-        t_curr_weights = f_generate_chances(n_length)
+    -- default values
+    should_generate_weights = should_generate_weights or false
+    should_generate_experimants = should_generate_experimants or false
+    num_experiments = num_experiments or 10^4
+    if weights_to_use == nil then weights_to_use = weights end
+
+    -- testing cycle
+    local true_checks = 0
+    local weights_current = weights
+    local experiments_current = experiments
+    for i = 1, NUM_CYCLES do
+      if should_generate_weights then
+        weights_current = generate_weights(length)
       end
-      if b_generate_experimants then
-        t_curr_experiments = f_generate_experiments(
-            t_generate_weights,
-            n_num_experiments
+      if should_generate_experimants then
+        experiments_current = generate_experiments(
+            num_experiments,
+            weights_to_use
           )
       end
       if
-        validate_probability_rough(t_curr_weights, t_curr_experiments)
+        validate_probability_rough(weights_current, experiments_current)
       then
-        n_true_checks_current = n_true_checks_current + 1
+        true_checks = true_checks + 1
       end
     end
-    return n_true_checks_current
+
+    return true_checks
   end
 
-  local n_set = 1000
-  local n_cycles = 100
-  local n_table = 2
-  local t_weight = {}
-  local t_experiments = {}
-  local n_experiments = {}
+  -- test step constants
+  local NUM_SET = 1000
+  local NUM_CYCLES = 100
 
-  print("\nRandom \"false\" set")
-  while n_table <= 100 do
-    t_weight = f_generate_chances(n_table)
-    t_experiments = f_generate_experiments(t_weight, n_set)
-    n_experiments = f_true_checks(
-        n_cycles,
-        n_table,
-        t_weight,
-        t_experiments,
+  -- all testing inside
+  print("Random test")
+  print("Experiments number in set: " .. NUM_SET)
+  local table_size = START_POINT
+  while table_size <= END_POINT do
+
+    -- false positive check
+    local num_experiments = check(
+        NUM_CYCLES,
+        table_size,
+        {},
+        generate_experiments(NUM_SET, generate_weights(table_size)),
         true
       )
-    print("Table size: " .. n_table .. " keys, false data, experiments: "
-      .. n_set .. "\n" .. n_experiments .. " of " .. n_cycles ..
-      " false positive.")
-    if n_experiments == 100 then
+    print("Table size: " .. table_size .. " keys, false data")
+    print(num_experiments .. " of " .. NUM_CYCLES .. " false positive.")
+
+    -- function broken, function cant randomly fail 100 of 100 times
+    -- can be 10 of 100 or even 40 of 100
+    if num_experiments == 100 then
       error("Test failed!")
     end
     print("OK")
-    if n_table < 10 then n_table = n_table + 2 else n_table = n_table + 30 end
-  end
 
-  print("\nRandom true set")
-  n_table = 2
-  while n_table <= 100 do
-    t_weight = f_generate_chances(n_table)
-    t_experiments = f_generate_experiments(t_weight, n_set)
-    n_experiments = n_cycles - f_true_checks(
-        n_cycles,
-        n_table,
-        t_weight,
-        t_experiments,
+    -- false negative check
+    num_experiments = NUM_CYCLES - check(
+        NUM_CYCLES,
+        table_size,
+        generate_weights(table_size),
+        {},
         false,
         true,
-        n_set
+        NUM_SET
       )
-    print("Table size: " .. n_table .. " keys, correct data, experiments: "
-      .. n_set .. "\n" .. n_experiments .. " of " .. n_cycles ..
-      " false negative.")
-    if n_experiments ~= 0 then
+    print("Table size: " .. table_size .. " keys, correct data")
+    print(num_experiments .. " of " .. NUM_CYCLES .. " false negative.")
+    if num_experiments ~= 0 then
       error("Test failed!")
     end
     print("OK")
-    if n_table < 10 then n_table = n_table + 2 else n_table = n_table + 30 end
+
+    -- next iteration counter
+    table_size = get_next_iteration(table_size)
   end
 
   print(string.format("Time: %.3f s (fast test)", os_clock() - start))
@@ -210,124 +241,108 @@ end)
 test:test_for 'validate_probability_precise' (function()
   local start = os_clock()
 
-  local f_generate_experiments_contrast_chances = function(
-      n_number,
-      n_pow,
-      b_low_rare
+  -- generates table, containing set of contrats weights (not normalized)
+  local generate_contrast_weights = function(
+      length, -- length of generated table
+      power, -- 10^power high weight value
+      are_low_rare -- if true table has single value = 1 and other = 10^power
     )
-    local t_output = {}
-    for i = 1, n_number do
-      if b_low_rare then
-        t_output[#t_output + 1] = math.pow(10, n_pow)
+    local weights = {}
+    local powered = math.pow(10, power)
+
+    -- filling table
+    if are_low_rare then
+        weights = tgenerate_n(length, function() return powered end)
+    else
+        weights = tgenerate_n(length, function() return 1 end)
+    end
+
+    -- adding random rare value
+    if are_low_rare then
+      weights[math.random(length)] = 1
+    else
+      weights[math.random(length)] = powered
+    end
+
+    return weights
+  end
+
+  local weights_closure = {}
+  -- is passed to validate_probability_precise
+  local generate_experiments_defined = function(num_experiments)
+    return generate_experiments(num_experiments, weights_closure)
+  end
+
+  -- checks validate_probability_precise work
+  local check = function(weights, expermiments_fn, is_data_true)
+    if
+      is_data_true ~= validate_probability_precise(weights, expermiments_fn)
+    then
+      error("Failed!")
+    else
+      if
+        is_data_true
+      then
+        print("OK - (no false negative)")
       else
-        t_output[#t_output + 1] = 1
+        print("OK - (no false positive)")
       end
     end
-    if b_low_rare then
-      t_output[math.random(n_number)] = 1
-    else
-      t_output[math.random(n_number)] = math.pow(10, n_pow)
-    end
-    return t_output
   end
 
-  local t_probability_distribution_closure = f_generate_chances(20)
-  local f_generate_experiments_defined = function(n_experiments)
-    return f_generate_experiments(
-        t_probability_distribution_closure,
-        n_experiments
-      )
-  end
-
-  print("\nRandom true set")
-  local i = 2
-  while i <= 100 do
-    print("Table size: " .. i)
-    t_probability_distribution_closure = f_generate_chances(i)
-    local d_curr = validate_probability_precise(
-        t_probability_distribution_closure,
-        f_generate_experiments_defined
-      )
-    if not d_curr then error("False negative!") else print("OK") end
-    if i < 10 then i = i + 2 else i = i + 30 end
-  end
-
-  print("\nRandom false set")
-  local i = 2
-  while i <= 100 do
-    print("Table size: " .. i)
-    t_probability_distribution_closure = f_generate_chances(i)
-    local t_probability_distribution_closure_false = f_generate_chances(i)
-    local d_curr = validate_probability_precise(
-        t_probability_distribution_closure_false,
-        f_generate_experiments_defined
-      )
-    if d_curr then error("False positive!") else print("OK") end
-    if i < 10 then i = i + 2 else i = i + 30 end
-  end
-
-  print("\nContrast true set")
-  local i = 2
-  while i <= 100 do
+  -- tests start here
+  local i = START_POINT
+  while i <= END_POINT do
     print("\nTable size: " .. i)
+
+    print("random:")
+    -- random correct input check
+    weights_closure = generate_weights(i)
+    check(weights_closure, generate_experiments_defined, true)
+
+    -- random false input check
+    local weights_closure_false = generate_weights(i)
+    check(weights_closure_false, generate_experiments_defined, false)
+
+    -- contrast correct input
+    print("contrast:")
     for j = 1, 3 do
-      print("contrast: 1 and " .. i - 1 .. " of 10^" .. j)
-      t_probability_distribution_closure =
-        f_generate_experiments_contrast_chances(i, j, true)
-      local d_curr = validate_probability_precise(
-          t_probability_distribution_closure,
-          f_generate_experiments_defined
-        )
-      if not d_curr then error("False negative!") else print("OK") end
+      print("1 and " .. i - 1 .. " of 10^" .. j)
+      weights_closure = generate_contrast_weights(i, j, true)
+      check(weights_closure, generate_experiments_defined, true)
 
-      print("contrast: " .. i - 1 .. " of 1 and 10^" .. j)
-      t_probability_distribution_closure =
-        f_generate_experiments_contrast_chances(i, j, false)
-      d_curr = validate_probability_precise(
-          t_probability_distribution_closure,
-          f_generate_experiments_defined
-        )
-      if not d_curr then error("False negative!") else print("OK") end
+      if i > 2 then
+        print(i - 1 .. " of 1 and 10^" .. j)
+        weights_closure = generate_contrast_weights(i, j, false)
+        check(weights_closure, generate_experiments_defined, true)
+      end
     end
-    if i < 10 then i = i + 2 else i = i + 30 end
-  end
 
-  print("\nContrast false set")
-  local i = 2
-  while i <= 100 do
-    print("\nTable size: " .. i)
+    -- contrast false input
     for j = 1, 2 do
-      print("contrast: 1 and " .. i - 1 .. " of 10^" .. j ..
-        ", added +" .. i .. " randomly.")
-      t_probability_distribution_closure =
-        f_generate_experiments_contrast_chances(i, j, true)
-      local t_probability_distribution_closure_false =
-        tclone(t_probability_distribution_closure)
-      local n_cur = math.random(#t_probability_distribution_closure_false)
-      t_probability_distribution_closure_false[n_cur] =
-        t_probability_distribution_closure_false[n_cur] + i
-      local d_curr = validate_probability_precise(
-          t_probability_distribution_closure_false,
-          f_generate_experiments_defined
-        )
-      if d_curr then error("False positive!") else print("OK") end
+      print("1 and " .. i - 1 .. " of 10^" .. j .. ", added +" .. i)
+      weights_closure = generate_contrast_weights(i, j, true)
 
-      print("contrast: " .. i - 1 .. " of 1 and 10^" .. j ..
-        ", added +" .. i .. " randomly.")
-      t_probability_distribution_closure =
-        f_generate_experiments_contrast_chances(i, j, false)
-      t_probability_distribution_closure_false =
-        tclone(t_probability_distribution_closure)
-      n_cur = math.random(#t_probability_distribution_closure_false)
-      t_probability_distribution_closure_false[n_cur] =
-        t_probability_distribution_closure_false[n_cur] + i
-      d_curr = validate_probability_precise(
-          t_probability_distribution_closure_false,
-          f_generate_experiments_defined
-        )
-      if d_curr then error("False positive!") else print("OK") end
+      -- create wrong weights (by adding small value) and check
+      local weights_closure_false = tclone(weights_closure)
+      local ran_key = math.random(i)
+      weights_closure_false[ran_key] = weights_closure_false[ran_key] + i
+      check(weights_closure_false, generate_experiments_defined, false)
+
+      if i > 2 then
+        print(i - 1 .. " of 1 and 10^" .. j .. ", +" .. i)
+        weights_closure = generate_contrast_weights(i, j, false)
+
+        -- create wrong weights (by adding small value) and check
+        weights_closure_false = tclone(weights_closure)
+        ran_key = math.random(i)
+        weights_closure_false[ran_key] = weights_closure_false[ran_key] + i
+        check(weights_closure_false, generate_experiments_defined, false)
+      end
     end
-    if i < 10 then i = i + 2 else i = i + 30 end
+
+    -- next iteration counter
+    i = get_next_iteration(i)
   end
 
   print(string.format("Time: %.3f s (slow test)", os_clock() - start))
