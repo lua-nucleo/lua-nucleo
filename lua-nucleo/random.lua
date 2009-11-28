@@ -71,11 +71,14 @@ local validate_probability_rough = function(weights, experiments)
     length = length + 1
   end
   if length > 100 or length < 2 then
-    error("argument: wrong input table size")
+    return nil, "argument: wrong weight table size"
+  end
+  if tcount_elements(experiments) ~= length then
+    return nil, "argument: wrong experiments table size"
   end
   local experiments_num = taccumulate(experiments)
   if experiments_num < 1000 then
-    error("argument: lack of experiments data")
+    return nil, "argument: lack of experiments data"
   end
 
   -- data preparation
@@ -109,8 +112,20 @@ local validate_probability_precise = function(weights, generate)
     if
       weights_normalized[k] < 1e-5
     then
-      error("Input below level of sensitivity")
+      return nil, "Input weights below level of sensitivity"
     end
+  end
+  local test_table = generate(50)
+  assert_is_table(test_table)
+  for k, v in pairs(test_table) do
+    assert_is_number(test_table[k])
+  end
+  if tcount_elements(test_table) ~= tcount_elements(weights) then
+    return nil, "argument: wrong generated table size"
+  end
+  local experiments_num = taccumulate(test_table)
+  if experiments_num ~= 50 then
+    return nil, "argument: wrong generated table data"
   end
 
   -- various algorithm variables initialization
@@ -236,7 +251,7 @@ local validate_probability_precise = function(weights, generate)
       if
         sensitivity >= BASE_SENSITIVITY + INCREASE_LIMIT
       then
-        error("Below level of sensitivity")
+        return nil, "Below level of sensitivity"
       end
       sensitivity = sensitivity + 1
     end

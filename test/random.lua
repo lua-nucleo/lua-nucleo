@@ -10,6 +10,12 @@ math.randomseed(12345)
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
+local ensure_fails_with_substring
+      = import 'lua-nucleo/ensure.lua'
+      {
+        'ensure_fails_with_substring',
+      }
+
 local tgenerate_n
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -275,10 +281,11 @@ test:test_for 'validate_probability_precise' (function()
 
   -- checks validate_probability_precise work
   local check = function(weights, expermiments_fn, is_data_true)
+    local res, err = validate_probability_precise(weights, expermiments_fn)
     if
-      is_data_true ~= validate_probability_precise(weights, expermiments_fn)
+      is_data_true ~= res or err ~= nil
     then
-      error("Failed!")
+      error("Failed!" .. err)
     else
       if
         is_data_true
