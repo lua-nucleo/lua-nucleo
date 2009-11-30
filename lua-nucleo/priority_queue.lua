@@ -10,10 +10,10 @@ local arguments,
         'method_arguments'
       }
 
-local lower_bound
+local lower_bound_gt
       = import 'lua-nucleo/algorithm.lua'
       {
-        'lower_bound'
+        'lower_bound_gt'
       }
 
 --------------------------------------------------------------------------------
@@ -32,10 +32,10 @@ do
         self,
         "number", priority
       )
-    -- value may be of any type, including nil
+    assert(value ~= nil, "value can't be nil") -- value may be of any type, except nil
 
     local queue = self.queue_
-    local k = lower_bound(queue, PRIORITY_KEY, priority)
+    local k = lower_bound_gt(queue, PRIORITY_KEY, priority)
 
     table_insert(queue, k, { [PRIORITY_KEY] = priority, [VALUE_KEY] = value })
   end
@@ -46,7 +46,7 @@ do
       )
 
     local queue = self.queue_
-    local front_elem = queue[1]
+    local front_elem = queue[#queue]
 
     if front_elem == nil then
       return nil
@@ -60,7 +60,8 @@ do
         self
       )
 
-    local front_elem = table_remove(self.queue_, 1)
+    local front_elem = table_remove(self.queue_)
+
     if front_elem == nil then
       return nil
     end

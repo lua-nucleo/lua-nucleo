@@ -48,18 +48,22 @@ local ensure,
 
 local tstr,
       tclone,
-      tgenerate_n
+      tgenerate_n,
+      tequals
       = import 'lua-nucleo/table.lua'
       {
         'tstr',
         'tclone',
-        'tgenerate_n'
+        'tgenerate_n',
+        'tequals'
       }
 
-local invariant
+local invariant,
+      make_generator_mt
       = import 'lua-nucleo/functional.lua'
       {
-        'invariant'
+        'invariant',
+        'make_generator_mt'
       }
 
 local make_priority_queue,
@@ -105,20 +109,23 @@ local check_insert_pop_elements = function(elements)
 
   print("Detecting duplicates")
 
-  local duplicates = { }
-  for i = 2, #elements do
+  local element_counts = setmetatable(
+      { },
+      make_generator_mt(function()
+        return setmetatable(
+            { },
+            make_generator_mt(invariant(0))
+          )
+      end)
+    )
+
+  for i = 1, #elements do
     if i % 1000 == 0 then
       print(i, "of", #elements)
     end
 
-    if elements[i - 1].p == elements[i].p then
-      duplicates[elements[i].p] = duplicates[elements[i].p] or { }
-
-      duplicates[elements[i].p][#duplicates[elements[i].p] + 1] = elements[i]
-      duplicates[elements[i].p][#duplicates[elements[i].p] + 1] = elements[i + 1]
-
-      --print("Duplicate priority:", i, elements[i], elements[i - 1])
-    end
+    local priority_element_counts = element_counts[elements[i].p]
+    priority_element_counts[elements[i].v] = priority_element_counts[elements[i].v] + 1
   end
 
   print("Popping")
@@ -135,14 +142,45 @@ local check_insert_pop_elements = function(elements)
 
     ensure_tequals("front matches popped " .. i, front, popped)
 
-    ensure_tequals(
-        "popped priority " .. i,
-        popped,
-        { elements[i].p, elements[i].v }
-      )
+    local expected = { elements[i].p, elements[i].v }
+    local popped_p, popped_v = unpack(popped)
+    local expected_p = unpack(expected)
+
+    local handled_duplicate = false
+    if popped_p == expected_p then
+      local priority_element_counts = element_counts[popped_p]
+      if priority_element_counts[popped_v] > 0 then
+        priority_element_counts[popped_v] = priority_element_counts[popped_v] - 1
+        handled_duplicate = true
+      else
+        -- Would be handled in the check below
+        print("unexpected element", popped_v, "for priority", popped_p)
+      end
+    end
+
+    if not handled_duplicate then
+      ensure_tequals( -- Would fail. It is here for consistent error message.
+          "popped priority " .. i,
+          popped,
+          expected
+        )
+    end
   end
 
   ensure_equals("no first after element", priority_queue:front(), nil)
+
+  for p, priority_element_counts in pairs(element_counts) do
+    for v, count in pairs(priority_element_counts) do
+      if count ~= 0 then
+        error(
+            "detected unhandled elements"
+         .. " p: " .. tostring(p)
+         .. " v: " .. tostring(v)
+         .. " count: " .. tostring(count)
+          )
+      end
+    end
+  end
 
   print("Done")
 end
@@ -231,6 +269,15 @@ end)
 
 --------------------------------------------------------------------------------
 
+test "insert_nil_fails" (function()
+  local priority_queue = ensure("created priority queue", make_priority_queue())
+  ensure_fails_with_substring(
+      "can't insert nil",
+      function() priority_queue:insert(1, nil) end,
+      "value can't be nil"
+    )
+end)
+
 test "many-elements-direct" (function()
   local priority_queue = ensure("created priority queue", make_priority_queue())
 
@@ -276,9 +323,10 @@ end)
 test "many-elements-random-generated" (function()
   local priority_queue = ensure("created priority queue", make_priority_queue())
 
-  local value_generators = -- TODO: Generalize to test-lib
+  local value_generators = -- TODO: Generalize to test-lib (let user to select features, like nil, NaN etc.)
   {
-    invariant(nil);
+    --invariant(nil);
+    -- No nil data here to extend applicability
     invariant(true);
     invariant(false);
     invariant(-42);
@@ -309,11 +357,11 @@ test "many-elements-random-generated" (function()
     invariant(newproxy());
   }
 
-  local MIN_ELEMENTS = 1e5
-  local MAX_ELEMENTS = 1e5
+  local MIN_ELEMENTS = 0
+  local MAX_ELEMENTS = 1e4
 
   local MIN_PRIORITY = 0
-  local MAX_PRIORITY = 1e8
+  local MAX_PRIORITY = 1e3
 
   local elements = tgenerate_n(
       math.random(MIN_ELEMENTS, MAX_ELEMENTS),
