@@ -47,6 +47,9 @@ local test = make_suite("random", random_exports)
 
 --------------------------------------------------------------------------------
 
+local pairs, print, error = pairs, print, error
+local math_random = math.random
+
 -- test global constants, defines number of elements (cases) in tested tables
 local START_POINT = 2 -- can't be less then 2, or more then END_POINT
 local MIDDLE_POINT = 10
@@ -121,7 +124,7 @@ local generate_experiments = function(
 
   -- carrying out experiments
   for i = 1, num_experiments do
-    local experiment = math.random()
+    local experiment = math_random()
     for i = 1, #formalized do
       if
         experiment >= formalized[i].lowBound
@@ -139,7 +142,7 @@ end
 
 -- generates indexed table with length n, and random numbers in values
 local generate_weights = function(n)
-  return tgenerate_n(n, math.random)
+  return tgenerate_n(n, math_random)
 end
 
 local os_clock = os.clock
@@ -239,7 +242,7 @@ test:test_for 'validate_probability_rough' (function()
     table_size = get_next_iteration(table_size)
   end
 
-  print(string.format("Time: %.3f s (fast test)", os_clock() - start))
+  print(("Time: %.3f s (fast test)"):format(os_clock() - start))
 end)
 
 --------------------------------------------------------------------------------
@@ -254,7 +257,7 @@ test:test_for 'validate_probability_precise' (function()
       are_low_rare -- if true table has single value = 1 and other = 10^power
     )
     local weights = {}
-    local powered = math.pow(10, power)
+    local powered = 10 ^ power
 
     -- filling table
     if are_low_rare then
@@ -265,9 +268,9 @@ test:test_for 'validate_probability_precise' (function()
 
     -- adding random rare value
     if are_low_rare then
-      weights[math.random(length)] = 1
+      weights[math_random(length)] = 1
     else
-      weights[math.random(length)] = powered
+      weights[math_random(length)] = powered
     end
 
     return weights
@@ -333,7 +336,7 @@ test:test_for 'validate_probability_precise' (function()
 
         -- create wrong weights (by adding small value) and check
         local weights_closure_false = tclone(weights_closure)
-        local ran_key = math.random(i)
+        local ran_key = math_random(i)
         weights_closure_false[ran_key] = weights_closure_false[ran_key] + i
         check(weights_closure_false, generate_experiments_defined, false)
 
@@ -343,7 +346,7 @@ test:test_for 'validate_probability_precise' (function()
 
           -- create wrong weights (by adding small value) and check
           weights_closure_false = tclone(weights_closure)
-          ran_key = math.random(i)
+          ran_key = math_random(i)
           weights_closure_false[ran_key] = weights_closure_false[ran_key] + i
           check(weights_closure_false, generate_experiments_defined, false)
         end
@@ -354,7 +357,7 @@ test:test_for 'validate_probability_precise' (function()
     i = get_next_iteration(i)
   end
 
-  print(string.format("Time: %.3f s (slow test)", os_clock() - start))
+  print(("Time: %.3f s (slow test)"):format(os_clock() - start))
 end)
 
 test 'validate_probability_wrong_input' (function()
