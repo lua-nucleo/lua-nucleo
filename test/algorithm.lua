@@ -26,10 +26,12 @@ local ensure,
         'ensure_equals'
       }
 
-local validate_probability_rough
+local validate_probability_rough,
+      validate_probability_precise
       = import 'lua-nucleo/random.lua'
       {
-        'validate_probability_rough'
+        'validate_probability_rough',
+        'validate_probability_precise'
       }
 
 local invariant
@@ -42,14 +44,16 @@ local tdeepequals,
       tstr,
       taccumulate,
       tnormalize,
-      tgenerate_n
+      tgenerate_n,
+      tclone
       = import 'lua-nucleo/table.lua'
       {
         'tdeepequals',
         'tstr',
         'taccumulate',
         'tnormalize',
-        'tgenerate_n'
+        'tgenerate_n',
+        'tclone'
       }
 
 local lower_bound,
@@ -297,40 +301,57 @@ test "pick-zero-ignored-nonzero-picked" (function()
   ensure_equals("no data picked", result, "nonzero")
 end)
 
+local generate = function(num_experiments, length, probabilities)
+  local data = assert_is_table(pick_init(probabilities))
+  local experiments = {}
+  if length > 0 then
+    experiments = tgenerate_n(length, invariant(0))
+  else
+    for k, _ in pairs(probabilities) do
+      experiments[k] = 0
+    end
+  end
+  for i = 1, num_experiments do
+    local result = pick_one(data)
+    assert(experiments[result])
+    experiments[result] = experiments[result] + 1
+  end
+  return experiments
+end
+
 test "pick-equal-weights" (function()
   local num_runs = 1e5
-
   local probs = { alpha = 1, beta = 1 }
-  local data = assert_is_table(pick_init(probs))
-  local stats = { alpha = 0, beta = 0 }
 
   print("generating stats...")
-  for i = 1, num_runs do
-    local result = pick_one(data)
-    assert(stats[result])
-    stats[result] = stats[result] + 1
-  end
+  local stats = generate(num_runs, 0, probs)
   print("done generating stats")
 
-  validate_probability_rough(probs, stats)
+  assert(validate_probability_rough(probs, stats))
+  if test:in_strict_mode() then
+    local res, err = validate_probability_precise(probs, generate, 0, probs)
+    if not res then
+      if err ~= nil then error(err) else error("Test failed!") end
+    end
+  end
 end)
 
 test "pick-non-equal-weights" (function()
   local num_runs = 1e5
 
   local probs = { alpha = 0.5, beta = 2 }
-  local data = assert_is_table(pick_init(probs))
-  local stats = { alpha = 0, beta = 0 }
 
   print("generating stats...")
-  for i = 1, num_runs do
-    local result = pick_one(data)
-    assert(stats[result])
-    stats[result] = stats[result] + 1
-  end
+  local stats = generate(num_runs, 0, probs)
   print("done generating stats")
 
-  validate_probability_rough(probs, stats)
+  assert(validate_probability_rough(probs, stats))
+  if test:in_strict_mode() then
+    local res, err = validate_probability_precise(probs, generate, 0, probs)
+    if not res then
+      if err ~= nil then error(err) else error("Test failed!") end
+    end
+  end
 end)
 
 test "pick-non-equal-weights-generated" (function()
@@ -346,18 +367,22 @@ test "pick-non-equal-weights-generated" (function()
       end
     )
 
-  local data = assert_is_table(pick_init(probs))
-  local stats = tgenerate_n(num_keys, invariant(0))
-
   print("generating stats...")
-  for i = 1, num_runs do
-    local result = pick_one(data)
-    assert(stats[result])
-    stats[result] = stats[result] + 1
-  end
+  local stats = generate(num_runs, num_keys, probs)
   print("done generating stats")
 
-  validate_probability_rough(probs, stats)
+  assert(validate_probability_rough(probs, stats))
+  if test:in_strict_mode() then
+    local res, err = validate_probability_precise(
+        probs,
+        generate,
+        num_keys,
+        probs
+      )
+    if not res then
+      if err ~= nil then error(err) else error("Test failed!") end
+    end
+  end
 end)
 
 --------------------------------------------------------------------------------
