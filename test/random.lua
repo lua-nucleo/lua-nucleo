@@ -152,14 +152,14 @@ test:test_for 'validate_probability_rough' (function()
       weights, -- table, contains weights of each case
       experiments, -- table, contains experiments
       should_generate_weights, -- if we generate other weights for each test
-      should_generate_experimants, -- if we generate other experiments for test
+      should_generate_experiments, -- if we generate other experiments for test
       num_experiments, -- generated, if previous true
       weights_to_use -- used to generate experiments if needed
     )
 
     -- default values
     should_generate_weights = should_generate_weights or false
-    should_generate_experimants = should_generate_experimants or false
+    should_generate_experiments = should_generate_experiments or false
     num_experiments = num_experiments or 10^4
     if weights_to_use == nil then weights_to_use = weights end
 
@@ -171,7 +171,7 @@ test:test_for 'validate_probability_rough' (function()
       if should_generate_weights then
         weights_current = generate_weights(length)
       end
-      if should_generate_experimants then
+      if should_generate_experiments then
         experiments_current = generate_experiments(
             num_experiments,
             weights_to_use
