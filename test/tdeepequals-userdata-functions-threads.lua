@@ -9,7 +9,9 @@ dofile('lua-nucleo/import.lua')
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
-local check_ok  = import 'test/lib/tdeepequals-test-utils.lua' { 'check_ok' }
+local check_ok = import 'test/lib/tdeepequals-test-utils.lua' { 'check_ok' }
+
+local collect_all_garbage = import 'lua-nucleo/misc.lua' { 'collect_all_garbage' }
 
 ---------------------------------------------------------------------------
 
@@ -31,12 +33,7 @@ test "1" (function()
   userdata2 = nil
   u = nil
   v = nil
-  local now = collectgarbage("count")
-  local prev = 0
-  while prev ~= now do
-    collectgarbage("collect")
-    prev, now = now, collectgarbage("count")
-  end
+  collect_all_garbage()
   assert(changed == 1,"Garbage not collected!!!")
 end)
 

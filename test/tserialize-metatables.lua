@@ -10,6 +10,8 @@ assert(type(make_suite) == "function")
 
 local check_ok = import 'test/lib/tserialize-test-utils.lua' { 'check_ok' }
 
+local collect_all_garbage = import 'lua-nucleo/misc.lua' { 'collect_all_garbage' }
+
 ---------------------------------------------------------------------------
 
 local test = make_suite("metatables test")
@@ -26,12 +28,7 @@ test "Collectgarbage" (function()
   tbl1 = nil
   tbl2 = nil
   u = nil
-  local now = collectgarbage("count")
-  local prev = 0
-  while prev ~= now do
-    collectgarbage("collect")
-    prev, now = now, collectgarbage("count")
-  end
+  collect_all_garbage()
   assert(not next(probe), "Garbage not collected")
 end)
 
