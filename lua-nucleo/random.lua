@@ -157,7 +157,7 @@ local validate_probability_precise = function(weights, generate)
     -- exponential experiments cycle: 10^n
     for n = 0, SENSITIVITY_DELTA do
       -- data preparation
-      local experiments_num = math.pow(10, sensitivity + n)
+      local experiments_num = 10 ^ (sensitivity + n)
       local experiments = generate(experiments_num)
       local experiments_normalized = tnormalize(experiments)
 
