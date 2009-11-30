@@ -144,7 +144,6 @@ local validate_probability_precise = function(weights, generate, ...)
   local chi_squares = {} -- chi square container
   local iteration = 0 -- iteration counter
   local decision = 0 -- decision making value
-  local tendency = 0
 
   -- algorithm itself
   while true do
@@ -222,24 +221,6 @@ local validate_probability_precise = function(weights, generate, ...)
     then
       decision = decision - 1
     end
-    if second_change > STEP_STAGNATION then
-      if tendency < 0 then tendency = 0 end
-      tendency = tendency + 1
-    else
-      if tendency > 0 then tendency = 0 end
-      tendency = tendency - 1
-    end
-    if first_change > STEP_STAGNATION then
-      if tendency < 0 then tendency = 0 end
-      tendency = tendency + 1
-    else
-      if tendency > 0 then tendency = 0 end
-      tendency = tendency - 1
-    end
-
-    -- 6 and -4 are algorithm magic constants
-    if tendency >= 6 then decision = decision + 1 end
-    if tendency <= -4 then decision = decision - 1 end
 
     iteration = iteration + 1
 
