@@ -235,71 +235,72 @@ end)
 --------------------------------------------------------------------------------
 
 test:test_for 'validate_probability_precise' (function()
-  local start = os_clock()
+  if test:in_strict_mode() then
+    local start = os_clock()
 
-  -- generates table, containing set of contrats weights (not normalized)
-  local generate_contrast_weights = function(
-      length, -- length of generated table
-      power, -- 10^power high weight value
-      are_low_rare -- if true table has single value = 1 and other = 10^power
-    )
-    local weights = {}
-    local powered = 10 ^ power
+    -- generates table, containing set of contrats weights (not normalized)
+    local generate_contrast_weights = function(
+        length, -- length of generated table
+        power, -- 10^power high weight value
+        are_low_rare -- if true table has single value = 1 and other = 10^power
+      )
+      local weights = {}
+      local powered = 10 ^ power
 
-    -- filling table
-    if are_low_rare then
-      weights = tgenerate_n(length, invariant(powered))
-    else
-      weights = tgenerate_n(length, invariant(1))
-    end
-
-    -- adding random rare value
-    if are_low_rare then
-      weights[math_random(length)] = 1
-    else
-      weights[math_random(length)] = powered
-    end
-
-    return weights
-  end
-
-  local weights_closure = {}
-  -- is passed to validate_probability_precise
-  local generate_experiments_defined = function(num_experiments)
-    return generate_experiments(num_experiments, weights_closure)
-  end
-
-  -- checks validate_probability_precise work
-  local check = function(weights, expermiments_fn, is_data_true)
-    local res, err = validate_probability_precise(weights, expermiments_fn)
-    if is_data_true ~= res or err ~= nil then
-      error("Failed!" .. err)
-    else
-      if is_data_true then
-        print("OK - (no false negative)")
+      -- filling table
+      if are_low_rare then
+        weights = tgenerate_n(length, invariant(powered))
       else
-        print("OK - (no false positive)")
+        weights = tgenerate_n(length, invariant(1))
+      end
+
+      -- adding random rare value
+      if are_low_rare then
+        weights[math_random(length)] = 1
+      else
+        weights[math_random(length)] = powered
+      end
+
+      return weights
+    end
+
+    local weights_closure = {}
+    -- is passed to validate_probability_precise
+    local generate_experiments_defined = function(num_experiments)
+      return generate_experiments(num_experiments, weights_closure)
+    end
+
+    -- checks validate_probability_precise work
+    local check = function(weights, expermiments_fn, is_data_true)
+      local res, err = validate_probability_precise(weights, expermiments_fn)
+      if is_data_true ~= res or err ~= nil then
+        error("Failed!")
+      else
+        if is_data_true then
+          print("OK - (no false negative)")
+        else
+          print("OK - (no false positive)")
+        end
       end
     end
-  end
 
-  -- tests start here
-  local i = START_POINT
-  while i <= END_POINT do
-    print("\nTable size: " .. i)
+    -- tests start here
+    local i = START_POINT
+    while i <= END_POINT do
+      print("\nTable size: " .. i)
 
-    print("random:")
-    -- random correct input check
-    weights_closure = generate_weights(i)
-    check(weights_closure, generate_experiments_defined, true)
+      print("random:")
+      -- random correct input check
+      weights_closure = generate_weights(i)
+      check(weights_closure, generate_experiments_defined, true)
 
-    -- random false input check
-    local weights_closure_false = generate_weights(i)
-    check(weights_closure_false, generate_experiments_defined, false)
+      -- random false input check
+      local weights_closure_false = generate_weights(i)
+      check(weights_closure_false, generate_experiments_defined, false)
 
-    if test:in_strict_mode() then
       -- contrast correct input
       print("contrast:")
+      -- for full test use 1, 5
       for j = 1, 3 do
         print("1 and " .. i - 1 .. " of 10^" .. j)
         weights_closure = generate_contrast_weights(i, j, true)
@@ -335,13 +336,14 @@ test:test_for 'validate_probability_precise' (function()
           check(weights_closure_false, generate_experiments_defined, false)
         end
       end
+
+      -- next iteration counter
+      i = get_next_iteration(i)
     end
-
-    -- next iteration counter
-    i = get_next_iteration(i)
+    print(("Time: %.3f s (slow test)"):format(os_clock() - start))
+  else
+    print("Test skipped because strict mode is disabled.")
   end
-
-  print(("Time: %.3f s (slow test)"):format(os_clock() - start))
 end)
 
 test 'validate_probability_wrong_input' (function()
