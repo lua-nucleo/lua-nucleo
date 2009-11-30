@@ -336,12 +336,12 @@ test 'validate_probability_wrong_input' (function()
   ensure_fails_with_substring(
       "wrong arguments",
       function() validate_probability_rough("a") end,
-      "argument"
+      "expected \`table\', got \`string\'"
     )
   ensure_fails_with_substring(
       "wrong arguments",
       function() validate_probability_rough({1}, "b") end,
-      "argument"
+      "expected \`table\', got \`string\'"
     )
   local res, err = validate_probability_rough({1, 3}, {3, 5, 6})
   if err ~= nil then print(err) else error("wrong input") end
@@ -352,17 +352,17 @@ test 'validate_probability_wrong_input' (function()
   ensure_fails_with_substring(
       "wrong arguments",
       function() validate_probability_precise("a") end,
-      "table"
+      "expected \`table\', got \`string\'"
     )
   ensure_fails_with_substring(
       "wrong arguments",
       function() validate_probability_precise({1, 2, "c"}, function() end) end,
-      "number"
+      "\`number\' expected, got \`string\'"
     )
   ensure_fails_with_substring(
       "wrong arguments",
       function() validate_probability_precise({1, 2, 3}, function() end) end,
-      "table"
+      "\`table\' expected, got \`nil\'"
     )
   res, err = validate_probability_precise({1, 2, 0.9e-5}, function() end)
   if err ~= nil then print(err) else error("wrong input") end
