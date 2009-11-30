@@ -105,7 +105,7 @@ end
 -- Function precisely determines if distribution of values in table experiments
 -- corresponds distribution in weights.
 -- algorithm based on experiment probability check.
-local validate_probability_precise = function(weights, generate)
+local validate_probability_precise = function(weights, generate, ...)
   -- input checks
   arguments(
     "table", weights,
@@ -122,10 +122,10 @@ local validate_probability_precise = function(weights, generate)
       return nil, "Input weights below level of sensitivity"
     end
   end
-  local test_table = generate(50)
+  local test_table = generate(50, ...)
   assert_is_table(test_table)
   for k, v in pairs(test_table) do
-    assert_is_number(test_table[k])
+    assert_is_number(v)
   end
   if tcount_elements(test_table) ~= tcount_elements(weights) then
     return nil, "argument: wrong generated table size"
@@ -137,9 +137,9 @@ local validate_probability_precise = function(weights, generate)
 
   -- various algorithm variables initialization
   local DECISION_VALUE = 8
-  local BASE_SENSITIVITY = 3
+  local BASE_SENSITIVITY = 3 -- 3-5 reasonable values
   local SENSITIVITY_DELTA = 2
-  local INCREASE_LIMIT = 2
+  local INCREASE_LIMIT = 7 - SENSITIVITY_DELTA - BASE_SENSITIVITY
   local sensitivity = BASE_SENSITIVITY -- power of number of experiments used
   local chi_squares = {} -- chi square container
   local iteration = 0 -- iteration counter
@@ -158,7 +158,7 @@ local validate_probability_precise = function(weights, generate)
     for n = 0, SENSITIVITY_DELTA do
       -- data preparation
       local experiments_num = 10 ^ (sensitivity + n)
-      local experiments = generate(experiments_num)
+      local experiments = generate(experiments_num, ...)
       local experiments_normalized = tnormalize(experiments)
 
       -- calculate chi_square for current experiments num
@@ -180,6 +180,7 @@ local validate_probability_precise = function(weights, generate)
     -- all constants are test-based
     local OVERALL_IMPROVEMENT = 90
     local STEP_IMPROVEMENT = 9
+    local STEP_IMPROVEMENT_TOP = 50
     local STEP_STAGNATION_LOW = 0.5
     local STEP_STAGNATION_TOP = 2
     local STEP_STAGNATION = 1.2
@@ -189,10 +190,18 @@ local validate_probability_precise = function(weights, generate)
     if overal_change > OVERALL_IMPROVEMENT then
       decision = decision + 1
     end
-    if first_change > STEP_IMPROVEMENT and second_change > 1 then
+    if
+      first_change > STEP_IMPROVEMENT and
+      second_change > 1 and
+      first_change < STEP_IMPROVEMENT_TOP
+    then
       decision = decision + 1
     end
-    if second_change > STEP_IMPROVEMENT and first_change > 1 then
+    if
+      second_change > STEP_IMPROVEMENT and
+      first_change > 1 and
+      second_change < STEP_IMPROVEMENT_TOP
+    then
       decision = decision + 1
     end
     if
