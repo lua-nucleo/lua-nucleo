@@ -26,6 +26,48 @@ local lower_bound = function(t, k, value)
   return first
 end
 
+local lower_bound_pred = function(t, k, value, less)
+  local len = #t
+  local first = 1
+  local middle, half
+  while len > 0 do
+    half = math_floor(len / 2)
+    middle = first + half
+    local v = assert(
+        assert(t[middle], "hole in array", middle)[k],
+        "value missing"
+      )
+    if less(v, value) then
+      first = middle + 1
+      len = len - half - 1
+    else
+      len = half
+    end
+  end
+  return first
+end
+
+local lower_bound_gt = function(t, k, value)
+  local len = #t
+  local first = 1
+  local middle, half
+  while len > 0 do
+    half = math_floor(len / 2)
+    middle = first + half
+    local v = assert(
+        assert(t[middle], "hole in array", middle)[k],
+        "value missing"
+      )
+    if v > value then
+      first = middle + 1
+      len = len - half - 1
+    else
+      len = half
+    end
+  end
+  return first
+end
+
 local upper_bound = function(t, k, value)
   local len = #t
   local first = 1
@@ -38,6 +80,48 @@ local upper_bound = function(t, k, value)
         "value missing"
       )
     if value < v then
+      len = half
+    else
+      first = middle + 1
+      len = len - half - 1
+    end
+  end
+  return first
+end
+
+local upper_bound_pred = function(t, k, value, less)
+  local len = #t
+  local first = 1
+  local middle, half
+  while len > 0 do
+    half = math_floor(len / 2)
+    middle = first + half
+    local v = assert(
+        assert(t[middle], "hole in array", middle)[k],
+        "value missing"
+      )
+    if less(value, v) then
+      len = half
+    else
+      first = middle + 1
+      len = len - half - 1
+    end
+  end
+  return first
+end
+
+local upper_bound_gt = function(t, k, value)
+  local len = #t
+  local first = 1
+  local middle, half
+  while len > 0 do
+    half = math_floor(len / 2)
+    middle = first + half
+    local v = assert(
+        assert(t[middle], "hole in array", middle)[k],
+        "value missing"
+      )
+    if value > v then
       len = half
     else
       first = middle + 1
@@ -89,7 +173,13 @@ end
 return
 {
   lower_bound = lower_bound;
+  lower_bound_pred = lower_bound_pred;
+  lower_bound_gt = lower_bound_gt;
+  --
   upper_bound = upper_bound;
+  upper_bound_pred = upper_bound_pred;
+  upper_bound_gt = upper_bound_gt;
+  --
   pick_init = pick_init;
   pick_one = pick_one;
 }

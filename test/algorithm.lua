@@ -49,14 +49,22 @@ local tdeepequals,
       }
 
 local lower_bound,
+      lower_bound_pred,
+      lower_bound_gt,
       upper_bound,
+      upper_bound_pred,
+      upper_bound_gt,
       pick_init,
       pick_one,
       algorithm_exports
       = import 'lua-nucleo/algorithm.lua'
       {
         'lower_bound',
+        'lower_bound_pred',
+        'lower_bound_gt',
         'upper_bound',
+        'upper_bound_pred',
+        'upper_bound_gt',
         'pick_init',
         'pick_one'
       }
@@ -67,19 +75,30 @@ local test = make_suite("algorithm", algorithm_exports)
 
 --------------------------------------------------------------------------------
 
-test:test_for "lower_bound" (function()
-  -- TODO: Test it better
+-- TODO: Test lower and upper bound better!
 
-  local check = function(t, k, expected_value)
-    local actual_value = lower_bound(t, 1, k)
-    if actual_value ~= expected_value then
-      error(
-          ("check lower_bound: bad actual value %q, expected %q\n"):format(
-              tostring(actual_value), tostring(expected_value)
-            ),
-          2
-        )
-    end
+local check_bound = function(name, bound_fn, pred, t, k, expected_value)
+  local actual_value
+  if pred then
+    actual_value = bound_fn(t, 1, k, pred)
+  else
+    actual_value = bound_fn(t, 1, k)
+  end
+  if actual_value ~= expected_value then
+    error(
+        ("check %s: bad actual value %q, expected %q\n"):format(
+            name, tostring(actual_value), tostring(expected_value)
+          ),
+        2
+      )
+  end
+end
+
+--------------------------------------------------------------------------------
+
+test:test_for "lower_bound" (function()
+  local check = function(...)
+    return check_bound("lower_bound", lower_bound, nil, ...)
   end
 
   check({ {1}, {2} }, 1.5, 2)
@@ -93,19 +112,75 @@ test:test_for "lower_bound" (function()
   check({ {1}, {2}, {2}, {3} }, 1.5, 2)
 end)
 
-test:test_for "upper_bound" (function()
-  -- TODO: Test it better
+test:test_for "lower_bound_gt" (function()
+  local check = function(...)
+    return check_bound("lower_bound_gt", lower_bound_gt, nil, ...)
+  end
 
-  local check = function(t, k, expected_value)
-    local actual_value = upper_bound(t, 1, k)
-    if actual_value ~= expected_value then
-      error(
-          ("check upper_bound: bad actual value %q, expected %q\n"):format(
-              tostring(actual_value), tostring(expected_value)
-            ),
-          2
-        )
-    end
+  check({ {2}, {1} }, 1.5, 2)
+  check({ {2}, {1} }, 0, 3)
+  check({ {2}, {1} }, 1, 2)
+  check({ {2}, {1} }, 2, 1)
+  check({ {2}, {1} }, 3, 1)
+
+  check({ {3}, {2}, {2}, {1} },   2, 2)
+  check({ {3}, {2}, {2}, {1} }, 2.5, 2)
+  check({ {3}, {2}, {2}, {1} }, 1.5, 4)
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "lower_bound_pred"
+
+--------------------------------------------------------------------------------
+
+test "lower_bound_pred-lt" (function()
+  local check = function(...)
+    return check_bound(
+        "lower_bound_pred",
+        lower_bound_pred,
+        function(lhs, rhs) return lhs[1] < rhs[1] end,
+        ...
+      )
+  end
+
+  check({ {{1}}, {{2}} }, {1.5}, 2)
+  check({ {{1}}, {{2}} }, {0}, 1)
+  check({ {{1}}, {{2}} }, {1}, 1)
+  check({ {{1}}, {{2}} }, {2}, 2)
+  check({ {{1}}, {{2}} }, {3}, 3)
+
+  check({ {{1}}, {{2}}, {{2}}, {{3}} },   {2}, 2)
+  check({ {{1}}, {{2}}, {{2}}, {{3}} }, {2.5}, 4)
+  check({ {{1}}, {{2}}, {{2}}, {{3}} }, {1.5}, 2)
+end)
+
+test "lower_bound_pred-gt" (function()
+  local check = function(...)
+    return check_bound(
+        "lower_bound_pred",
+        lower_bound_pred,
+        function(lhs, rhs) return lhs[1] > rhs[1] end,
+        ...
+      )
+  end
+
+  check({ {{2}}, {{1}} }, {1.5}, 2)
+  check({ {{2}}, {{1}} }, {0}, 3)
+  check({ {{2}}, {{1}} }, {1}, 2)
+  check({ {{2}}, {{1}} }, {2}, 1)
+  check({ {{2}}, {{1}} }, {3}, 1)
+
+  check({ {{3}}, {{2}}, {{2}}, {{1}} },   {2}, 2)
+  check({ {{3}}, {{2}}, {{2}}, {{1}} }, {2.5}, 2)
+  check({ {{3}}, {{2}}, {{2}}, {{1}} }, {1.5}, 4)
+end)
+
+--------------------------------------------------------------------------------
+
+test:test_for "upper_bound" (function()
+  local check = function(...)
+    return check_bound("upper_bound", upper_bound, nil, ...)
   end
 
   check({ {1}, {2} }, 1.5, 2)
@@ -117,6 +192,70 @@ test:test_for "upper_bound" (function()
   check({ {1}, {2}, {2}, {3} },   2, 4)
   check({ {1}, {2}, {2}, {3} }, 2.5, 4)
   check({ {1}, {2}, {2}, {3} }, 1.5, 2)
+end)
+
+test:test_for "upper_bound_gt" (function()
+  local check = function(...)
+    return check_bound("upper_bound_gt", upper_bound_gt, nil, ...)
+  end
+
+  check({ {2}, {1} }, 1.5, 2)
+  check({ {2}, {1} }, 0, 3)
+  check({ {2}, {1} }, 1, 3)
+  check({ {2}, {1} }, 2, 2)
+  check({ {2}, {1} }, 3, 1)
+
+  check({ {3}, {2}, {2}, {1} },   2, 4)
+  check({ {3}, {2}, {2}, {1} }, 2.5, 2)
+  check({ {3}, {2}, {2}, {1} }, 1.5, 4)
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "upper_bound_pred"
+
+--------------------------------------------------------------------------------
+
+test "upper_bound_pred-lt" (function()
+  local check = function(...)
+    return check_bound(
+        "upper_bound_pred",
+        upper_bound_pred,
+        function(lhs, rhs) return lhs[1] < rhs[1] end,
+        ...
+      )
+  end
+
+  check({ {{1}}, {{2}} }, {1.5}, 2)
+  check({ {{1}}, {{2}} }, {0}, 1)
+  check({ {{1}}, {{2}} }, {1}, 2)
+  check({ {{1}}, {{2}} }, {2}, 3)
+  check({ {{1}}, {{2}} }, {3}, 3)
+
+  check({ {{1}}, {{2}}, {{2}}, {{3}} },   {2}, 4)
+  check({ {{1}}, {{2}}, {{2}}, {{3}} }, {2.5}, 4)
+  check({ {{1}}, {{2}}, {{2}}, {{3}} }, {1.5}, 2)
+end)
+
+test "upper_bound_pred-gt" (function()
+  local check = function(...)
+    return check_bound(
+        "upper_bound_pred",
+        upper_bound_pred,
+        function(lhs, rhs) return lhs[1] > rhs[1] end,
+        ...
+      )
+  end
+
+  check({ {{2}}, {{1}} }, {1.5}, 2)
+  check({ {{2}}, {{1}} }, {0}, 3)
+  check({ {{2}}, {{1}} }, {1}, 3)
+  check({ {{2}}, {{1}} }, {2}, 2)
+  check({ {{2}}, {{1}} }, {3}, 1)
+
+  check({ {{3}}, {{2}}, {{2}}, {{1}} },   {2}, 4)
+  check({ {{3}}, {{2}}, {{2}}, {{1}} }, {2.5}, 2)
+  check({ {{3}}, {{2}}, {{2}}, {{1}} }, {1.5}, 4)
 end)
 
 --------------------------------------------------------------------------------
