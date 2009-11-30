@@ -8,17 +8,27 @@ dofile('lua-nucleo/import.lua') -- Import module should be loaded manually
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
+--------------------------------------------------------------------------------
+
 local ensure_equals
       = import 'lua-nucleo/ensure.lua'
       {
         'ensure_equals'
       }
 
+local tcount_elements
+      = import 'lua-nucleo/table.lua'
+      {
+        'tcount_elements'
+      }
+
 local unique_object,
+      collect_all_garbage,
       misc
       = import 'lua-nucleo/misc.lua'
       {
-        'unique_object'
+        'unique_object',
+        'collect_all_garbage'
       }
 
 --------------------------------------------------------------------------------
@@ -42,6 +52,81 @@ test:test_for "unique_object" (function()
   end
 
   ensure_equals("all objects are unique", count, N)
+end)
+
+--------------------------------------------------------------------------------
+
+test:group 'collect_all_garbage'
+
+--------------------------------------------------------------------------------
+
+test 'collect_all_garbage-table' (function()
+  local cache = setmetatable({ }, { __mode = "k" })
+
+  collect_all_garbage()
+
+  do
+    local t = { }
+    cache[t] = true
+
+    ensure_equals("all objects are cached", tcount_elements(cache), 1)
+  end
+
+  collect_all_garbage()
+
+  ensure_equals("no objects are cached", tcount_elements(cache), 0)
+end)
+
+test 'collect_all_garbage-userdata' (function()
+  local cache = setmetatable({ }, { __mode = "k" })
+  local userdata_collected = false
+
+  collect_all_garbage()
+
+  do
+    -- No garbage except our userdata.
+    -- Checking that both userdata GC cycles would be run
+    local ud = newproxy()
+    debug.setmetatable(ud, { __gc = function() userdata_collected = true end })
+    cache[ud] = true
+
+    ensure_equals("userdata not collected", userdata_collected, false)
+    ensure_equals("all objects are cached", tcount_elements(cache), 1)
+
+    collect_all_garbage()
+
+    ensure_equals("userdata not collected", userdata_collected, false)
+    ensure_equals("all objects are cached", tcount_elements(cache), 1)
+  end
+
+  collect_all_garbage()
+
+  ensure_equals("userdata is collected", userdata_collected, true)
+  ensure_equals("no objects are cached", tcount_elements(cache), 0)
+end)
+
+test 'collect_all_garbage-complex' (function()
+  local cache = setmetatable({ }, { __mode = "k" })
+  local userdata_collected = false
+
+  collect_all_garbage()
+
+  do
+    local t = { }
+    cache[t] = true
+
+    local ud = newproxy()
+    debug.setmetatable(ud, { __gc = function() userdata_collected = true end })
+    cache[ud] = true
+
+    ensure_equals("userdata not collected", userdata_collected, false)
+    ensure_equals("all objects are cached", tcount_elements(cache), 2)
+  end
+
+  collect_all_garbage()
+
+  ensure_equals("userdata is collected", userdata_collected, true)
+  ensure_equals("no objects are cached", tcount_elements(cache), 0)
 end)
 
 --------------------------------------------------------------------------------
