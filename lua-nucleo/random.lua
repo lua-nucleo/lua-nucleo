@@ -38,6 +38,9 @@ local arguments,
 
 local type_imports = import 'lua-nucleo/type.lua' ()
 
+local math_abs = math.abs
+local pairs = pairs
+
 -- main algorithm value, got 99% chance of false negative
 -- (though high chance of false positive accordingly)
 -- http://www.itl.nist.gov/div898/handbook/eda/section3/eda3674.htm
@@ -92,7 +95,7 @@ local validate_probability_rough = function(weights, experiments)
 
   -- algorithm itself
   for k, v in pairs(weights_normalized) do
-    local delta = math.abs(weights_normalized[k] - experiments_normalized[k])
+    local delta = math_abs(weights_normalized[k] - experiments_normalized[k])
     chi_square = chi_square + (100 * delta * delta) / weights_normalized[k]
   end
 
@@ -161,7 +164,7 @@ local validate_probability_precise = function(weights, generate)
       -- calculate chi_square for current experiments num
       chi_squares[n] = 0;
       for k, v in pairs(weights_normalized) do
-        local delta = math.abs(v - experiments_normalized[k])
+        local delta = math_abs(v - experiments_normalized[k])
         chi_squares[n] = chi_squares[n] + (100 * delta * delta) / v
       end
     end
