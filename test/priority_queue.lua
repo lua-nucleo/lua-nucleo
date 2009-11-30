@@ -2,9 +2,6 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
--- TODO: Test on 'nil' object to be inserted???
--- TODO: Test pop from empty queue
-
 dofile('lua-nucleo/strict.lua')
 dofile('lua-nucleo/import.lua')
 
@@ -196,6 +193,23 @@ test "empty" (function()
   ensure("created priority queue", priority_queue)
 
   ensure_equals("no first element", priority_queue:front(), nil)
+end)
+
+--------------------------------------------------------------------------------
+
+test "empty-pop" (function()
+  local priority_queue = make_priority_queue()
+  ensure("created priority queue", priority_queue)
+
+  ensure_equals("no first element", priority_queue:front(), nil)
+  ensure_equals("pop on empty queue", priority_queue:pop(), nil)
+  priority_queue:insert(1, "1")
+  ensure_tequals(
+      "pop on non-empty queue",
+      { priority_queue:pop() },
+      { 1, "1" }
+    )
+  ensure_equals("pop on empty queue again", priority_queue:pop(), nil)
 end)
 
 --------------------------------------------------------------------------------
