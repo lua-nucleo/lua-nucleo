@@ -67,24 +67,7 @@ local get_next_iteration = function(i)
   return i
 end
 
--- sorts input table t using compare expression
--- bubble_sort is used because its faster then table.sort
-local bubble_sort = function(t)
-  for i = 2, #t do
-    local switched = false
-    for j = #t, i, -1 do
-      -- compare expression here
-      if t[j][1] > t[j - 1][1] then
-        t[j], t[j - 1] = t[j - 1], t[j]
-        switched = true
-      end
-    end
-    if switched == false then
-      return t
-    end
-  end
-  return t
-end
+local table_sort = table.sort
 
 -- generates distribution table, where keys are cases and
 -- values - number of experiments fallen in this case
@@ -114,7 +97,7 @@ local generate_experiments = function(
   end
 
   -- sorting formalized by chance of hitting case
-  bubble_sort(formalized)
+  table_sort(formalized, function(a, b) return a[1] > b[1] end)
 
   -- carrying out experiments
   for i = 1, num_experiments do
