@@ -41,6 +41,12 @@ local validate_probability_rough,
         'validate_probability_precise'
       }
 
+local invariant
+      = import 'lua-nucleo/functional.lua'
+      {
+        'invariant'
+      }
+
 --------------------------------------------------------------------------------
 
 local test = make_suite("random", random_exports)
@@ -56,6 +62,12 @@ local MIDDLE_POINT = 10
 local END_POINT = 100 -- cant be more then 100, or less then START_POINT
 local STEP_SMALL = 2 -- before MIDDLE_POINT
 local STEP_LARGE = 30 -- after MIDDLE_POINT
+-- if we need full test use further values:
+-- START_POINT = 2 -- can't be less then 2, or more then END_POINT
+-- MIDDLE_POINT = 10
+-- END_POINT = 100 -- cant be more then 100, or less then START_POINT
+-- STEP_SMALL = 1 -- before MIDDLE_POINT
+-- STEP_LARGE = 1 -- after MIDDLE_POINT
 
 -- step of tests
 local get_next_iteration = function(i)
@@ -301,6 +313,7 @@ test:test_for 'validate_probability_precise' (function()
       end
 
       -- contrast false input
+      -- for full test use 1, 4
       for j = 1, 2 do
         print("1 and " .. i - 1 .. " of 10^" .. j .. ", added +" .. i)
         weights_closure = generate_contrast_weights(i, j, true)
