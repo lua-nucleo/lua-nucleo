@@ -59,9 +59,7 @@ local STEP_LARGE = 30 -- after MIDDLE_POINT
 
 -- step of tests
 local get_next_iteration = function(i)
-  if
-    i < MIDDLE_POINT
-  then
+  if i < MIDDLE_POINT then
     i = i + STEP_SMALL
   else
     i = i + STEP_LARGE
@@ -75,17 +73,13 @@ local bubble_sort = function(t)
   for i = 2, #t do
     local switched = false
     for j = #t, i, -1 do
-      if
-        -- compare expression here
-        t[j][1] > t[j - 1][1]
-      then
+      -- compare expression here
+      if t[j][1] > t[j - 1][1] then
         t[j], t[j - 1] = t[j - 1], t[j]
         switched = true
       end
     end
-    if
-      switched == false
-    then
+    if switched == false then
       return t
     end
   end
@@ -183,9 +177,7 @@ test:test_for 'validate_probability_rough' (function()
             weights_to_use
           )
       end
-      if
-        validate_probability_rough(weights_current, experiments_current)
-      then
+      if validate_probability_rough(weights_current, experiments_current) then
         true_checks = true_checks + 1
       end
     end
@@ -261,9 +253,9 @@ test:test_for 'validate_probability_precise' (function()
 
     -- filling table
     if are_low_rare then
-      weights = tgenerate_n(length, function() return powered end)
+      weights = tgenerate_n(length, invariant(powered))
     else
-      weights = tgenerate_n(length, function() return 1 end)
+      weights = tgenerate_n(length, invariant(1))
     end
 
     -- adding random rare value
@@ -285,14 +277,10 @@ test:test_for 'validate_probability_precise' (function()
   -- checks validate_probability_precise work
   local check = function(weights, expermiments_fn, is_data_true)
     local res, err = validate_probability_precise(weights, expermiments_fn)
-    if
-      is_data_true ~= res or err ~= nil
-    then
+    if is_data_true ~= res or err ~= nil then
       error("Failed!" .. err)
     else
-      if
-        is_data_true
-      then
+      if is_data_true then
         print("OK - (no false negative)")
       else
         print("OK - (no false positive)")

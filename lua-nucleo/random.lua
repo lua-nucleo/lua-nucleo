@@ -186,19 +186,13 @@ local validate_probability_precise = function(weights, generate)
     local OVERALL_STAGNATION_LOW = 0.25
     local OVERALL_STAGNATION_TOP = 4
 
-    if
-      overal_change > OVERALL_IMPROVEMENT
-    then
+    if overal_change > OVERALL_IMPROVEMENT then
       decision = decision + 1
     end
-    if
-      first_change > STEP_IMPROVEMENT and second_change > 1
-    then
+    if first_change > STEP_IMPROVEMENT and second_change > 1 then
       decision = decision + 1
     end
-    if
-      second_change > STEP_IMPROVEMENT and first_change > 1
-    then
+    if second_change > STEP_IMPROVEMENT and first_change > 1 then
       decision = decision + 1
     end
     if
@@ -219,18 +213,14 @@ local validate_probability_precise = function(weights, generate)
     then
       decision = decision - 1
     end
-    if
-      second_change > STEP_STAGNATION
-    then
+    if second_change > STEP_STAGNATION then
       if tendency < 0 then tendency = 0 end
       tendency = tendency + 1
     else
       if tendency > 0 then tendency = 0 end
       tendency = tendency - 1
     end
-    if
-      first_change > STEP_STAGNATION
-    then
+    if first_change > STEP_STAGNATION then
       if tendency < 0 then tendency = 0 end
       tendency = tendency + 1
     else
