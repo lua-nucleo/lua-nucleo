@@ -331,7 +331,7 @@ test "pick-equal-weights" (function()
   if test:in_strict_mode() then
     local res, err = validate_probability_precise(probs, generate, 0, probs)
     if not res then
-      if err ~= nil then error(err) else error("Test failed!") end
+       error(err or "Test failed!")
     end
   end
 end)
@@ -349,7 +349,7 @@ test "pick-non-equal-weights" (function()
   if test:in_strict_mode() then
     local res, err = validate_probability_precise(probs, generate, 0, probs)
     if not res then
-      if err ~= nil then error(err) else error("Test failed!") end
+      error(err or "Test failed!")
     end
   end
 end)
@@ -380,7 +380,7 @@ test "pick-non-equal-weights-generated" (function()
         probs
       )
     if not res then
-      if err ~= nil then error(err) else error("Test failed!") end
+      error(err or "Test failed!")
     end
   end
 end)
