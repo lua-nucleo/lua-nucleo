@@ -186,8 +186,8 @@ local ensure_strequals = function(msg, actual, expected, ...)
   error(
       "ensure_strequals: " .. msg .. ":\n"
       .. strdiff_msg(actual, expected)
-      .. "\nactual:\n" .. actual
-      .. "\nexpected:\n" .. expected
+      .. "\nactual:\n" .. tostring(actual)
+      .. "\nexpected:\n" .. tostring(expected)
     )
 end
 
