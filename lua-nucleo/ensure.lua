@@ -201,13 +201,6 @@ local ensure_error = function(msg, expected_message, res, actual_message, ...)
 
   -- TODO: Improve error reporting
   ensure_strequals(msg, actual_message, expected_message)
-
-  if select("#", ...) ~= 0 then
-    error(
-        "ensure_error failed: " .. msg .. ": got extra arguments",
-        2
-      )
-  end
 end
 
 -- TODO: Uncomment and move to proper tests
