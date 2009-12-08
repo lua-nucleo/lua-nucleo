@@ -105,6 +105,17 @@ end
 -- Function precisely determines if distribution of values in table experiments
 -- corresponds distribution in weights.
 -- algorithm based on experiment probability check.
+-- algorithm:
+-- We check the alteration of chi square after ten times experiments growth.
+-- If this change tends to 1 (see STEP_STAGNATION) we increase probability
+-- that generated experiments doesn't match weights (-1 to decision variable),
+-- if it tends to 10 (see STEP_IMPROVEMENT) we increase probability that
+-- generated experiments match weights (+1 to decision variable).
+-- When decision variable reaches DECISION_VALUE limit - return whatever have.
+-- If we cant decide in step_limit iterations we return that we increase basic
+-- number of experiments, until reach INCREASE_LIMIT. Then we return nil, err.
+-- (that usually can mean that weights contain too low-probable values or we
+-- need further investigation).
 local validate_probability_precise = function(weights, generate, ...)
   -- input checks
   arguments(
