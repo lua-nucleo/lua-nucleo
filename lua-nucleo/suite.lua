@@ -89,6 +89,8 @@ do
 
     print("Running suite", self.name_, self.strict_mode_ and "in STRICT mode")
 
+    local failed_on_first_error = false
+
     local nok, errs = 0, {}
     for i, test in ipairs(self.tests_) do
       print("Suite test", test.name)
@@ -97,51 +99,60 @@ do
         print("OK")
         nok = nok + 1
       else
-        print("ERR")
         errs[#errs + 1] = { name = test.name, err = err }
-      end
-    end
-
-    local imports_set = self.imports_set_
-    if imports_set then
-      print("Checking suite completeness")
-      if next(imports_set) == nil then
-        print("OK")
-        nok = nok + 1
-      else
-        print("ERR")
-
-        local list = { }
-        for name, _ in pairs(imports_set) do
-          list[#list + 1] = name
+        if not self.fail_on_first_error_ then
+          print("ERR")
+        else
+          errs[#errs + 1] = { name = "[FAIL ON FIRST ERROR]", err = "FAILED AS REQUESTED" }
+          print("ERR (failing on first error)")
+          failed_on_first_error = true
+          break
         end
-
-        errs[#errs + 1] =
-        {
-          name = "[completeness check]";
-          err = "detected untested imports: "
-            .. table_concat(list, ", ")
-            ;
-        }
       end
     end
 
     local todo_messages = nil
-    if #self.todos_ > 0 then
-      todo_messages = { }
-      for i, todo in ipairs(self.todos_) do
-        todo_messages[#todo_messages + 1] = "   -- "
-        todo_messages[#todo_messages + 1] = todo
-        todo_messages[#todo_messages + 1] = "\n"
-      end
-      todo_messages = table_concat(todo_messages)
+    if not failed_on_first_error then
+      local imports_set = self.imports_set_
+      if imports_set then
+        print("Checking suite completeness")
+        if next(imports_set) == nil then
+          print("OK")
+          nok = nok + 1
+        else
+          print("ERR")
 
-      if self.strict_mode_ then
-        errs[#errs + 1] =
-        {
-          name = "[STRICT MODE]";
-          err = "detected TODOs:\n" .. todo_messages;
-        }
+          local list = { }
+          for name, _ in pairs(imports_set) do
+            list[#list + 1] = name
+          end
+
+          errs[#errs + 1] =
+          {
+            name = "[completeness check]";
+            err = "detected untested imports: "
+              .. table_concat(list, ", ")
+              ;
+          }
+        end
+      end
+
+      if #self.todos_ > 0 then
+        todo_messages = { }
+        for i, todo in ipairs(self.todos_) do
+          todo_messages[#todo_messages + 1] = "   -- "
+          todo_messages[#todo_messages + 1] = todo
+          todo_messages[#todo_messages + 1] = "\n"
+        end
+        todo_messages = table_concat(todo_messages)
+
+        if self.strict_mode_ then
+          errs[#errs + 1] =
+          {
+            name = "[STRICT MODE]";
+            err = "detected TODOs:\n" .. todo_messages;
+          }
+        end
       end
     end
 
@@ -149,6 +160,10 @@ do
 
     print("Total tests in suite:", nok + nerr)
     print("Successful:", nok)
+
+    if failed_on_first_error then
+      print("Failed on first error")
+    end
 
     local msg
 
@@ -179,6 +194,13 @@ do
     assert(type(flag) == "boolean", "bad flag")
 
     self.strict_mode_ = flag
+  end
+
+  local set_fail_on_first_error = function(self, flag)
+    assert(type(self) == "table", "bad self")
+    assert(type(flag) == "boolean", "bad flag")
+
+    self.fail_on_first_error_ = flag
   end
 
   local suite_mt =
@@ -215,11 +237,13 @@ do
           case = case; -- Note this is an alias for test().
           run = run;
           set_strict_mode = set_strict_mode;
+          set_fail_on_first_error = set_fail_on_first_error; -- TODO: Test this!
           UNTESTED = UNTESTED;
           TODO = TODO;
           --
           name_ = name;
           strict_mode_ = false;
+          fail_on_first_error_ = false;
           imports_set_ = imports_set;
           tests_ = {};
           todos_ = {};
