@@ -17,7 +17,7 @@
 local type, setmetatable, tostring, select, assert, unpack
     = type, setmetatable, tostring, select, assert, unpack
 
-local os_time, os_date 
+local os_time, os_date
     = os.time, os.date
 
 --------------------------------------------------------------------------------
@@ -32,10 +32,20 @@ local arguments,
         'optional_arguments'
       }
 
-local assert_is_table
+local is_string,
+      is_function
+      = import 'lua-nucleo/type.lua'
+      {
+        'is_string',
+        'is_function'
+      }
+
+local assert_is_table,
+      assert_is_string
       = import 'lua-nucleo/typeassert.lua'
       {
-        'assert_is_table'
+        'assert_is_table',
+        'assert_is_string'
       }
 
 local tflip,
@@ -227,17 +237,30 @@ do
           "string", module_name,
           "number", level,
           "function", sink,
-          "string", logger_id,
+          --"string", logger_id, -- TODO: Need metatype, may be function or string
           "string", suffix
         )
 
-      return function(...)
-        if logging_config:is_log_enabled(module_name, level) then
-          -- NOTE: Using explicit size since we have to support holes in the vararg.
-          sink "[" (get_current_logsystem_date()) "] " (logger_id)
-               "[" (suffix) "] "
+      if is_function(logger_id) then
+        return function(...)
+          if logging_config:is_log_enabled(module_name, level) then
+            sink "[" (get_current_logsystem_date()) "] " (logger_id())
+                "[" (suffix) "] "
 
-          return impl(sink, select("#", ...), ...)
+            -- NOTE: Using explicit size since we have to support holes in the vararg.
+            return impl(sink, select("#", ...), ...)
+          end
+        end
+      else
+        assert_is_string(logger_id)
+        return function(...)
+          if logging_config:is_log_enabled(module_name, level) then
+            sink "[" (get_current_logsystem_date()) "] " (logger_id)
+                "[" (suffix) "] "
+
+            -- NOTE: Using explicit size since we have to support holes in the vararg.
+            return impl(sink, select("#", ...), ...)
+          end
         end
       end
     end
@@ -273,8 +296,9 @@ do
   -- Sink also must behave like cat(), that is, return itself.
   --
   make_logging_system = function(logger_id, sink, logging_config)
+    assert(is_string(logger_id) or is_function(logger_id))
     arguments(
-        "string", logger_id,
+        -- "string", logger_id, -- TODO: Need metatype may be function or string
         "function", sink,
         "table", logging_config
       )

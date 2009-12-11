@@ -10,6 +10,14 @@ assert(type(make_suite) == "function")
 
 --------------------------------------------------------------------------------
 
+local is_string,
+      is_function
+      = import 'lua-nucleo/type.lua'
+      {
+        'is_string',
+        'is_function'
+      }
+
 local assert_is_string,
       assert_is_table,
       assert_is_nil,
@@ -245,9 +253,11 @@ local check_logger = function(
   arguments(
          "table", concatter,
       "function", logger,
-        "string", logging_system_id,
+        --"string", logging_system_id,
         "string", module_suffix
     )
+
+  assert(is_function(logging_system_id) or is_string(logging_system_id))
 
   concatter.reset()
 
@@ -260,6 +270,10 @@ local check_logger = function(
   -- Prepend system info to expected data
   local date = assert_is_string(actual[2])
   check_date_str(date, ts_before, ts_after)
+
+  if is_function(logging_system_id) then
+    logging_system_id = assert_is_string(logging_system_id())
+  end
 
   local expected = { "[", date, "] ", logging_system_id, "[", module_suffix, "] " }
 
@@ -347,6 +361,50 @@ test "make_module_logger-simple" (function()
 
   check_make_module_logger(
       concatter, logging_system, logging_system_id,
+      42, "embedded\0zero", nil, true, nil
+    )
+end)
+
+test "make_module_logger-id-callback-simple" (function()
+  local concatter = make_test_concatter()
+  local logging_system_id = "{logger_id} "
+  local logging_system = ensure(
+      "make logging system",
+      make_logging_system(
+          function() return logging_system_id end,
+          concatter.cat,
+          make_common_logging_config(tset(LOG_LEVEL))
+        )
+    )
+
+  check_make_module_logger(
+      concatter, logging_system, logging_system_id,
+      42, "embedded\0zero", nil, true, nil
+    )
+end)
+
+test "make_module_logger-id-callback-dynamic" (function()
+  local concatter = make_test_concatter()
+
+  local make_logging_system_id = function()
+    local count = 0
+    return function()
+      count = count + 1
+      return tostring(count)
+    end
+  end
+
+  local logging_system = ensure(
+      "make logging system",
+      make_logging_system(
+          make_logging_system_id(),
+          concatter.cat,
+          make_common_logging_config(tset(LOG_LEVEL))
+        )
+    )
+
+  check_make_module_logger(
+      concatter, logging_system, make_logging_system_id(),
       42, "embedded\0zero", nil, true, nil
     )
 end)
