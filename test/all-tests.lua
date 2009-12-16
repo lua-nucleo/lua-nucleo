@@ -37,6 +37,7 @@ return
   'log';
   'priority_queue';
   'timed_queue';
+  'deque';
   --
   'util/anim/interpolator';
 }
