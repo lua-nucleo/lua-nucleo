@@ -923,7 +923,7 @@ test "timap-counter-noargs" (function()
   ensure_equals("function called", c, 3)
   ensure_tequals("original table not changed", t, old_t)
   ensure("returned other table", r ~= t)
-  ensure_tequals("table changed", r, { 11, 22, 33, ["a"] = 42 })
+  ensure_tequals("table changed", r, { 11, 22, 33 })
 end)
 
 test "timap-counter-args" (function()
@@ -941,7 +941,7 @@ test "timap-counter-args" (function()
   ensure_equals("function called", c, 3)
   ensure_tequals("original table not changed", t, old_t)
   ensure("returned other table", r ~= t)
-  ensure_tequals("table changed", r, { 11, 22, 33, ["a"] = 42 })
+  ensure_tequals("table changed", r, { 11, 22, 33 })
 end)
 
 --------------------------------------------------------------------------------
