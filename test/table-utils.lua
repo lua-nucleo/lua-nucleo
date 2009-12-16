@@ -47,6 +47,7 @@ local empty_table,
       tiset,
       tiinsert_args,
       timap_inplace,
+      timap,
       timap_sliding,
       tiwalk,
       tiwalker,
@@ -74,6 +75,7 @@ local empty_table,
         'tiset',
         'tiinsert_args',
         'timap_inplace',
+        'timap',
         'timap_sliding',
         'tiwalk',
         'tiwalker',
@@ -876,6 +878,69 @@ test "timap_inplace-counter-args" (function()
   local r = timap_inplace(fn, t, k)
   ensure_equals("function called", c, 3)
   ensure_equals("returned table", r, t)
+  ensure_tequals("table changed", r, { 11, 22, 33, ["a"] = 42 })
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "timap"
+
+--------------------------------------------------------------------------------
+
+test "timap-empty-noargs" (function()
+  local c = 0
+  local fn = function() c = c + 1 end
+  local t = { }
+  local old_t = tclone(t)
+  local r = timap(fn, t)
+  ensure_equals("function not called", c, 0)
+  ensure_tequals("original table not changed", t, old_t)
+  ensure("returned other table", r ~= t)
+end)
+
+test "timap-empty-args" (function()
+  local c = 0
+  local fn = function() c = c + 1 end
+  local t = { }
+  local old_t = tclone(t)
+  local r = timap(fn, t, 42)
+  ensure_equals("function not called", c, 0)
+  ensure_tequals("original table not changed", t, old_t)
+  ensure("returned other table", r ~= t)
+end)
+
+test "timap-counter-noargs" (function()
+  local c = 0
+  local fn = function(a, b)
+    c = c + 1
+    ensure_equals("check a", a, c * 10)
+    ensure_equals("check b", b, nil)
+    return a + c
+  end
+  local t = { 10, 20, 30, ["a"] = 42 }
+  local old_t = tclone(t)
+  local r = timap(fn, t)
+  ensure_equals("function called", c, 3)
+  ensure_tequals("original table not changed", t, old_t)
+  ensure("returned other table", r ~= t)
+  ensure_tequals("table changed", r, { 11, 22, 33, ["a"] = 42 })
+end)
+
+test "timap-counter-args" (function()
+  local k = { }
+  local c = 0
+  local fn = function(a, b)
+    c = c + 1
+    ensure_equals("check a", a, c * 10)
+    ensure_equals("check b", b, k)
+    return a + c
+  end
+  local t = { 10, 20, 30, ["a"] = 42 }
+  local old_t = tclone(t)
+  local r = timap(fn, t, k)
+  ensure_equals("function called", c, 3)
+  ensure_tequals("original table not changed", t, old_t)
+  ensure("returned other table", r ~= t)
   ensure_tequals("table changed", r, { 11, 22, 33, ["a"] = 42 })
 end)
 

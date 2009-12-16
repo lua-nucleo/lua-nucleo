@@ -156,6 +156,14 @@ local timap_inplace = function(fn, t, ...)
   return t
 end
 
+local timap = function(fn, t, ...)
+  local r = { }
+  for i = 1, #t do
+    r[i] = fn(t[i], ...)
+  end
+  return r
+end
+
 local timap_sliding = function(fn, t, ...)
   local r = {}
 
@@ -287,6 +295,7 @@ return
   tiset = tiset;
   tiinsert_args = tiinsert_args;
   timap_inplace = timap_inplace;
+  timap = timap;
   timap_sliding = timap_sliding;
   tiwalk = tiwalk;
   tiwalker = tiwalker;
