@@ -59,6 +59,7 @@ local empty_table,
       tnormalize_inplace,
       tclone,
       tcount_elements,
+      tremap_to_array,
       table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -86,7 +87,8 @@ local empty_table,
         'tnormalize',
         'tnormalize_inplace',
         'tclone',
-        'tcount_elements'
+        'tcount_elements',
+        'tremap_to_array'
       }
 
 --------------------------------------------------------------------------------
@@ -1534,6 +1536,40 @@ test "tcount_elements-hash" (function()
       "hash",
       tcount_elements({ 42, a = 2, b = nil }),
       2
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tremap_to_array"
+
+--------------------------------------------------------------------------------
+
+test "tremap_to_array-empty" (function()
+  local fn = function(k, v)
+    return { k, v }
+  end
+
+  ensure_tequals("empty", tremap_to_array(fn, { }), { })
+end)
+
+test "tremap_to_array-mixed" (function()
+  local fn = function(k, v)
+    return { k, v }
+  end
+
+  -- NOTE: Have to use tset here due to undefined hash-part traversal order.
+  ensure_tdeepequals(
+      "mixed",
+      tset(tremap_to_array(fn, { 3, -1, a = -1, b = 2, c = 3 })),
+      tset
+      {
+        { 1, 3 };
+        { 2, -1 };
+        { "a", -1 };
+        { "b", 2 };
+        { "c", 3 };
+      }
     )
 end)
 

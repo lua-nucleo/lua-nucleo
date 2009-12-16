@@ -280,6 +280,14 @@ local tcount_elements = function(t)
   return n
 end
 
+local tremap_to_array = function(fn, t)
+  local r = { }
+  for k, v in pairs(t) do
+    r[#r + 1] = fn(k, v)
+  end
+  return r
+end
+
 return
 {
   empty_table = empty_table;
@@ -307,4 +315,5 @@ return
   tnormalize_inplace = tnormalize_inplace;
   tclone = tclone;
   tcount_elements = tcount_elements;
+  tremap_to_array = tremap_to_array;
 }
