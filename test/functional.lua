@@ -27,6 +27,7 @@ local do_nothing,
       make_generator_mt,
       arguments_ignorer,
       list_caller,
+      bind_many,
       functional_exports =
       import 'lua-nucleo/functional.lua'
       {
@@ -36,7 +37,8 @@ local do_nothing,
         'create_table',
         'make_generator_mt',
         'arguments_ignorer',
-        'list_caller'
+        'list_caller',
+        'bind_many'
       }
 
 --------------------------------------------------------------------------------
@@ -349,6 +351,92 @@ test "list_caller-nil-arguments" (function()
       "all functions are called properly",
       actual_arguments,
       expected_arguments
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "bind_many"
+
+--------------------------------------------------------------------------------
+
+test "bind_many-empty-simple" (function()
+  local called = false
+
+  local fn = bind_many(function(...)
+    ensure_equals("no args", select("#", ...), 0)
+    ensure_equals("call once", called, false)
+    called = true
+  end)
+
+  ensure_equals("call check", fn(), nil)
+
+  ensure_equals("was called", called, true)
+end)
+
+test "bind_many-empty-with-return-values" (function()
+  local called = false
+
+  local fn = bind_many(function(...)
+    ensure_equals("call once", called, false)
+    called = true
+    return { n = select("#", ...), ... }, ...
+  end)
+
+  ensure_equals("not called yet", called, false)
+
+  local res = { fn() }
+
+  ensure_equals("was called", called, true)
+
+  ensure_tdeepequals(
+      "return values check",
+      res,
+      { { n = 0 } }
+    )
+end)
+
+test "bind_many-basic" (function()
+  local called = false
+
+  local fn = bind_many(function(...)
+    ensure_equals("call once", called, false)
+    called = true
+    return { n = select("#", ...), ... }, ...
+  end, 1, nil, 2)
+
+  ensure_equals("not called yet", called, false)
+
+  local res = { fn("XXX") }
+
+  ensure_equals("was called", called, true)
+
+  ensure_tdeepequals(
+      "return values check",
+      res,
+      { { n = 3, 1, nil, 2 }, 1, nil, 2 }
+    )
+end)
+
+test "bind_many-nil-arguments" (function()
+  local called = false
+
+  local fn = bind_many(function(...)
+    ensure_equals("call once", called, false)
+    called = true
+    return { n = select("#", ...), ... }, ...
+  end, nil, nil, nil, nil, nil)
+
+  ensure_equals("not called yet", called, false)
+
+  local res = { fn("XXX") }
+
+  ensure_equals("was called", called, true)
+
+  ensure_tdeepequals(
+      "return values check",
+      res,
+      { { n = 5, nil, nil, nil, nil, nil }, nil, nil, nil, nil, nil }
     )
 end)
 

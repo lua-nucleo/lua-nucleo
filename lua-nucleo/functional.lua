@@ -2,7 +2,7 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-local assert, unpack = assert, unpack
+local assert, unpack, select = assert, unpack, select
 local table_remove = table.remove
 
 local assert_is_number,
@@ -62,6 +62,13 @@ local list_caller = function(calls)
   end
 end
 
+local bind_many = function(fn, ...)
+  local n, args = select("#", ...), { ... }
+  return function()
+    return fn(unpack(args, 1, n))
+  end
+end
+
 return
 {
   do_nothing = do_nothing;
@@ -71,4 +78,5 @@ return
   make_generator_mt = make_generator_mt;
   arguments_ignorer = arguments_ignorer;
   list_caller = list_caller;
+  bind_many = bind_many;
 }
