@@ -46,13 +46,15 @@ local ensure,
 local tstr,
       tclone,
       tgenerate_n,
-      tequals
+      tequals,
+      tset
       = import 'lua-nucleo/table.lua'
       {
         'tstr',
         'tclone',
         'tgenerate_n',
-        'tequals'
+        'tequals',
+        'tset'
       }
 
 local invariant,
@@ -68,6 +70,12 @@ local make_priority_queue,
       = import 'lua-nucleo/priority_queue.lua'
       {
         'make_priority_queue'
+      }
+
+local make_value_generators
+      = import 'test/lib/value_generators.lua'
+      {
+        'make_value_generators'
       }
 
 --------------------------------------------------------------------------------
@@ -337,39 +345,7 @@ end)
 test "many-elements-random-generated" (function()
   local priority_queue = ensure("created priority queue", make_priority_queue())
 
-  local value_generators = -- TODO: Generalize to test-lib (let user to select features, like nil, NaN etc.)
-  {
-    --invariant(nil);
-    -- No nil data here to extend applicability
-    invariant(true);
-    invariant(false);
-    invariant(-42);
-    invariant(-1);
-    invariant(0);
-    math.random;
-    function() return math.random(-1e8, 1e8) end;
-    invariant(1);
-    invariant(42);
-    invariant(math.pi);
-    -- No NaN data here to extend applicability
-    invariant(1/0);
-    invariant(-1/0);
-    invariant("");
-    invariant("The Answer to the Ultimate Question of Life, the Universe, and Everything");
-    invariant("embedded\0zero");
-    invariant("multiline\nstring");
-    -- TODO: Random_string().
-    invariant({});
-    invariant({ 1 });
-    invariant({ a = 1 });
-    invariant({ a = 1; 1 });
-    invariant({ [{}] = {} });
-    -- No recursive data here to extend applicability
-    invariant(function() end);
-    -- No functions with upvalues to extend applicability
-    invariant(coroutine.create(function() end));
-    invariant(newproxy());
-  }
+  local value_generators = make_value_generators(tset({ "userdata" }))
 
   local MIN_ELEMENTS = 0
   local MAX_ELEMENTS = 1e4
