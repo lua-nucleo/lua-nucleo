@@ -1330,25 +1330,25 @@ test:group "taccumulate"
 --------------------------------------------------------------------------------
 
 test "taccumulate-empty" (function()
-  ensure_equals("empty default", taccumulate({}), 0)
-  ensure_equals("empty 0", taccumulate({}, 0), 0)
-  ensure_equals("empty 1", taccumulate({}, 1), 1)
+  ensure_equals("empty default", taccumulate({ }), 0)
+  ensure_equals("empty 0", taccumulate({ }, 0), 0)
+  ensure_equals("empty 1", taccumulate({ }, 1), 1)
 end)
 
 test "taccumulate-array" (function()
-  ensure_equals("array", taccumulate({1, 2, 3}), 6)
+  ensure_equals("array", taccumulate({ 1, 2, 3 }), 6)
 end)
 
 test "taccumulate-array-hole" (function()
-  ensure_equals("array", taccumulate({1, 2, nil, nil, nil, 3}), 6)
+  ensure_equals("array", taccumulate({ 1, 2, nil, nil, nil, 3 }), 6)
 end)
 
 test "taccumulate-hash" (function()
-  ensure_equals("hash", taccumulate({a = 1, b = 2, c = 3}), 6)
+  ensure_equals("hash", taccumulate({ a = 1, b = 2, c = 3 }), 6)
 end)
 
 test "taccumulate-mixed" (function()
-  ensure_equals("mixed", taccumulate({ 3, -1, a = -1, b = 2, c = 3}), 6)
+  ensure_equals("mixed", taccumulate({ 3, -1, a = -1, b = 2, c = 3 }), 6)
 end)
 
 --------------------------------------------------------------------------------
