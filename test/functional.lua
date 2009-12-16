@@ -10,12 +10,14 @@ assert(type(make_suite) == "function")
 
 local ensure_equals,
       ensure_tequals,
-      ensure_tdeepequals
+      ensure_tdeepequals,
+      ensure_returns
       = import 'lua-nucleo/ensure.lua'
       {
         'ensure_equals',
         'ensure_tequals',
-        'ensure_tdeepequals'
+        'ensure_tdeepequals',
+        'ensure_returns'
       }
 
 local tstr = import 'lua-nucleo/table.lua' { 'tstr' }
@@ -28,8 +30,9 @@ local do_nothing,
       arguments_ignorer,
       list_caller,
       bind_many,
-      functional_exports =
-      import 'lua-nucleo/functional.lua'
+      remove_nil_arguments,
+      functional_exports
+      = import 'lua-nucleo/functional.lua'
       {
         'do_nothing',
         'identity',
@@ -38,7 +41,8 @@ local do_nothing,
         'make_generator_mt',
         'arguments_ignorer',
         'list_caller',
-        'bind_many'
+        'bind_many',
+        'remove_nil_arguments'
       }
 
 --------------------------------------------------------------------------------
@@ -437,6 +441,44 @@ test "bind_many-nil-arguments" (function()
       "return values check",
       res,
       { { n = 5, nil, nil, nil, nil, nil }, nil, nil, nil, nil, nil }
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "remove_nil_arguments"
+
+--------------------------------------------------------------------------------
+
+test "remove_nil_arguments-empty" (function()
+  ensure_returns(
+      "empty",
+      0, { },
+      remove_nil_arguments()
+    )
+end)
+
+test "remove_nil_arguments-no-nils" (function()
+  ensure_returns(
+      "empty",
+      3, { 1, false, "nil" },
+      remove_nil_arguments(1, false, "nil")
+    )
+end)
+
+test "remove_nil_arguments-some-nils" (function()
+  ensure_returns(
+      "empty",
+      3, { 1, false, "nil" },
+      remove_nil_arguments(nil, 1, nil, false, nil, "nil")
+    )
+end)
+
+test "remove_nil_arguments-all-nils" (function()
+  ensure_returns(
+      "empty",
+      0, { },
+      remove_nil_arguments(nil, nil, nil)
     )
 end)
 

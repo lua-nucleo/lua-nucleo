@@ -69,6 +69,23 @@ local bind_many = function(fn, ...)
   end
 end
 
+local remove_nil_arguments
+do
+  local function impl(n, a, ...)
+    if n > 0 then
+      if a ~= nil then
+        return a, impl(n - 1, ...)
+      end
+
+      return impl(n - 1, ...)
+    end
+  end
+
+  remove_nil_arguments = function(...)
+    return impl(select("#", ...), ...)
+  end
+end
+
 return
 {
   do_nothing = do_nothing;
@@ -79,4 +96,5 @@ return
   arguments_ignorer = arguments_ignorer;
   list_caller = list_caller;
   bind_many = bind_many;
+  remove_nil_arguments = remove_nil_arguments;
 }
