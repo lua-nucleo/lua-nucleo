@@ -26,6 +26,12 @@ local assert_is_number
         'assert_is_number'
       }
 
+local make_checker
+      = import 'lua-nucleo/checker.lua'
+      {
+        'make_checker'
+      }
+
 -- TODO: Write tests for this one
 local ensure = function(msg, value, ...)
   return value
@@ -265,6 +271,38 @@ local ensure_aposteriori_probability = function(num_runs, weights, stats, max_ac
   ensure_equals("no extra data", next(aposteriori_probs), nil)
 end
 
+local ensure_returns = function(msg, num, expected, ...)
+  local checker = make_checker()
+  -- Explicit check to separate no-return-values from all-nils
+  if num ~= select("#", ...) then
+    checker:fail(
+        "return value count mismatch: expected "
+        .. num .. " actual " .. select("#", ...)
+      )
+  end
+  for i = 1, num do
+    if not tdeepequals(expected[i], (select(i, ...))) then
+      -- TODO: Enhance error reporting (especially for tables and long strings)
+      checker:fail(
+          "return value #" .. i .. " mismatch: "
+          .. "actual `" .. tostring((select(i, ...)))
+          .. "', expected `" .. tostring(expected[i])
+          .. "'"
+        )
+    end
+  end
+  if not checker:good() then
+    error(
+        checker:msg(
+            "return values check failed: " .. msg .. "\n -- ",
+            "\n -- "
+          ),
+        2
+      )
+  end
+  return ...
+end
+
 return
 {
   ensure = ensure;
@@ -275,4 +313,5 @@ return
   ensure_error = ensure_error;
   ensure_fails_with_substring = ensure_fails_with_substring;
   ensure_aposteriori_probability = ensure_aposteriori_probability;
+  ensure_returns = ensure_returns;
 }
