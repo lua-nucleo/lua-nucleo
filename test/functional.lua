@@ -1,4 +1,4 @@
--- functional.lua -- tests for the functional module
+-- functional.lua: tests for (pseudo-)functional stuff
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
@@ -9,12 +9,16 @@ local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
 local ensure_equals,
-      ensure_tequals
+      ensure_tequals,
+      ensure_tdeepequals
       = import 'lua-nucleo/ensure.lua'
       {
         'ensure_equals',
-        'ensure_tequals'
+        'ensure_tequals',
+        'ensure_tdeepequals'
       }
+
+local tstr = import 'lua-nucleo/table.lua' { 'tstr' }
 
 local do_nothing,
       identity,
@@ -22,6 +26,7 @@ local do_nothing,
       create_table,
       make_generator_mt,
       arguments_ignorer,
+      list_caller,
       functional_exports =
       import 'lua-nucleo/functional.lua'
       {
@@ -30,7 +35,8 @@ local do_nothing,
         'invariant',
         'create_table',
         'make_generator_mt',
-        'arguments_ignorer'
+        'arguments_ignorer',
+        'list_caller'
       }
 
 --------------------------------------------------------------------------------
@@ -199,6 +205,151 @@ test:test_for "arguments_ignorer" (function()
   end
 
   ensure_tequals("check", { arguments_ignorer(fn)(3, nil, 4) }, { 1, nil, 2 })
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "list_caller"
+
+--------------------------------------------------------------------------------
+
+test "list_caller-empty" (function()
+  local caller = list_caller({ })
+  caller()
+end)
+
+test "list_caller-basic" (function()
+  local expected_arguments =
+  {
+    [1] =
+    {
+      id = 1;
+      { n = 3; 1, nil, 2 };
+    };
+    [2] =
+    {
+      id = 2;
+      { n = 4, "one", "two", "three", 4 };
+    };
+    [3] =
+    {
+      id = 3;
+      { n = 0 };
+    };
+    [4] =
+    {
+      id = 4;
+      { n = 0 };
+    };
+  }
+
+  local actual_arguments = { }
+
+  local common_fn = function(id)
+    return function(...)
+      actual_arguments[#actual_arguments + 1] =
+      {
+        id = id;
+        { n = select("#", ...), ... };
+      }
+    end
+  end
+
+  local calls =
+  {
+    [1] =
+    {
+      n = expected_arguments[1][1].n;
+      common_fn(1);
+      unpack(expected_arguments[1][1], 1, expected_arguments[1][1].n);
+    };
+    [2] =
+    {
+      -- No explicit n
+      common_fn(2);
+      unpack(expected_arguments[2][1], 1, expected_arguments[2][1].n);
+    };
+    [3] =
+    {
+      n = expected_arguments[3][1].n;
+      common_fn(3);
+      -- No arguments
+    };
+    [4] =
+    {
+      -- No explicit n
+      common_fn(4);
+      -- No arguments
+    };
+  }
+
+  local caller = list_caller(calls)
+
+  ensure_tequals("nothing is called yet", actual_arguments, { })
+
+  caller()
+
+  ensure_tdeepequals(
+      "all functions are called properly",
+      actual_arguments,
+      expected_arguments
+    )
+end)
+
+test "list_caller-nil-arguments" (function()
+  local expected_arguments =
+  {
+    [1] =
+    {
+      id = 1;
+      { n = 3; nil, nil, nil };
+    };
+    [2] =
+    {
+      id = 2;
+      { n = 4; nil, nil, nil, nil };
+    };
+  }
+
+  local actual_arguments = { }
+
+  local common_fn = function(id)
+    return function(...)
+      actual_arguments[#actual_arguments + 1] =
+      {
+        id = id;
+        { n = select("#", ...), ... };
+      }
+    end
+  end
+
+  local calls =
+  {
+    [1] =
+    {
+      n = expected_arguments[1][1].n;
+      common_fn(1);
+      unpack(expected_arguments[1][1], 1, expected_arguments[1][1].n);
+    };
+    [2] =
+    {
+      n = expected_arguments[2][1].n;
+      common_fn(2);
+      unpack(expected_arguments[2][1], 1, expected_arguments[2][1].n);
+    };
+  }
+
+  local caller = list_caller(calls)
+
+  ensure_tequals("nothing is called yet", actual_arguments, { })
+
+  caller()
+
+  ensure_tdeepequals(
+      "all functions are called properly",
+      actual_arguments,
+      expected_arguments
+    )
 end)
 
 --------------------------------------------------------------------------------
