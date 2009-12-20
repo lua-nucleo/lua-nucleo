@@ -254,56 +254,57 @@ end)
 --------------------------------------------------------------------------------
 
 test:test_for 'validate_probability_precise' (function()
+  local start = os_clock()
+
+  -- generates table, containing set of contrats weights (not normalized)
+  local generate_contrast_weights = function(
+      length, -- length of generated table
+      power, -- 10^power high weight value
+      are_low_rare -- if true table has single value = 1 and other = 10^power
+    )
+    local weights = {}
+    local powered = 10 ^ power
+
+    -- filling table
+    if are_low_rare then
+      weights = tgenerate_n(length, invariant(powered))
+    else
+      weights = tgenerate_n(length, invariant(1))
+    end
+
+    -- adding random rare value
+    if are_low_rare then
+      weights[math_random(length)] = 1
+    else
+      weights[math_random(length)] = powered
+    end
+
+    return weights
+  end
+
+  local weights_closure = {}
+  -- is passed to validate_probability_precise
+  local generate_experiments_defined = function(num_experiments)
+    return generate_experiments(num_experiments, weights_closure)
+  end
+
+  -- checks validate_probability_precise work
+  local check = function(weights, expermiments_fn, is_data_true)
+    local res, err = validate_probability_precise(weights, expermiments_fn)
+    if is_data_true ~= res or err ~= nil then
+      if err ~= nil then print(err) end
+      error("Failed!")
+    else
+      if is_data_true then
+        print("OK - (no false negative)")
+      else
+        print("OK - (no false positive)")
+      end
+    end
+  end
+
   if test:in_strict_mode() then
-    local start = os_clock()
-
-    -- generates table, containing set of contrats weights (not normalized)
-    local generate_contrast_weights = function(
-        length, -- length of generated table
-        power, -- 10^power high weight value
-        are_low_rare -- if true table has single value = 1 and other = 10^power
-      )
-      local weights = {}
-      local powered = 10 ^ power
-
-      -- filling table
-      if are_low_rare then
-        weights = tgenerate_n(length, invariant(powered))
-      else
-        weights = tgenerate_n(length, invariant(1))
-      end
-
-      -- adding random rare value
-      if are_low_rare then
-        weights[math_random(length)] = 1
-      else
-        weights[math_random(length)] = powered
-      end
-
-      return weights
-    end
-
-    local weights_closure = {}
-    -- is passed to validate_probability_precise
-    local generate_experiments_defined = function(num_experiments)
-      return generate_experiments(num_experiments, weights_closure)
-    end
-
-    -- checks validate_probability_precise work
-    local check = function(weights, expermiments_fn, is_data_true)
-      local res, err = validate_probability_precise(weights, expermiments_fn)
-      if is_data_true ~= res or err ~= nil then
-        error("Failed!")
-      else
-        if is_data_true then
-          print("OK - (no false negative)")
-        else
-          print("OK - (no false positive)")
-        end
-      end
-    end
-
-    -- tests start here
+    -- complex tests start here
     local i = START_POINT
     while i <= END_POINT do
       print("\nTable size: " .. i)
