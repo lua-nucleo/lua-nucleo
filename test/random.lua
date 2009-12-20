@@ -56,18 +56,18 @@ local test = make_suite("random", random_exports)
 local pairs, print, error = pairs, print, error
 local math_random = math.random
 
--- test global constants, defines number of elements (cases) in tested tables
+-- test global constants, define number of elements (cases) in tested tables
 local START_POINT = 2 -- can't be less then 2, or more then END_POINT
 local MIDDLE_POINT = 10
 local END_POINT = 100 -- cant be more then 100, or less then START_POINT
 local STEP_SMALL = 2 -- before MIDDLE_POINT
 local STEP_LARGE = 30 -- after MIDDLE_POINT
 -- if we need full test use further values:
--- START_POINT = 2 -- can't be less then 2, or more then END_POINT
+-- START_POINT = 2
 -- MIDDLE_POINT = 10
--- END_POINT = 100 -- cant be more then 100, or less then START_POINT
--- STEP_SMALL = 1 -- before MIDDLE_POINT
--- STEP_LARGE = 1 -- after MIDDLE_POINT
+-- END_POINT = 100
+-- STEP_SMALL = 1
+-- STEP_LARGE = 1
 
 -- step of tests
 local get_next_iteration = function(i)
@@ -136,10 +136,35 @@ end
 
 local os_clock = os.clock
 
-test:test_for 'validate_probability_rough' (function()
-  local start = os_clock()
+--------------------------------------------------------------------------------
 
-  -- simple tests
+test:group "validate_probability_rough"
+
+--------------------------------------------------------------------------------
+
+test 'validate_probability_rough-input' (function()
+  print("Wrong inputs:")
+  ensure_fails_with_substring(
+      "wrong arguments",
+      function() validate_probability_rough("a") end,
+      "expected `table', got `string'"
+    )
+  ensure_fails_with_substring(
+      "wrong arguments",
+      function() validate_probability_rough({1}, "b") end,
+      "expected `table', got `string'"
+    )
+  local res, err = validate_probability_rough({1, 3}, {3, 5, 6})
+  if err ~= nil then print(err) else error("wrong input") end
+  res, err = validate_probability_rough({1}, {1})
+  if err ~= nil then print(err) else error("wrong input") end
+  res, err = validate_probability_rough({1, 2, 3}, {1, 2, 3})
+  if err ~= nil then print(err) else error("wrong input") end
+end)
+
+--------------------------------------------------------------------------------
+
+test 'validate_probability_rough-simple' (function()
   print("Simple tests")
   local weights_list = {
     {0,5; 0,5};
@@ -157,7 +182,11 @@ test:test_for 'validate_probability_rough' (function()
     error("Simple test failed.")
   end
   print("OK")
+end)
 
+--------------------------------------------------------------------------------
+
+test 'validate_probability_rough-complex' (function()
   -- generates data, tests function validate_probability_rough on this data
   -- and returns number of true checks
   local check = function(
@@ -202,6 +231,8 @@ test:test_for 'validate_probability_rough' (function()
   -- test step constants
   local NUM_SET = 1000
   local NUM_CYCLES = 100
+
+  local start = os_clock()
 
   -- all testing inside
   print("Random test")
@@ -253,9 +284,34 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:test_for 'validate_probability_precise' (function()
-  local start = os_clock()
+test:group "validate_probability_precise"
 
+--------------------------------------------------------------------------------
+
+test 'validate_probability_precise-input' (function()
+  print("Wrong inputs:")
+  ensure_fails_with_substring(
+      "wrong arguments",
+      function() validate_probability_precise("a") end,
+      "expected `table', got `string'"
+    )
+  ensure_fails_with_substring(
+      "wrong arguments",
+      function() validate_probability_precise({1, 2, "c"}, function() end) end,
+      "`number' expected, got `string'"
+    )
+  ensure_fails_with_substring(
+      "wrong arguments",
+      function() validate_probability_precise({1, 2, 3}, function() end) end,
+      "`table' expected, got `nil'"
+    )
+  local res, err = validate_probability_precise({1, 2, 0.9e-5}, function() end)
+  if err ~= nil then print(err) else error("wrong input") end
+end)
+
+--------------------------------------------------------------------------------
+
+do
   -- generates table, containing set of contrats weights (not normalized)
   local generate_contrast_weights = function(
       length, -- length of generated table
@@ -303,118 +359,85 @@ test:test_for 'validate_probability_precise' (function()
     end
   end
 
-  -- simple tests
-  local weights_list = {
-   {{0.5, 0.5}, {0.45, 0.55}};
-   {{0.3, 0.6, 0.1}, {0.275, 0.625, 0.1}};
-   {{0.2, 0.2, 0.2, 0.2}, {0.22, 0.19, 0.19, 0.2}};
-   {{0.1, 0.15, 0.2, 0.25, 0.3}, {0.09, 0.15, 0.2, 0.25, 0.301}};
-  }
-  for i = 1, #weights_list do
-    weights_closure = weights_list[i][2]
-    print("Simple test")
-    check(weights_list[i][2], generate_experiments_defined, true)
-    check(weights_list[i][1], generate_experiments_defined, false)
-  end
+  test 'validate_probability_precise-simple' (function()
+    local weights_list = {
+     {{0.5, 0.5}, {0.45, 0.55}};
+     {{0.3, 0.6, 0.1}, {0.275, 0.625, 0.1}};
+     {{0.2, 0.2, 0.2, 0.2}, {0.22, 0.19, 0.19, 0.2}};
+     {{0.1, 0.15, 0.2, 0.25, 0.3}, {0.09, 0.15, 0.2, 0.25, 0.301}};
+    }
+    for i = 1, #weights_list do
+      weights_closure = weights_list[i][2]
+      print("Simple test")
+      check(weights_list[i][2], generate_experiments_defined, true)
+      check(weights_list[i][1], generate_experiments_defined, false)
+    end
+  end)
 
-  if test:in_strict_mode() then
-    -- complex tests start here
-    local i = START_POINT
-    while i <= END_POINT do
-      print("\nTable size: " .. i)
-
-      print("random:")
-      -- random correct input check
-      weights_closure = generate_weights(i)
-      check(weights_closure, generate_experiments_defined, true)
-
-      -- random false input check
-      local weights_closure_false = generate_weights(i)
-      check(weights_closure_false, generate_experiments_defined, false)
-
-      -- contrast correct input
-      print("contrast:")
-      -- for full test use 1, 5
-      for j = 1, 3 do
-        print("1 and " .. i - 1 .. " of 10^" .. j)
-        weights_closure = generate_contrast_weights(i, j, true)
+  test 'validate_probability_precise-complex' (function()
+    if test:in_strict_mode() then
+      local start = os_clock()
+      local i = START_POINT
+      while i <= END_POINT do
+        print("\nTable size: " .. i)
+        print("random:")
+        -- random correct input check
+        weights_closure = generate_weights(i)
         check(weights_closure, generate_experiments_defined, true)
 
-        if i > 2 then
-          print(i - 1 .. " of 1 and 10^" .. j)
-          weights_closure = generate_contrast_weights(i, j, false)
-          check(weights_closure, generate_experiments_defined, true)
-        end
-      end
-
-      -- contrast false input
-      -- for full test use 1, 4
-      for j = 1, 2 do
-        print("1 and " .. i - 1 .. " of 10^" .. j .. ", added +" .. i)
-        weights_closure = generate_contrast_weights(i, j, true)
-
-        -- create wrong weights (by adding small value) and check
-        local weights_closure_false = tclone(weights_closure)
-        local ran_key = math_random(i)
-        weights_closure_false[ran_key] = weights_closure_false[ran_key] + i
+        -- random false input check
+        local weights_closure_false = generate_weights(i)
         check(weights_closure_false, generate_experiments_defined, false)
 
-        if i > 2 then
-          print(i - 1 .. " of 1 and 10^" .. j .. ", +" .. i)
-          weights_closure = generate_contrast_weights(i, j, false)
+        -- contrast correct input
+        print("contrast:")
+        -- for full test use 1, 5
+        for j = 1, 3 do
+          print("1 and " .. i - 1 .. " of 10^" .. j)
+          weights_closure = generate_contrast_weights(i, j, true)
+          check(weights_closure, generate_experiments_defined, true)
+
+          if i > 2 then
+            print(i - 1 .. " of 1 and 10^" .. j)
+            weights_closure = generate_contrast_weights(i, j, false)
+            check(weights_closure, generate_experiments_defined, true)
+          end
+        end
+
+        -- contrast false input
+        -- for full test use 1, 4
+        for j = 1, 2 do
+          print("1 and " .. i - 1 .. " of 10^" .. j .. ", added +" .. i)
+          weights_closure = generate_contrast_weights(i, j, true)
 
           -- create wrong weights (by adding small value) and check
-          weights_closure_false = tclone(weights_closure)
-          ran_key = math_random(i)
+          local weights_closure_false = tclone(weights_closure)
+          local ran_key = math_random(i)
           weights_closure_false[ran_key] = weights_closure_false[ran_key] + i
           check(weights_closure_false, generate_experiments_defined, false)
+
+          if i > 2 then
+            print(i - 1 .. " of 1 and 10^" .. j .. ", +" .. i)
+            weights_closure = generate_contrast_weights(i, j, false)
+
+            -- create wrong weights (by adding small value) and check
+            weights_closure_false = tclone(weights_closure)
+            ran_key = math_random(i)
+            weights_closure_false[ran_key] = weights_closure_false[ran_key] + i
+            check(weights_closure_false, generate_experiments_defined, false)
+          end
         end
+
+        -- next iteration counter
+        i = get_next_iteration(i)
       end
-
-      -- next iteration counter
-      i = get_next_iteration(i)
+      print(("Time: %.3f s (slow test)"):format(os_clock() - start))
+    else
+      print("Test skipped because strict mode is disabled.")
     end
-    print(("Time: %.3f s (slow test)"):format(os_clock() - start))
-  else
-    print("Test skipped because strict mode is disabled.")
-  end
-end)
+  end)
+end
 
-test 'validate_probability_wrong_input' (function()
-  print("Wrong inputs:")
-  ensure_fails_with_substring(
-      "wrong arguments",
-      function() validate_probability_rough("a") end,
-      "expected `table', got `string'"
-    )
-  ensure_fails_with_substring(
-      "wrong arguments",
-      function() validate_probability_rough({1}, "b") end,
-      "expected `table', got `string'"
-    )
-  local res, err = validate_probability_rough({1, 3}, {3, 5, 6})
-  if err ~= nil then print(err) else error("wrong input") end
-  res, err = validate_probability_rough({1}, {1})
-  if err ~= nil then print(err) else error("wrong input") end
-  res, err = validate_probability_rough({1, 2, 3}, {1, 2, 3})
-  if err ~= nil then print(err) else error("wrong input") end
-  ensure_fails_with_substring(
-      "wrong arguments",
-      function() validate_probability_precise("a") end,
-      "expected `table', got `string'"
-    )
-  ensure_fails_with_substring(
-      "wrong arguments",
-      function() validate_probability_precise({1, 2, "c"}, function() end) end,
-      "`number' expected, got `string'"
-    )
-  ensure_fails_with_substring(
-      "wrong arguments",
-      function() validate_probability_precise({1, 2, 3}, function() end) end,
-      "`table' expected, got `nil'"
-    )
-  res, err = validate_probability_precise({1, 2, 0.9e-5}, function() end)
-  if err ~= nil then print(err) else error("wrong input") end
-end)
+--------------------------------------------------------------------------------
 
 assert(test:run())
