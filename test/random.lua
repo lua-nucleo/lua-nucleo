@@ -139,6 +139,25 @@ local os_clock = os.clock
 test:test_for 'validate_probability_rough' (function()
   local start = os_clock()
 
+  -- simple tests
+  print("Simple tests")
+  local weights_list = {
+    {0,5; 0,5};
+    {0,5; 0,25; 0,25};
+    {0,6; 0,3; 0,05; 0,05};
+  }
+  for i = 1, #weights_list do
+    local weights = weights_list[i]
+    if validate_probability_rough(weights, generate_experiments(1000, weights)) then
+      error("Simple test failed.")
+    end
+  end
+  -- simple wrong test
+  if validate_probability_rough({0.6, 0.4}, generate_experiments(1000, {0.4, 0.6})) ~= false then
+    error("Simple test failed.")
+  end
+  print("OK")
+
   -- generates data, tests function validate_probability_rough on this data
   -- and returns number of true checks
   local check = function(
