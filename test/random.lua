@@ -303,6 +303,20 @@ test:test_for 'validate_probability_precise' (function()
     end
   end
 
+  -- simple tests
+  local weights_list = {
+   {{0.5, 0.5}, {0.45, 0.55}};
+   {{0.3, 0.6, 0.1}, {0.275, 0.625, 0.1}};
+   {{0.2, 0.2, 0.2, 0.2}, {0.22, 0.19, 0.19, 0.2}};
+   {{0.1, 0.15, 0.2, 0.25, 0.3}, {0.09, 0.15, 0.2, 0.25, 0.301}};
+  }
+  for i = 1, #weights_list do
+    weights_closure = weights_list[i][2]
+    print("Simple test")
+    check(weights_list[i][2], generate_experiments_defined, true)
+    check(weights_list[i][1], generate_experiments_defined, false)
+  end
+
   if test:in_strict_mode() then
     -- complex tests start here
     local i = START_POINT
