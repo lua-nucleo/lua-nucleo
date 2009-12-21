@@ -164,24 +164,32 @@ end)
 
 --------------------------------------------------------------------------------
 
-test 'validate_probability_rough-simple' (function()
-  print("Simple tests")
-  local weights_list = {
-    {0,5; 0,5};
-    {0,5; 0,25; 0,25};
-    {0,6; 0,3; 0,05; 0,05};
-  }
-  for i = 1, #weights_list do
-    local weights = weights_list[i]
-    if validate_probability_rough(weights, generate_experiments(1000, weights)) then
-      error("Simple test failed.")
-    end
+test 'validate_probability_rough-simple1' (function()
+  local weights = {0,5; 0,5}
+  if validate_probability_rough(weights, generate_experiments(1000, weights)) then
+    error("Simple test failed.")
   end
+end)
+
+test 'validate_probability_rough-simple2' (function()
+  local weights = {0,5; 0,25; 0,25}
+  if validate_probability_rough(weights, generate_experiments(1000, weights)) then
+    error("Simple test failed.")
+  end
+end)
+
+test 'validate_probability_rough-simple3' (function()
+  local weights = {0,6; 0,3; 0,05; 0,05}
+  if validate_probability_rough(weights, generate_experiments(1000, weights)) then
+    error("Simple test failed.")
+  end
+end)
+
+test 'validate_probability_rough-simple4' (function()
   -- simple wrong test
   if validate_probability_rough({0.6, 0.4}, generate_experiments(1000, {0.4, 0.6})) ~= false then
     error("Simple test failed.")
   end
-  print("OK")
 end)
 
 --------------------------------------------------------------------------------
@@ -345,33 +353,49 @@ do
   end
 
   -- checks validate_probability_precise work
-  local check = function(weights, expermiments_fn, is_data_true)
+  local check = function(weights, expermiments_fn, is_data_true, do_not_output)
     local res, err = validate_probability_precise(weights, expermiments_fn)
     if is_data_true ~= res or err ~= nil then
       if err ~= nil then print(err) end
       error("Failed!")
     else
-      if is_data_true then
-        print("OK - (no false negative)")
-      else
-        print("OK - (no false positive)")
+      if not do_not_output then
+        if is_data_true then
+          print("OK - (no false negative)")
+        else
+          print("OK - (no false positive)")
+        end
       end
     end
   end
 
-  test 'validate_probability_precise-simple' (function()
-    local weights_list = {
-     {{0.5, 0.5}, {0.45, 0.55}};
-     {{0.3, 0.6, 0.1}, {0.275, 0.625, 0.1}};
-     {{0.2, 0.2, 0.2, 0.2}, {0.22, 0.19, 0.19, 0.2}};
-     {{0.1, 0.15, 0.2, 0.25, 0.3}, {0.09, 0.15, 0.2, 0.25, 0.301}};
-    }
-    for i = 1, #weights_list do
-      weights_closure = weights_list[i][2]
-      print("Simple test")
-      check(weights_list[i][2], generate_experiments_defined, true)
-      check(weights_list[i][1], generate_experiments_defined, false)
-    end
+  test 'validate_probability_precise-simple1' (function()
+    weights_closure = {0.45, 0.55}
+    check(weights_closure, generate_experiments_defined, true, true)
+    check({0.5, 0.5}, generate_experiments_defined, false, true)
+  end)
+
+  test 'validate_probability_precise-simple2' (function()
+    weights_closure = {0.3, 0.6, 0.1}
+    check(weights_closure, generate_experiments_defined, true, true)
+    check({0.275, 0.625, 0.1}, generate_experiments_defined, false, true)
+  end)
+
+  test 'validate_probability_precise-simple3' (function()
+    weights_closure = {0.2, 0.2, 0.2, 0.2}
+    check(weights_closure, generate_experiments_defined, true, true)
+    check({0.22, 0.19, 0.19, 0.2}, generate_experiments_defined, false, true)
+  end)
+
+  test 'validate_probability_precise-simple4' (function()
+    weights_closure = {0.1, 0.15, 0.2, 0.25, 0.3}
+    check(weights_closure, generate_experiments_defined, true, true)
+    check(
+        {0.09, 0.15, 0.2, 0.25, 0.301},
+        generate_experiments_defined,
+        false,
+        false
+      )
   end)
 
   test 'validate_probability_precise-complex' (function()
