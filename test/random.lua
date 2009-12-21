@@ -57,9 +57,9 @@ local pairs, print, error = pairs, print, error
 local math_random = math.random
 
 -- test global constants, define number of elements (cases) in tested tables
-local START_POINT = 2 -- can't be less then 2, or more then END_POINT
+local START_POINT = 2 -- can't be less than 2, or more then END_POINT
 local MIDDLE_POINT = 10
-local END_POINT = 100 -- cant be more then 100, or less then START_POINT
+local END_POINT = 100 -- cant be more than 100, or less then START_POINT
 local STEP_SMALL = 2 -- before MIDDLE_POINT
 local STEP_LARGE = 30 -- after MIDDLE_POINT
 -- if we need full test use further values:
@@ -68,6 +68,10 @@ local STEP_LARGE = 30 -- after MIDDLE_POINT
 -- END_POINT = 100
 -- STEP_SMALL = 1
 -- STEP_LARGE = 1
+assert(2 <= START_POINT, "2 > START_POINT")
+assert(START_POINT <= MIDDLE_POINT, "START_POINT > MIDDLE_POINT")
+assert(MIDDLE_POINT <= END_POINT, "MIDDLE_POINT > END_POINT")
+assert(END_POINT <= 100, "END_POINT > 100")
 
 -- step of tests
 local get_next_iteration = function(i)
