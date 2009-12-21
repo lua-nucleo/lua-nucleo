@@ -246,6 +246,7 @@ end
 local check_logger = function(
     concatter,
     logger,
+    date_checker,
     logging_system_id,
     module_suffix,
     ...
@@ -253,6 +254,7 @@ local check_logger = function(
   arguments(
          "table", concatter,
       "function", logger,
+      "function", date_checker,
         --"string", logging_system_id,
         "string", module_suffix
     )
@@ -269,7 +271,7 @@ local check_logger = function(
 
   -- Prepend system info to expected data
   local date = assert_is_string(actual[2])
-  check_date_str(date, ts_before, ts_after)
+  date_checker(date, ts_before, ts_after)
 
   if is_function(logging_system_id) then
     logging_system_id = assert_is_string(logging_system_id())
@@ -307,10 +309,17 @@ end
 
 local check_make_module_logger = function(
     concatter,
+    date_checker,
     logging_system,
     logging_system_id,
     ...
   )
+  arguments(
+      "table", concatter,
+      "function", date_checker,
+      "table", logging_system
+      --"string", logging_system_id
+    )
   for _, log_level in pairs(LOG_LEVEL) do
     local logger = ensure(
         "make_module_logger",
@@ -320,7 +329,7 @@ local check_make_module_logger = function(
       )
 
     check_logger(
-        concatter, logger,
+        concatter, logger, date_checker,
         logging_system_id, "MOD",
         ...
       )
@@ -342,7 +351,7 @@ test "make_module_logger-empty" (function()
     )
 
   check_make_module_logger(
-      concatter, logging_system, logging_system_id
+      concatter, check_date_str, logging_system, logging_system_id
       -- Empty
     )
 end)
@@ -360,7 +369,7 @@ test "make_module_logger-simple" (function()
     )
 
   check_make_module_logger(
-      concatter, logging_system, logging_system_id,
+      concatter, check_date_str, logging_system, logging_system_id,
       42, "embedded\0zero", nil, true, nil
     )
 end)
@@ -378,7 +387,7 @@ test "make_module_logger-id-callback-simple" (function()
     )
 
   check_make_module_logger(
-      concatter, logging_system, logging_system_id,
+      concatter, check_date_str, logging_system, logging_system_id,
       42, "embedded\0zero", nil, true, nil
     )
 end)
@@ -404,7 +413,32 @@ test "make_module_logger-id-callback-dynamic" (function()
     )
 
   check_make_module_logger(
-      concatter, logging_system, make_logging_system_id(),
+      concatter, check_date_str, logging_system, make_logging_system_id(),
+      42, "embedded\0zero", nil, true, nil
+    )
+end)
+
+test "make_module_logger-get_current_logsystem_date-simple" (function()
+  local concatter = make_test_concatter()
+  local logging_system_id = "{logger_id} "
+
+  local date = "MYDATE"
+  local date_checker = function(date_str, time_before, time_after)
+    ensure_strequals("date match expected", date_str, date)
+  end
+
+  local logging_system = ensure(
+      "make logging system",
+      make_logging_system(
+          logging_system_id,
+          concatter.cat,
+          make_common_logging_config(tset(LOG_LEVEL)),
+          function() return date end
+        )
+    )
+
+  check_make_module_logger(
+      concatter, date_checker, logging_system, logging_system_id,
       42, "embedded\0zero", nil, true, nil
     )
 end)
@@ -422,7 +456,7 @@ test "make_module_logger-table" (function()
     )
 
   check_make_module_logger(
-      concatter, logging_system, logging_system_id,
+      concatter, check_date_str, logging_system, logging_system_id,
       nil, { [{ 42, nil, 24 }] = { a = 42 } }, nil
     )
 end)
@@ -481,7 +515,7 @@ local check_is_log_enabled = function(
 
   if actually_enabled then
     check_logger(
-        concatter, logger,
+        concatter, logger, check_date_str,
         logging_system_id, module_suffix,
         42, "embedded\0zero", nil, true, nil
       )
@@ -496,7 +530,7 @@ local check_is_log_enabled = function(
 
   if actually_enabled then
     check_logger(
-        concatter, logger,
+        concatter, logger, check_date_str,
         logging_system_id, module_suffix,
         42, "embedded\0zero", nil, true, nil
       )
@@ -706,7 +740,7 @@ test "make_loggers-complex" (function()
     common_logging_config:set_log_enabled(module_name, log_level, true)
 
     check_logger(
-        concatter, logger,
+        concatter, logger, check_date_str,
         logging_system_id, module_suffix,
         42, "embedded\0zero", nil, true, nil
       )

@@ -229,6 +229,7 @@ do
         module_name,
         level,
         sink,
+        date_fn,
         logger_id,
         suffix
       )
@@ -237,6 +238,7 @@ do
           "string", module_name,
           "number", level,
           "function", sink,
+          "function", date_fn,
           --"string", logger_id, -- TODO: Need metatype, may be function or string
           "string", suffix
         )
@@ -244,7 +246,7 @@ do
       if is_function(logger_id) then
         return function(...)
           if logging_config:is_log_enabled(module_name, level) then
-            sink "[" (get_current_logsystem_date()) "] " (logger_id())
+            sink "[" (date_fn()) "] " (logger_id())
                 "[" (suffix) "] "
 
             -- NOTE: Using explicit size since we have to support holes in the vararg.
@@ -255,7 +257,7 @@ do
         assert_is_string(logger_id)
         return function(...)
           if logging_config:is_log_enabled(module_name, level) then
-            sink "[" (get_current_logsystem_date()) "] " (logger_id)
+            sink "[" (date_fn()) "] " (logger_id)
                 "[" (suffix) "] "
 
             -- NOTE: Using explicit size since we have to support holes in the vararg.
@@ -279,6 +281,7 @@ do
         module_name,
         level,
         self.sink_,
+        self.date_fn_,
         self.logger_id_,
         suffix
       )
@@ -295,12 +298,15 @@ do
   --
   -- Sink also must behave like cat(), that is, return itself.
   --
-  make_logging_system = function(logger_id, sink, logging_config)
+  make_logging_system = function(logger_id, sink, logging_config, date_fn)
+    date_fn = date_fn or get_current_logsystem_date
+
     assert(is_string(logger_id) or is_function(logger_id))
     arguments(
         -- "string", logger_id, -- TODO: Need metatype may be function or string
         "function", sink,
-        "table", logging_config
+        "table", logging_config,
+        "function", date_fn
       )
 
     return
@@ -310,6 +316,7 @@ do
       --
       logger_id_ = logger_id;
       sink_ = sink;
+      date_fn_ = date_fn;
       config_ = logging_config;
     }
   end
