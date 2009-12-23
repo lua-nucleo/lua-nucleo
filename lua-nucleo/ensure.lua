@@ -34,12 +34,14 @@ local make_checker
 
 -- TODO: Write tests for this one
 local ensure = function(msg, value, ...)
-  return value
-    or error(
-        "ensure failed: " .. msg
-        .. ((...) and (": " .. (tostring(...) or "?")) or ""),
-        2
-      )
+  if not value then
+    error(
+            "ensure failed: " .. msg
+            .. ((...) and (": " .. (tostring(...) or "?")) or ""),
+            2
+          )
+  end
+  return value, ...
 end
 
 -- TODO: Write tests for this one
