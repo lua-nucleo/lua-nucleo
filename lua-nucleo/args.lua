@@ -31,7 +31,7 @@ do
 
       if not is_optional or value ~= nil then
         error(
-            (is_optional and "optional" or "")
+            (is_optional and "optional " or "")
          .. "argument #"..arg_n..": expected `"..tostring(expected_type)
          .. "', got `"..type(value).."'",
             3 + arg_n
