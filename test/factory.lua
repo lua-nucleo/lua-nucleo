@@ -60,8 +60,8 @@ print(list_two[j]) -- delete
         is_found = true
         break
       end
-      if is_found == false then return false end
     end
+    if is_found == false then return false end
   end
   return true
 end
@@ -91,12 +91,91 @@ test "no_arguments_single_method" (function()
 end)
 
 test "no_arguments_several_method" (function()
+  local make_something = function()
+    local method_one = function(a, b, c)
+      return a + b + c;
+    end
+    local method_two = function()
+      return 1;
+    end
+    local method_three = function(a, b, c)
+      return a * b - c;
+    end
+    return
+    {
+      method_one = method_one;
+      method_two = method_two;
+      method_three = method_three;
+    }
+  end
+  local methods_list_true = {
+    "method_one";
+    "method_two";
+    "method_three";
+  }
+  local methods_list_test = common_method_list(make_something)
+  assert(compare_lists(methods_list_true, methods_list_test))
 end)
 
 test "no_arguments_number_key_method" (function()
+  local make_something = function()
+    local method_one = function(a, b, c)
+      return a + b + c;
+    end
+    local method_two = function()
+      return 1;
+    end
+    local method_three = function(a, b, c)
+      return a * b - c;
+    end
+    return
+    {
+      method_one;
+      [5] = method_two;
+      method_three = method_three;
+    }
+  end
+  local methods_list_true = {
+    1;
+    5;
+    "method_three";
+  }
+  ensure_fails_with_substring(
+      "wrong arguments",
+      function() common_method_list(make_something) end,
+      "Non string key for function value."
+    )
 end)
 
 test "no_arguments_table_key_method" (function()
+  local make_something = function()
+    local method_one = function(a, b, c)
+      return a + b + c
+    end
+    local method_two = function()
+      return 1
+    end
+    local method_three = function(a, b, c)
+      return a * b - c
+    end
+    local k = { method_two = 2 }
+    return
+    {
+      method_one = method_one;
+      [k] = method_two;
+      method_three = method_three;
+    }
+  end
+  local methods_list_true = {
+    "method_one";
+    {2};
+    "method_three";
+  }
+  ensure_fails_with_substring(
+      "wrong arguments",
+      function() common_method_list(make_something) end,
+      "Non string key for function value."
+    )
 end)
 
 test "no_arguments_nested" (function()
