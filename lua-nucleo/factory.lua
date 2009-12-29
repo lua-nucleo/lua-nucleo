@@ -3,15 +3,18 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
 local assert_is_table,
-      assert_is_string
+      assert_is_string,
+      assert_is_function
       = import 'lua-nucleo/typeassert.lua'
       {
         'assert_is_table',
-        'assert_is_string'
+        'assert_is_string',
+        'assert_is_function'
       }
 
 -- return list of factory methods
 local common_method_list = function(factory, ...)
+  assert_is_function(factory)
   local factory_return = factory(...)
   assert_is_table(factory_return)
   local method_list = {}

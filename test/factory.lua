@@ -8,6 +8,12 @@ dofile('lua-nucleo/import.lua')
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
+local ensure_fails_with_substring
+      = import 'lua-nucleo/ensure.lua'
+      {
+        'ensure_fails_with_substring',
+      }
+
 local common_method_list,
       factory_exports =
       import 'lua-nucleo/factory.lua'
@@ -24,6 +30,21 @@ local test = make_suite("functional", factory_exports)
 test:group "common_method_list"
 
 test "wrong_input" (function()
+  local a = {}
+  ensure_fails_with_substring(
+      "wrong arguments",
+      function() common_method_list(a, 1, 2, 3) end,
+      "`function' expected, got `table'"
+    )
+end)
+
+test "wrong_output" (function()
+  local a = function() end
+  ensure_fails_with_substring(
+      "wrong arguments",
+      function() common_method_list(a, 1, 2, 3) end,
+      "`table' expected, got `nil'"
+    )
 end)
 
 test "no_arguments_no_methods" (function()
