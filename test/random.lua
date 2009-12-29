@@ -103,7 +103,6 @@ local generate_experiments = function(
     local cached = probability + weights_normalized[k]
     formalized[#formalized + 1] =
     {
-
       cached - probability;
       name = k;
       lowBound = probability;
