@@ -21,7 +21,37 @@ local test = make_suite("functional", factory_exports)
 
 --------------------------------------------------------------------------------
 
-test:UNTESTED "common_method_list"
+test:group "common_method_list"
+
+test "wrong_input" (function()
+end)
+
+test "no_arguments_no_methods" (function()
+end)
+
+test "no_arguments_single_method" (function()
+end)
+
+test "no_arguments_several_method" (function()
+end)
+
+test "no_arguments_number_key_method" (function()
+end)
+
+test "no_arguments_table_key_method" (function()
+end)
+
+test "no_arguments_nested" (function()
+end)
+
+test "no_arguments_recursive" (function()
+end)
+
+test "several_method" (function()
+end)
+
+test "nil_arguments_several_method" (function()
+end)
 
 --------------------------------------------------------------------------------
 
