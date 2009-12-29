@@ -8,6 +8,16 @@ dofile('lua-nucleo/import.lua')
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
+local assert_is_number,
+      assert_is_string,
+      assert_is_table
+      = import 'lua-nucleo/typeassert.lua'
+      {
+        'assert_is_number',
+        'assert_is_string',
+        'assert_is_table'
+      }
+
 local ensure_fails_with_substring
       = import 'lua-nucleo/ensure.lua'
       {
@@ -241,10 +251,57 @@ test "no_arguments_recursive" (function()
   assert(compare_lists(methods_list_true, methods_list_test))
 end)
 
-test "several_method" (function()
-end)
-
-test "nil_arguments_several_method" (function()
+test "several_methods" (function()
+  local make_something = function(a, b, c)
+    assert_is_number(a)
+    assert_is_string(b)
+    assert_is_table(c)
+    local a_local = a
+    local b_local = b
+    local c_local = c
+    local method_one = function()
+      print(b_local)
+      return a_local
+    end
+    local method_two = function()
+      return b_local
+    end
+    local method_three = function(a, b, c)
+      return c_local
+    end
+    local k = { method_two = 2 }
+    return
+    {
+      method_one = method_one;
+      method_two = method_two;
+      method_three = method_three;
+      a_local = a_local;
+      b_local = b_local;
+      c_local = c_local;
+    }
+  end
+  local methods_list_true = {
+    "method_one";
+    "method_two";
+    "method_three";
+  }
+  local methods_list_test = common_method_list(make_something, 1, "a", {})
+  assert(compare_lists(methods_list_true, methods_list_test))
+  ensure_fails_with_substring(
+      "wrong arguments",
+      function() common_method_list(make_something, 1, "a") end,
+      "`table' expected, got `nil'"
+    )
+  ensure_fails_with_substring(
+      "wrong arguments",
+      function() common_method_list(make_something, 1) end,
+      "`string' expected, got `nil'"
+    )
+  ensure_fails_with_substring(
+      "wrong arguments",
+      function() common_method_list(make_something) end,
+      "`number' expected, got `nil'"
+    )
 end)
 
 --------------------------------------------------------------------------------
