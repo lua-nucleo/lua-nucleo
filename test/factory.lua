@@ -47,10 +47,47 @@ test "wrong_output" (function()
     )
 end)
 
+local compare_lists = function(list_one, list_two)
+print(#list_one, #list_two) -- delete
+  if #list_one ~= #list_two then return false end
+  local number = #list_one
+  for i = 1, number do
+print(list_one[i]) -- delete
+    local is_found = false
+    for j = 1, number do
+print(list_two[j]) -- delete
+      if list_one[i] == list_two[j] then
+        is_found = true
+        break
+      end
+      if is_found == false then return false end
+    end
+  end
+  return true
+end
+
 test "no_arguments_no_methods" (function()
+  local make_something = function()
+    return {}
+  end
+  local methods_list_true = {}
+  local methods_list_test = common_method_list(make_something)
+  assert(compare_lists(methods_list_true, methods_list_test))
 end)
 
 test "no_arguments_single_method" (function()
+  local make_something = function()
+    local method_one = function()
+      return 1;
+    end
+    return
+    {
+      method_one = method_one;
+    }
+  end
+  local methods_list_true = {"method_one"}
+  local methods_list_test = common_method_list(make_something)
+  assert(compare_lists(methods_list_true, methods_list_test))
 end)
 
 test "no_arguments_several_method" (function()

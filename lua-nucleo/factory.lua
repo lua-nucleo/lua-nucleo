@@ -21,7 +21,7 @@ local common_method_list = function(factory, ...)
   for k, v in pairs(factory_return) do
     assert_is_string(k)
     if k:sub(-1) ~= '_' then
-      method_list[#method_list + 1] = factory_return.k
+      method_list[#method_list + 1] = k
     end
   end
   return method_list
