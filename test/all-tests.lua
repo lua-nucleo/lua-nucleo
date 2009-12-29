@@ -25,6 +25,7 @@ return
   --
   'coro';
   'functional';
+  'factory';
   'random';
   'algorithm';
   'math';
