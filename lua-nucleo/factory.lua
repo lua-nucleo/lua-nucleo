@@ -33,7 +33,7 @@ local common_method_list = function(factory, ...)
           method_list[#method_list + 1] = k
         end
       else
-        error("Non string key for function value.")
+        error("non-string key for function value")
       end
     end
   end
