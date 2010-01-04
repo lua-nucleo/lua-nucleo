@@ -25,15 +25,15 @@ local test = make_suite("type", type_imports)
 --------------------------------------------------------------------------------
 
 test:tests_for 'is_nil'
-               'is_number'
-               'is_string'
-               'is_boolean'
-               'is_table'
-               'is_function'
-               'is_thread'
-               'is_userdata'
-               'is_self'
-               'is_type'
+test:tests_for 'is_number'
+test:tests_for 'is_string'
+test:tests_for 'is_boolean'
+test:tests_for 'is_table'
+test:tests_for 'is_function'
+test:tests_for 'is_thread'
+test:tests_for 'is_userdata'
+test:tests_for 'is_self'
+test:tests_for 'is_type'
 
 --------------------------------------------------------------------------------
 
