@@ -20,22 +20,20 @@ end
 
 local make_suite
 do
+  local check_name = function(self, import_name)
+    local imports_set = self.imports_set_
+    if imports_set then
+      if not imports_set[import_name] then
+        error("suite: unknown import `" .. import_name .. "'", 2)
+      end
+      imports_set[import_name] = nil
+    end
+  end
+
   local tests_for = function(self, import_name)
     assert(type(self) == "table", "bad self")
     assert(type(import_name) == "string", "bad import name")
-
-    local function check_name(import_name)
-      local imports_set = self.imports_set_
-      if imports_set then
-        if not imports_set[import_name] then
-          error("suite: unknown import `" .. import_name .. "'", 2)
-        end
-        imports_set[import_name] = nil
-      end
-      return check_name
-    end
-
-    return check_name(import_name)
+    check_name(self, import_name)
   end
 
   local group = tests_for -- Useful alias
@@ -80,6 +78,44 @@ do
       assert(type(fn) == "function", "bad callback")
       self.tests_[#self.tests_ + 1] = { name = name, fn = fn }
     end
+  end
+
+  local factory = function(self, name)
+    assert(type(self) == "table", "bad self")
+    assert(type(name) == "string", "bad name")
+    check_name(self, name)
+    self.current_group_ = name
+
+    return function(methods_list)
+      assert(type(methods_list) == "table", "bad methods list")
+      for i = 1, #methods_list do
+        local method = methods_list[i]
+        local method_full_name = name .. ":" .. method
+        assert(not self.imports_set_[method], "duplicate test name")
+        self.imports_set_[method_full_name] = true
+      end
+    end
+  end
+
+  local method = function(self, name)
+    assert(type(self) == "table", "bad self")
+    assert(type(name) == "string", "bad name")
+    assert(not self.tests_[name], "duplicate test name")
+    local method_full_name = self.current_group_ .. ":" .. name
+
+    return function(fn)
+      assert(type(fn) == "function", "bad callback")
+      self.tests_[#self.tests_ + 1] = { name = method_full_name, fn = fn }
+      self.imports_set_[method_full_name] = nil
+    end
+  end
+
+  local method_group = function(self, name)
+    assert(type(self) == "table", "bad self")
+    assert(type(name) == "string", "bad name")
+    assert(not self.tests_[name], "duplicate test name")
+    local method_full_name = self.current_group_ .. ":" .. name
+    check_name(self, method_full_name)
   end
 
   local in_strict_mode = function(self)
@@ -249,11 +285,15 @@ do
           set_fail_on_first_error = set_fail_on_first_error; -- TODO: Test this!
           UNTESTED = UNTESTED;
           TODO = TODO;
+          factory = factory;
+          method = method;
+          method_group = method_group;
           --
           name_ = name;
           strict_mode_ = false;
           fail_on_first_error_ = false;
           imports_set_ = imports_set;
+          current_group_ = "";
           tests_ = {};
           todos_ = {};
         },
