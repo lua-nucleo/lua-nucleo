@@ -84,6 +84,12 @@ local unique_object
         'unique_object'
       }
 
+local common_method_list
+      = import 'lua-nucleo/factory.lua'
+      {
+        'common_method_list'
+      }
+
 --------------------------------------------------------------------------------
 
 local LOG_LEVEL,
@@ -194,7 +200,13 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:group "make_logging_system"
+test:factory "make_logging_system" (common_method_list(
+    make_logging_system,
+    "",
+    function() end,
+    {}
+  )
+)
 
 --------------------------------------------------------------------------------
 
@@ -338,6 +350,9 @@ end
 
 --------------------------------------------------------------------------------
 
+test:method_group "get_config" -- TODO: no explicit tests
+test:method_group "make_module_logger"
+
 test "make_module_logger-empty" (function()
   local concatter = make_test_concatter()
   local logging_system_id = "{logger_id} "
@@ -463,7 +478,10 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:group "make_common_logging_config"
+test:factory "make_common_logging_config" (common_method_list(
+    make_common_logging_config
+  )
+)
 
 --------------------------------------------------------------------------------
 
@@ -539,6 +557,9 @@ local check_is_log_enabled = function(
     ensure_equals("logging is disabled", next(concatter.buf()), nil)
   end
 end
+
+test:method_group "set_log_enabled" -- TODO: no explicit tests found
+test:method_group "is_log_enabled"
 
 test "is_log_enabled-levels-default" (function()
   local module_name = "module_name"
@@ -680,7 +701,7 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:group "make_loggers"
+test:factory "make_loggers" {} -- TODO: get method list
 
 --------------------------------------------------------------------------------
 
