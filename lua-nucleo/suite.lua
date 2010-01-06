@@ -30,10 +30,11 @@ do
     end
   end
 
-  local tests_for = function(self, import_name)
+  local function tests_for(self, import_name)
     assert(type(self) == "table", "bad self")
     assert(type(import_name) == "string", "bad import name")
     check_name(self, import_name)
+    return function(import_name) return tests_for(self, import_name) end
   end
 
   local group = tests_for -- Useful alias
@@ -110,12 +111,13 @@ do
     end
   end
 
-  local methods = function(self, name)
+  local function methods(self, name)
     assert(type(self) == "table", "bad self")
     assert(type(name) == "string", "bad name")
     assert(not self.tests_[name], "duplicate test name")
     local method_full_name = self.current_group_ .. ":" .. name
     check_name(self, method_full_name)
+    return function(name) return methods(self, name) end
   end
 
   local in_strict_mode = function(self)
