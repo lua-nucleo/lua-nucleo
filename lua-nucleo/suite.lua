@@ -101,8 +101,8 @@ do
   local method = function(self, name)
     assert(type(self) == "table", "bad self")
     assert(type(name) == "string", "bad name")
-    assert(not self.tests_[name], "duplicate test name")
     local method_full_name = self.current_group_ .. ":" .. name
+    assert(self.imports_set_[method_full_name] == nil, "method is not listed")
 
     return function(fn)
       assert(type(fn) == "function", "bad callback")
@@ -114,7 +114,6 @@ do
   local function methods(self, name)
     assert(type(self) == "table", "bad self")
     assert(type(name) == "string", "bad name")
-    assert(not self.tests_[name], "duplicate test name")
     local method_full_name = self.current_group_ .. ":" .. name
     check_name(self, method_full_name)
     return function(name) return methods(self, name) end
