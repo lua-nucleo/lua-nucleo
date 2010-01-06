@@ -27,15 +27,15 @@ local test = make_suite("typeassert", typeassert_imports)
 --------------------------------------------------------------------------------
 
 test:tests_for 'assert_is_nil'
-test:tests_for 'assert_is_number'
-test:tests_for 'assert_is_string'
-test:tests_for 'assert_is_boolean'
-test:tests_for 'assert_is_table'
-test:tests_for 'assert_is_function'
-test:tests_for 'assert_is_thread'
-test:tests_for 'assert_is_userdata'
-test:tests_for 'assert_is_self'
-test:tests_for 'assert_is_type'
+               'assert_is_number'
+               'assert_is_string'
+               'assert_is_boolean'
+               'assert_is_table'
+               'assert_is_function'
+               'assert_is_thread'
+               'assert_is_userdata'
+               'assert_is_self'
+               'assert_is_type'
 
 --------------------------------------------------------------------------------
 

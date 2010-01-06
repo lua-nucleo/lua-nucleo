@@ -65,8 +65,8 @@ local test = make_suite("coro", coro)
 --       When adding function to this list, make sure it has tests first.
 
 test:tests_for 'resume_inner'
-test:tests_for 'yield_outer'
-test:tests_for 'pcall'
+               'yield_outer'
+               'pcall'
 
 --------------------------------------------------------------------------------
 
@@ -374,7 +374,7 @@ end)
 --       When adding function to this list, make sure it has tests first.
 
 test:tests_for 'eat_tag'
-test:tests_for 'is_outer_yield_tag'
+               'is_outer_yield_tag'
 
 --------------------------------------------------------------------------------
 

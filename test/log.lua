@@ -351,7 +351,7 @@ end
 --------------------------------------------------------------------------------
 
 test:methods "get_config" -- TODO: no explicit tests
-test:methods "make_module_logger"
+             "make_module_logger"
 
 test "make_module_logger-empty" (function()
   local concatter = make_test_concatter()
@@ -559,7 +559,7 @@ local check_is_log_enabled = function(
 end
 
 test:methods "set_log_enabled" -- TODO: no explicit tests found
-test:methods "is_log_enabled"
+             "is_log_enabled"
 
 test "is_log_enabled-levels-default" (function()
   local module_name = "module_name"
