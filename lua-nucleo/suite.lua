@@ -110,7 +110,7 @@ do
     end
   end
 
-  local method_group = function(self, name)
+  local methods = function(self, name)
     assert(type(self) == "table", "bad self")
     assert(type(name) == "string", "bad name")
     assert(not self.tests_[name], "duplicate test name")
@@ -287,7 +287,7 @@ do
           TODO = TODO;
           factory = factory;
           method = method;
-          method_group = method_group;
+          methods = methods;
           --
           name_ = name;
           strict_mode_ = false;
