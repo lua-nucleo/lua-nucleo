@@ -79,19 +79,29 @@ do
     end
   end
 
+  local add_methods = function(self, methods_list)
+    assert(type(methods_list) == "table", "bad methods list")
+    for i = 1, #methods_list do
+      local method = methods_list[i]
+      local method_full_name = self.current_group_ .. ":" .. method
+      assert(not self.imports_set_[method], "duplicate test name")
+      self.imports_set_[method_full_name] = true
+    end
+  end
+
   local factory = function(self, name)
     assert(type(self) == "table", "bad self")
     assert(type(name) == "string", "bad name")
     check_name(self, name)
     self.current_group_ = name
 
-    return function(methods_list)
-      assert(type(methods_list) == "table", "bad methods list")
-      for i = 1, #methods_list do
-        local method = methods_list[i]
-        local method_full_name = name .. ":" .. method
-        assert(not self.imports_set_[method], "duplicate test name")
-        self.imports_set_[method_full_name] = true
+    return function(methods_input)
+      if type(methods_input) == "table" then
+        add_methods(self, methods_input)
+      elseif type(methods_input) == "function" then
+        add_methods(self, methods_input())
+      else
+        error("bad methods list")
       end
     end
   end
