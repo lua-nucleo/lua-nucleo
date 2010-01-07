@@ -478,10 +478,9 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:factory "make_common_logging_config" (common_method_list(
-    make_common_logging_config
+test:factory "make_common_logging_config" (
+    common_method_list(make_common_logging_config)
   )
-)
 
 --------------------------------------------------------------------------------
 
