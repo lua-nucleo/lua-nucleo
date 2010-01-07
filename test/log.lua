@@ -200,13 +200,9 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:factory "make_logging_system" (common_method_list(
-    make_logging_system,
-    "",
-    function() end,
-    {}
-  )
-)
+test:factory "make_logging_system" (function()
+  return common_method_list(make_logging_system, "", function() end, {})
+end)
 
 --------------------------------------------------------------------------------
 
@@ -700,7 +696,7 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:factory "make_loggers" {} -- TODO: get method list
+test:tests_for "make_loggers"
 
 --------------------------------------------------------------------------------
 
