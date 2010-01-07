@@ -64,9 +64,7 @@ do
   local test_for = function(self, name)
     assert(type(self) == "table", "bad self")
     assert(type(name) == "string", "bad name")
-
-    self:tests_for(name)
-
+    check_name(self, name)
     return self:test(name)
   end
 
@@ -102,13 +100,8 @@ do
     assert(type(self) == "table", "bad self")
     assert(type(name) == "string", "bad name")
     local method_full_name = self.current_group_ .. ":" .. name
-    assert(self.imports_set_[method_full_name] == nil, "method is not listed")
-
-    return function(fn)
-      assert(type(fn) == "function", "bad callback")
-      self.tests_[#self.tests_ + 1] = { name = method_full_name, fn = fn }
-      self.imports_set_[method_full_name] = nil
-    end
+    check_name(self, method_full_name)
+    return self:test(method_full_name)
   end
 
   local function methods(self, name)
