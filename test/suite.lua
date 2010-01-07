@@ -16,7 +16,7 @@ assert(type(make_suite) == "function")
 assert(pcall(function() make_suite() end) == false)
 
 do
-  local test = make_suite("test")
+  local test = make_suite("test", {some_factory = true})
   assert(type(test) == "table")
 
   assert(pcall(function() test "a" (false) end) == false)
@@ -27,6 +27,12 @@ do
   assert(to_call['1'] == true)
   test '1' (function() if next_i ~= 1 then next_i = false else next_i = 2 end to_call['1'] = nil end)
   assert(to_call['1'] == true)
+
+  test:factory "some_factory" {"method1", "method2", "method3"}
+  test:method "method1" (function()
+  end)
+  test:methods "method2"
+               "method3"
 
   assert(test:run() == true)
   assert(to_call['1'] == nil)

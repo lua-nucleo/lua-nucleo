@@ -81,11 +81,13 @@ do
 
   local add_methods = function(self, methods_list)
     assert(type(methods_list) == "table", "bad methods list")
+    local imports_set = self.imports_set_
     for i = 1, #methods_list do
       local method = methods_list[i]
+      assert(not imports_set[method], "duplicate test name")
       local method_full_name = self.current_group_ .. ":" .. method
-      assert(not self.imports_set_[method], "duplicate test name")
-      self.imports_set_[method_full_name] = true
+      assert(not imports_set[method_full_name], "duplicate test name")
+      imports_set[method_full_name] = true
     end
   end
 
