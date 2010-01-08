@@ -107,7 +107,7 @@ test "10" (function()
   check_ok(u, v, false)
 end)
 
-test "10" (function()
+test "10.5" (function()
   local a = {}
   a[a] = a a[{a, a}] = {a,a} a[3]={{a, {a, {a}}, {[a] = a}}}
   local b = {}

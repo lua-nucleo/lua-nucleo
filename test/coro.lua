@@ -65,7 +65,6 @@ local test = make_suite("coro", coro)
 --       When adding function to this list, make sure it has tests first.
 
 test:tests_for 'resume_inner'
-               'yield_outer'
                'pcall'
 
 --------------------------------------------------------------------------------
@@ -84,7 +83,7 @@ end)
 
 --------------------------------------------------------------------------------
 
-test "yield_outer" (function()
+test:test_for "yield_outer" (function()
   local co = coroutine_create(function(A)
     ensure_equals("A", A, "A")
     ensure_equals("C", coro.yield_outer("B"), "C")
