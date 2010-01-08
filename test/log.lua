@@ -84,12 +84,6 @@ local unique_object
         'unique_object'
       }
 
-local common_method_list
-      = import 'lua-nucleo/factory.lua'
-      {
-        'common_method_list'
-      }
-
 --------------------------------------------------------------------------------
 
 local LOG_LEVEL,
