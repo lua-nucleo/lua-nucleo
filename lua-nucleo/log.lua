@@ -224,7 +224,7 @@ do
       return sink(END_OF_LOG_MESSAGE)
     end
 
-    make_logger = function(
+    make_logger = function( -- TODO: rename, is not factory
         logging_config,
         module_name,
         level,

@@ -4,7 +4,7 @@
 
 local table_concat = table.concat
 
-local make_concatter
+local make_concatter -- TODO: rename, is not factory
 do
   make_concatter = function()
     local buf = {}
