@@ -52,6 +52,10 @@ do
   local function tests_for(self, import_name)
     assert(type(self) == "table", "bad self")
     assert(type(import_name) == "string", "bad import name")
+
+    assert(self.test_names_[import_name] ~= true, "test name duplicated")
+    self.test_names_[import_name] = true
+
     check_name(self, import_name)
     return function(import_name) return tests_for(self, import_name) end
   end
@@ -61,7 +65,6 @@ do
   local TODO = function(self, msg)
     assert(type(self) == "table", "bad self")
     assert(type(msg) == "string", "bad msg")
-
     self.todos_[#self.todos_ + 1] = msg
   end
 
@@ -77,12 +80,19 @@ do
       imports_set[import_name] = nil
     end
 
+    assert(
+        self.test_names_[import_name] ~= true,
+        "test name duplicated:" .. import_name
+      )
+    self.test_names_[import_name] = true
+
     self:TODO("write tests for `" .. import_name .. "'")
   end
 
   local test_for = function(self, name)
     assert(type(self) == "table", "bad self")
     assert(type(name) == "string", "bad name")
+
     check_name(self, name)
     return self:test(name)
   end
@@ -90,7 +100,9 @@ do
   local test = function(self, name)
     assert(type(self) == "table", "bad self")
     assert(type(name) == "string", "bad name")
-    assert(not self.tests_[name], "duplicate test name")
+
+    assert(self.test_names_[name] ~= true, "test name duplicated:" .. name)
+    self.test_names_[name] = true
 
     return function(fn)
       assert(type(fn) == "function", "bad callback")
@@ -113,6 +125,10 @@ do
   local factory = function(self, name)
     assert(type(self) == "table", "bad self")
     assert(type(name) == "string", "bad name")
+
+    assert(self.test_names_[name] ~= true, "test name duplicated:" .. name)
+    self.test_names_[name] = true
+
     check_name(self, name)
     self.current_group_ = name
 
@@ -131,6 +147,10 @@ do
   local method = function(self, name)
     assert(type(self) == "table", "bad self")
     assert(type(name) == "string", "bad name")
+
+    assert(self.test_names_[name] ~= true, "test name duplicated:" .. name)
+    self.test_names_[name] = true
+
     local method_full_name = self.current_group_ .. ":" .. name
     check_name(self, method_full_name)
     return self:test(method_full_name)
@@ -140,6 +160,15 @@ do
     assert(type(self) == "table", "bad self")
     assert(type(name) == "string", "bad name")
     local method_full_name = self.current_group_ .. ":" .. name
+
+    assert(self.test_names_[name] ~= true, "test name duplicated:" .. name)
+    self.test_names_[name] = true
+    assert(
+        self.test_names_[method_full_name] ~= true,
+        "test name duplicated:" .. method_full_name
+      )
+    self.test_names_[method_full_name] = true
+
     check_name(self, method_full_name)
     return function(name) return methods(self, name) end
   end
@@ -321,6 +350,7 @@ do
           imports_set_ = imports_set;
           current_group_ = "";
           tests_ = {};
+          test_names_ = {};
           todos_ = {};
         },
         suite_mt
