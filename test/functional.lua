@@ -149,10 +149,11 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:tests_for "make_generator_mt"
+test:factory "make_generator_mt" (make_generator_mt, function() end)
 
 --------------------------------------------------------------------------------
 
+test:methods "__index"
 test "make_generator_mt-nil" (function()
   local num_calls = 0
 

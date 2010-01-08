@@ -51,8 +51,10 @@ local test = make_suite("timed_queue", timed_queue_exports)
 
 --------------------------------------------------------------------------------
 
-test:group "make_timed_queue"
-
+test:factory "make_timed_queue" (make_timed_queue)
+test:methods "pop_next_expired"
+             "get_next_expiration_time"
+             "insert"
 --------------------------------------------------------------------------------
 
 test "empty" (function()

@@ -192,7 +192,10 @@ end
 
 --------------------------------------------------------------------------------
 
-test:group "make_priority_queue"
+test:factory "make_priority_queue" (make_priority_queue)
+test:methods "insert"
+             "pop"
+             "front"
 
 --------------------------------------------------------------------------------
 

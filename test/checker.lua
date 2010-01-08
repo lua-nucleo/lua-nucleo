@@ -33,11 +33,13 @@ local test = make_suite("checker", checker_exports)
 
 --------------------------------------------------------------------------------
 
-test:group "make_checker"
+test:factory "make_checker" (make_checker)
 
 --------------------------------------------------------------------------------
+test:methods "msg"
+             "result"
 
-test "good" (function()
+test:method "good" (function()
   local checker = make_checker()
 
   print("checker", checker)
@@ -47,6 +49,7 @@ test "good" (function()
   ensure_tequals("good result is true", { checker:result() }, { true })
 end)
 
+test:methods "ensure"
 test "ensure-passes" (function()
   local checker = make_checker()
 
@@ -61,7 +64,7 @@ test "ensure-passes" (function()
   ensure_tequals("result is still true", { checker:result() }, { true })
 end)
 
-test "fail" (function()
+test:method "fail" (function()
   local checker = make_checker()
 
   ensure_equals("empty is good", checker:good(), true)
