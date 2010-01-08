@@ -5,6 +5,7 @@
 return
 {
   'suite';
+  'suite-factory';
   'strict';
   'import';
   'import-base_path';

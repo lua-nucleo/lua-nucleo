@@ -28,12 +28,6 @@ do
   test '1' (function() if next_i ~= 1 then next_i = false else next_i = 2 end to_call['1'] = nil end)
   assert(to_call['1'] == true)
 
-  test:factory "some_factory" {"method1", "method2", "method3"}
-  test:method "method1" (function()
-  end)
-  test:methods "method2"
-               "method3"
-
   assert(test:run() == true)
   assert(to_call['1'] == nil)
   assert(next_i == 2)
