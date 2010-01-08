@@ -16,7 +16,7 @@ assert(type(make_suite) == "function")
 assert(pcall(function() make_suite() end) == false)
 
 do
-  local test = make_suite("test", {some_factory = true})
+  local test = make_suite("test", {})
   assert(type(test) == "table")
 
   assert(pcall(function() test "a" (false) end) == false)
