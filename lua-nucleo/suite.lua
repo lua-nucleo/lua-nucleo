@@ -18,6 +18,25 @@ local err_handler = function(err)
   return err
 end
 
+local common_method_list = function(factory, ...)
+  assert(type(factory) == "function", "`function' expected")
+  local factory_return = factory(...)
+  assert(type(factory_return) == "table", "`table' expected")
+  local method_list = {}
+  for k, v in pairs(factory_return) do
+    if type(v) == "function" then
+      if type(k) == "string" then
+        if k:sub(-1) ~= '_' then
+          method_list[#method_list + 1] = k
+        end
+      else
+        error("non-string key for function value")
+      end
+    end
+  end
+  return method_list
+end
+
 local make_suite
 do
   local check_name = function(self, import_name)
@@ -97,13 +116,14 @@ do
     check_name(self, name)
     self.current_group_ = name
 
-    return function(methods_input)
-      if type(methods_input) == "table" then
-        add_methods(self, methods_input)
-      elseif type(methods_input) == "function" then
-        add_methods(self, methods_input())
+    return function(factory, ...)
+      if type(factory) == "function" then
+        assert(type(factory) == "function", "bad factory")
+        add_methods(self, common_method_list(factory, ...))
+      elseif type(factory) == "table" then
+        add_methods(self, factory)
       else
-        error("bad methods list")
+        error("expected function or table")
       end
     end
   end
@@ -389,4 +409,5 @@ return
 {
   run_tests = run_tests;
   make_suite = make_suite;
+  common_method_list = common_method_list;
 }

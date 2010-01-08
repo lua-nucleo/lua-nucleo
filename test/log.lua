@@ -200,9 +200,9 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:factory "make_logging_system" (function()
-  return common_method_list(make_logging_system, "", function() end, {})
-end)
+test:factory "make_logging_system" (
+    make_logging_system, "", function() end, {}
+  )
 
 --------------------------------------------------------------------------------
 
@@ -475,7 +475,7 @@ end)
 --------------------------------------------------------------------------------
 
 test:factory "make_common_logging_config" (
-    common_method_list(make_common_logging_config)
+    make_common_logging_config
   )
 
 --------------------------------------------------------------------------------

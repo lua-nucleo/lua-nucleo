@@ -44,7 +44,7 @@ test "wrong_input" (function()
   ensure_fails_with_substring(
       "wrong arguments",
       function() common_method_list(a, 1, 2, 3) end,
-      "`function' expected, got `table'"
+      "`function' expected"
     )
 end)
 
@@ -53,7 +53,7 @@ test "wrong_output" (function()
   ensure_fails_with_substring(
       "wrong arguments",
       function() common_method_list(a, 1, 2, 3) end,
-      "`table' expected, got `nil'"
+      "`table' expected"
     )
 end)
 
