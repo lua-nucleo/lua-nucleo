@@ -21,7 +21,7 @@ local assert_is_number,
 local ensure_equals
       = import 'lua-nucleo/ensure.lua'
       {
-        'ensure_equals',
+        'ensure_equals'
       }
 
 --------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ local test = make_suite(
     }
   )
 local var = 1
-test:factory "some_factory" {"method1", "method2", "method3"}
+test:factory "some_factory" { "method1", "method2", "method3" }
 
 ensure_equals("test:run()", test:run(), false)
 test:method "method1" (function()
