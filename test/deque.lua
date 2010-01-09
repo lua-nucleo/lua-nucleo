@@ -63,7 +63,17 @@ local test = make_suite("deque", deque_exports)
 
 --------------------------------------------------------------------------------
 
-test:factory "make_deque" (make_deque)
+test:factory "make_deque" ((function()
+  return debug.getmetatable(make_deque()).__index -- TODO: Hack
+end))
+
+test:methods "back"
+             "pop_back"
+             "push_back"
+             "front"
+             "pop_front"
+             "push_front"
+             "size"
 
 --------------------------------------------------------------------------------
 
