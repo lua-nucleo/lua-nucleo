@@ -1,4 +1,4 @@
--- factory.lua -- tests for the factory module
+-- factory.lua: tests for the factory module
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
@@ -115,7 +115,8 @@ test "no_arguments_several_method" (function()
       method_three = method_three;
     }
   end
-  local methods_list_true = {
+  local methods_list_true =
+  {
     "method_one";
     "method_two";
     "method_three";
@@ -205,7 +206,8 @@ test "no_arguments_nested" (function()
       method_three = method_three;
     }
   end
-  local methods_list_true = {
+  local methods_list_true =
+  {
     "method_one";
     "method_two";
     "method_three";
@@ -242,7 +244,8 @@ test "no_arguments_recursive" (function()
       inner_recursive_table = inner_recursive_table;
     }
   end
-  local methods_list_true = {
+  local methods_list_true =
+  {
     "method_one";
     "method_two";
     "method_three";
@@ -280,7 +283,8 @@ test "several_methods" (function()
       c_local = c_local;
     }
   end
-  local methods_list_true = {
+  local methods_list_true =
+  {
     "method_one";
     "method_two";
     "method_three";
