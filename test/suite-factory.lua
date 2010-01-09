@@ -18,6 +18,12 @@ local assert_is_number,
         'assert_is_table'
       }
 
+local ensure_equals
+      = import 'lua-nucleo/ensure.lua'
+      {
+        'ensure_equals',
+      }
+
 --------------------------------------------------------------------------------
 
 local make_another_factory = function(a, b, c)
@@ -40,39 +46,39 @@ end
 
 --------------------------------------------------------------------------------
 
-  local test = make_suite(
-      "test",
-      {
-        some_factory = true
-      }
-    )
-  local var = 1
-  test:factory "some_factory" {"method1", "method2", "method3"}
-  print "stuff"
-  assert(test:run() == false)
-  test:method "method1" (function()
-    var = 2
-  end)
-  assert(test:run() == false)
-  assert(var == 2)
-  test:methods "method2"
-               "method3"
-  assert(test:run() == true)
+local test = make_suite(
+    "test",
+    {
+      some_factory = true
+    }
+  )
+local var = 1
+test:factory "some_factory" {"method1", "method2", "method3"}
 
-  local test = make_suite(
-      "test",
-      {
-        make_another_factory = true
-      }
-    )
-  test:factory "make_another_factory" (make_another_factory, 1, "", {})
+ensure_equals("test:run()", test:run(), false)
+test:method "method1" (function()
+  var = 2
+end)
+ensure_equals("test:run()", test:run(), false)
+ensure_equals("var == 2", var, 2)
+test:methods "method2"
+             "method3"
+ensure_equals("test:run()", test:run(), true)
 
-  assert(test:run() == false)
-  test:method "method1" (function()
-    var = 2
-  end)
-  assert(test:run() == false)
-  assert(var == 2)
-  test:methods "method2"
-               "method3"
-  assert(test:run() == true)
+local test = make_suite(
+    "test",
+    {
+      make_another_factory = true
+    }
+  )
+test:factory "make_another_factory" (make_another_factory, 1, "", {})
+
+ensure_equals("test:run()", test:run(), false)
+test:method "method1" (function()
+  var = var + 2
+end)
+ensure_equals("test:run()", test:run(), false)
+ensure_equals("var", var, 4)
+test:methods "method2"
+             "method3"
+ensure_equals("test:run()", test:run(), true)
