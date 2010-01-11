@@ -49,14 +49,9 @@ do
     end
   end
 
-  local check_input = function(self, name)
-    assert(type(self) == "table", "bad self")
-    assert(type(name) == "string", "bad import name")
-  end
-
   local check_duplicate = function(self, name)
     if self.test_names_[name] == true then
-      error("test name duplicated: " .. name)
+      error("test name duplicated: " .. name, 3)
     end
     self.test_names_[name] = true
   end
