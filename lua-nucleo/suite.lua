@@ -186,7 +186,11 @@ do
       print(todo_messages)
     end
 
-    return nerr == 0, msg
+    if nerr ~= 0 then
+      return nil, msg
+    end
+
+    return true
   end
 
   local set_strict_mode = function(self, flag)

@@ -41,7 +41,7 @@ do
   assert(to_call['2'] == true)
   assert(to_call['3'] == true)
 
-  assert(test:run() == false)
+  assert(test:run() == nil) -- TODO: Check actual error message.
 
   assert(next_i == true)
   assert(next(to_call) == nil)
