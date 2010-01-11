@@ -55,12 +55,15 @@ do
   end
 
   local check_duplicate = function(self, name)
-    assert(self.test_names_[name] ~= true, "test name duplicated:" .. name)
+    if self.test_names_[name] == true then
+      error("test name duplicated: " .. name)
+    end
     self.test_names_[name] = true
   end
 
   local function tests_for(self, import_name)
-    check_input(self, import_name)
+    assert(type(self) == "table", "bad self")
+    assert(type(import_name) == "string", "bad import name")
     check_duplicate(self, import_name)
     check_name(self, import_name)
     return function(import_name) return tests_for(self, import_name) end
@@ -75,20 +78,23 @@ do
   end
 
   local UNTESTED = function(self, import_name)
-    check_input(self, import_name)
+    assert(type(self) == "table", "bad self")
+    assert(type(import_name) == "string", "bad import name")
     check_duplicate(self, import_name)
     check_name(self, import_name)
     self:TODO("write tests for `" .. import_name .. "'")
   end
 
   local test_for = function(self, name)
-    check_input(self, name)
+    assert(type(self) == "table", "bad self")
+    assert(type(name) == "string", "bad import name")
     check_name(self, name)
     return self:test(name)
   end
 
   local test = function(self, name)
-    check_input(self, name)
+    assert(type(self) == "table", "bad self")
+    assert(type(name) == "string", "bad import name")
     check_duplicate(self, name)
 
     return function(fn)
@@ -111,7 +117,8 @@ do
   end
 
   local factory = function(self, name)
-    check_input(self, name)
+    assert(type(self) == "table", "bad self")
+    assert(type(name) == "string", "bad import name")
     check_duplicate(self, name)
     check_name(self, name)
     self.current_group_ = name
@@ -129,7 +136,8 @@ do
   end
 
   local method = function(self, name)
-    check_input(self, name)
+    assert(type(self) == "table", "bad self")
+    assert(type(name) == "string", "bad import name")
     check_duplicate(self, name)
 
     local method_full_name = self.current_group_ .. ":" .. name
@@ -139,7 +147,8 @@ do
   end
 
   local function methods(self, name)
-    check_input(self, name)
+    assert(type(self) == "table", "bad self")
+    assert(type(name) == "string", "bad import name")
     local method_full_name = self.current_group_ .. ":" .. name
     check_duplicate(self, name)
     check_duplicate(self, method_full_name)
