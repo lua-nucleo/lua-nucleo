@@ -18,10 +18,12 @@ local assert_is_number,
         'assert_is_table'
       }
 
-local ensure_equals
+local ensure_equals,
+      ensure_error
       = import 'lua-nucleo/ensure.lua'
       {
-        'ensure_equals'
+        'ensure_equals',
+        'ensure_error'
       }
 
 --------------------------------------------------------------------------------
@@ -38,14 +40,31 @@ do
   local var = 1
 
   test:factory "some_factory" { "method1", "method2", "method3" }
-  ensure_equals("test:run()", test:run(), false)
+  ensure_error(
+      "test:run()",
+      "Suite `test' failed:\n * Test `[completeness check]': detected untes" ..
+      "ted imports: some_factory:method3, some_factory:method1, other_facto" ..
+      "ry, some_factory:method2\n",
+      test:run()
+    )
 
   test:method "method1" (function() var = 2 end)
-  ensure_equals("test:run()", test:run(), false)
+  ensure_error(
+      "test:run()",
+      "Suite `test' failed:\n * Test `[completeness check]': detected untes" ..
+      "ted imports: some_factory:method3, other_factory, some_factory:metho" ..
+      "d2\n",
+      test:run()
+    )
   ensure_equals("var == 2", var, 2)
 
   test:methods "method2" "method3"
-  ensure_equals("test:run()", test:run(), false)
+  ensure_error(
+      "test:run()",
+      "Suite `test' failed:\n * Test `[completeness check]': detected untes" ..
+      "ted imports: other_factory\n",
+      test:run()
+    )
 
   test:factory "other_factory" { }
   ensure_equals("test:run()", test:run(), true)
@@ -88,15 +107,31 @@ do
     )
 
   test:factory "make_another" (make_another, 1, "", {})
-  ensure_equals("test:run()", test:run(), false)
+  ensure_error(
+      "test:run()",
+      "Suite `test' failed:\n * Test `[completeness check]': detected untes" ..
+      "ted imports: make_some, make_another:method1, make_another:method2, " ..
+      "make_another:method3\n",
+      test:run()
+    )
 
   local var = 1
   test:method "method1" (function() var = var + 2 end)
-  ensure_equals("test:run()", test:run(), false)
+  ensure_error(
+      "test:run()",
+      "Suite `test' failed:\n * Test `[completeness check]': detected untes" ..
+      "ted imports: make_some, make_another:method2, make_another:method3\n",
+      test:run()
+    )
   ensure_equals("var", var, 3)
 
   test:methods "method2" "method3"
-  ensure_equals("test:run()", test:run(), false)
+  ensure_error(
+      "test:run()",
+      "Suite `test' failed:\n * Test `[completeness check]': detected untes" ..
+      "ted imports: make_some\n",
+      test:run()
+    )
 
   test:factory "make_some" (make_some)
   ensure_equals("test:run()", test:run(), true)
