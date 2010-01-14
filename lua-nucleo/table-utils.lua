@@ -188,6 +188,12 @@ local tiwalker = function(fn)
   end
 end
 
+local twalk_pairs = function(fn, t)
+  for k, v in pairs(t) do
+    fn(k, v)
+  end
+end
+
 local tequals = function(lhs, rhs)
   for k, v in pairs(lhs) do
     if v ~= rhs[k] then
@@ -316,4 +322,5 @@ return
   tclone = tclone;
   tcount_elements = tcount_elements;
   tremap_to_array = tremap_to_array;
+  twalk_pairs = twalk_pairs;
 }

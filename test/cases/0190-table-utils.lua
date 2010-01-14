@@ -56,6 +56,7 @@ local empty_table,
       tclone,
       tcount_elements,
       tremap_to_array,
+      twalk_pairs,
       table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -84,7 +85,8 @@ local empty_table,
         'tnormalize_inplace',
         'tclone',
         'tcount_elements',
-        'tremap_to_array'
+        'tremap_to_array',
+        'twalk_pairs'
       }
 
 --------------------------------------------------------------------------------
@@ -1567,6 +1569,35 @@ test "tremap_to_array-mixed" (function()
         { "c", 3 };
       }
     )
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "twalk_pairs"
+
+--------------------------------------------------------------------------------
+
+test "twalk_pairs-empty" (function()
+  local c = 0
+  local fn = function() c = c + 1 end
+  local t = { }
+  local r = twalk_pairs(fn, t)
+  ensure_equals("function not called", c, 0)
+  ensure_equals("returned nil", r, nil)
+end)
+
+test "twalk_pairs-counter" (function()
+  local results = { }
+  local fn = function(k, v, extra)
+    ensure_equals("extra is nil", extra, nil)
+    results[k] = v
+  end
+  local t = { 10, 20, 30, ["a"] = 42 }
+  local t_orig = tclone(t)
+  local r = twalk_pairs(fn, t, 42)
+  ensure_equals("returned nil", r, nil)
+  ensure_tequals("argument unchanged", t, t_orig)
+  ensure_tequals("check results", results, t_orig)
 end)
 
 --------------------------------------------------------------------------------
