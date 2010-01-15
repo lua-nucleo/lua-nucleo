@@ -6,16 +6,19 @@ local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
 local ensure,
       ensure_equals,
-      ensure_fails_with_substring
+      ensure_fails_with_substring,
+      ensure_returns
       = import 'lua-nucleo/ensure.lua'
       {
         'ensure',
         'ensure_equals',
-        'ensure_fails_with_substring'
+        'ensure_fails_with_substring',
+        'ensure_returns'
       }
 
 local nargs,
       pack,
+      eat_true,
       arguments,
       method_arguments,
       optional_arguments,
@@ -24,6 +27,7 @@ local nargs,
       {
         'nargs',
         'pack',
+        'eat_true',
         'arguments',
         'method_arguments',
         'optional_arguments'
@@ -54,6 +58,60 @@ test:test_for "pack" (function()
   ensure_equals("args number", pack(t1, nil, t3), 3)
   local num, tbl = pack(t1, t2, t3)
   ensure_equals("args", table.concat(tbl), "abc")
+end)
+
+---------------------------------------------------------------------------
+
+test:test_for "eat_true" (function()
+  ensure_returns("no args", 0, { }, eat_true(true))
+  ensure_returns("one arg", 1, { 42 }, eat_true(true, 42))
+  ensure_returns(
+      "nils",
+      4, { nil, nil, "embedded\0zero", nil },
+      eat_true(true, nil, nil, "embedded\0zero", nil)
+    )
+
+  ensure_fails_with_substring(
+      "no args at all",
+      function() eat_true() end,
+      "can't eat true, got nil"
+    )
+
+  ensure_fails_with_substring(
+      "false",
+      function() eat_true(false) end,
+      "can't eat true, got false"
+    )
+
+  ensure_fails_with_substring(
+      "nil",
+      function() eat_true(nil) end,
+      "can't eat true, got nil"
+    )
+
+  ensure_fails_with_substring(
+      "data",
+      function() eat_true(42) end,
+      "can't eat true, got 42"
+    )
+
+  ensure_fails_with_substring(
+      "data, string",
+      function() eat_true(42, "MYERROR") end,
+      "can't eat true, got 42"
+    )
+
+  ensure_fails_with_substring(
+      "error message",
+      function() eat_true(nil, "MYERROR") end,
+      "can't eat true:\nMYERROR"
+    )
+
+  ensure_fails_with_substring(
+      "nil, true",
+      function() eat_true(nil, true) end,
+      "can't eat true, got nil"
+    )
 end)
 
 ---------------------------------------------------------------------------

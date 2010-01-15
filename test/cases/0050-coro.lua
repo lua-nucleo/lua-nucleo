@@ -28,16 +28,11 @@ local ensure,
 
 local make_concatter = import 'lua-nucleo/string.lua' { 'make_concatter' }
 
+local eat_true = import 'lua-nucleo/functional.lua' { 'eat_true' }
+
 local coro = import 'lua-nucleo/coro.lua' ()
 
 --------------------------------------------------------------------------------
-
-local eat_true = function(v, ...)
-  if v ~= true then
-    error("can't eat true:\n"..tostring(...), 2)
-  end
-  return ...
-end
 
 local eat_tag = function(v, ...)
   if not coro.is_outer_yield_tag(v) then

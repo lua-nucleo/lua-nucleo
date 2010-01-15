@@ -16,6 +16,18 @@ local pack = function(...)
   return select("#", ...), { ... }
 end
 
+local eat_true = function(v, ...)
+  if v ~= true then
+    local msg = (...)
+    if not v and type(msg) == "string" then
+      error("can't eat true:\n"..msg, 2)
+    else
+      error("can't eat true, got "..tostring(v), 2)
+    end
+  end
+  return ...
+end
+
 local arguments, optional_arguments, method_arguments
 do
   local function impl(is_optional, arg_n, expected_type, value, ...)
@@ -49,7 +61,7 @@ do
        and (
          (nargs % 2 == 0)
            and impl(false, 1, ...) -- Not optional
-            or error("arguments: bad call, dangling argument detected")
+            or error("arguments: bad call, dangling argument detected", 2)
        )
        or true
   end
@@ -60,7 +72,7 @@ do
        and (
          (nargs % 2 == 0)
            and impl(true, 1, ...) -- Optional
-            or error("arguments: bad call, dangling argument detected")
+            or error("arguments: bad call, dangling argument detected", 2)
        )
        or true
   end
@@ -75,7 +87,7 @@ do
               and (
                 (nargs % 2 == 0)
                   and impl(false, 1, ...) -- Not optional
-                   or error("method_arguments: bad call, dangling argument detected")
+                   or error("method_arguments: bad call, dangling argument detected", 2)
               )
               or true
           )
@@ -86,6 +98,7 @@ return
 {
   pack = pack;
   nargs = nargs;
+  eat_true = eat_true;
   --
   arguments = arguments;
   optional_arguments = optional_arguments;
