@@ -12,7 +12,7 @@ assert(pcall(function() make_suite() end) == false)
 
 -- test, case, run
 do
-  local test = make_suite("test", {})
+  local test = make_suite("test")
   assert(type(test) == "table")
 
   assert(pcall(function() test "a" (false) end) == false)
