@@ -120,7 +120,6 @@ do
 
     return function(factory, ...)
       if type(factory) == "function" then
-        assert(type(factory) == "function", "bad factory")
         add_methods(self, common_method_list(factory, ...))
       elseif type(factory) == "table" then
         add_methods(self, factory)
@@ -189,7 +188,10 @@ do
       local imports_set = self.imports_set_
       if imports_set then
         print("Checking suite completeness")
-        if next(imports_set) == nil then
+        if #self.tests_ == 0 then
+          print("ERR")
+          errs[#errs + 1] = { name = "[completeness check]", err = "empty" }
+        elseif next(imports_set) == nil then
           print("OK")
           nok = nok + 1
         else
@@ -297,10 +299,7 @@ do
       for name, _ in pairs(imports) do
         -- NOTE: If you ever need non-string imports,
         --       fix table_concat() in completeness check above first.
-        assert(
-            type(name) == "string",
-            "sorry, non-string imports are not supported"
-          )
+        assert(type(name) == "string", "non-string imports")
         imports_set[name] = true
       end
     end
