@@ -15,6 +15,7 @@ assert(type(make_suite) == "function")
 
 assert(pcall(function() make_suite() end) == false)
 
+-- test, case, run
 do
   local test = make_suite("test", {})
   assert(type(test) == "table")
