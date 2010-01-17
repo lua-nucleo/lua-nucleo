@@ -225,7 +225,7 @@ local ensure_error_with_substring = function( -- TODO: Write tests for this
   )
   if res ~= nil and res ~= false then -- TODO: remove double check
     error(
-        "ensure_error failed: " .. msg
+        "ensure_error_with_substring failed: " .. msg
      .. ": failure expected, got non-nil result: `"
      .. tostring(res) .. "'",
         2
@@ -235,7 +235,7 @@ local ensure_error_with_substring = function( -- TODO: Write tests for this
   -- TODO: Improve error reporting
   if not err:find(substring) and err ~= substring then
     error(
-        "ensure_fails_with_substring failed: " .. msg
+        "ensure_error_with_substring failed: " .. msg
      .. ": can't find expected substring `"
      .. tostring(substring) .. "' in error message:\n"
      .. err
