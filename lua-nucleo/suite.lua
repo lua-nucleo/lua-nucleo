@@ -188,7 +188,7 @@ do
       local imports_set = self.imports_set_
       if imports_set then
         print("Checking suite completeness")
-        if #self.tests_ == 0 then
+        if #self.tests_ == 0 and #self.todos_ == 0 then
           print("ERR")
           errs[#errs + 1] = { name = "[completeness check]", err = "empty" }
         elseif next(imports_set) == nil then
