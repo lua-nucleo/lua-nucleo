@@ -186,6 +186,8 @@ do
   end
 end
 
+--------------------------------------------------------------------------------
+
 local ensure_strequals = function(msg, actual, expected, ...)
   if actual == expected then
     return actual, expected, ...
@@ -199,6 +201,8 @@ local ensure_strequals = function(msg, actual, expected, ...)
     )
 end
 
+--------------------------------------------------------------------------------
+
 local ensure_error = function(msg, expected_message, res, actual_message, ...)
   if res ~= nil then
     error(
@@ -210,6 +214,36 @@ local ensure_error = function(msg, expected_message, res, actual_message, ...)
   -- TODO: Improve error reporting
   ensure_strequals(msg, actual_message, expected_message)
 end
+
+--------------------------------------------------------------------------------
+
+local ensure_error_with_substring = function( -- TODO: Write tests for this
+    msg, -- output message
+    substring, -- part to search
+    res, -- result (nil or false)
+    err -- error message
+  )
+  if res ~= nil and res ~= false then -- TODO: remove double check
+    error(
+        "ensure_error failed: " .. msg
+     .. ": failure expected, got non-nil result: `"
+     .. tostring(res) .. "'",
+        2
+      )
+  end
+
+  -- TODO: Improve error reporting
+  if not err:find(substring) and err ~= substring then
+    error(
+        "ensure_fails_with_substring failed: " .. msg
+     .. ": can't find expected substring `"
+     .. tostring(substring) .. "' in error message:\n"
+     .. err
+      )
+  end
+end
+
+--------------------------------------------------------------------------------
 
 -- TODO: Uncomment and move to proper tests
 --[[
@@ -239,6 +273,8 @@ local ensure_fails_with_substring = function(msg, fn, substring)
       )
   end
 end
+
+--------------------------------------------------------------------------------
 
 -- We want 99.9% probability of success
 -- Would not work for high-contrast weights. Use for tests only.
@@ -313,6 +349,7 @@ return
   ensure_tdeepequals = ensure_tdeepequals;
   ensure_strequals = ensure_strequals;
   ensure_error = ensure_error;
+  ensure_error_with_substring = ensure_error_with_substring;
   ensure_fails_with_substring = ensure_fails_with_substring;
   ensure_aposteriori_probability = ensure_aposteriori_probability;
   ensure_returns = ensure_returns;
