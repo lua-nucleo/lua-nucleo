@@ -41,14 +41,16 @@ do
   ensure_error_with_substring(
       "test.tests_for(\"\")",
       "bad self",
-      err, res)
+      err, res
+    )
 
   err, res = pcall(test.tests_for, test, 0)
   print(res)
   ensure_error_with_substring(
       "test.tests_for, test, 0",
       "bad import name",
-      err, res)
+      err, res
+    )
 
   -- TODO
   err, res = pcall(test.TODO, "")
@@ -56,14 +58,16 @@ do
   ensure_error_with_substring(
       "test.TODO(\"\")",
       "bad self",
-      err, res)
+      err, res
+    )
 
   err, res = pcall(test.TODO, test, 0)
   print(res)
   ensure_error_with_substring(
       "test.TODO, test, 0",
       "bad msg",
-      err, res)
+      err, res
+    )
 
   -- UNTESTED
   err, res = pcall(test.UNTESTED, "")
@@ -71,14 +75,16 @@ do
   ensure_error_with_substring(
       "test.UNTESTED(\"\")",
       "bad self",
-      err, res)
+      err, res
+    )
 
   err, res = pcall(test.UNTESTED, test, 0)
   print(res)
   ensure_error_with_substring(
       "test.UNTESTED, test, 0",
       "bad import name",
-      err, res)
+      err, res
+    )
 
   -- test_for
   err, res = pcall(test.test_for, "")
@@ -86,14 +92,16 @@ do
   ensure_error_with_substring(
       "test.test_for(\"\")",
       "bad self",
-      err, res)
+      err, res
+    )
 
   err, res = pcall(test.test_for, test, 0)
   print(res)
   ensure_error_with_substring(
       "test.test_for, test, 0",
       "bad import name",
-      err, res)
+      err, res
+    )
 
   -- test
   err, res = pcall(test.test, "")
@@ -101,21 +109,24 @@ do
   ensure_error_with_substring(
       "test.test(\"\")",
       "bad self",
-      err, res)
+      err, res
+    )
 
   err, res = pcall(test.test, test, 0)
   print(res)
   ensure_error_with_substring(
       "(test.test, test, 0",
       "bad import name",
-      err, res)
+      err, res
+    )
 
   err, res = pcall(test.test(test, "name"), { })
   print(res)
   ensure_error_with_substring(
       "test.test(test, \"name\"), { }",
       "bad callback",
-      err, res)
+      err, res
+    )
 
   -- factory
   err, res = pcall(test.factory, "")
@@ -123,21 +134,24 @@ do
   ensure_error_with_substring(
       "test.factory(\"\")",
       "bad self",
-      err, res)
+      err, res
+    )
 
   err, res = pcall(test.factory, test, 0)
   print(res)
   ensure_error_with_substring(
       "test.factory, test, 0",
       "bad import name",
-      err, res)
+      err, res
+    )
 
   err, res = pcall(test.factory(test, "name1"), 0)
   print(res)
   ensure_error_with_substring(
       "test.factory(test, \"name\"), 0",
       "expected function or table",
-      err, res)
+      err, res
+    )
 
   -- method
   err, res = pcall(test.method, "")
@@ -145,14 +159,16 @@ do
   ensure_error_with_substring(
       "test.method(\"\")",
       "bad self",
-      err, res)
+      err, res
+    )
 
   err, res = pcall(test.method, test, 0)
   print(res)
   ensure_error_with_substring(
       "test.method, test, 0",
       "bad import name",
-      err, res)
+      err, res
+    )
 
   -- methods
   err, res = pcall(test.methods, "")
@@ -160,14 +176,16 @@ do
   ensure_error_with_substring(
       "test.methods(\"\")",
       "bad self",
-      err, res)
+      err, res
+    )
 
   err, res = pcall(test.methods, test, 0)
   print(res)
   ensure_error_with_substring(
       "test.methods, test, 0",
       "bad import name",
-      err, res)
+      err, res
+    )
 
   -- run
   err, res = pcall(test.run, "")
@@ -183,14 +201,16 @@ do
   ensure_error_with_substring(
       "test.set_strict_mode(\"\")",
       "bad self",
-      err, res)
+      err, res
+    )
 
   err, res = pcall(test.set_strict_mode, test, 0)
   print(res)
   ensure_error_with_substring(
       "test.set_strict_mode, test, 0",
       "bad flag",
-      err, res)
+      err, res
+    )
 
   -- set_fail_on_first_error
   err, res = pcall(test.set_fail_on_first_error, "")
@@ -198,14 +218,16 @@ do
   ensure_error_with_substring(
       "test.set_fail_on_first_error(\"\")",
       "bad self",
-      err, res)
+      err, res
+    )
 
   err, res = pcall(test.set_fail_on_first_error, test, 0)
   print(res)
   ensure_error_with_substring(
       "test.set_fail_on_first_error, test, 0",
       "bad flag",
-      err, res)
+      err, res
+    )
 
   -- make_suite
   err, res = pcall(make_suite, 0)
@@ -213,21 +235,24 @@ do
   ensure_error_with_substring(
       "make_suite, 0",
       "bad name",
-      err, res)
+      err, res
+    )
 
   err, res = pcall(make_suite, "suite_name", 0)
   print(res)
   ensure_error_with_substring(
       "test.set_fail_on_first_error, test, 0",
       "bad imports",
-      err, res)
+      err, res
+    )
 
   err, res = pcall(make_suite, "suite_name", { 1 })
   print(res)
   ensure_error_with_substring(
       "test.set_fail_on_first_error, test, 0",
       "string imports",
-      err, res)
+      err, res
+    )
 end
 
 --------------------------------------------------------------------------------
@@ -240,7 +265,8 @@ do
       "test:run()",
       "Suite `test_empty' failed:\n"
    .. " * Test `[completeness check]': empty\n",
-      test:run())
+      test:run()
+    )
 end
 
 --------------------------------------------------------------------------------
@@ -248,18 +274,165 @@ end
 
 do
   print "\nSingle test suite:"
-  local test = make_suite("test_empty", { })
+  local test = make_suite("test", { })
   local counter = 0
   test "test_1" (function()
     counter = 1
   end)
   ensure_equals("test:run()", test:run(), true)
-  ensure_equals("Callback", counter, 1)
+  ensure_equals("Sum", counter, 1)
+end
+
+do
+  print "\nSingle case suite:"
+  local test = make_suite("test", { })
+  local counter = 0
+  test:case "test_1" (function()
+    counter = 1
+  end)
+  ensure_equals("test:run()", test:run(), true)
+  ensure_equals("Sum", counter, 1)
+end
+
+do
+  print "\nSingle test_for suite:"
+  local test = make_suite("test", { to_test = true })
+  local counter = 0
+  test:test_for "to_test" (function()
+    counter = counter + 1
+  end)
+  ensure_equals("test:run()", test:run(), true)
+  ensure_equals("Sum", counter, 1)
+end
+
+do
+  print "\nSingle tests_for suite:"
+  local test = make_suite("test", { to_test = true })
+  local counter = 0
+  test:tests_for "to_test"
+  test "any" (function()
+    counter = counter + 1
+  end)
+  ensure_equals("test:run()", test:run(), true)
+  ensure_equals("Sum", counter, 1)
+end
+
+do
+  print "\nSingle group suite:"
+  local test = make_suite("test", { to_test = true })
+  local counter = 0
+  test:group "to_test"
+  test "any" (function()
+    counter = counter + 1
+  end)
+  ensure_equals("test:run()", test:run(), true)
+  ensure_equals("Sum", counter, 1)
+end
+
+do
+  print "\nSet_strict_mode suite:"
+  local test = make_suite("test", { to_test = true })
+  local counter = 0
+  test:UNTESTED "to_test"
+  test "any" (function()
+    counter = counter + 1
+    if test:in_strict_mode() then
+      counter = counter + 1
+    end
+  end)
+  ensure_equals("test:run()", test:run(), true)
+  ensure_equals("Sum", counter, 1)
+  ensure_equals("strict_mode", test.strict_mode_, false)
+  test:set_strict_mode(true)
+  ensure_equals("strict_mode", test.strict_mode_, true)
+  ensure_error(
+      "test:run()",
+      "Suite `test' failed:\n"
+   .. " * Test `[STRICT MODE]': detected TODOs:\n"
+   .. "   -- write tests for `to_test'\n\n",
+      test:run()
+    )
+  ensure_equals("Sum", counter, 3)
+end
+
+do
+  print "\nSingle set_fail_on_first_error suite:"
+  local test = make_suite("test", { })
+  local counter = 0
+  test "fail_one" (function()
+    counter = counter + 1
+    error("any error", 0)
+  end)
+  test "fail_two" (function()
+    counter = counter + 10
+    error("any error", 0)
+  end)
+  ensure_error(
+      "test:run()",
+      "Suite `test' failed:\n"
+   .. " * Test `fail_one': any error\n"
+   .. " * Test `fail_two': any error\n",
+      test:run()
+    )
+  ensure_equals("Sum", counter, 11)
+  ensure_equals("fail_on_first_error", test.fail_on_first_error_, false)
+  test:set_fail_on_first_error(true)
+  ensure_equals("fail_on_first_error", test.fail_on_first_error_, true)
+  ensure_error(
+      "test:run()",
+      "Suite `test' failed:\n"
+   .. " * Test `fail_one': any error\n"
+   .. " * Test `[FAIL ON FIRST ERROR]': FAILED AS REQUESTED\n",
+      test:run()
+    )
+  ensure_equals("Sum", counter, 12)
+end
+
+do
+  print "\nSingle UNTESTED suite:"
+  local test = make_suite("test", { to_test = true })
+  test:UNTESTED "to_test"
+  ensure_equals("test:run()", test:run(), true)
+end
+
+do
+  print "\nSingle TODO suite:"
+  local test = make_suite("test", { })
+  test:TODO "to_test"
+  ensure_equals("test:run()", test:run(), true)
+end
+
+do
+  print "\nSingle factory suite:"
+  local test = make_suite("test", { to_test = true })
+  test:factory "to_test" { }
+  test "any" (function() end)
+  ensure_equals("test:run()", test:run(), true)
+end
+
+do
+  print "\nSingle method suite:"
+  local test = make_suite("test", { to_test = true })
+  local counter = 0
+  test:factory "to_test" { "method" }
+  test:method "method" (function() counter = 1 end)
+  ensure_equals("test:run()", test:run(), true)
+  ensure_equals("Sum", counter, 1)
+end
+
+do
+  print "\nSingle methods suite:"
+  local test = make_suite("test", { to_test = true })
+  test:factory "to_test" { "method1", "method2" }
+  test:methods "method1" "method2"
+  test "any" (function() end)
+  ensure_equals("test:run()", test:run(), true)
 end
 
 --------------------------------------------------------------------------------
 -- test:factory table input test
 do
+  print "\nComplex factory table input test:"
   local test = make_suite(
       "test",
       {
@@ -307,6 +480,7 @@ end
 --------------------------------------------------------------------------------
 -- test:factory function input test
 do
+  print "\nComplex factory function input test:"
   local make_some = function()
     return
     {
