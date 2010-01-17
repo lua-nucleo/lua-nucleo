@@ -30,7 +30,6 @@ local ensure_equals,
 
 --------------------------------------------------------------------------------
 -- asserts
-
 do
   print "\nAsserts:"
   local test = make_suite("test_empty", { name1 = true })
@@ -257,7 +256,6 @@ end
 
 --------------------------------------------------------------------------------
 -- empty suite
-
 do
   print "\nEmpty suite:"
   local test = make_suite("test_empty", { })
@@ -271,7 +269,6 @@ end
 
 --------------------------------------------------------------------------------
 -- simple suite tests
-
 do
   print "\nSingle test suite:"
   local test = make_suite("test", { })
@@ -315,6 +312,18 @@ do
   end)
   ensure_equals("test:run()", test:run(), true)
   ensure_equals("Sum", counter, 1)
+end
+
+do
+  print "\nSingle tests_for error:"
+  local test = make_suite("test", { })
+  local err, res = pcall(test.tests_for, test, "to_test")
+  print(res)
+  ensure_error_with_substring(
+      "test.tests_for(\"\")",
+      "unknown import",
+      err, res
+    )
 end
 
 do
@@ -544,4 +553,83 @@ do
 
   test:factory "make_some" (make_some)
   ensure_equals("test:run()", test:run(), true)
+end
+
+--------------------------------------------------------------------------------
+-- Complex test
+do
+  print "\nComplex test:"
+  local make_another = function()
+    local method1 = function() end
+    local method2 = function() end
+    local method3 = function() end
+    return
+    {
+      method1 = method1,
+      method2 = method2,
+      method3 = method3
+    }
+  end
+
+  local test = make_suite(
+      "test",
+      {
+        make_another = true,
+        func1 = true,
+        func2 = true,
+        func3 = true,
+        func4 = true
+      }
+    )
+  local counter = 1
+  test "any" (function()
+    counter = counter * 2
+  end)
+  test:test_for "func1" (function()
+    counter = counter * 3
+  end)
+  test:tests_for "func2"
+  test:case "func2_one" (function()
+    if test:in_strict_mode() then
+      counter = counter * 5
+    end
+  end)
+
+  test "func2_two" (function()
+    counter = counter * 7
+    error("Expected error.")
+  end)
+  test:UNTESTED "func3"
+  test:TODO "TODOs can duplicate func names"
+  test:TODO "func4"
+  test:test_for "func4" (function() end)
+
+  test:factory "make_another" (make_another)
+  test:method "method1" (function() counter = counter * 11 end)
+  test:methods "method2" "method3"
+
+  ensure_error_with_substring(
+      "test.tests_for(\"\")",
+      "Expected error.",
+      test:run()
+    )
+  ensure_equals("product", counter, 2 * 3 * 7 * 11)
+
+  counter = 1
+  test:set_strict_mode(true)
+  ensure_error_with_substring(
+      "test.tests_for(\"\")",
+      "Expected error.",
+      test:run()
+    )
+  ensure_equals("product", counter, 2 * 3 * 5 * 7 * 11)
+
+  counter = 1
+  test:set_fail_on_first_error(true)
+  ensure_error_with_substring(
+      "test.tests_for(\"\")",
+      "Expected error.",
+      test:run()
+    )
+  ensure_equals("product", counter, 2 * 3 * 5 * 7)
 end
