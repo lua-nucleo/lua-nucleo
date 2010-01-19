@@ -1,4 +1,4 @@
--- suite.lua: a simple test suite test
+-- suite-full.lua: set of tests for suite test
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
@@ -31,14 +31,14 @@ local ensure_equals,
 --------------------------------------------------------------------------------
 -- asserts
 do
-  print "\nAsserts:"
+  print("\nAsserts:")
   local test = make_suite("test_empty", { name1 = true })
 
   -- tests_for
   local err, res = pcall(test.tests_for, "")
   print(res)
   ensure_error_with_substring(
-      "test.tests_for(\"\")",
+      "test.tests_for('')",
       "bad self",
       err, res
     )
@@ -55,7 +55,7 @@ do
   err, res = pcall(test.TODO, "")
   print(res)
   ensure_error_with_substring(
-      "test.TODO(\"\")",
+      "test.TODO('')",
       "bad self",
       err, res
     )
@@ -72,7 +72,7 @@ do
   err, res = pcall(test.UNTESTED, "")
   print(res)
   ensure_error_with_substring(
-      "test.UNTESTED(\"\")",
+      "test.UNTESTED('')",
       "bad self",
       err, res
     )
@@ -89,7 +89,7 @@ do
   err, res = pcall(test.test_for, "")
   print(res)
   ensure_error_with_substring(
-      "test.test_for(\"\")",
+      "test.test_for('')",
       "bad self",
       err, res
     )
@@ -106,7 +106,7 @@ do
   err, res = pcall(test.test, "")
   print(res)
   ensure_error_with_substring(
-      "test.test(\"\")",
+      "test.test('')",
       "bad self",
       err, res
     )
@@ -122,7 +122,7 @@ do
   err, res = pcall(test.test(test, "name"), { })
   print(res)
   ensure_error_with_substring(
-      "test.test(test, \"name\"), { }",
+      "test.test(test, 'name'), { }",
       "bad callback",
       err, res
     )
@@ -131,7 +131,7 @@ do
   err, res = pcall(test.factory, "")
   print(res)
   ensure_error_with_substring(
-      "test.factory(\"\")",
+      "test.factory('')",
       "bad self",
       err, res
     )
@@ -147,7 +147,7 @@ do
   err, res = pcall(test.factory(test, "name1"), 0)
   print(res)
   ensure_error_with_substring(
-      "test.factory(test, \"name\"), 0",
+      "test.factory(test, 'name'), 0",
       "expected function or table",
       err, res
     )
@@ -156,7 +156,7 @@ do
   err, res = pcall(test.method, "")
   print(res)
   ensure_error_with_substring(
-      "test.method(\"\")",
+      "test.method('')",
       "bad self",
       err, res
     )
@@ -173,7 +173,7 @@ do
   err, res = pcall(test.methods, "")
   print(res)
   ensure_error_with_substring(
-      "test.methods(\"\")",
+      "test.methods('')",
       "bad self",
       err, res
     )
@@ -190,7 +190,7 @@ do
   err, res = pcall(test.run, "")
   print(res)
   ensure_error_with_substring(
-      "test.run(\"\")",
+      "test.run('')",
       "bad self",
      err, res)
 
@@ -198,7 +198,7 @@ do
   err, res = pcall(test.set_strict_mode, "")
   print(res)
   ensure_error_with_substring(
-      "test.set_strict_mode(\"\")",
+      "test.set_strict_mode('')",
       "bad self",
       err, res
     )
@@ -215,7 +215,7 @@ do
   err, res = pcall(test.set_fail_on_first_error, "")
   print(res)
   ensure_error_with_substring(
-      "test.set_fail_on_first_error(\"\")",
+      "test.set_fail_on_first_error('')",
       "bad self",
       err, res
     )
@@ -257,7 +257,7 @@ end
 --------------------------------------------------------------------------------
 -- empty suite
 do
-  print "\nEmpty suite:"
+  print("\nEmpty suite:")
   local test = make_suite("test_empty", { })
   ensure_error(
       "test:run()",
@@ -270,7 +270,7 @@ end
 --------------------------------------------------------------------------------
 -- simple suite tests
 do
-  print "\nSingle test suite:"
+  print("\nSingle test suite:")
   local test = make_suite("test", { })
   local counter = 0
   test "test_1" (function()
@@ -281,7 +281,7 @@ do
 end
 
 do
-  print "\nSingle case suite:"
+  print("\nSingle case suite:")
   local test = make_suite("test", { })
   local counter = 0
   test:case "test_1" (function()
@@ -292,7 +292,7 @@ do
 end
 
 do
-  print "\nSingle test_for suite:"
+  print("\nSingle test_for suite:")
   local test = make_suite("test", { to_test = true })
   local counter = 0
   test:test_for "to_test" (function()
@@ -303,7 +303,7 @@ do
 end
 
 do
-  print "\nSingle tests_for suite:"
+  print("\nSingle tests_for suite:")
   local test = make_suite("test", { to_test = true })
   local counter = 0
   test:tests_for "to_test"
@@ -315,19 +315,19 @@ do
 end
 
 do
-  print "\nSingle tests_for error:"
+  print("\nSingle tests_for error:")
   local test = make_suite("test", { })
   local err, res = pcall(test.tests_for, test, "to_test")
   print(res)
   ensure_error_with_substring(
-      "test.tests_for(\"\")",
+      "test.tests_for('')",
       "unknown import",
       err, res
     )
 end
 
 do
-  print "\nSingle group suite:"
+  print("\nSingle group suite:")
   local test = make_suite("test", { to_test = true })
   local counter = 0
   test:group "to_test"
@@ -339,7 +339,7 @@ do
 end
 
 do
-  print "\nSet_strict_mode suite:"
+  print("\nSet_strict_mode suite:")
   local test = make_suite("test", { to_test = true })
   local counter = 0
   test:UNTESTED "to_test"
@@ -365,7 +365,7 @@ do
 end
 
 do
-  print "\nSingle set_fail_on_first_error suite:"
+  print("\nSingle set_fail_on_first_error suite:")
   local test = make_suite("test", { })
   local counter = 0
   test "fail_one" (function()
@@ -398,21 +398,21 @@ do
 end
 
 do
-  print "\nSingle UNTESTED suite:"
+  print("\nSingle UNTESTED suite:")
   local test = make_suite("test", { to_test = true })
   test:UNTESTED "to_test"
   ensure_equals("test:run()", test:run(), true)
 end
 
 do
-  print "\nSingle TODO suite:"
+  print("\nSingle TODO suite:")
   local test = make_suite("test", { })
   test:TODO "to_test"
   ensure_equals("test:run()", test:run(), true)
 end
 
 do
-  print "\nSingle factory suite:"
+  print("\nSingle factory suite:")
   local test = make_suite("test", { to_test = true })
   test:factory "to_test" { }
   test "any" (function() end)
@@ -420,7 +420,7 @@ do
 end
 
 do
-  print "\nSingle method suite:"
+  print("\nSingle method suite:")
   local test = make_suite("test", { to_test = true })
   local counter = 0
   test:factory "to_test" { "method" }
@@ -430,7 +430,7 @@ do
 end
 
 do
-  print "\nSingle methods suite:"
+  print("\nSingle methods suite:")
   local test = make_suite("test", { to_test = true })
   test:factory "to_test" { "method1", "method2" }
   test:methods "method1" "method2"
@@ -441,7 +441,7 @@ end
 --------------------------------------------------------------------------------
 -- test:factory table input test
 do
-  print "\nComplex factory table input test:"
+  print("\nComplex factory table input test:")
   local test = make_suite(
       "test",
       {
@@ -489,7 +489,7 @@ end
 --------------------------------------------------------------------------------
 -- test:factory function input test
 do
-  print "\nComplex factory function input test:"
+  print("\nComplex factory function input test:")
   local make_some = function()
     return
     {
@@ -558,7 +558,7 @@ end
 --------------------------------------------------------------------------------
 -- Complex test
 do
-  print "\nComplex test:"
+  print("\nComplex test:")
   local make_another = function()
     local method1 = function() end
     local method2 = function() end
@@ -609,7 +609,7 @@ do
   test:methods "method2" "method3"
 
   ensure_error_with_substring(
-      "test.tests_for(\"\")",
+      "test.tests_for('')",
       "Expected error.",
       test:run()
     )
@@ -618,7 +618,7 @@ do
   counter = 1
   test:set_strict_mode(true)
   ensure_error_with_substring(
-      "test.tests_for(\"\")",
+      "test.tests_for('')",
       "Expected error.",
       test:run()
     )
@@ -627,7 +627,7 @@ do
   counter = 1
   test:set_fail_on_first_error(true)
   ensure_error_with_substring(
-      "test.tests_for(\"\")",
+      "test.tests_for('')",
       "Expected error.",
       test:run()
     )
