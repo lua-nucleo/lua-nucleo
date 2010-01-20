@@ -32,11 +32,11 @@ do
     if fn_type == "table" then
       t = filename
     elseif fn_type == "string" then
-      filename = get_path(filename)
+      local full_path = get_path(filename)
 
       t = import_cache[filename]
       if t == nil then
-        t = assert(assert(loadfile(filename))(), "import: bad implementation", 2)
+        t = assert(assert(loadfile(full_path))(), "import: bad implementation", 2)
         import_cache[filename] = t
       end
     else
