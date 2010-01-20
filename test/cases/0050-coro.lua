@@ -28,7 +28,7 @@ local ensure,
 
 local make_concatter = import 'lua-nucleo/string.lua' { 'make_concatter' }
 
-local eat_true = import 'lua-nucleo/functional.lua' { 'eat_true' }
+local eat_true = import 'lua-nucleo/args.lua' { 'eat_true' }
 
 local coro = import 'lua-nucleo/coro.lua' ()
 
