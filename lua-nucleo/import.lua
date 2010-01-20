@@ -7,9 +7,20 @@ if exports then exports 'import' end
 local type, assert, loadfile, ipairs, tostring, error, unpack
     = type, assert, loadfile, ipairs, tostring, error, unpack
 
-local BASE_PATH = (...) or ""
-if type(BASE_PATH) ~= "string" then
-  error("import: bad base path type")
+local get_path
+do
+  local base_path = (...) or ""
+
+  local base_path_type = type(base_path)
+  if base_path_type == "function" then
+    get_path = base_path
+  elseif base_path_type == "string" then
+    get_path = function(filename)
+      return base_path .. filename
+    end
+  else
+    error("import: bad base path type")
+  end
 end
 
 do
@@ -21,7 +32,7 @@ do
     if fn_type == "table" then
       t = filename
     elseif fn_type == "string" then
-      filename = BASE_PATH .. filename
+      filename = get_path(filename)
 
       t = import_cache[filename]
       if t == nil then
