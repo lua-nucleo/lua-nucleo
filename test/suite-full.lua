@@ -35,222 +35,222 @@ do
   local test = make_suite("test_empty", { name1 = true })
 
   -- tests_for
-  local err, res = pcall(test.tests_for, "")
-  print(res)
+  local res, err = pcall(test.tests_for, "")
+  print(err)
   ensure_error_with_substring(
       "test.tests_for('')",
       "bad self",
-      err, res
+      res, err
     )
 
-  err, res = pcall(test.tests_for, test, 0)
-  print(res)
+  res, err = pcall(test.tests_for, test, 0)
+  print(err)
   ensure_error_with_substring(
       "test.tests_for, test, 0",
       "bad import name",
-      err, res
+      res, err
     )
 
   -- TODO
-  err, res = pcall(test.TODO, "")
-  print(res)
+  res, err = pcall(test.TODO, "")
+  print(err)
   ensure_error_with_substring(
       "test.TODO('')",
       "bad self",
-      err, res
+      res, err
     )
 
-  err, res = pcall(test.TODO, test, 0)
-  print(res)
+  res, err = pcall(test.TODO, test, 0)
+  print(err)
   ensure_error_with_substring(
       "test.TODO, test, 0",
       "bad msg",
-      err, res
+      res, err
     )
 
   -- UNTESTED
-  err, res = pcall(test.UNTESTED, "")
-  print(res)
+  res, err = pcall(test.UNTESTED, "")
+  print(err)
   ensure_error_with_substring(
       "test.UNTESTED('')",
       "bad self",
-      err, res
+      res, err
     )
 
-  err, res = pcall(test.UNTESTED, test, 0)
-  print(res)
+  res, err = pcall(test.UNTESTED, test, 0)
+  print(err)
   ensure_error_with_substring(
       "test.UNTESTED, test, 0",
       "bad import name",
-      err, res
+      res, err
     )
 
   -- test_for
-  err, res = pcall(test.test_for, "")
-  print(res)
+  res, err = pcall(test.test_for, "")
+  print(err)
   ensure_error_with_substring(
       "test.test_for('')",
       "bad self",
-      err, res
+      res, err
     )
 
-  err, res = pcall(test.test_for, test, 0)
-  print(res)
+  res, err = pcall(test.test_for, test, 0)
+  print(err)
   ensure_error_with_substring(
       "test.test_for, test, 0",
       "bad import name",
-      err, res
+      res, err
     )
 
   -- test
-  err, res = pcall(test.test, "")
-  print(res)
+  res, err = pcall(test.test, "")
+  print(err)
   ensure_error_with_substring(
       "test.test('')",
       "bad self",
-      err, res
+      res, err
     )
 
-  err, res = pcall(test.test, test, 0)
-  print(res)
+  res, err = pcall(test.test, test, 0)
+  print(err)
   ensure_error_with_substring(
       "(test.test, test, 0",
       "bad import name",
-      err, res
+      res, err
     )
 
-  err, res = pcall(test.test(test, "name"), { })
-  print(res)
+  res, err = pcall(test.test(test, "name"), { })
+  print(err)
   ensure_error_with_substring(
       "test.test(test, 'name'), { }",
       "bad callback",
-      err, res
+      res, err
     )
 
   -- factory
-  err, res = pcall(test.factory, "")
-  print(res)
+  res, err = pcall(test.factory, "")
+  print(err)
   ensure_error_with_substring(
       "test.factory('')",
       "bad self",
-      err, res
+      res, err
     )
 
-  err, res = pcall(test.factory, test, 0)
-  print(res)
+  res, err = pcall(test.factory, test, 0)
+  print(err)
   ensure_error_with_substring(
       "test.factory, test, 0",
       "bad import name",
-      err, res
+      res, err
     )
 
-  err, res = pcall(test.factory(test, "name1"), 0)
-  print(res)
+  res, err = pcall(test.factory(test, "name1"), 0)
+  print(err)
   ensure_error_with_substring(
       "test.factory(test, 'name'), 0",
       "expected function or table",
-      err, res
+      res, err
     )
 
   -- method
-  err, res = pcall(test.method, "")
-  print(res)
+  res, err = pcall(test.method, "")
+  print(err)
   ensure_error_with_substring(
       "test.method('')",
       "bad self",
-      err, res
+      res, err
     )
 
-  err, res = pcall(test.method, test, 0)
-  print(res)
+  res, err = pcall(test.method, test, 0)
+  print(err)
   ensure_error_with_substring(
       "test.method, test, 0",
       "bad import name",
-      err, res
+      res, err
     )
 
   -- methods
-  err, res = pcall(test.methods, "")
-  print(res)
+  res, err = pcall(test.methods, "")
+  print(err)
   ensure_error_with_substring(
       "test.methods('')",
       "bad self",
-      err, res
+      res, err
     )
 
-  err, res = pcall(test.methods, test, 0)
-  print(res)
+  res, err = pcall(test.methods, test, 0)
+  print(err)
   ensure_error_with_substring(
       "test.methods, test, 0",
       "bad import name",
-      err, res
+      res, err
     )
 
   -- run
-  err, res = pcall(test.run, "")
-  print(res)
+  res, err = pcall(test.run, "")
+  print(err)
   ensure_error_with_substring(
       "test.run('')",
       "bad self",
-     err, res)
+     res, err)
 
   -- set_strict_mode
-  err, res = pcall(test.set_strict_mode, "")
-  print(res)
+  res, err = pcall(test.set_strict_mode, "")
+  print(err)
   ensure_error_with_substring(
       "test.set_strict_mode('')",
       "bad self",
-      err, res
+      res, err
     )
 
-  err, res = pcall(test.set_strict_mode, test, 0)
-  print(res)
+  res, err = pcall(test.set_strict_mode, test, 0)
+  print(err)
   ensure_error_with_substring(
       "test.set_strict_mode, test, 0",
       "bad flag",
-      err, res
+      res, err
     )
 
   -- set_fail_on_first_error
-  err, res = pcall(test.set_fail_on_first_error, "")
-  print(res)
+  res, err = pcall(test.set_fail_on_first_error, "")
+  print(err)
   ensure_error_with_substring(
       "test.set_fail_on_first_error('')",
       "bad self",
-      err, res
+      res, err
     )
 
-  err, res = pcall(test.set_fail_on_first_error, test, 0)
-  print(res)
+  res, err = pcall(test.set_fail_on_first_error, test, 0)
+  print(err)
   ensure_error_with_substring(
       "test.set_fail_on_first_error, test, 0",
       "bad flag",
-      err, res
+      res, err
     )
 
   -- make_suite
-  err, res = pcall(make_suite, 0)
-  print(res)
+  res, err = pcall(make_suite, 0)
+  print(err)
   ensure_error_with_substring(
       "make_suite, 0",
       "bad name",
-      err, res
+      res, err
     )
 
-  err, res = pcall(make_suite, "suite_name", 0)
-  print(res)
+  res, err = pcall(make_suite, "suite_name", 0)
+  print(err)
   ensure_error_with_substring(
       "test.set_fail_on_first_error, test, 0",
       "bad imports",
-      err, res
+      res, err
     )
 
-  err, res = pcall(make_suite, "suite_name", { 1 })
-  print(res)
+  res, err = pcall(make_suite, "suite_name", { 1 })
+  print(err)
   ensure_error_with_substring(
       "test.set_fail_on_first_error, test, 0",
       "string imports",
-      err, res
+      res, err
     )
 end
 
@@ -317,12 +317,12 @@ end
 do
   print("\nSingle tests_for error:")
   local test = make_suite("test", { })
-  local err, res = pcall(test.tests_for, test, "to_test")
-  print(res)
+  local res, err = pcall(test.tests_for, test, "to_test")
+  print(err)
   ensure_error_with_substring(
       "test.tests_for('')",
       "unknown import",
-      err, res
+      res, err
     )
 end
 
