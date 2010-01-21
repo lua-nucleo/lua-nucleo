@@ -3,7 +3,7 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
 local function gen_random_dataset(num, nesting, visited, random)
-  random = random or random
+  random = random or math.random
 
   nesting = nesting or 1
   visited = visited or {}
