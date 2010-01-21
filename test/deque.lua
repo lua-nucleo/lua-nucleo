@@ -280,6 +280,14 @@ test "deque-random" (function()
     return value_generators[math.random(#value_generators)]()
   end
 
+  -- Not using numeric keys in hash part to avoid confusing #t
+  local key_generators = make_value_generators(
+      tset({ "userdata", "no-numbers" })
+    )
+  local random_key = function()
+    return key_generators[math.random(#key_generators)]()
+  end
+
   local check_once = function()
     local initial_data = nil
 
@@ -296,7 +304,7 @@ test "deque-random" (function()
           initial_data[#initial_data + 1] = random_value()
         else
           -- Hash part
-          initial_data[random_value()] = random_value()
+          initial_data[random_key()] = random_value()
         end
       end
     end
