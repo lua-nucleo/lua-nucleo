@@ -32,18 +32,27 @@ local make_value_generators = function(features)
         and invariant(nil),
       invariant(true),
       invariant(false),
-      invariant(-42),
-      invariant(-1),
-      invariant(0),
-      function() return math_random() end,
-      function() return math_random(-1e8, 1e8) end,
-      invariant(1),
-      invariant(42),
-      invariant(math_pi),
-      features["nan"]
-        and invariant(0/0),
-      invariant(1/0),
-      invariant(-1/0),
+      (not features["no-numbers"]) and invariant(-42) or nil,
+      (not features["no-numbers"]) and invariant(-1) or nil,
+      (not features["no-numbers"]) and invariant(0) or nil,
+      (not features["no-numbers"])
+        and function()
+          return math_random()
+        end
+        or nil,
+      (not features["no-numbers"])
+        and function()
+          return math_random(-1e8, 1e8)
+        end
+        or nil,
+      (not features["no-numbers"]) and invariant(1) or nil,
+      (not features["no-numbers"]) and invariant(42) or nil,
+      (not features["no-numbers"]) and invariant(math_pi) or nil,
+      (not features["no-numbers"]) and features["nan"]
+        and invariant(0/0)
+        or nil,
+      (not features["no-numbers"]) and invariant(1/0) or nil,
+      (not features["no-numbers"]) and invariant(-1/0) or nil,
       invariant(""),
       invariant("The Answer to the Ultimate Question of Life, the Universe, and Everything"),
       invariant("embedded\0zero"),
