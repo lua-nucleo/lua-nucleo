@@ -2,28 +2,30 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-local function gen_random_dataset(num, nesting, visited)
+local function gen_random_dataset(num, nesting, visited, random)
+  random = random or random
+
   nesting = nesting or 1
   visited = visited or {}
-  num = num or math.random(0, 10)
+  num = num or random(0, 10)
 
   local gen_str = function()
-    local len = math.random(1, 64)
+    local len = random(1, 64)
     local t = {}
     for i = 1, len do
-      t[i] = string.char(math.random(0, 255))
+      t[i] = string.char(random(0, 255))
     end
     return table.concat(t)
   end
 
-  local gen_bool = function() return math.random() >= 0.5 end
+  local gen_bool = function() return random() >= 0.5 end
   local gen_udata = function() return newproxy() end
   local gen_func = function() return function() end end
   local gen_thread = function() return coroutine.create(function() end) end
   local gen_nil = function() return nil end
   local gen_visited_link = function()
     if #visited > 1 then
-      return visited[math.random(1, #visited)]
+      return visited[random(1, #visited)]
     else
       return gen_str()
     end
@@ -34,7 +36,7 @@ local function gen_random_dataset(num, nesting, visited)
     gen_bool;
     gen_bool;
     gen_bool;
-    function() return math.random(-10, 10) end;
+    function() return random(-10, 10) end;
     gen_str;
     gen_str;
     gen_str;
@@ -51,13 +53,13 @@ local function gen_random_dataset(num, nesting, visited)
       end
       local t = {}
       visited[#visited + 1] = t
-      local n = math.random(0, 10 - nesting)
+      local n = random(0, 10 - nesting)
       for i = 1, n do
-        local k = gen_random_dataset(1, nesting + 1,visited)
+        local k = gen_random_dataset(1, nesting + 1, visited, random)
         if k == nil then
           k = "(nil)"
         end
-        t[ k ] = gen_random_dataset(1, nesting + 1,visited)
+        t[ k ] = gen_random_dataset(1, nesting + 1, visited, random)
       end
       return t
     end
@@ -67,7 +69,7 @@ local function gen_random_dataset(num, nesting, visited)
   visited[#visited + 1] = t
 
   for i = 1, num do
-    local n = math.random(1, #generators)
+    local n = random(1, #generators)
     t[i] = generators[n]()
   end
 
