@@ -20,12 +20,12 @@ local assert_is_number,
 
 local ensure_equals,
       ensure_error,
-      ensure_error_with_substring
+      ensure_fails_with_substring
       = import 'lua-nucleo/ensure.lua'
       {
         'ensure_equals',
         'ensure_error',
-        'ensure_error_with_substring'
+        'ensure_fails_with_substring'
       }
 
 --------------------------------------------------------------------------------
@@ -35,222 +35,172 @@ do
   local test = make_suite("test_empty", { name1 = true })
 
   -- tests_for
-  local res, err = pcall(test.tests_for, "")
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.tests_for('')",
-      "bad self",
-      res, err
+      function() test.tests_for("") end,
+      "bad self"
     )
 
-  res, err = pcall(test.tests_for, test, 0)
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.tests_for, test, 0",
-      "bad import name",
-      res, err
+      function() test:tests_for(0) end,
+      "bad import name"
     )
 
   -- TODO
-  res, err = pcall(test.TODO, "")
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.TODO('')",
-      "bad self",
-      res, err
+      function() test.TODO("") end,
+      "bad self"
     )
 
-  res, err = pcall(test.TODO, test, 0)
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.TODO, test, 0",
-      "bad msg",
-      res, err
+      function() test:TODO(0) end,
+      "bad msg"
     )
 
   -- UNTESTED
-  res, err = pcall(test.UNTESTED, "")
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.UNTESTED('')",
-      "bad self",
-      res, err
+      function()  test.UNTESTED("") end,
+      "bad self"
     )
 
-  res, err = pcall(test.UNTESTED, test, 0)
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.UNTESTED, test, 0",
-      "bad import name",
-      res, err
+      function() test:UNTESTED(0)  end,
+      "bad import name"
     )
 
   -- test_for
-  res, err = pcall(test.test_for, "")
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.test_for('')",
-      "bad self",
-      res, err
+      function() test.test_for("") end,
+      "bad self"
     )
 
-  res, err = pcall(test.test_for, test, 0)
-  print(err)
-  ensure_error_with_substring(
+   ensure_fails_with_substring(
       "test.test_for, test, 0",
-      "bad import name",
-      res, err
+      function() test:test_for(0) end,
+      "bad import name"
     )
 
   -- test
-  res, err = pcall(test.test, "")
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.test('')",
-      "bad self",
-      res, err
+      function() test.test("") end,
+      "bad self"
     )
 
-  res, err = pcall(test.test, test, 0)
-  print(err)
-  ensure_error_with_substring(
-      "(test.test, test, 0",
-      "bad import name",
-      res, err
+  ensure_fails_with_substring(
+      "test:test(0)",
+      function() test:test(0) end,
+      "bad import name"
     )
 
-  res, err = pcall(test.test(test, "name"), { })
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.test(test, 'name'), { }",
-      "bad callback",
-      res, err
+      function() test:test "name" ({ }) end,
+      "bad callback"
     )
 
   -- factory
-  res, err = pcall(test.factory, "")
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.factory('')",
-      "bad self",
-      res, err
+      function() test.factory("") end,
+      "bad self"
     )
 
-  res, err = pcall(test.factory, test, 0)
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.factory, test, 0",
-      "bad import name",
-      res, err
+      function() test:factory(0) end,
+      "bad import name"
     )
 
-  res, err = pcall(test.factory(test, "name1"), 0)
-  print(err)
-  ensure_error_with_substring(
+
+  ensure_fails_with_substring(
       "test.factory(test, 'name'), 0",
-      "expected function or table",
-      res, err
+      function() test:factory "name1" (0)  end,
+      "expected function or table"
     )
 
   -- method
-  res, err = pcall(test.method, "")
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.method('')",
-      "bad self",
-      res, err
+      function() test.method("") end,
+      "bad self"
     )
 
-  res, err = pcall(test.method, test, 0)
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.method, test, 0",
-      "bad import name",
-      res, err
+      function() test:method(0) end,
+      "bad import name"
     )
 
   -- methods
-  res, err = pcall(test.methods, "")
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.methods('')",
-      "bad self",
-      res, err
+      function() test.methods("") end,
+      "bad self"
     )
 
-  res, err = pcall(test.methods, test, 0)
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.methods, test, 0",
-      "bad import name",
-      res, err
+      function() test:methods(0) end,
+      "bad import name"
     )
 
   -- run
-  res, err = pcall(test.run, "")
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.run('')",
-      "bad self",
-     res, err)
-
-  -- set_strict_mode
-  res, err = pcall(test.set_strict_mode, "")
-  print(err)
-  ensure_error_with_substring(
-      "test.set_strict_mode('')",
-      "bad self",
-      res, err
+      function() test.run("") end,
+      "bad self"
     )
 
-  res, err = pcall(test.set_strict_mode, test, 0)
-  print(err)
-  ensure_error_with_substring(
+  -- set_strict_mode
+  ensure_fails_with_substring(
+      "test.set_strict_mode('')",
+      function() test.set_strict_mode("") end,
+      "bad self"
+    )
+
+  ensure_fails_with_substring(
       "test.set_strict_mode, test, 0",
-      "bad flag",
-      res, err
+      function() test:set_strict_mode(0) end,
+      "bad flag"
     )
 
   -- set_fail_on_first_error
-  res, err = pcall(test.set_fail_on_first_error, "")
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.set_fail_on_first_error('')",
-      "bad self",
-      res, err
+      function() test.set_fail_on_first_error("") end,
+      "bad self"
     )
 
-  res, err = pcall(test.set_fail_on_first_error, test, 0)
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.set_fail_on_first_error, test, 0",
-      "bad flag",
-      res, err
+      function() test:set_fail_on_first_error(0) end,
+      "bad flag"
     )
 
   -- make_suite
-  res, err = pcall(make_suite, 0)
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "make_suite, 0",
-      "bad name",
-      res, err
+      function() make_suite(0) end,
+      "bad name"
     )
 
-  res, err = pcall(make_suite, "suite_name", 0)
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.set_fail_on_first_error, test, 0",
-      "bad imports",
-      res, err
+      function() make_suite("suite_name", 0) end,
+      "bad imports"
     )
 
-  res, err = pcall(make_suite, "suite_name", { 1 })
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.set_fail_on_first_error, test, 0",
-      "string imports",
-      res, err
+      function() make_suite("suite_name", { 1 }) end,
+      "string imports"
     )
 end
 
@@ -317,12 +267,10 @@ end
 do
   print("\nSingle tests_for error:")
   local test = make_suite("test", { })
-  local res, err = pcall(test.tests_for, test, "to_test")
-  print(err)
-  ensure_error_with_substring(
+  ensure_fails_with_substring(
       "test.tests_for('')",
-      "unknown import",
-      res, err
+      function() test:tests_for("to_test") end,
+      "unknown import"
     )
 end
 
@@ -608,27 +556,35 @@ do
   test:method "method1" (function() counter = counter * 11 end)
   test:methods "method2" "method3"
 
-  ensure_error_with_substring(
-      "test.tests_for('')",
-      "Expected error.",
+  ensure_error(
+      "test:run()",
+      "Suite `test' failed:\n"
+   .. " * Test `func2_two': test/suite-full.lua:548: Expected error.\n",
       test:run()
     )
   ensure_equals("product", counter, 2 * 3 * 7 * 11)
 
   counter = 1
   test:set_strict_mode(true)
-  ensure_error_with_substring(
-      "test.tests_for('')",
-      "Expected error.",
+  ensure_error(
+      "test:run()",
+      "Suite `test' failed:\n"
+   .. " * Test `func2_two': test/suite-full.lua:548: Expected error.\n"
+   .. " * Test `[STRICT MODE]': detected TODOs:\n"
+   .. "   -- write tests for `func3'\n"
+   .. "   -- TODOs can duplicate func names\n"
+   .. "   -- func4\n\n",
       test:run()
     )
   ensure_equals("product", counter, 2 * 3 * 5 * 7 * 11)
 
   counter = 1
   test:set_fail_on_first_error(true)
-  ensure_error_with_substring(
-      "test.tests_for('')",
-      "Expected error.",
+  ensure_error(
+      "test:run()",
+      "Suite `test' failed:\n"
+   .. " * Test `func2_two': test/suite-full.lua:548: Expected error.\n"
+   .. " * Test `[FAIL ON FIRST ERROR]': FAILED AS REQUESTED\n",
       test:run()
     )
   ensure_equals("product", counter, 2 * 3 * 5 * 7)
