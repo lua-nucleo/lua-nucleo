@@ -217,34 +217,6 @@ end
 
 --------------------------------------------------------------------------------
 
-local ensure_error_with_substring = function( -- TODO: Write tests for this
-    msg, -- output message
-    substring, -- part to search
-    res, -- result (nil or false)
-    err -- error message
-  )
-  if res ~= nil and res ~= false then -- TODO: remove double check
-    error(
-        "ensure_error_with_substring failed: " .. msg
-     .. ": failure expected, got non-nil result: `"
-     .. tostring(res) .. "'",
-        2
-      )
-  end
-
-  -- TODO: Improve error reporting
-  if not err:find(substring) and err ~= substring then
-    error(
-        "ensure_error_with_substring failed: " .. msg
-     .. ": can't find expected substring `"
-     .. tostring(substring) .. "' in error message:\n"
-     .. err
-      )
-  end
-end
-
---------------------------------------------------------------------------------
-
 -- TODO: Uncomment and move to proper tests
 --[[
 ensure_error("ok", "a", nil, "a")
@@ -349,7 +321,6 @@ return
   ensure_tdeepequals = ensure_tdeepequals;
   ensure_strequals = ensure_strequals;
   ensure_error = ensure_error;
-  ensure_error_with_substring = ensure_error_with_substring;
   ensure_fails_with_substring = ensure_fails_with_substring;
   ensure_aposteriori_probability = ensure_aposteriori_probability;
   ensure_returns = ensure_returns;
