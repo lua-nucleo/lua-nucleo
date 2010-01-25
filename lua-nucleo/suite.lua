@@ -319,7 +319,6 @@ do
           set_strict_mode = set_strict_mode;
           in_strict_mode = in_strict_mode;
           set_fail_on_first_error = set_fail_on_first_error; -- TODO: Test this!
-          check_fail_on_first_error = check_fail_on_first_error;
           UNTESTED = UNTESTED;
           TODO = TODO;
           factory = factory;

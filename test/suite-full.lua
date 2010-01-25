@@ -185,20 +185,34 @@ do
 end
 
 do
-  print("\nSet_strict_mode suite:")
+  print("\nSet_strict_mode false suite:")
   local test = make_suite("test", { to_test = true })
+  test:set_strict_mode(false)
   local counter = 0
   test:UNTESTED "to_test"
   test "any" (function()
     counter = counter + 1
     if test:in_strict_mode() then
-      counter = counter + 1
+      counter = counter + 10
     end
   end)
   ensure_equals("in strict mode", test:in_strict_mode(), false)
   ensure_equals("test:run()", test:run(), true)
   ensure_equals("Sum", counter, 1)
+end
+
+do
+  print("\nSet_strict_mode true suite:")
+  local test = make_suite("test", { to_test = true })
   test:set_strict_mode(true)
+  local counter = 0
+  test:UNTESTED "to_test"
+  test "any" (function()
+    counter = counter + 1
+    if test:in_strict_mode() then
+      counter = counter + 10
+    end
+  end)
   ensure_equals("in strict mode", test:in_strict_mode(), true)
   ensure_error(
       "test:run()",
@@ -207,31 +221,33 @@ do
    .. "   -- write tests for `to_test'\n\n",
       test:run()
     )
-  ensure_equals("Sum", counter, 3)
+  ensure_equals("Sum", counter, 11)
 end
 
 do
-  print("\nSingle set_fail_on_first_error suite:")
+  print("\nSingle set_fail_on_first_error false suite:")
   local test = make_suite("test", { })
+  test:set_fail_on_first_error(false)
   local counter = 0
-  test "fail_one" (function()
-    counter = counter + 1
-    error("any error", 0)
-  end)
-  test "fail_two" (function()
-    counter = counter + 10
-    error("any error", 0)
-  end)
+  test "fail_one" (function() counter = counter + 1 error("any error", 0) end)
+  test "fail_two" (function() counter = counter + 10 error("any error", 0) end)
   ensure_error(
-      "test:run()",
-      "Suite `test' failed:\n"
-   .. " * Test `fail_one': any error\n"
-   .. " * Test `fail_two': any error\n",
-      test:run()
-    )
-  ensure_equals("Sum", counter, 11)
-  ensure_equals("fail_on_first_error", test:check_fail_on_first_error(), false)
+       "test:run()",
+       "Suite `test' failed:\n"
+    .. " * Test `fail_one': any error\n"
+    .. " * Test `fail_two': any error\n",
+       test:run()
+     )
+   ensure_equals("Sum", counter, 11)
+end
+
+do
+  print("\nSingle set_fail_on_first_error true suite:")
+  local test = make_suite("test", { })
   test:set_fail_on_first_error(true)
+  local counter = 0
+  test "fail_one" (function() counter = counter + 1 error("any error", 0) end)
+  test "fail_two" (function() counter = counter + 10 error("any error", 0) end)
   ensure_error(
       "test:run()",
       "Suite `test' failed:\n"
@@ -239,8 +255,7 @@ do
    .. " * Test `[FAIL ON FIRST ERROR]': FAILED AS REQUESTED\n",
       test:run()
     )
-  ensure_equals("Sum", counter, 12)
-  ensure_equals("fail_on_first_error", test:check_fail_on_first_error(), true)
+  ensure_equals("Sum", counter, 1)
   print("ABOVE FAIL WAS EXPECTED")
 end
 
