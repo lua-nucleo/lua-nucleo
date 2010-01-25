@@ -47,7 +47,7 @@ do
       "bad import name"
     )
 
-  -- TODO
+  -- test:TODO
   ensure_fails_with_substring(
       "test.TODO('')",
       function() test.TODO("") end,
@@ -60,7 +60,7 @@ do
       "bad msg"
     )
 
-  -- UNTESTED
+  -- test:UNTESTED
   ensure_fails_with_substring(
       "test.UNTESTED('')",
       function()  test.UNTESTED("") end,
@@ -299,9 +299,7 @@ do
   end)
   ensure_equals("test:run()", test:run(), true)
   ensure_equals("Sum", counter, 1)
-  ensure_equals("strict_mode", test.strict_mode_, false)
   test:set_strict_mode(true)
-  ensure_equals("strict_mode", test.strict_mode_, true)
   ensure_error(
       "test:run()",
       "Suite `test' failed:\n"
@@ -332,9 +330,7 @@ do
       test:run()
     )
   ensure_equals("Sum", counter, 11)
-  ensure_equals("fail_on_first_error", test.fail_on_first_error_, false)
   test:set_fail_on_first_error(true)
-  ensure_equals("fail_on_first_error", test.fail_on_first_error_, true)
   ensure_error(
       "test:run()",
       "Suite `test' failed:\n"
@@ -587,5 +583,6 @@ do
    .. " * Test `[FAIL ON FIRST ERROR]': FAILED AS REQUESTED\n",
       test:run()
     )
+  print("ABOVE FAIL WAS EXPECTED")
   ensure_equals("product", counter, 2 * 3 * 5 * 7)
 end
