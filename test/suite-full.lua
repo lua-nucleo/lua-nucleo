@@ -8,6 +8,8 @@ dofile('lua-nucleo/import.lua')
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
+local __LINE__ = function() return debug.getinfo(2, 'l').currentline end
+
 local assert_is_number,
       assert_is_string,
       assert_is_table
@@ -444,6 +446,8 @@ do
     counter = counter * 7
     error("Expected error.")
   end)
+  local line = __LINE__() - 2 -- TODO: check hack
+
   test:UNTESTED "func3"
   test:TODO "TODOs can duplicate func names"
   test:TODO "func4"
@@ -456,7 +460,8 @@ do
   ensure_error(
       "test:run()",
       "Suite `test' failed:\n"
-   .. " * Test `func2_two': test/suite-full.lua:445: Expected error.\n",
+   .. " * Test `func2_two': test/suite-full.lua:" .. line
+   .. ": Expected error.\n",
       test:run()
     )
   ensure_equals("product", counter, 2 * 3 * 7 * 11)
@@ -466,7 +471,8 @@ do
   ensure_error(
       "test:run()",
       "Suite `test' failed:\n"
-   .. " * Test `func2_two': test/suite-full.lua:445: Expected error.\n"
+   .. " * Test `func2_two': test/suite-full.lua:" .. line
+   .. ": Expected error.\n"
    .. " * Test `[STRICT MODE]': detected TODOs:\n"
    .. "   -- write tests for `func3'\n"
    .. "   -- TODOs can duplicate func names\n"
@@ -480,7 +486,8 @@ do
   ensure_error(
       "test:run()",
       "Suite `test' failed:\n"
-   .. " * Test `func2_two': test/suite-full.lua:445: Expected error.\n"
+   .. " * Test `func2_two': test/suite-full.lua:" .. line
+   .. ": Expected error.\n"
    .. " * Test `[FAIL ON FIRST ERROR]': FAILED AS REQUESTED\n",
       test:run()
     )
