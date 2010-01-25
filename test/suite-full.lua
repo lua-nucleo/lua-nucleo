@@ -31,156 +31,54 @@ local ensure_equals,
 --------------------------------------------------------------------------------
 -- asserts
 do
+  local test_self_and_name = function(name, fn, self, msg)
+    print(name)
+    ensure_fails_with_substring(
+        name .. ": bad self (string)",
+        function() fn("") end,
+        "bad self"
+      )
+    msg = msg or "bad import name"
+    if msg ~= 0 then
+      ensure_fails_with_substring(
+          name .. ": " .. msg .. " (number)",
+          function() fn(self, 0) end,
+          msg
+        )
+    end
+  end
+
   print("\nAsserts:")
   local test = make_suite("test_empty", { name1 = true })
-
-  -- tests_for
-  ensure_fails_with_substring(
-      "test.tests_for('')",
-      function() test.tests_for("") end,
-      "bad self"
-    )
-
-  ensure_fails_with_substring(
-      "test.tests_for, test, 0",
-      function() test:tests_for(0) end,
-      "bad import name"
-    )
-
-  -- test:TODO
-  ensure_fails_with_substring(
-      "test.TODO('')",
-      function() test.TODO("") end,
-      "bad self"
-    )
-
-  ensure_fails_with_substring(
-      "test.TODO, test, 0",
-      function() test:TODO(0) end,
-      "bad msg"
-    )
-
-  -- test:UNTESTED
-  ensure_fails_with_substring(
-      "test.UNTESTED('')",
-      function()  test.UNTESTED("") end,
-      "bad self"
-    )
-
-  ensure_fails_with_substring(
-      "test.UNTESTED, test, 0",
-      function() test:UNTESTED(0)  end,
-      "bad import name"
-    )
-
-  -- test_for
-  ensure_fails_with_substring(
-      "test.test_for('')",
-      function() test.test_for("") end,
-      "bad self"
-    )
-
-   ensure_fails_with_substring(
-      "test.test_for, test, 0",
-      function() test:test_for(0) end,
-      "bad import name"
-    )
-
-  -- test
-  ensure_fails_with_substring(
-      "test.test('')",
-      function() test.test("") end,
-      "bad self"
-    )
-
-  ensure_fails_with_substring(
-      "test:test(0)",
-      function() test:test(0) end,
-      "bad import name"
-    )
-
+  test_self_and_name("test.tests_for", test.tests_for, test)
+  test_self_and_name("test.TODO", test.TODO, test, "bad msg")
+  test_self_and_name("test.UNTESTED", test.UNTESTED, test)
+  test_self_and_name("test.test_for", test.test_for, test)
+  test_self_and_name("test.test", test.test, test)
   ensure_fails_with_substring(
       "test.test(test, 'name'), { }",
       function() test:test "name" ({ }) end,
       "bad callback"
     )
-
-  -- factory
-  ensure_fails_with_substring(
-      "test.factory('')",
-      function() test.factory("") end,
-      "bad self"
-    )
-
-  ensure_fails_with_substring(
-      "test.factory, test, 0",
-      function() test:factory(0) end,
-      "bad import name"
-    )
-
-
+  test_self_and_name("test.factory", test.factory, test)
   ensure_fails_with_substring(
       "test.factory(test, 'name'), 0",
       function() test:factory "name1" (0)  end,
       "expected function or table"
     )
-
-  -- method
-  ensure_fails_with_substring(
-      "test.method('')",
-      function() test.method("") end,
-      "bad self"
-    )
-
-  ensure_fails_with_substring(
-      "test.method, test, 0",
-      function() test:method(0) end,
-      "bad import name"
-    )
-
-  -- methods
-  ensure_fails_with_substring(
-      "test.methods('')",
-      function() test.methods("") end,
-      "bad self"
-    )
-
-  ensure_fails_with_substring(
-      "test.methods, test, 0",
-      function() test:methods(0) end,
-      "bad import name"
-    )
-
-  -- run
-  ensure_fails_with_substring(
-      "test.run('')",
-      function() test.run("") end,
-      "bad self"
-    )
-
-  -- set_strict_mode
-  ensure_fails_with_substring(
-      "test.set_strict_mode('')",
-      function() test.set_strict_mode("") end,
-      "bad self"
-    )
-
-  ensure_fails_with_substring(
-      "test.set_strict_mode, test, 0",
-      function() test:set_strict_mode(0) end,
+  test_self_and_name("test.method", test.method, test)
+  test_self_and_name("test.methods", test.methods, test)
+  test_self_and_name("test.run", test.run, test, 0)
+  test_self_and_name(
+      "test.set_fail_on_first_error",
+      test.set_fail_on_first_error,
+      test,
       "bad flag"
     )
-
-  -- set_fail_on_first_error
-  ensure_fails_with_substring(
-      "test.set_fail_on_first_error('')",
-      function() test.set_fail_on_first_error("") end,
-      "bad self"
-    )
-
-  ensure_fails_with_substring(
-      "test.set_fail_on_first_error, test, 0",
-      function() test:set_fail_on_first_error(0) end,
+  test_self_and_name(
+      "test.set_fail_on_first_error",
+      test.set_fail_on_first_error,
+      test,
       "bad flag"
     )
 
@@ -190,13 +88,11 @@ do
       function() make_suite(0) end,
       "bad name"
     )
-
   ensure_fails_with_substring(
       "test.set_fail_on_first_error, test, 0",
       function() make_suite("suite_name", 0) end,
       "bad imports"
     )
-
   ensure_fails_with_substring(
       "test.set_fail_on_first_error, test, 0",
       function() make_suite("suite_name", { 1 }) end,
@@ -560,7 +456,7 @@ do
   ensure_error(
       "test:run()",
       "Suite `test' failed:\n"
-   .. " * Test `func2_two': test/suite-full.lua:549: Expected error.\n",
+   .. " * Test `func2_two': test/suite-full.lua:445: Expected error.\n",
       test:run()
     )
   ensure_equals("product", counter, 2 * 3 * 7 * 11)
@@ -570,7 +466,7 @@ do
   ensure_error(
       "test:run()",
       "Suite `test' failed:\n"
-   .. " * Test `func2_two': test/suite-full.lua:549: Expected error.\n"
+   .. " * Test `func2_two': test/suite-full.lua:445: Expected error.\n"
    .. " * Test `[STRICT MODE]': detected TODOs:\n"
    .. "   -- write tests for `func3'\n"
    .. "   -- TODOs can duplicate func names\n"
@@ -584,7 +480,7 @@ do
   ensure_error(
       "test:run()",
       "Suite `test' failed:\n"
-   .. " * Test `func2_two': test/suite-full.lua:549: Expected error.\n"
+   .. " * Test `func2_two': test/suite-full.lua:445: Expected error.\n"
    .. " * Test `[FAIL ON FIRST ERROR]': FAILED AS REQUESTED\n",
       test:run()
     )
