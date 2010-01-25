@@ -297,9 +297,11 @@ do
       counter = counter + 1
     end
   end)
+  ensure_equals("in strict mode", test:in_strict_mode(), false)
   ensure_equals("test:run()", test:run(), true)
   ensure_equals("Sum", counter, 1)
   test:set_strict_mode(true)
+  ensure_equals("in strict mode", test:in_strict_mode(), true)
   ensure_error(
       "test:run()",
       "Suite `test' failed:\n"
@@ -330,6 +332,7 @@ do
       test:run()
     )
   ensure_equals("Sum", counter, 11)
+  ensure_equals("fail_on_first_error", test:check_fail_on_first_error(), false)
   test:set_fail_on_first_error(true)
   ensure_error(
       "test:run()",
@@ -339,6 +342,8 @@ do
       test:run()
     )
   ensure_equals("Sum", counter, 12)
+  ensure_equals("fail_on_first_error", test:check_fail_on_first_error(), true)
+  print("ABOVE FAIL WAS EXPECTED")
 end
 
 do
@@ -555,7 +560,7 @@ do
   ensure_error(
       "test:run()",
       "Suite `test' failed:\n"
-   .. " * Test `func2_two': test/suite-full.lua:548: Expected error.\n",
+   .. " * Test `func2_two': test/suite-full.lua:549: Expected error.\n",
       test:run()
     )
   ensure_equals("product", counter, 2 * 3 * 7 * 11)
@@ -565,7 +570,7 @@ do
   ensure_error(
       "test:run()",
       "Suite `test' failed:\n"
-   .. " * Test `func2_two': test/suite-full.lua:548: Expected error.\n"
+   .. " * Test `func2_two': test/suite-full.lua:549: Expected error.\n"
    .. " * Test `[STRICT MODE]': detected TODOs:\n"
    .. "   -- write tests for `func3'\n"
    .. "   -- TODOs can duplicate func names\n"
@@ -579,7 +584,7 @@ do
   ensure_error(
       "test:run()",
       "Suite `test' failed:\n"
-   .. " * Test `func2_two': test/suite-full.lua:548: Expected error.\n"
+   .. " * Test `func2_two': test/suite-full.lua:549: Expected error.\n"
    .. " * Test `[FAIL ON FIRST ERROR]': FAILED AS REQUESTED\n",
       test:run()
     )

@@ -150,6 +150,10 @@ do
     return function(name) return methods(self, name) end
   end
 
+  local check_fail_on_first_error = function(self)
+    return self.fail_on_first_error_
+  end
+
   local in_strict_mode = function(self)
     return self.strict_mode_
   end
@@ -309,12 +313,13 @@ do
           tests_for = tests_for;
           group = group; -- Note this is an alias for tests_for().
           test_for = test_for;
-          in_strict_mode = in_strict_mode;
           test = test;
           case = case; -- Note this is an alias for test().
           run = run;
           set_strict_mode = set_strict_mode;
+          in_strict_mode = in_strict_mode;
           set_fail_on_first_error = set_fail_on_first_error; -- TODO: Test this!
+          check_fail_on_first_error = check_fail_on_first_error;
           UNTESTED = UNTESTED;
           TODO = TODO;
           factory = factory;
