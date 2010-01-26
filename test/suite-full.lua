@@ -8,8 +8,6 @@ dofile('lua-nucleo/import.lua')
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
-local __LINE__ = function() return debug.getinfo(2, 'l').currentline end
-
 local assert_is_number,
       assert_is_string,
       assert_is_table
@@ -22,11 +20,13 @@ local assert_is_number,
 
 local ensure_equals,
       ensure_error,
+      ensure_error_with_substring,
       ensure_fails_with_substring
       = import 'lua-nucleo/ensure.lua'
       {
         'ensure_equals',
         'ensure_error',
+        'ensure_error_with_substring',
         'ensure_fails_with_substring'
       }
 
@@ -58,13 +58,13 @@ do
   test_self_and_name("test.test_for", test.test_for, test)
   test_self_and_name("test.test", test.test, test)
   ensure_fails_with_substring(
-      "test.test(test, 'name'), { }",
+      "test.test(test, 'name'), { }: bad callback (table)",
       function() test:test "name" ({ }) end,
       "bad callback"
     )
   test_self_and_name("test.factory", test.factory, test)
   ensure_fails_with_substring(
-      "test.factory(test, 'name'), 0",
+      "test.factory(test, 'name'), 0: bad method list (number)",
       function() test:factory "name1" (0)  end,
       "expected function or table"
     )
@@ -78,7 +78,7 @@ do
       "bad flag"
     )
   test_self_and_name(
-      "test.set_fail_on_first_error",
+      "test_self_and_name",
       test.set_fail_on_first_error,
       test,
       "bad flag"
@@ -86,17 +86,17 @@ do
 
   -- make_suite
   ensure_fails_with_substring(
-      "make_suite, 0",
+      "make_suite, 0: bad name (number)",
       function() make_suite(0) end,
       "bad name"
     )
   ensure_fails_with_substring(
-      "test.set_fail_on_first_error, test, 0",
+      "make_suite: bad imports (number)",
       function() make_suite("suite_name", 0) end,
       "bad imports"
     )
   ensure_fails_with_substring(
-      "test.set_fail_on_first_error, test, 0",
+      "make_suite: bad imports value (number)",
       function() make_suite("suite_name", { 1 }) end,
       "string imports"
     )
@@ -461,7 +461,6 @@ do
     counter = counter * 7
     error("Expected error.")
   end)
-  local line = __LINE__() - 2 -- TODO: check hack
 
   test:UNTESTED "func3"
   test:TODO "TODOs can duplicate func names"
@@ -472,38 +471,35 @@ do
   test:method "method1" (function() counter = counter * 11 end)
   test:methods "method2" "method3"
 
-  ensure_error(
+  ensure_error_with_substring(
       "test:run()",
       "Suite `test' failed:\n"
-   .. " * Test `func2_two': test/suite-full.lua:" .. line
-   .. ": Expected error.\n",
+   .. " %* Test `func2_two': (.-): Expected error.",
       test:run()
     )
   ensure_equals("product", counter, 2 * 3 * 7 * 11)
 
   counter = 1
   test:set_strict_mode(true)
-  ensure_error(
+  ensure_error_with_substring(
       "test:run()",
       "Suite `test' failed:\n"
-   .. " * Test `func2_two': test/suite-full.lua:" .. line
-   .. ": Expected error.\n"
-   .. " * Test `[STRICT MODE]': detected TODOs:\n"
-   .. "   -- write tests for `func3'\n"
-   .. "   -- TODOs can duplicate func names\n"
-   .. "   -- func4\n\n",
+   .. " %* Test `func2_two': (.-): Expected error.\n"
+   .. " %* Test `%[STRICT MODE%]': detected TODOs:\n"
+   .. "   %-%- write tests for `func3'\n"
+   .. "   %-%- TODOs can duplicate func names\n"
+   .. "   %-%- func4",
       test:run()
     )
   ensure_equals("product", counter, 2 * 3 * 5 * 7 * 11)
 
   counter = 1
   test:set_fail_on_first_error(true)
-  ensure_error(
+  ensure_error_with_substring(
       "test:run()",
       "Suite `test' failed:\n"
-   .. " * Test `func2_two': test/suite-full.lua:" .. line
-   .. ": Expected error.\n"
-   .. " * Test `[FAIL ON FIRST ERROR]': FAILED AS REQUESTED\n",
+   .. " %* Test `func2_two': (.-): Expected error.\n"
+   .. " %* Test `%[FAIL ON FIRST ERROR%]': FAILED AS REQUESTED\n",
       test:run()
     )
   print("ABOVE FAIL WAS EXPECTED")
