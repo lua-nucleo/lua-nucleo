@@ -206,13 +206,34 @@ end
 local ensure_error = function(msg, expected_message, res, actual_message, ...)
   if res ~= nil then
     error(
-        "ensure_error failed: " .. msg .. ": failure expected, got non-nil result: `" .. tostring(res) .. "'",
+        "ensure_error failed: " .. msg
+     .. ": failure expected, got non-nil result: `" .. tostring(res) .. "'",
         2
       )
   end
 
   -- TODO: Improve error reporting
   ensure_strequals(msg, actual_message, expected_message)
+end
+
+--------------------------------------------------------------------------------
+
+local ensure_error_with_substring = function(msg, substring, res, err)
+  if res ~= nil then
+    error(
+        "ensure_error_with_substring failed: " .. msg
+     .. ": failure expected, got non-nil result: `" .. tostring(res) .. "'",
+        2
+      )
+  end
+
+  if not err:find(substring) and substring ~= err then
+    error(
+        "ensure_error_with_substring failed: " .. msg
+        .. ": can't find expected substring `" .. tostring(substring)
+        .. "' in error message:\n" .. err
+      )
+  end
 end
 
 --------------------------------------------------------------------------------
@@ -321,6 +342,7 @@ return
   ensure_tdeepequals = ensure_tdeepequals;
   ensure_strequals = ensure_strequals;
   ensure_error = ensure_error;
+  ensure_error_with_substring = ensure_error_with_substring;
   ensure_fails_with_substring = ensure_fails_with_substring;
   ensure_aposteriori_probability = ensure_aposteriori_probability;
   ensure_returns = ensure_returns;
