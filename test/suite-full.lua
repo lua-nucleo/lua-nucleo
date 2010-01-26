@@ -58,13 +58,13 @@ do
   test_self_and_name("test.test_for", test.test_for, test)
   test_self_and_name("test.test", test.test, test)
   ensure_fails_with_substring(
-      "test.test(test, 'name'), { }: bad callback (table)",
+      "test.test: bad callback (table)",
       function() test:test "name" ({ }) end,
       "bad callback"
     )
   test_self_and_name("test.factory", test.factory, test)
   ensure_fails_with_substring(
-      "test.factory(test, 'name'), 0: bad method list (number)",
+      "test.factory: bad method list (number)",
       function() test:factory "name1" (0)  end,
       "expected function or table"
     )
@@ -86,7 +86,7 @@ do
 
   -- make_suite
   ensure_fails_with_substring(
-      "make_suite, 0: bad name (number)",
+      "make_suite: bad name (number)",
       function() make_suite(0) end,
       "bad name"
     )
