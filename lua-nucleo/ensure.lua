@@ -305,13 +305,14 @@ end
 local ensure_returns = function(msg, num, expected, ...)
   local checker = make_checker()
   -- Explicit check to separate no-return-values from all-nils
-  if num ~= select("#", ...) then
+  local actual_num = select("#", ...)
+  if num ~= actual_num then
     checker:fail(
         "return value count mismatch: expected "
-        .. num .. " actual " .. select("#", ...)
+        .. num .. " actual " .. actual_num
       )
   end
-  for i = 1, num do
+  for i = 1, math_max(num, actual_num) do
     if not tdeepequals(expected[i], (select(i, ...))) then
       -- TODO: Enhance error reporting (especially for tables and long strings)
       checker:fail(
