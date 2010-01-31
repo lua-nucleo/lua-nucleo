@@ -18,7 +18,7 @@ do
       return table_concat(buf, "")
     end
 
-    return cat, concat
+    return cat, concat, buf
   end
 end
 
