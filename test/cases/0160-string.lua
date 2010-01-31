@@ -50,41 +50,36 @@ local test = make_suite("string", string_exports)
 test:tests_for "make_concatter"
 
 test "make_concatter-basic" (function()
-  local cat, concat, buf = make_concatter()
+  local cat, concat = make_concatter()
 
   ensure_equals("cat is function", type(cat), "function")
   ensure_equals("concat is function", type(concat), "function")
-  ensure_equals("buf is table", type(buf), "table")
 
   ensure_equals("cat returns self", cat("42"), cat)
-  ensure_tequals("buf has single element", buf, { "42" })
   ensure_equals("concat on single element", concat(), "42")
 end)
 
 test "make_concatter-empty" (function()
-  local cat, concat, buf = make_concatter()
+  local cat, concat = make_concatter()
 
-  ensure_tequals("buf is empty on empty data", buf, { })
   ensure_equals("concat on empty data is empty string", concat(), "")
 end)
 
 test "make_concatter-simple" (function()
-  local cat, concat, buf = make_concatter()
+  local cat, concat = make_concatter()
 
   cat "a"
   cat "bc" (42)
   cat "" "d" ""
 
-  ensure_tequals("buf", buf, { "a", "bc", 42, "", "d", "" })
   ensure_equals("concat", concat(), "abc42d")
 end)
 
 test "make_concatter-embedded-zeroes" (function()
-  local cat, concat, buf = make_concatter()
+  local cat, concat = make_concatter()
 
   cat "a" "\0" "bc\0" "def\0"
 
-  ensure_tequals("buf", buf, { "a", "\0", "bc\0", "def\0" })
   ensure_equals("concat", concat(), "a\0bc\0def\0")
 end)
 
