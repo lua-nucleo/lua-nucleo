@@ -20,14 +20,15 @@ do
 
         -- Serialize numeric indices
 
-        for i, v in ipairs(t) do
+        local next_i = 0
+        for i, v in ipairs(t) do -- TODO: Lua 5.2 warning. Rewrite.
           if i > 1 then -- TODO: Move condition out of the loop
             cat(",")
           end
           impl(v, cat, visited)
+          next_i = i
         end
-
-        local next_i = #t + 1
+        next_i = next_i + 1
 
         -- Serialize hash part
         -- Skipping comma only at first element if there is no numeric part.
