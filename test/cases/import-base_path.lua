@@ -7,6 +7,6 @@
 dofile('lua-nucleo/strict.lua') -- Import module requires strict
 loadfile('lua-nucleo/import.lua')("test/data/") -- Import module should be loaded manually
 
-local test_import = assert(assert(assert(loadfile("test/lib/import.lua"))())["test_import"])
+local test_import = assert(assert(assert(loadfile("test/test-lib/import.lua"))())["test_import"])
 
 test_import("")

@@ -43,7 +43,7 @@ local tset,
       }
 
 local make_value_generators
-      = import 'test/lib/value_generators.lua'
+      = import 'test/test-lib/value_generators.lua'
       {
         'make_value_generators'
       }

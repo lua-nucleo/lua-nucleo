@@ -10,12 +10,12 @@ math.randomseed(12345)
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
-local check_ok = import 'test/lib/tdeepequals-test-utils.lua' { 'check_ok' }
+local check_ok = import 'test/test-lib/tdeepequals-test-utils.lua' { 'check_ok' }
 local tserialize = import "lua-nucleo/tserialize.lua" { 'tserialize' }
 
 local gen_random_dataset,
       mutate =
-      import 'test/lib/table.lua'
+      import 'test/test-lib/table.lua'
       {
         'gen_random_dataset',
         'mutate'

@@ -39,7 +39,7 @@ test:tests_for 'is_nil'
 
 test "all_predicates" (function()
   local is = type_imports
-  
+
   local values =
   {
     -- ["nil"] = nil; -- Can't do nil values in tables.
@@ -51,11 +51,11 @@ test "all_predicates" (function()
     ["thread"] = coroutine.create(function() end);
     ["userdata"] = newproxy();
   }
-  
+
   assert(is.is_self == is.is_table)
-  
+
   assert(is.is_nil(nil) == true)
-  
+
   assert(is.is_type(42) == false)
   assert(is.is_type("") == false)
 

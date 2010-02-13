@@ -263,14 +263,30 @@ do
   print("\nSingle UNTESTED suite:")
   local test = make_suite("test", { to_test = true })
   test:UNTESTED "to_test"
-  ensure_equals("test:run()", test:run(), true)
+  if test:in_strict_mode() then
+    ensure_error(
+        "test:run()",
+        "Suite `test' failed:\n"
+     .. " * Test `[STRICT MODE]': detected TODOs:\n"
+     .. "   -- write tests for `to_test'\n\n",
+        test:run()
+      )
+  else ensure_equals("test:run()", test:run(), true) end
 end
 
 do
   print("\nSingle TODO suite:")
   local test = make_suite("test", { })
   test:TODO "to_test"
-  ensure_equals("test:run()", test:run(), true)
+  if test:in_strict_mode() then
+    ensure_error(
+        "test:run()",
+        "Suite `test' failed:\n"
+     .. " * Test `[STRICT MODE]': detected TODOs:\n"
+     .. "   -- to_test\n\n",
+        test:run()
+      )
+  else ensure_equals("test:run()", test:run(), true) end
 end
 
 do
@@ -444,6 +460,7 @@ do
       }
     )
   local counter = 1
+  test:set_strict_mode(false)
   test "any" (function()
     counter = counter * 2
   end)

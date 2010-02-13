@@ -8,7 +8,7 @@ dofile('lua-nucleo/import.lua')
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
 
-local check_ok  = import 'test/lib/tdeepequals-test-utils.lua' { 'check_ok' }
+local check_ok  = import 'test/test-lib/tdeepequals-test-utils.lua' { 'check_ok' }
 
 ---------------------------------------------------------------------------
 

@@ -18,7 +18,7 @@ local run_tests = assert(assert(assert(loadfile('lua-nucleo/suite.lua'))()).run_
 -- TODO: Also preserve random number generator's seed
 --       (save it and restore between suites)
 
-local tests_pr = assert(assert(loadfile('test/all-tests.lua'))())
+local tests_pr = assert(assert(loadfile('test/test-list.lua'))())
 
 local strict_mode = false
 local n = 1
@@ -35,7 +35,7 @@ for _, v in ipairs(tests_pr) do
   -- Checking directly to avoid escaping special characters (like '-')
   -- when running specific test
   if v == pattern or string.match(v, pattern) then
-    test_r[#test_r + 1] = "test/"..v..".lua"
+    test_r[#test_r + 1] = "test/cases/"..v..".lua"
   end
 end
 
