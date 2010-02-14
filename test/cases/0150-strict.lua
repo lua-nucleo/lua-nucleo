@@ -75,3 +75,10 @@ for name, flag in get_declared_iter_() do
 end
 
 assert(next(expected) == nil)
+
+assert(getmetatable(_G) ~= nil)
+uninstall_strict_mode_()
+assert(getmetatable(_G) == nil)
+for name, flag in get_declared_iter_() do
+  error("declared not empty")
+end
