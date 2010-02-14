@@ -5,7 +5,7 @@
 local type, pairs, error, rawget, rawset, tostring
     = type, pairs, error, rawget, rawset, tostring
 
-local declared = {}
+local declared = { }
 
 declare = function(name)
   declared[name] = true
@@ -32,7 +32,16 @@ get_declared_iter_ = function()
   return pairs(declared)
 end
 
-setmetatable(_G,{
+uninstall_strict_mode_ = function()
+  setmetatable(_G, nil)
+  declared = { }
+end
+
+if getmetatable(_G) ~= nil then
+  error("_G already got meatatable")
+end
+
+setmetatable(_G, {
   __index = function(t, k)
     if declared[k] then
       return rawget(t, k)
