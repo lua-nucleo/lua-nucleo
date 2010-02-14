@@ -14,7 +14,6 @@ local function find_all_files(path, regexp, dest)
         find_all_files(filepath, regexp, dest)
       elseif filename:find(regexp) then
         dest[#dest + 1] = filename
-        print(dest[#dest])
       end
     end
   end

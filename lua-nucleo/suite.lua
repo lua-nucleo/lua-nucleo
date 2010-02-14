@@ -372,6 +372,7 @@ local run_test = function(name, strict_mode)
     if not res then
       result, stage, msg = false, "run", run_err
     end
+    uninstall_strict_mode_()
   end
 
   setmetatable(_G, gmt)
