@@ -1,46 +1,41 @@
 -- all-tests.lua: the list of all tests in the library
--- This file is a part of lua-nucleo library
+-- This file is generetad by lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
 return
 {
-  'suite';
-  'suite-full';
-  'strict';
-  'import';
+  'algorithm';
+  'args';
+  'assert';
+  'checker';
+  'coro';
+  'deque';
+  'factory';
+  'functional';
   'import-base_path';
-  --
-  'tserialize-basic';
-  'tserialize-recursive';
-  'tserialize-metatables';
-  'tserialize-autogen';
-  --
-  'tdeepequals-basic-types';
-  'tdeepequals-basic-tables';
-  'tdeepequals-recursive';
-  'tdeepequals-userdata-functions-threads';
-  'tdeepequals-autogen';
-  --
+  'import';
+  'log';
+  'math';
+  'misc';
+  'priority_queue';
+  'random';
+  'strict';
+  'string';
+  'suite-full';
+  'suite';
   'table-utils';
   'table';
-  --
-  'coro';
-  'functional';
-  'factory';
-  'random';
-  'algorithm';
-  'math';
-  'string';
-  'args';
-  'misc';
+  'tdeepequals-autogen';
+  'tdeepequals-basic-tables';
+  'tdeepequals-basic-types';
+  'tdeepequals-recursive';
+  'tdeepequals-userdata-functions-threads';
+  'timed_queue';
+  'tserialize-autogen';
+  'tserialize-basic';
+  'tserialize-metatables';
+  'tserialize-recursive';
   'type';
   'typeassert';
-  'checker';
-  'assert';
-  'log';
-  'priority_queue';
-  'timed_queue';
-  'deque';
-  --
-  'interpolator';
+  'util-anim-interpolator';
 }
