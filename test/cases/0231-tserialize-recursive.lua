@@ -2,11 +2,7 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-dofile('lua-nucleo/strict.lua')
-dofile('lua-nucleo/import.lua')
-
-local make_suite = select(1, ...)
-assert(type(make_suite) == "function")
+local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
 local check_ok = import 'test/test-lib/tserialize-test-utils.lua' { 'check_ok' }
 

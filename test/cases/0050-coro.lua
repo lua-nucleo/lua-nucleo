@@ -9,16 +9,12 @@
 
 -- TODO: Benchmark coroutine.pcall against regular pcall.
 
-dofile('lua-nucleo/strict.lua') -- Import module requires strict
-dofile('lua-nucleo/import.lua') -- Import module should be loaded manually
+local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
 local select, assert, type, tostring = select, assert, type, tostring
 local table_concat = table.concat
 local coroutine_create, coroutine_yield, coroutine_status, coroutine_resume =
       coroutine.create, coroutine.yield, coroutine.status, coroutine.resume
-
-local make_suite = select(1, ...)
-assert(type(make_suite) == "function")
 
 local ensure,
       ensure_equals,

@@ -5,11 +5,7 @@
 -- TODO: Employ test:tests_for idiom to check that all exports from
 --       tdeepequals.lua are covered with tests.
 
-dofile('lua-nucleo/strict.lua')
-dofile('lua-nucleo/import.lua')
-
-local make_suite = select(1, ...)
-assert(type(make_suite) == "function")
+local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
 local check_ok  = import 'test/test-lib/tserialize-test-utils.lua' { 'check_ok' }
 

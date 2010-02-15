@@ -4,11 +4,7 @@
 
 -- TODO: Add more tests?
 
-dofile('lua-nucleo/strict.lua')
-dofile('lua-nucleo/import.lua')
-
-local make_suite = select(1, ...)
-assert(type(make_suite) == "function")
+local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
 local assert_is_table,
       assert_is_number

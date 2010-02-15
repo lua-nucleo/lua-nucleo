@@ -4,11 +4,7 @@
 
 -- TODO: Test times_and_values_looped, nearest_left_interpolator.
 
-dofile('lua-nucleo/strict.lua')
-dofile('lua-nucleo/import.lua') -- Import module should be loaded manually
-
-local make_suite = select(1, ...)
-assert(type(make_suite) == "function")
+local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
 local times_and_values_looped,
       looped_linear_interpolator,
