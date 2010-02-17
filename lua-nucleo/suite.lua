@@ -87,6 +87,20 @@ do
     return self:test(name)
   end
 
+  local set_up = function(self, fn)
+    assert(type(self) == "table", "bad self")
+    assert(type(fn) == "function", "bad function")
+    assert(self.tests_.set_up_ == nil, "set_up duplication")
+    self.tests_.set_up_ = fn
+  end
+
+  local tear_down = function(self, fn)
+    assert(type(self) == "table", "bad self")
+    assert(type(fn) == "function", "bad function")
+    assert(self.tests_.tear_down_ == nil, "tear_down duplication")
+    self.tests_.tear_down_ = fn
+  end
+
   local test = function(self, name)
     assert(type(self) == "table", "bad self")
     assert(type(name) == "string", "bad import name")
@@ -166,24 +180,57 @@ do
     print("Running suite", self.name_, self.strict_mode_ and "in STRICT mode")
 
     local failed_on_first_error = false
-
     local nok, errs = 0, {}
-    for i, test in ipairs(self.tests_) do
-      print("Suite test", test.name)
-      local res, err = xpcall(function() test.fn() end, err_handler)
-      if res then
+
+    local check_output = function(test, res, err, text, increment)
+      increment = increment or 0
+      print("increment", increment)
+      if res and increment ~= 0 then
         print("OK")
-        nok = nok + 1
-      else
+        nok = nok + increment
+      elseif res == false then
+        print("HERE!!!")
         errs[#errs + 1] = { name = test.name, err = err }
         if not self.fail_on_first_error_ then
-          print("ERR")
+          print("ERR", text)
         else
-          errs[#errs + 1] = { name = "[FAIL ON FIRST ERROR]", err = "FAILED AS REQUESTED" }
-          print("ERR (failing on first error)")
+          errs[#errs + 1] =
+          {
+            name = "[FAIL ON FIRST ERROR]",
+            err = "FAILED AS REQUESTED"
+          }
+          print("ERR (failing on first error)", text)
           failed_on_first_error = true
+          return false
+        end
+      end
+      return true
+    end
+
+    for i, test in ipairs(self.tests_) do
+      print("Suite test", test.name)
+      if self.tests_.set_up_ ~= nil then
+        local res_up, err_up = xpcall(
+            function() self.tests_.set_up_() end,
+            err_handler
+          )
+        if res_up == false then
+          print("000Set up error!")
+          check_output(test, res_up, err_up, "set up")
+          print("Set up error!")
           break
         end
+      end
+
+      local res, err = xpcall(function() test.fn() end, err_handler)
+      if check_output(test, res, err, "", 1) == false then break end
+
+      if self.tests_.tear_down_ ~= nil then
+        local res_down, err_down = xpcall(
+            function() self.tests_.tear_down_() end,
+            err_handler
+          )
+        if not check_output(test, res_down, err_down, "tear down") then break end
       end
     end
 
@@ -315,6 +362,8 @@ do
           test_for = test_for;
           test = test;
           case = case; -- Note this is an alias for test().
+          set_up = set_up;
+          tear_down = tear_down;
           run = run;
           set_strict_mode = set_strict_mode;
           in_strict_mode = in_strict_mode;
@@ -354,11 +403,9 @@ end
 local run_test = function(name, parameters_list)
   local result, stage, msg = true, nil, nil
   local strict_mode = parameters_list.strict_mode
-  local seed_value = parameters_list.seed_value
 
   local gmt = getmetatable(_G) -- Preserve metatable
-  math.randomseed(seed_value)
-
+  math.randomseed(parameters_list.seed_value)
   local fn, load_err = loadfile(name)
   if not fn then
     result, stage, msg = false, "load", load_err
