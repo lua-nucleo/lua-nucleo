@@ -20,12 +20,17 @@ local run_tests = assert(assert(assert(loadfile('lua-nucleo/suite.lua'))()).run_
 
 local tests_pr = assert(assert(loadfile('test/test-list.lua'))())
 
-local strict_mode = false
+local parameters_list = {}
 local n = 1
+-- TODO: we need to implement input params parser and default values injector
 if select(n, ...) == "--strict" then
-  strict_mode = true
+  parameters_list.strict_mode = true
   n = 2
+else
+  parameters_list.strict_mode = false
 end
+parameters_list.seed_value = 12345
+
 
 local pattern = select(n, ...) or ""
 assert(type(pattern) == "string")
@@ -49,4 +54,4 @@ if pattern ~= "" then
      )
 end
 
-run_tests(test_r, strict_mode)
+run_tests(test_r, parameters_list)

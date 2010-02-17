@@ -351,10 +351,13 @@ local make_suite_nonstrict = function(...)
   return suite
 end
 
-local run_test = function(name, strict_mode)
+local run_test = function(name, parameters_list)
   local result, stage, msg = true, nil, nil
+  local strict_mode = parameters_list.strict_mode
+  local seed_value = parameters_list.seed_value
 
   local gmt = getmetatable(_G) -- Preserve metatable
+  math.randomseed(seed_value)
 
   local fn, load_err = loadfile(name)
   if not fn then
@@ -380,8 +383,9 @@ local run_test = function(name, strict_mode)
   return result, stage, msg
 end
 
-local run_tests = function(names, strict_mode)
+local run_tests = function(names, parameters_list)
   local nok, errs = 0, {}
+  local strict_mode = parameters_list.strict_mode
 
   if strict_mode then
     print("Enabling STRICT mode")
@@ -391,7 +395,7 @@ local run_tests = function(names, strict_mode)
 
   for _, name in ipairs(names) do
     print("Running test", name)
-    local res, stage, err, todo = run_test(name, strict_mode)
+    local res, stage, err, todo = run_test(name, parameters_list)
     if res then
       print("OK")
       nok = nok + 1
