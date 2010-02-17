@@ -4,8 +4,6 @@
 
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
-math.randomseed(12345)
-
 local check_ok = import 'test/test-lib/tserialize-test-utils.lua' { 'check_ok' }
 local gen_random_dataset = import 'test/test-lib/table.lua' { 'gen_random_dataset' }
 

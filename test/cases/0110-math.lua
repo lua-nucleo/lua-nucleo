@@ -4,8 +4,6 @@
 
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
-math.randomseed(12345)
-
 --------------------------------------------------------------------------------
 
 local assert_is_number

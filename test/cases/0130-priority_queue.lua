@@ -4,9 +4,6 @@
 
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
-math.randomseed(12345)
---math.randomseed(os.time())
-
 local is_table
       = import 'lua-nucleo/type.lua'
       {

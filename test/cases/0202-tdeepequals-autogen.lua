@@ -4,8 +4,6 @@
 
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
-math.randomseed(12345)
-
 local check_ok = import 'test/test-lib/tdeepequals-test-utils.lua' { 'check_ok' }
 local tserialize = import "lua-nucleo/tserialize.lua" { 'tserialize' }
 

@@ -4,8 +4,6 @@
 
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
-math.randomseed(12345)
-
 local ensure_fails_with_substring
       = import 'lua-nucleo/ensure.lua'
       {
