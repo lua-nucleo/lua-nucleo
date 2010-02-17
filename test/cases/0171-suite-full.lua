@@ -312,6 +312,22 @@ do
   ensure_equals("test:run()", test:run(), true)
 end
 
+do
+  print("\nRandomseed value test:")
+  local test = make_suite("test", {})
+  local value, other_value
+  test "any" (function() value = math.random() end)
+  test "any_other" (function() other_value = math.random() end)
+  ensure_equals("test:run()", test:run(), true)
+  math.randomseed(12345)
+  ensure_equals("test:run()", value == math.random(), true)
+  -- math.randomseed(12345)
+  -- ensure_equals("test:run()", other_value == math.random(), true)
+  -- TODO: we get one randomseed for suite, not for case
+  math.randomseed(12346)
+  ensure_equals("test:run()", value == math.random(), false)
+end
+
 --------------------------------------------------------------------------------
 -- test:factory table input test
 do
