@@ -51,6 +51,18 @@ do
   test_self_and_name("test.tests_for", test.tests_for, test)
   test_self_and_name("test.TODO", test.TODO, test, "bad msg")
   test_self_and_name("test.UNTESTED", test.UNTESTED, test)
+  test_self_and_name("test.set_up", test.set_up, test, 0)
+  ensure_fails_with_substring(
+      "test.set_up: bad function (table)",
+      function() test:set_up()({ }) end,
+      "bad function"
+    )
+  test_self_and_name("test.tear_down", test.tear_down, test, 0)
+  ensure_fails_with_substring(
+      "test.tear_down: bad function (table)",
+      function() test:tear_down()({ }) end,
+      "bad function"
+    )
   test_self_and_name("test.test_for", test.test_for, test)
   test_self_and_name("test.test", test.test, test)
   ensure_fails_with_substring(
@@ -320,12 +332,71 @@ do
   test "any_other" (function() other_value = math.random() end)
   ensure_equals("test:run()", test:run(), true)
   math.randomseed(12345)
-  ensure_equals("test:run()", value == math.random(), true)
+  ensure_equals("random values equal", value == math.random(), true)
   -- math.randomseed(12345)
   -- ensure_equals("test:run()", other_value == math.random(), true)
   -- TODO: we get one randomseed for suite, not for case
   math.randomseed(12346)
-  ensure_equals("test:run()", value == math.random(), false)
+  ensure_equals("random values not equal", value == math.random(), false)
+end
+
+do
+  print("\nSet_up and tear_down test:")
+  local test = make_suite("test", {})
+  local value, other_value
+  local counter = 0
+  test:set_up (function()
+    math.randomseed(12345)
+  end)
+  test:tear_down (function()
+    counter = counter + 1
+  end)
+  test "any" (function() value = math.random() end)
+  test "any_other" (function() other_value = math.random() end)
+  ensure_equals("test:run()", test:run(), true)
+  ensure_equals("tear_down results", counter == 2, true)
+  math.randomseed(12345)
+  ensure_equals("random values equal", value == math.random(), true)
+  math.randomseed(12345)
+  ensure_equals("random values equal", other_value == math.random(), true)
+  math.randomseed(12346)
+  ensure_equals("random values not equal", value == math.random(), false)
+  ensure_fails_with_substring(
+    "double set_up",
+    function() test:set_up (function() end) end,
+    "set_up duplication"
+  )
+  ensure_fails_with_substring(
+    "double tear_down",
+    function() test:tear_down (function() end) end,
+    "tear_down duplication"
+  )
+end
+
+do
+  print("\nSet_up test fail:")
+  local test = make_suite("test", {})
+  test:set_up (function() error("expected error") end)
+  test "any" (function() end)
+  ensure_error_with_substring(
+      "test:run()",
+      "Suite `test' failed:\n"
+   .. " %* Test `any':(.-) expected error\n",
+      test:run()
+    )
+end
+
+do
+  print("\nTear_down test fail:")
+  local test = make_suite("test", {})
+  test:tear_down (function() error("expected error") end)
+  test "any" (function() end)
+  ensure_error_with_substring(
+      "test:run()",
+      "Suite `test' failed:\n"
+   .. " %* Test `any':(.-) expected error\n",
+      test:run()
+    )
 end
 
 --------------------------------------------------------------------------------
