@@ -2,6 +2,15 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
+--dofile('lua-nucleo/strict.lua')
+dofile('lua-nucleo/import.lua')
+
+local common_method_list
+      = import 'lua-nucleo/factory.lua'
+      {
+        'common_method_list'
+      }
+
 local print, loadfile, xpcall, error, ipairs, assert, type, next, pairs =
       print, loadfile, xpcall, error, ipairs, assert, type, next, pairs
 
@@ -16,25 +25,6 @@ local table_concat = table.concat
 local err_handler = function(err)
   print(debug_traceback(err, 2))
   return err
-end
-
-local common_method_list = function(factory, ...)
-  assert(type(factory) == "function", "`function' expected")
-  local factory_return = factory(...)
-  assert(type(factory_return) == "table", "`table' expected")
-  local method_list = {}
-  for k, v in pairs(factory_return) do
-    if type(v) == "function" then
-      if type(k) == "string" then
-        if k:sub(-1) ~= '_' then
-          method_list[#method_list + 1] = k
-        end
-      else
-        error("non-string key for function value")
-      end
-    end
-  end
-  return method_list
 end
 
 local make_suite
@@ -472,5 +462,4 @@ return
 {
   run_tests = run_tests;
   make_suite = make_suite;
-  common_method_list = common_method_list;
 }
