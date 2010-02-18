@@ -2,6 +2,8 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
+local print, string, io, os = print, string, io, os
+
 local lfs = require 'lfs'
 
 local function find_all_files(path, regexp, dest)
@@ -20,8 +22,38 @@ local function find_all_files(path, regexp, dest)
   return dest
 end
 
+-- get all library files
+local lib_files = find_all_files("lua-nucleo", ".lua")
+
+-- get all test cases
 local cases = find_all_files("test/cases", ".lua")
 
+-- check all library files got test cases
+print("Test list generation check:")
+for i = 1, #lib_files do
+  local lib_file = lib_files[i]
+  lib_file = lib_file:match("([%w%-_]+).lua")
+  local match_found = false
+  io.write(lib_file .. ": ")
+  lib_file = lib_file:gsub("%-", "%%%-") -- replace "-" with "%-" in names
+  for j = 1, #cases do
+    local case_j = cases[j]
+    if string.match(case_j, "%-" .. lib_file .. "[%-%.]") then
+      match_found = true
+      io.write(case_j .. "; ")
+    end
+  end
+  if match_found == false then
+    print("no tests found.\nTest list generation failed!\n")
+    os.remove("test/test-list.lua")
+    return nil
+  end
+  io.write("\n")
+end
+print("OK\n")
+
+-- write test list
+print("Test list file write:")
 local file, err = io.open("test/test-list.lua", "w")
 file:write("-- all-tests.lua: the list of all tests in the library\n"
         .. "-- This file is generetad by lua-nucleo library\n"
@@ -31,8 +63,5 @@ for i = 1, #cases do
   file:write("  '" .. cases[i]:match("([%w%-_]+).lua") .. "';\n")
 end
 file:write("}\n")
-
--- TODO: find that tests match library
--- local libraries = find_all_files("./lua-nucleo", ".lua")
-
 file:close()
+print("OK\n")
