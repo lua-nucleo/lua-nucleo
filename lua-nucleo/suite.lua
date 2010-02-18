@@ -174,12 +174,10 @@ do
 
     local check_output = function(test, res, err, text, increment)
       increment = increment or 0
-      print("increment", increment)
       if res and increment ~= 0 then
         print("OK")
         nok = nok + increment
       elseif res == false then
-        print("HERE!!!")
         errs[#errs + 1] = { name = test.name, err = err }
         if not self.fail_on_first_error_ then
           print("ERR", text)
@@ -204,10 +202,7 @@ do
             function() self.tests_.set_up_() end,
             err_handler
           )
-        if res_up == false then
-          print("000Set up error!")
-          check_output(test, res_up, err_up, "set up")
-          print("Set up error!")
+        if not check_output(test, res_up, err_up, "set up") then
           break
         end
       end
