@@ -1,4 +1,4 @@
--- strict.lua: tests for global environment protection
+-- 0150-strict.lua: tests for global environment protection
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
@@ -11,7 +11,7 @@
 --
 
 allowed_global = 1
-dofile('lua-nucleo/strict.lua')
+local make_suite = assert(loadfile('test/test-lib/init/no-suite-no-import.lua'))(...)
 allowed_global = 2
 
 local a0 = allowed_global

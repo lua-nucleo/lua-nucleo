@@ -1,4 +1,4 @@
--- random.lua: tests for utilities for random generation
+-- 0140-random.lua: tests for utilities for random generation
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
@@ -139,6 +139,7 @@ test:group "validate_probability_rough"
 
 --------------------------------------------------------------------------------
 
+-- wrong input test
 test 'validate_probability_rough-input' (function()
   print("Wrong inputs:")
   ensure_fails_with_substring(
@@ -148,43 +149,63 @@ test 'validate_probability_rough-input' (function()
     )
   ensure_fails_with_substring(
       "wrong arguments",
-      function() validate_probability_rough({1}, "b") end,
+      function() validate_probability_rough({ 1 }, "b") end,
       "expected `table', got `string'"
     )
-  local res, err = validate_probability_rough({1, 3}, {3, 5, 6})
+  local res, err = validate_probability_rough({ 1, 3 }, { 3, 5, 6 })
   if err ~= nil then print(err) else error("wrong input") end
-  res, err = validate_probability_rough({1}, {1})
+  res, err = validate_probability_rough({ 1 }, { 1 })
   if err ~= nil then print(err) else error("wrong input") end
-  res, err = validate_probability_rough({1, 2, 3}, {1, 2, 3})
+  res, err = validate_probability_rough({ 1, 2, 3 }, { 1, 2, 3 })
   if err ~= nil then print(err) else error("wrong input") end
 end)
 
 --------------------------------------------------------------------------------
 
 test 'validate_probability_rough-simple1' (function()
-  local weights = {0,5; 0,5}
-  if validate_probability_rough(weights, generate_experiments(1000, weights)) then
+  local weights = { 0,5; 0,5 }
+  if
+    validate_probability_rough(
+        weights,
+        generate_experiments(1000, weights)
+      )
+  then
     error("Simple test failed.")
   end
 end)
 
 test 'validate_probability_rough-simple2' (function()
-  local weights = {0,5; 0,25; 0,25}
-  if validate_probability_rough(weights, generate_experiments(1000, weights)) then
+  local weights = { 0,5; 0,25; 0,25 }
+  if
+    validate_probability_rough(
+        weights,
+        generate_experiments(1000, weights)
+      )
+  then
     error("Simple test failed.")
   end
 end)
 
 test 'validate_probability_rough-simple3' (function()
-  local weights = {0,6; 0,3; 0,05; 0,05}
-  if validate_probability_rough(weights, generate_experiments(1000, weights)) then
+  local weights = { 0,6; 0,3; 0,05; 0,05 }
+  if
+    validate_probability_rough(
+        weights,
+        generate_experiments(1000, weights)
+      )
+  then
     error("Simple test failed.")
   end
 end)
 
+-- simple wrong test
 test 'validate_probability_rough-simple4' (function()
-  -- simple wrong test
-  if validate_probability_rough({0.6, 0.4}, generate_experiments(1000, {0.4, 0.6})) ~= false then
+  if
+    validate_probability_rough(
+        { 0.6, 0.4 },
+        generate_experiments(1000, { 0.4, 0.6 })
+      ) ~= false
+  then
     error("Simple test failed.")
   end
 end)
@@ -249,7 +270,7 @@ test 'validate_probability_rough-complex' (function()
     local num_experiments = check(
         NUM_CYCLES,
         table_size,
-        {},
+        { },
         generate_experiments(NUM_SET, generate_weights(table_size)),
         true
       )
@@ -268,7 +289,7 @@ test 'validate_probability_rough-complex' (function()
         NUM_CYCLES,
         table_size,
         generate_weights(table_size),
-        {},
+        { },
         false,
         true,
         NUM_SET
@@ -323,7 +344,7 @@ do
       power, -- 10^power high weight value
       are_low_rare -- if true table has single value = 1 and other = 10^power
     )
-    local weights = {}
+    local weights = { }
     local powered = 10 ^ power
 
     -- filling table
@@ -343,7 +364,7 @@ do
     return weights
   end
 
-  local weights_closure = {}
+  local weights_closure = { }
   -- is passed to validate_probability_precise
   local generate_experiments_defined = function(num_experiments)
     return generate_experiments(num_experiments, weights_closure)
@@ -367,28 +388,28 @@ do
   end
 
   test 'validate_probability_precise-simple1' (function()
-    weights_closure = {0.45, 0.55}
+    weights_closure = { 0.45, 0.55 }
     check(weights_closure, generate_experiments_defined, true, true)
-    check({0.5, 0.5}, generate_experiments_defined, false, true)
+    check({ 0.5, 0.5 }, generate_experiments_defined, false, true)
   end)
 
   test 'validate_probability_precise-simple2' (function()
-    weights_closure = {0.3, 0.6, 0.1}
+    weights_closure = { 0.3, 0.6, 0.1 }
     check(weights_closure, generate_experiments_defined, true, true)
-    check({0.275, 0.625, 0.1}, generate_experiments_defined, false, true)
+    check({ 0.275, 0.625, 0.1 }, generate_experiments_defined, false, true)
   end)
 
   test 'validate_probability_precise-simple3' (function()
-    weights_closure = {0.2, 0.2, 0.2, 0.2}
+    weights_closure = { 0.2, 0.2, 0.2, 0.2 }
     check(weights_closure, generate_experiments_defined, true, true)
-    check({0.22, 0.19, 0.19, 0.2}, generate_experiments_defined, false, true)
+    check({ 0.22, 0.19, 0.19, 0.2 }, generate_experiments_defined, false, true)
   end)
 
   test 'validate_probability_precise-simple4' (function()
-    weights_closure = {0.1, 0.15, 0.2, 0.25, 0.3}
+    weights_closure = { 0.1, 0.15, 0.2, 0.25, 0.3 }
     check(weights_closure, generate_experiments_defined, true, true)
     check(
-        {0.09, 0.15, 0.2, 0.25, 0.301},
+        { 0.09, 0.15, 0.2, 0.25, 0.301 },
         generate_experiments_defined,
         false,
         false
@@ -434,7 +455,8 @@ do
           -- create wrong weights (by adding small value) and check
           local weights_closure_false = tclone(weights_closure)
           local ran_key = math_random(i)
-          weights_closure_false[ran_key] = weights_closure_false[ran_key] + i
+          weights_closure_false[ran_key] =
+            weights_closure_false[ran_key] + 3 * i
           check(weights_closure_false, generate_experiments_defined, false)
 
           if i > 2 then
@@ -444,7 +466,8 @@ do
             -- create wrong weights (by adding small value) and check
             weights_closure_false = tclone(weights_closure)
             ran_key = math_random(i)
-            weights_closure_false[ran_key] = weights_closure_false[ran_key] + i
+            weights_closure_false[ran_key] =
+              weights_closure_false[ran_key] + 3 * i
             check(weights_closure_false, generate_experiments_defined, false)
           end
         end

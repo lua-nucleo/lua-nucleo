@@ -1,4 +1,4 @@
--- tdeepequals-basic-tables.lua: basic table tests for tdeepequals
+-- 0201-tdeepequals-basic-tables.lua: basic table tests for tdeepequals
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 

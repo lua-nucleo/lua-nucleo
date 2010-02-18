@@ -1,4 +1,4 @@
--- suite.lua: a simple test suite test
+-- 0170-suite.lua: a simple test suite test
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
@@ -6,12 +6,7 @@
 -- TODO: Test make_suite with imports_list argument and related methods.
 -- TODO: Test strict mode
 
-local make_suite = select(1, ...)
-
-dofile('lua-nucleo/strict.lua')
--- Note we do not use import() here.
-
-assert(type(make_suite) == "function")
+local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
 assert(pcall(function() make_suite() end) == false)
 
