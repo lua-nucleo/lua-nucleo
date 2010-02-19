@@ -28,6 +28,5 @@ test "generate-test-list" (function()
   end
 end)
 
-test:TODO "Do testing here"
 --------------------------------------------------------------------------------
 assert(test:run())
