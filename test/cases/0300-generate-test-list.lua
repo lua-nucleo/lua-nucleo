@@ -10,5 +10,7 @@ test "generate-test-list" (function()
   --uninstall_strict_mode_()
   loadfile('test/test-lib/generate-test-list.lua')("test/data/generate-test-list/lib test/data/generate-test-list/cases")
 end)
+
+test:TODO "Do testing here"
 --------------------------------------------------------------------------------
 assert(test:run())
