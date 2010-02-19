@@ -4,8 +4,17 @@
 
 local print, string, io, os = print, string, io, os
 
-local lfs = require 'lfs'
+if not pcall(require, 'luarocks.require') then
+  print("Warning: luarocks not found.")
+end
 
+pcall(require, 'lfs')
+if lfs == nil then
+  print("lfs include failed. Test list was not generated.")
+  return
+end
+
+local lfs = lfs
 local function find_all_files(path, regexp, dest)
   dest = dest or {}
   for filename in lfs.dir(path) do
