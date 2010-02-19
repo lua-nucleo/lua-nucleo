@@ -8,9 +8,11 @@ if not pcall(require, 'luarocks.require') then
   print("Warning: luarocks not found.")
 end
 
-if pcall(require, 'lfs') == false then
-  print("lfs include failed. Test list was not generated.")
-  return 0
+if lfs == nil then
+  if pcall(require, 'lfs') == false then
+    print("lfs include failed. Test list was not generated.")
+    return 0
+  end
 end
 
 local lfs = lfs
@@ -31,10 +33,20 @@ local function find_all_files(path, regexp, dest)
   return dest
 end
 
-local lib_path, case_path, extension = select(1, ...)
-
+-- parsing input string
+local input_string = select(1, ...)
+local lib_path, case_path, file_to_save, extension
+if input_string ~= nil then
+  local input_table = { }
+  for word in input_string:gmatch("[%a,._/%-]+") do
+    input_table[#input_table + 1] = word
+  end
+  lib_path, case_path, file_to_save, extension =
+    input_table[1], input_table[2], input_table[3], input_table[4]
+end
 lib_path = lib_path or "lua-nucleo"
 case_path = case_path or "test/cases"
+file_to_save = file_to_save or "test/test-list.lua"
 extension = extension or ".lua"
 
 -- get all library files
@@ -69,7 +81,7 @@ print("OK\n")
 
 -- write test list
 print("Test list file write:")
-local file, err = io.open("test/test-list.lua", "w")
+local file, err = io.open(file_to_save, "w")
 file:write("-- all-tests.lua: the list of all tests in the library\n"
         .. "-- This file is generetad by lua-nucleo library\n"
         .. "-- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)\n\n"
