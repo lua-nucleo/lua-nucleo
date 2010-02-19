@@ -8,13 +8,13 @@ if not pcall(require, 'luarocks.require') then
   print("Warning: luarocks not found.")
 end
 
-pcall(require, 'lfs')
-if lfs == nil then
+if pcall(require, 'lfs') == false then
   print("lfs include failed. Test list was not generated.")
-  return
+  return 0
 end
 
 local lfs = lfs
+
 local function find_all_files(path, regexp, dest)
   dest = dest or {}
   for filename in lfs.dir(path) do
@@ -31,11 +31,17 @@ local function find_all_files(path, regexp, dest)
   return dest
 end
 
+local lib_path, case_path, extension = select(1, ...)
+
+lib_path = lib_path or "lua-nucleo"
+case_path = case_path or "test/cases"
+extension = extension or ".lua"
+
 -- get all library files
-local lib_files = find_all_files("lua-nucleo", ".lua")
+local lib_files = find_all_files(lib_path, extension)
 
 -- get all test cases
-local cases = find_all_files("test/cases", ".lua")
+local cases = find_all_files(case_path, extension)
 
 -- check all library files got test cases
 print("Test list generation check:")
