@@ -35,7 +35,7 @@ if test_it then
     end
   end)
 else
-  test:TODO "LFS not included, generate-test-list cant be tested."
+  test:TODO "LFS not included, generate-test-list can't be tested."
 end
 
 --------------------------------------------------------------------------------
