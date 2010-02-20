@@ -13,27 +13,27 @@ local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 local test = make_suite("generate-test-list", { })
 
 if test_it then
-test "generate-test-list" (function()
-  -- delete file if exist
-  local file, err = io.open("test/data/generate-test-list/test-list-standard.lua", "r")
-  if err then error("Error:" .. err) end
-  local standard_file_content = file:read("*all")
-  file:close()
+  test "generate-test-list" (function()
+    -- delete file if exist
+    local file, err = io.open("test/data/generate-test-list/test-list-standard.lua", "r")
+    if err then error("Error:" .. err) end
+    local standard_file_content = file:read("*all")
+    file:close()
 
-  os.remove("test/data/generate-test-list/test-list.lua")
-  loadfile('test/test-lib/generate-test-list.lua')(
-      "test/data/generate-test-list/lib " ..
-      "test/data/generate-test-list/cases " ..
-      "test/data/generate-test-list/test-list.lua")
+    os.remove("test/data/generate-test-list/test-list.lua")
+    loadfile('test/test-lib/generate-test-list.lua')(
+        "test/data/generate-test-list/lib " ..
+        "test/data/generate-test-list/cases " ..
+        "test/data/generate-test-list/test-list.lua")
 
-  local file, err = io.open("test/data/generate-test-list/test-list.lua", "r")
-  if err then error("Error:" .. err) end
-  local generated_file_content = file:read("*all")
-  file:close()
-  if standard_file_content ~= generated_file_content then
-    error("Generated file doesnt match standard")
-  end
-end)
+    local file, err = io.open("test/data/generate-test-list/test-list.lua", "r")
+    if err then error("Error:" .. err) end
+    local generated_file_content = file:read("*all")
+    file:close()
+    if standard_file_content ~= generated_file_content then
+      error("Generated file doesnt match standard")
+    end
+  end)
 else
   test:TODO "LFS not included, generate-test-list cant be tested."
 end
