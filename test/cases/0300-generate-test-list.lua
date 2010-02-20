@@ -2,10 +2,17 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-local make_suite = assert(loadfile('test/test-lib/init/strict-lfs.lua'))(...)
+if not pcall(require, 'luarocks.require') then
+  print("Warning: luarocks not found.")
+end
 
+test_it = pcall(require, 'lfs')
+
+local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 -- TODO: write tests here
 local test = make_suite("generate-test-list", { })
+
+if test_it then
 test "generate-test-list" (function()
   -- delete file if exist
   local file, err = io.open("test/data/generate-test-list/test-list-standard.lua", "r")
@@ -27,6 +34,9 @@ test "generate-test-list" (function()
     error("Generated file doesnt match standard")
   end
 end)
+else
+  test:TODO "LFS not included, generate-test-list cant be tested."
+end
 
 --------------------------------------------------------------------------------
 assert(test:run())
