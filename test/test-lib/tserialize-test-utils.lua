@@ -11,11 +11,13 @@ local pack = import 'lua-nucleo/args.lua' { 'pack' }
 local check_fn_ok = function(eq, ...)
   local saved = tserialize(...)
   assert(type(saved) == "string")
+  --[[
   print(
       "saved length", #saved,
       "(truncated to 100 chars, non-printable chars are urlencoded)"
     )
   print(escape_string(saved:sub(1, 100)))
+  ]] -- commented due to massive output
   local ne, expected = pack (...)
   local nl, loaded = pack(assert(loadstring(saved))())
   ensure_equals("Returned values quantity", ne, nl)
@@ -24,13 +26,13 @@ local check_fn_ok = function(eq, ...)
 end
 
 local check_ok = function(...)
-  print("check_ok started")
+  --print("check_ok started")
   local ret = check_fn_ok(tdeepequals, ...)
   if ret then
-    print("check_ok successful")
+    --print("check_ok successful")
     return true
   else
-    print("check_ok failed")
+    --print("check_ok failed")
     return false
   end
 end

@@ -12,9 +12,10 @@ assert(type(tdeepequals) == "function")
 local function check_ok_ser(t1,t2,rez,ser)
   assert(type(rez) == "boolean","Result type must be a number")
   local r = tdeepequals(t1,t2)
-  print("First  = ", escape_string(ser(t1)))
-  print("Second = ", escape_string(ser(t2)))
-  print("Result = ", r)
+  --print("First  = ", escape_string(ser(t1)))
+  --print("Second = ", escape_string(ser(t2)))
+  --print("Result = ", r)
+  -- commented due to massive output
   assert(r == rez, "Expected:"..tostring(rez))
 end
 local function check_ok(t1, t2, rez)
