@@ -13,7 +13,7 @@ do
   local ok
   ok, lfs = pcall(require, 'lfs')
   if not ok then
-    error("lfs not found")
+    error("Failed to require 'lfs'. Skipping test list refresh.")
   end
 end
 
