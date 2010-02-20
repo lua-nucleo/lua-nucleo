@@ -8,14 +8,14 @@ if not pcall(require, 'luarocks.require') then
   print("Warning: luarocks not found.")
 end
 
-if lfs == nil then
-  if pcall(require, 'lfs') == false then
-    print("lfs include failed. Test list was not generated.")
-    return 0
+local lfs
+do
+  local ok
+  ok, lfs = pcall(require, 'lfs')
+  if not ok then
+    error("lfs not found")
   end
 end
-
-local lfs = lfs
 
 local function find_all_files(path, regexp, dest)
   dest = dest or {}
