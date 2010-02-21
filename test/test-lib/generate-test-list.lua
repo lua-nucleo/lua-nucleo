@@ -82,9 +82,10 @@ print("OK\n")
 -- write test list
 print("Test list file write:")
 local file, err = io.open(file_to_save, "w")
-file:write("-- all-tests.lua: the list of all tests in the library\n"
+file:write("-- test-list.lua: the list of all tests in the library\n"
         .. "-- This file is generetad by lua-nucleo library\n"
-        .. "-- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)\n\n"
+        .. "-- Copyright (c) lua-nucleo authors"
+        .. "(see file `COPYRIGHT` for the license)\n\n"
         .. "return\n{\n")
 for i = 1, #cases do
   file:write("  '" .. cases[i]:match("([%w%-_]+).lua") .. "';\n")
