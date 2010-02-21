@@ -33,6 +33,7 @@ if test_it then
     if standard_file_content ~= generated_file_content then
       error("Generated file doesnt match standard")
     else
+      -- removing generated file, as it completely matches test-list-standard
       os.remove("test/data/generate-test-list/test-list.lua")
     end
   end)
