@@ -57,4 +57,3 @@ int dump_lua_stack(lua_State * L, int base)
 
   return 1;
 }
-

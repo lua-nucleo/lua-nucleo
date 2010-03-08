@@ -53,7 +53,7 @@ fi
 
 # TODO: Add error-handling!
 
-${CMD} 
+${CMD}
 
 echo "Updating VERSION file"
 echo ${LUA_NUCLEO_NEW_VERSION} >${DEST_VERSION_PATH}
