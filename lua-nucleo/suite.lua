@@ -387,6 +387,12 @@ end
 
 local run_test = function(name, parameters_list)
   local result, stage, msg = true, nil, nil
+
+  -- TODO: Remove. Legacy code compatibility
+  if type(parameters_list) == "boolean" then
+    parameters_list = { strict_mode = parameters_list }
+  end
+
   local strict_mode = not not parameters_list.strict_mode
 
   local gmt = getmetatable(_G) -- Preserve metatable
