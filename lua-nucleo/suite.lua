@@ -390,7 +390,11 @@ local run_test = function(name, parameters_list)
 
   -- TODO: Remove. Legacy code compatibility
   if type(parameters_list) == "boolean" then
-    parameters_list = { strict_mode = parameters_list }
+    parameters_list =
+    {
+      strict_mode = parameters_list;
+      seed_value = 12345;
+    }
   end
 
   local strict_mode = not not parameters_list.strict_mode
@@ -423,7 +427,17 @@ end
 
 local run_tests = function(names, parameters_list)
   local nok, errs = 0, {}
-  local strict_mode = parameters_list.strict_mode
+
+  -- TODO: Remove. Legacy code compatibility
+  if type(parameters_list) == "boolean" then
+    parameters_list =
+    {
+      strict_mode = parameters_list;
+      seed_value = 12345;
+    }
+  end
+
+  local strict_mode = not not parameters_list.strict_mode
 
   if strict_mode then
     print("Enabling STRICT mode")
