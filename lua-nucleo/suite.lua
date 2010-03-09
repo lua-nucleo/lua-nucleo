@@ -387,7 +387,7 @@ end
 
 local run_test = function(name, parameters_list)
   local result, stage, msg = true, nil, nil
-  local strict_mode = parameters_list.strict_mode
+  local strict_mode = not not parameters_list.strict_mode
 
   local gmt = getmetatable(_G) -- Preserve metatable
   math.randomseed(parameters_list.seed_value)
