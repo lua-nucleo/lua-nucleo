@@ -2,7 +2,7 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-local assert, tostring = assert, tostring
+local assert, tostring, select = assert, tostring, select
 local table_concat = table.concat
 
 -- TODO: Port to method_arguments()
@@ -20,8 +20,14 @@ do
     assert(is_self(self))
     if not var then
       self:fail(
-          (msg or "expectation failed")..": "
-       .. (tostring(...) or '(no additional error message)')
+          (msg or "expectation failed") .. ": "
+       .. (
+            tostring(
+                (select("#", ...) == 0)
+                  and '(no additional error message)'
+                   or (...)
+              )
+          )
         )
     end
     return var, ... -- Note input is passed through regardless of error.

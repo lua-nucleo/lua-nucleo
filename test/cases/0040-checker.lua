@@ -112,6 +112,24 @@ test "ensure-fails" (function()
   ensure_tequals("2: result custom", { checker:result("p:", ":s") }, { nil, "p:my message 1: 42:smy message 2: nil" })
 end)
 
+test "ensure-fails-no-third-argument" (function()
+  local checker = make_checker()
+
+  ensure_equals("empty is good", checker:good(), true)
+
+  ensure_tequals(
+      "failed ensure still returns arguments with false",
+      { checker:ensure("my message 1", false) },
+      { false }
+    )
+
+  ensure_equals("1: is bad", checker:good(), nil)
+  ensure_equals("1: message default", checker:msg(), "\nmy message 1: (no additional error message)")
+  ensure_equals("1: message custom", checker:msg("p:", ":s"), "p:my message 1: (no additional error message)")
+  ensure_tequals("1: result default", { checker:result() }, { nil, "\nmy message 1: (no additional error message)" })
+  ensure_tequals("1: result custom", { checker:result("p:", ":s") }, { nil, "p:my message 1: (no additional error message)" })
+end)
+
 --------------------------------------------------------------------------------
 
 assert(test:run())
