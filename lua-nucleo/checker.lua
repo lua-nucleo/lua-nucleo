@@ -44,12 +44,11 @@ do
   local result = function(self, prefix, glue)
     assert(is_self(self))
 
-    local good, msg = self:good(), nil
-    if not good then
-      msg = self:msg(prefix, glue)
+    if self:good() then
+      return true
     end
 
-    return good, msg
+    return nil, self:msg(prefix, glue)
   end
 
   local good = function(self)
