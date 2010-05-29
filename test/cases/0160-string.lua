@@ -83,6 +83,14 @@ test "make_concatter-embedded-zeroes" (function()
   ensure_equals("concat", concat(), "a\0bc\0def\0")
 end)
 
+test "make_concatter-glue" (function()
+  local cat, concat = make_concatter()
+
+  cat "a" "\0" "bc\0" "def\0"
+
+  ensure_equals("concat", concat("{\0}"), "a{\0}\0{\0}bc\0{\0}def\0")
+end)
+
 --------------------------------------------------------------------------------
 
 test:tests_for "trim"

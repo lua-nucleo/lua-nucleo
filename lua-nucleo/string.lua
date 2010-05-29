@@ -14,8 +14,8 @@ do
       return cat
     end
 
-    local concat = function()
-      return table_concat(buf, "")
+    local concat = function(glue)
+      return table_concat(buf, glue or "")
     end
 
     return cat, concat
