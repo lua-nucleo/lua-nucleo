@@ -84,6 +84,14 @@ local test_import = function(BASE_PATH)
     assert(pcall(function()
         import(BASE_PATH..'import/good.lua') {'x', 'y'} end
       ) == false)
+
+    assert(pcall(function()
+        import(BASE_PATH..'import/circular-A.lua') () end
+      ) == false)
+
+    assert(pcall(function()
+        import(BASE_PATH..'import/circular-self.lua') () end
+      ) == false)
   end
 end
 

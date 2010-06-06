@@ -24,7 +24,9 @@ do
 end
 
 do
-  local import_cache = {}
+  local import_cache = { }
+
+  local import_in_progress_tag = function() end
 
   import = function(filename)
     local t
@@ -36,8 +38,11 @@ do
 
       t = import_cache[filename]
       if t == nil then
+        import_cache[filename] = import_in_progress_tag
         t = assert(assert(loadfile(full_path))(), "import: bad implementation", 2)
         import_cache[filename] = t
+      elseif t == import_in_progress_tag then
+        error("import: cyclic dependency detected while loading: "..filename, 2)
       end
     else
       error("import: bad filename type: "..fn_type, 2)
