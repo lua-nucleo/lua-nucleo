@@ -42,4 +42,5 @@ return
   '0280-language';
   '0290-tstr';
   '0300-generate-test-list';
+  '0310-sandbox';
 }
