@@ -4,6 +4,7 @@
 
 local table_concat, table_insert = table.concat, table.insert
 local string_find, string_sub = string.find, string.sub
+local assert = assert
 
 local make_concatter -- TODO: rename, is not factory
 do
@@ -91,6 +92,31 @@ local split_by_char = function(str, div)
   return result
 end
 
+local count_substrings = function(str, substr)
+  local count = 0
+
+  local s, e = 0, 0
+  while true do
+    s, e = str:find(substr, e + 1, true)
+    if s ~= nil then
+      count = count + 1
+    else
+      break
+    end
+  end
+
+  return count
+end
+
+local split_by_offset = function(str, offset, skip_right)
+  assert(offset <= #str)
+  return str:sub(1, offset), str:sub(offset + 1 + (skip_right or 0))
+end
+
+local fill_curly_placeholders = function(str, dict)
+  return (str:gsub("%${(.-)}", dict))
+end
+
 return
 {
   escape_string = escape_string;
@@ -98,7 +124,10 @@ return
   trim = trim;
   htmlspecialchars = htmlspecialchars;
   fill_placeholders = fill_placeholders;
+  fill_curly_placeholders = fill_curly_placeholders;
   cdata_wrap = cdata_wrap;
   cdata_cat = cdata_cat;
   split_by_char = split_by_char;
+  split_by_offset = split_by_offset;
+  count_substrings = count_substrings;
 }
