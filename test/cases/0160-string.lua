@@ -29,6 +29,7 @@ local make_concatter,
       fill_placeholders,
       cdata_wrap,
       cdata_cat,
+      split_by_char,
       string_exports
       = import 'lua-nucleo/string.lua'
       {
@@ -38,7 +39,8 @@ local make_concatter,
         'htmlspecialchars',
         'fill_placeholders',
         'cdata_wrap',
-        'cdata_cat'
+        'cdata_cat',
+        'split_by_char'
       }
 
 --------------------------------------------------------------------------------
@@ -199,6 +201,10 @@ test:test_for "fill_placeholders" (function ()
   ensure_strequals("extra braces", fill_placeholders("$(a `$(a)')", { a = 42 }), "$(a `$(a)')")
   ensure_strequals("extra right brace", fill_placeholders("`$(a)')", { a = 42 }), "`42')")
 end)
+
+--------------------------------------------------------------------------------
+
+test:UNTESTED 'split_by_char'
 
 --------------------------------------------------------------------------------
 
