@@ -27,6 +27,7 @@ local do_nothing,
       list_caller,
       bind_many,
       remove_nil_arguments,
+      args_proxy,
       functional_exports
       = import 'lua-nucleo/functional.lua'
       {
@@ -38,7 +39,8 @@ local do_nothing,
         'arguments_ignorer',
         'list_caller',
         'bind_many',
-        'remove_nil_arguments'
+        'remove_nil_arguments',
+        'args_proxy'
       }
 
 --------------------------------------------------------------------------------
@@ -478,6 +480,10 @@ test "remove_nil_arguments-all-nils" (function()
       remove_nil_arguments(nil, nil, nil)
     )
 end)
+
+--------------------------------------------------------------------------------
+
+test:UNTESTED 'args_proxy'
 
 --------------------------------------------------------------------------------
 

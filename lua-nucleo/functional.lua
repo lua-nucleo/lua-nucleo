@@ -86,6 +86,11 @@ do
   end
 end
 
+local args_proxy = function(fn, ...)
+  fn(...)
+  return ...
+end
+
 return
 {
   do_nothing = do_nothing;
@@ -97,4 +102,5 @@ return
   list_caller = list_caller;
   bind_many = bind_many;
   remove_nil_arguments = remove_nil_arguments;
+  args_proxy = args_proxy;
 }
