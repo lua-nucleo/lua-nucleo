@@ -30,6 +30,7 @@ return
   '0202-tdeepequals-autogen';
   '0203-tdeepequals-recursive';
   '0204-tdeepequals-userdata-functions-threads';
+  '0205-tdeepequals-other-functions';
   '0210-timed_queue';
   '0220-tserialize-basic';
   '0221-tserialize-autogen';

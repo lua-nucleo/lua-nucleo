@@ -232,9 +232,37 @@ local tless = function(lhs, rhs)
   return tmore(lhs, rhs) < 0
 end
 
+local less_kv = function(lhs, rhs)
+  return (lhs.k < rhs.k) or (lhs.k == rhs.k and lhs.v < rhs.v)
+end
+
+local tless_kv = function(lhs, rhs)
+  -- TODO: WTF?! Why these extra arguments to tmore() are needed?!
+  local kless = tmore(lhs.k, rhs.k, { n = 0 }, { n = 0 })
+  return (kless < 0)
+    or (kless == 0 and tmore(lhs.v, rhs.v, { n = 0 }, { n = 0 }) < 0)
+end
+
+-- WARNING: Slow!
+local tsort_kv = function(t, less)
+  less = less or tless_kv
+
+  local r = { }
+  for k, v in pairs(t) do
+    r[#r + 1] = { k = k, v = v }
+  end
+
+  table_sort(r, less)
+
+  return r
+end
+
 return
 {
   tdeepequals = tdeepequals;
   tmore = tmore;
   tless = tless;
+  less_kv = less_kv;
+  tless_kv = tless_kv;
+  tsort_kv = tsort_kv;
 }
