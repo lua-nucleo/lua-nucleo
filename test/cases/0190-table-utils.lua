@@ -57,6 +57,19 @@ local empty_table,
       tcount_elements,
       tremap_to_array,
       twalk_pairs,
+      tmap_values,
+      torderedset,
+      torderedset_insert,
+      torderedset_remove,
+      twithdefaults,
+      tifilter,
+      tsetof,
+      tset_many,
+      tidentityset,
+      timapofrecords,
+      tivalues,
+      treadonly,
+      treadonly_ex,
       table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -86,7 +99,20 @@ local empty_table,
         'tclone',
         'tcount_elements',
         'tremap_to_array',
-        'twalk_pairs'
+        'twalk_pairs',
+        'tmap_values',
+        'torderedset',
+        'torderedset_insert',
+        'torderedset_remove',
+        'twithdefaults',
+        'tifilter',
+        'tsetof',
+        'tset_many',
+        'tidentityset',
+        'timapofrecords',
+        'tivalues',
+        'treadonly',
+        'treadonly_ex'
       }
 
 --------------------------------------------------------------------------------
@@ -1599,6 +1625,22 @@ test "twalk_pairs-counter" (function()
   ensure_tequals("argument unchanged", t, t_orig)
   ensure_tequals("check results", results, t_orig)
 end)
+
+--------------------------------------------------------------------------------
+
+test:UNTESTED 'tmap_values'
+test:UNTESTED 'torderedset'
+test:UNTESTED 'torderedset_insert'
+test:UNTESTED 'torderedset_remove'
+test:UNTESTED 'twithdefaults'
+test:UNTESTED 'tifilter'
+test:UNTESTED 'tsetof'
+test:UNTESTED 'tset_many'
+test:UNTESTED 'tidentityset'
+test:UNTESTED 'timapofrecords'
+test:UNTESTED 'tivalues'
+test:UNTESTED 'treadonly'
+test:UNTESTED 'treadonly_ex'
 
 --------------------------------------------------------------------------------
 

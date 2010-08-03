@@ -2,8 +2,34 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
+--------------------------------------------------------------------------------
+
 local setmetatable, error, pairs, ipairs, tostring, select, type, assert
     = setmetatable, error, pairs, ipairs, tostring, select, type, assert
+
+local rawget = rawget
+
+local table_insert, table_remove = table.insert, table.remove
+
+--------------------------------------------------------------------------------
+
+local arguments,
+      optional_arguments,
+      method_arguments
+      = import 'lua-nucleo/args.lua'
+      {
+        'arguments',
+        'optional_arguments',
+        'method_arguments'
+      }
+
+local is_table
+      = import 'lua-nucleo/type.lua'
+      {
+        'is_table'
+      }
+
+--------------------------------------------------------------------------------
 
 -- Warning: it is possible to corrupt this with rawset and debug.setmetatable.
 local empty_table = setmetatable(
@@ -294,6 +320,241 @@ local tremap_to_array = function(fn, t)
   return r
 end
 
+local tmap_values = function(fn, t, ...)
+  local r = { }
+  for k, v in pairs(t) do
+    r[k] = fn(v, ...)
+  end
+  return r
+end
+
+--------------------------------------------------------------------------------
+
+local torderedset = function(t)
+  local r = { }
+
+  for i = 1, #t do
+    local v = t[i]
+
+    -- Have to add this limitation to avoid size ambiquity.
+    -- If you need ordered set of numbers, use separate storage
+    -- for set and array parts (write make_ordered_set then).
+    assert(type(v) ~= "number", "can't insert number into ordered set")
+
+    r[v] = i
+    r[i] = v
+  end
+
+  return r
+end
+
+-- Returns false if item already exists
+-- Returns true otherwise
+local torderedset_insert = function(t, v)
+  -- See torderedset() for motivation
+  assert(type(v) ~= "number", "can't insert number into ordered set")
+
+  if not t[v] then
+    local i = #t + 1
+    t[v] = i
+    t[i] = v
+
+    return true
+  end
+
+  return false
+end
+
+-- Returns false if item didn't existed
+-- Returns true otherwise
+-- Note this operation is really slow
+local torderedset_remove = function(t, v)
+  -- See torderedset() for motivation
+  assert(type(v) ~= "number", "can't remove number from ordered set")
+
+  local pos = t[v]
+  if pos then
+    t[v] = nil
+    -- TODO: Do table.remove manually then to do all in a single loop.
+    table_remove(t, pos)
+    for i = pos, #t do
+      t[t[i]] = i -- Update changed numbers
+    end
+  end
+
+  return false
+end
+
+--------------------------------------------------------------------------------
+
+-- Handles subtables (is "deep").
+-- Does not support recursive defaults tables
+-- WARNING: Uses tclone()! Do not use on tables with metatables!
+local twithdefaults
+do
+  twithdefaults = function(t, defaults)
+    for k, d in pairs(defaults) do
+      local v = t[k]
+      if v == nil then
+        if type(d) == "table" then
+          d = tclone(d)
+        end
+        t[k] = d
+      elseif type(v) == "table" and type(d) == "table" then
+        twithdefaults(v, d)
+      end
+    end
+
+    return t
+  end
+end
+
+--------------------------------------------------------------------------------
+
+local tifilter = function(pred, t, ...)
+  local r = { }
+  for i = 1, #t do
+    local v = t[i]
+    if pred(v, ...) then
+      r[#r + 1] = v
+    end
+  end
+  return r
+end
+
+--------------------------------------------------------------------------------
+
+local tsetof = function(value, t)
+  local r = { }
+
+  for k, v in pairs(t) do
+    r[v] = value
+  end
+
+  return r
+end
+
+--------------------------------------------------------------------------------
+
+local tset_many = function(...)
+  local r = { }
+
+  for i = 1, select("#", ...) do
+    for k, v in pairs((select(i, ...))) do
+      r[v] = true
+    end
+  end
+
+  return r
+end
+
+-- TODO: Pick a better name?
+local tidentityset = function(t)
+  local r = { }
+
+  for k, v in pairs(t) do
+    r[v] = v
+  end
+
+  return r
+end
+
+--------------------------------------------------------------------------------
+
+local timapofrecords = function(t, key)
+  local r = { }
+
+  for i = 1, #t do
+    local v = t[i]
+    r[assert(v[key], "missing record key field")] = v
+  end
+
+  return r
+end
+
+local tivalues = function(t)
+  local r = { }
+
+  for i = 1, #t do
+    r[#r + 1] = t[i]
+  end
+
+  return r
+end
+
+--------------------------------------------------------------------------------
+
+-- NOTE: Optimized to be fast at simple value indexing.
+--       Slower on initialization and on table value fetching.
+-- WARNING: This does not protect userdata.
+local treadonly, treadonly_ex
+do
+  local newindex = function()
+    error("attempted to change read-only table")
+  end
+
+  treadonly = function(value, callbacks, tostring_fn, disable_nil)
+    callbacks = callbacks or empty_table
+    if disable_nil == nil then
+      disable_nil = true
+    end
+
+    arguments(
+        "table", value,
+        "table", callbacks
+      )
+
+    optional_arguments(
+        "function", tostring_fn,
+        "boolean", disable_nil -- TODO: ?! Not exactly optional
+      )
+
+    local mt =
+    {
+      __metatable = "treadonly"; -- protect metatable
+
+      __index = function(t, k)
+        local v = rawget(value, k)
+        if is_table(v) then
+          -- TODO: Optimize
+          v = treadonly(v, callbacks, tostring_fn, disable_nil)
+        end
+        if v == nil then -- TODO: Try to use metatables
+          -- Note: __index does not support multiple return values in 5.1,
+          --       so we can not do call right here.
+          local fn = callbacks[k]
+          if fn then
+            return function(...) return fn(value, ...) end
+          end
+          if disable_nil then
+            error(
+                "attempted to read inexistant value at key " .. tostring(k),
+                2
+              )
+          end
+        end
+        return v
+      end;
+
+      __newindex = newindex;
+    }
+
+    if tostring_fn then
+      mt.__tostring = function() return tostring_fn(value) end
+    end
+
+    return setmetatable({ }, mt)
+  end
+
+  -- Changes to second return value are guaranteed to affect first one
+  treadonly_ex = function(value, ...)
+    local protected = treadonly(value, ...)
+    return protected, value
+  end
+end
+
+--------------------------------------------------------------------------------
+
 return
 {
   empty_table = empty_table;
@@ -323,4 +584,17 @@ return
   tcount_elements = tcount_elements;
   tremap_to_array = tremap_to_array;
   twalk_pairs = twalk_pairs;
+  tmap_values = tmap_values;
+  torderedset = torderedset;
+  torderedset_insert = torderedset_insert;
+  torderedset_remove = torderedset_remove;
+  twithdefaults = twithdefaults;
+  tifilter = tifilter;
+  tsetof = tsetof;
+  tset_many = tset_many;
+  tidentityset = tidentityset;
+  timapofrecords = timapofrecords;
+  tivalues = tivalues;
+  treadonly = treadonly;
+  treadonly_ex = treadonly_ex;
 }
