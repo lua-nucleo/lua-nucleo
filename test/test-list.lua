@@ -44,4 +44,5 @@ return
   '0290-tstr';
   '0300-generate-test-list';
   '0310-sandbox';
+  '0320-timestamp';
 }
