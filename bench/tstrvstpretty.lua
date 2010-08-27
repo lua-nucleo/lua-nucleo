@@ -1,4 +1,4 @@
--- tstrvstpretty.lua - benchmark, comparing tstr and tpretty
+-- tstrvstpretty.lua: benchmark, comparing tstr and tpretty
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
@@ -15,7 +15,7 @@ local data = {
 local bench = {}
 
 bench.tpretty = function()
-  assert(tpretty(data,"  ", 80))
+  assert(tpretty(data, "  ", 80))
 end
 
 bench.tstr = function()

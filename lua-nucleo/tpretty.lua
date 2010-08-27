@@ -1,4 +1,4 @@
--- tpretty.lua -- pretty visualization of non-recursive tables.
+-- tpretty.lua: pretty visualization of non-recursive tables.
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
@@ -6,26 +6,25 @@ local pairs, ipairs, type, tostring = pairs, ipairs, type, tostring
 local table_concat = table.concat
 local string_match, string_format = string.match, string.format
 
-
 local lua51_keywords = import 'lua-nucleo/language.lua' { 'lua51_keywords' }
 local make_prettifier = import 'lua-nucleo/prettifier.lua' { 'make_prettifier' }
 
 local tpretty
 do
-  local add=""
+  local add = ""
   local function impl(t, cat, prettifier, visited)
     local t_type = type(t)
     if t_type == "table" then
       if not visited[t] then
         visited[t] = true
 
-	prettifier:table_start()
+        prettifier:table_start()
 
         -- Serialize numeric indices
 
         for i, v in ipairs(t) do
           if i > 1 then -- TODO: Move condition out of the loop
-	    prettifier:separator()
+            prettifier:separator()
           end
           impl(v, cat, prettifier, visited)
         end
@@ -38,11 +37,11 @@ do
         for k, v in pairs(t) do
           local k_type = type(k)
           if k_type == "string" then
-	    if need_comma then
-	      prettifier:separator()
-	    end
-	    need_comma = true
-	    prettifier:key_start()
+            if need_comma then
+              prettifier:separator()
+            end
+            need_comma = true
+            prettifier:key_start()
             -- TODO: Need "%q" analogue, which would put quotes
             --       only if string does not match regexp below
             if not lua51_keywords[k] and string_match(k, "^[%a_][%a%d_]*$") then
@@ -50,30 +49,30 @@ do
             else
               cat(string_format("[%q]", k))
             end
-	    prettifier:value_start()
+            prettifier:value_start()
             impl(v, cat, prettifier, visited)
-	    prettifier:key_value_finish()
+            prettifier:key_value_finish()
           else
             if
               k_type ~= "number" or -- non-string non-number
               k >= next_i or k < 1 or -- integer key in hash part of the table
               k % 1 ~= 0 -- non-integer key
             then
-	      if need_comma then
-		prettifier:separator()
-	      end
-	      need_comma = true
-	      prettifier:key_start()
+              if need_comma then
+                prettifier:separator()
+              end
+              need_comma = true
+              prettifier:key_start()
               cat("[")
               impl(k, cat, prettifier, visited)
               cat("]")
-	      prettifier:value_start()
+              prettifier:value_start()
               impl(v, cat, prettifier, visited)
-	      prettifier:key_value_finish()
+              prettifier:key_value_finish()
             end
           end
         end
-	prettifier:table_finish()
+        prettifier:table_finish()
 
         visited[t] = nil
       else

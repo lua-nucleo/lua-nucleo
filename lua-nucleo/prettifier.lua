@@ -1,8 +1,8 @@
--- prettyfier.lua -- creates special prettifier object for pretty-printing lua tables
+-- prettifier.lua: creates prettifier object for pretty-printing lua tables
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-local create_prettifier;
+local create_prettifier
 do
   local countlen = function(buf, start, finish)
     local count = 0
@@ -13,22 +13,22 @@ do
   end
 
   --named constants...
-  local SEPARATOR = 1;
-  local OPTIONAL_NEWLINE =2;
-  local TERMINATING_SEPARATOR = 3;
-  local TABLE_END = 4;
-  local TABLE_BEGIN_LINE = 5;
-  local TABLE_BEGIN_MULTILINE = 6;
-  local MODE_LINE = 7;
-  local MODE_MULTILINE = 8;
+  local SEPARATOR = 1
+  local OPTIONAL_NEWLINE = 2
+  local TERMINATING_SEPARATOR = 3
+  local TABLE_END = 4
+  local TABLE_BEGIN_LINE = 5
+  local TABLE_BEGIN_MULTILINE = 6
+  local MODE_LINE = 7
+  local MODE_MULTILINE = 8
 
-  local subst_multiline = {";\n", "\n", ";\n", " =\n"}
-  local subst_line = {", ", "", "", " = "}
+  local subst_multiline = { ";\n", "\n", ";\n", " =\n" }
+  local subst_line = { ", ", "", "", " = " }
 
   local level = 0
-  local positions = {}
-  local levels = {}
-  local types = {}
+  local positions = { }
+  local levels = { }
+  local types = { }
   local father_table_pos = -1
   local prev_table_pos = -1
   local prev_table_len = 0
@@ -162,7 +162,6 @@ do
       finished         = finished;
     }
   end
-
 end
 
 return
