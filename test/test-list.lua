@@ -45,4 +45,6 @@ return
   '0300-generate-test-list';
   '0310-sandbox';
   '0320-timestamp';
+  '0330-tpretty';
+  '0331-prettifier';
 }
