@@ -2,7 +2,7 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
-local create_prettifier
+local make_prettifier
 do
   local countlen = function(buf, start, finish)
     local count = 0
