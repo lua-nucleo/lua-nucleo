@@ -4,8 +4,8 @@
 
 if exports then exports 'import' end
 
-local type, assert, loadfile, ipairs, tostring, error, unpack
-    = type, assert, loadfile, ipairs, tostring, error, unpack
+local type, assert, loadfile, tostring, error, unpack
+    = type, assert, loadfile, tostring, error, unpack
 
 local get_path
 do
@@ -54,7 +54,8 @@ do
 
       if sym_type ~= "nil" then
         if sym_type == "table" then
-          for i,name in ipairs(symbols) do
+          for i = 1, #symbols do
+            local name = symbols[i]
             local v = t[name]
             if v == nil then
               error("import: key `"..tostring(name).."' not found", 2)
