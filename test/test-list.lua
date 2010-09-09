@@ -47,4 +47,5 @@ return
   '0320-timestamp';
   '0330-tpretty';
   '0331-prettifier';
+  '0340-import_as_require';
 }
