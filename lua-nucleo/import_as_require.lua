@@ -32,6 +32,11 @@ do
           "import: bad implementation",
           2
         )
+
+      if t == true then
+        -- This means that module did not return anything.
+        error("import: bad implementation", 2)
+      end
     else
       error("import: bad filename type: "..fn_type, 2)
     end
