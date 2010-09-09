@@ -1,4 +1,4 @@
--- import.lua -- minimalistic Lua submodule system
+-- import.lua: minimalistic Lua submodule system
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
@@ -49,7 +49,7 @@ do
     end
 
     return function(symbols)
-      local result = {}
+      local result = { }
       local sym_type = type(symbols)
 
       if sym_type ~= "nil" then
