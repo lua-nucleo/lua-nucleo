@@ -6,8 +6,40 @@ An appropriate description would be added later.
 
 See the copyright information in the file named `COPYRIGHT`.
 
+Installation
+------------
+
+If you're in a require-friendly environment, you may install lua-nucleo
+from luarocks:
+
+    luarocks install \
+        lua-nucleo \
+        --from=http://luarocks.org/repositories/rocks-cvs
+
+Otherwise just copy lua-nucleo directory whereever is comfortable.
+
+Initialization with require()
+-----------------------------
+
 To use lua-nucleo in require-friendly environment, do as follows:
 
-    import = require('lua-nucleo.import_as_require').import
+    require 'lua-nucleo'
 
 This assumes that lua-nucleo directory is somewhere in the `package.path`
+
+Note that you may also want to enable the strict mode
+(aka the Global Environment Protection):
+
+    require 'lua-nucleo.strict'
+
+For all other lua-nucleo files, use `import()`.
+
+Initialization without require()
+--------------------------------
+
+Set `CODE_ROOT` to path to lua-nucleo directory.
+
+    dofile(CODE_ROOT..'lua-nucleo/strict.lua')
+    assert(loadfile(CODE_ROOT..'lua-nucleo/import.lua'))(CODE_ROOT)
+
+After that use `import()`.
