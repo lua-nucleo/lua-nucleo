@@ -257,6 +257,25 @@ local tsort_kv = function(t, less)
   return r
 end
 
+local ordered_pairs = function(t)
+  local keys = { }
+  for k, _ in pairs(t) do
+    keys[#keys + 1] = k
+  end
+
+  table_sort(keys, tless)
+
+  -- TODO: Try to move that out of this function.
+  local i = 1
+  local ordered_next = function(t)
+    local key = keys[i]
+    i = i + 1
+    return key, t[key]
+  end
+
+  return ordered_next, t, nil
+end
+
 return
 {
   tdeepequals = tdeepequals;
@@ -265,4 +284,5 @@ return
   less_kv = less_kv;
   tless_kv = tless_kv;
   tsort_kv = tsort_kv;
+  ordered_pairs = ordered_pairs;
 }
