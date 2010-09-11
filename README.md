@@ -36,7 +36,7 @@ Initialization with require()
 
 To use lua-nucleo in require-friendly environment, do as follows:
 
-    require 'lua-nucleo'
+    require 'lua-nucleo.module'
 
 This assumes that lua-nucleo directory is somewhere in the `package.path`
 
