@@ -10,4 +10,6 @@ TODO list for lua-nucleo library
 -- Tests for test:UNTESTED and test:TODO (run ./strict-test.sh to see them)
 -- Documentation
 
+-- Update benchmarks to use luamarca framework.
+
 -- Add more TODOs from the code.
