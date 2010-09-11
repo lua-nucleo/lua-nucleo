@@ -2,3 +2,12 @@ TODO list for lua-nucleo library
 ================================
 
 -- Tests for files in c/
+-- Move c/ to a separate library
+-- Move lua-nucleo/util to a separate library
+-- Split or rename lua-nucleo/misc.lua, the name is too generic
+-- Split lua-nucleo/args.lua
+-- Split lua-nucleo/tdeepequals.lua
+-- Tests for test:UNTESTED and test:TODO (run ./strict-test.sh to see them)
+-- Documentation
+
+-- Add more TODOs from the code.
