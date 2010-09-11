@@ -12,9 +12,9 @@ Dependencies
 Lua-Núcleo itself does not have external dependencies
 except for Lua 5.1 itself.
 
-The tests are dependent on luafilesystem:
+The tests are dependent on `luafilesystem`:
 
-  sudo luarocks install luafilesystem
+    sudo luarocks install luafilesystem
 
 List of cases will not be updated without this module,
 but you should be able to run tests themselves.
@@ -23,7 +23,7 @@ Installation
 ------------
 
 If you're in a require-friendly environment, you may install lua-nucleo
-from luarocks:
+from luarocks (http://www.luarocks.org):
 
     luarocks install \
         lua-nucleo \
@@ -47,7 +47,7 @@ Note that you may also want to enable the strict mode
 
 For all other lua-nucleo files, use `import()`.
 
-Note that if you want to keep using require,
+Note that if you want to keep using `require()`,
 you may replace in your code
 
     local foo, bar = import 'lua-nucleo/baz/quo.lua' { 'foo', 'bar' }
@@ -71,9 +71,14 @@ Documentation
 -------------
 
 Sorry, the documentation for the project is not available at this point.
-Use the source.
+Read the source and tests.
 
 TODO
 ----
 
 See file named `TODO`.
+
+Support
+-------
+
+Post your questions to the Lua mailing list: http://www.lua.org/lua-l.html
