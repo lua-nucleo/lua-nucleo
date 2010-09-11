@@ -66,3 +66,14 @@ Set `CODE_ROOT` to path to lua-nucleo directory.
     assert(loadfile(CODE_ROOT..'lua-nucleo/import.lua'))(CODE_ROOT)
 
 After that use `import()`.
+
+Documentation
+-------------
+
+Sorry, the documentation for the project is not available at this point.
+Use the source.
+
+TODO
+----
+
+See file TODO.
