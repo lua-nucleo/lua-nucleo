@@ -6,6 +6,19 @@ An appropriate description would be added later.
 
 See the copyright information in the file named `COPYRIGHT`.
 
+Dependencies
+------------
+
+Lua-Núcleo itself does not have external dependencies
+except for Lua 5.1 itself.
+
+The tests are dependent on luafilesystem:
+
+  sudo luarocks install luafilesystem
+
+List of cases will not be updated without this module,
+but you should be able to run tests themselves.
+
 Installation
 ------------
 
