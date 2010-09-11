@@ -47,6 +47,16 @@ Note that you may also want to enable the strict mode
 
 For all other lua-nucleo files, use `import()`.
 
+Note that if you want to keep using require,
+you may replace in your code
+
+    local foo, bar = import 'lua-nucleo/baz/quo.lua' { 'foo', 'bar' }
+
+with
+
+    local quo = require 'lua-nucleo.baz.quo'
+    local foo, bar = quo.foo, quo.bar
+
 Initialization without require()
 --------------------------------
 
