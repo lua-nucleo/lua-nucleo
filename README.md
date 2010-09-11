@@ -76,4 +76,4 @@ Use the source.
 TODO
 ----
 
-See file TODO.
+See file named `TODO`.
