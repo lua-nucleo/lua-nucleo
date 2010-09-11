@@ -61,7 +61,7 @@ with
 Initialization without require()
 --------------------------------
 
-Set `CODE_ROOT` to path to lua-nucleo directory.
+Set `CODE_ROOT` Lua variable to path to lua-nucleo directory.
 
     dofile(CODE_ROOT..'lua-nucleo/strict.lua')
     assert(loadfile(CODE_ROOT..'lua-nucleo/import.lua'))(CODE_ROOT)
