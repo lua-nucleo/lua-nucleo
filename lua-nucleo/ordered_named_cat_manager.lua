@@ -59,6 +59,10 @@ do
     return self.cats_[name] or new_cat_concat(self, name)
   end
 
+  local name_exists = function(self, name)
+    return not not self.cats_[name]
+  end
+
   local named_set = function(self, name, text)
     text = tostring(text) or text
     method_arguments(
@@ -76,7 +80,6 @@ do
     return get_cat_concat(self, name)[1]
   end
 
-  -- Returned value is valid until next call to manager. Do not store.
   local named_concat = function(self, name, ...)
     return get_cat_concat(self, name)[2](...)
   end
@@ -102,6 +105,7 @@ do
       named_cat = named_cat;
       named_concat = named_concat;
       concat_all = concat_all;
+      name_exists = name_exists;
       --
       cats_ = { };
       order_ = torderedset({ });
