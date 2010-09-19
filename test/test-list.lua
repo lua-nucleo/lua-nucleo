@@ -49,4 +49,5 @@ return
   '0331-prettifier';
   '0340-import_as_require';
   '0350-module';
+  '0360-stack_with_factory';
 }
