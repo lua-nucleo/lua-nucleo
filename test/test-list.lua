@@ -51,4 +51,5 @@ return
   '0350-module';
   '0360-stack_with_factory';
   '0370-ordered_named_cat_manager';
+  '0380-scoped_cat_tree_manager';
 }

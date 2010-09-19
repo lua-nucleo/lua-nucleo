@@ -36,6 +36,7 @@ build = {
          ["lua-nucleo.priority_queue"] = "lua-nucleo/priority_queue.lua";
          ["lua-nucleo.random"] = "lua-nucleo/random.lua";
          ["lua-nucleo.sandbox"] = "lua-nucleo/sandbox.lua";
+         ["lua-nucleo.scoped_cat_tree_manager"] = "lua-nucleo/scoped_cat_tree_manager.lua";
          ["lua-nucleo.stack_with_factory"] = "lua-nucleo/stack_with_factory.lua";
          ["lua-nucleo.strict"] = "lua-nucleo/strict.lua";
          ["lua-nucleo.string"] = "lua-nucleo/string.lua";
