@@ -2,8 +2,6 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
--- TODO: Rename. This is not a proper tree.
-
 --------------------------------------------------------------------------------
 
 local assert = assert
@@ -41,16 +39,34 @@ do
     }
   end
 
+  -- Private method
+  local get_current_scope = function(self)
+    local parents = self.parents_
+    return assert(parents[#parents])
+  end
+
+  -- Private method
+  local push_new_scope = function(self)
+    local scope = create_new_scope()
+    table_insert(self.parents_, scope)
+    return scope
+  end
+
+  -- Private method
+  local pop_current_scope = function(self)
+    return assert(table_remove(self.parents_))
+  end
+
   local cat_current = function(self, str)
-    return self.current_scope_[cat_key](str)
+    return get_current_scope(self)[cat_key](str)
   end
 
   local concat_current = function(self, ...)
-    return self.current_scope_[concat_key](...)
+    return get_current_scope(self)[concat_key](...)
   end
 
   local maybe_concat_child = function(self, key, ...)
-    local scope = assert(self.children_, "no children found")[key]
+    local scope = assert(get_current_scope(self), "no children found")[key]
     if scope ~= nil then
       return scope[concat_key](...)
     end
@@ -67,22 +83,17 @@ do
   end
 
   local push = function(self, key)
-    local scope = create_new_scope()
 
-    self.current_scope_[key] = scope
-    table_insert(self.parents_, self.current_scope_)
-    self.current_scope_ = scope
-    self.children_ = nil
+    local old_scope = get_current_scope(self)
+    old_scope[key] = push_new_scope(self)
   end
 
   -- TODO: Use that key parameter somehow for validation
   local pop = function(self, key)
-    -- Note that previous value is discarded
-    self.children_ = self.current_scope_
-    self.current_scope_ = assert(table_remove(self.parents_))
+
+    pop_current_scope(self)
   end
 
-  -- TODO: Optimizable?
   make_scoped_cat_tree_manager = function()
 
     return
@@ -96,9 +107,7 @@ do
       push = push;
       pop = pop;
       --
-      parents_ = { };
-      current_scope_ = create_new_scope();
-      children_ = nil;
+      parents_ = { create_new_scope() };
     }
   end
 end
