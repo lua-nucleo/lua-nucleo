@@ -1,4 +1,4 @@
--- 0360-ordered_named_cat_manager.lua: tests for stack manager with factory
+-- 0360-ordered_named_cat_manager.lua: tests for ordered named cat manager
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
