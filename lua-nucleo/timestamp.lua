@@ -26,10 +26,42 @@ local get_yesterday_timestamp = function(timestamp)
   return get_day_timestamp(timestamp - 60 * 60 * 24)
 end
 
+local get_quarter_timestamp = function(timestamp)
+  timestamp = timestamp or os_time()
+
+  local t = os_date("*t", timestamp)
+
+  t.sec = 0
+  if t.min < 15 then
+    t.min = 0
+  elseif t.min < 30 then
+    t.min = 15
+  elseif t.min < 45 then
+    t.min = 15
+  else
+    t.min = 45
+  end
+
+  return os_time(t)
+end
+
+-- TODO: Generalize to lua-nucleo
+local get_minute_timestamp = function(timestamp)
+  timestamp = timestamp or os_time()
+
+  local t = os_date("*t", timestamp)
+
+  t.sec = 0
+
+  return os_time(t)
+end
+
 --------------------------------------------------------------------------------
 
 return
 {
   get_day_timestamp = get_day_timestamp;
   get_yesterday_timestamp = get_yesterday_timestamp;
+  get_quarter_timestamp = get_quarter_timestamp;
+  get_minute_timestamp = get_minute_timestamp;
 }
