@@ -71,10 +71,11 @@ local empty_table,
       treadonly,
       treadonly_ex,
       tmap_kv,
-      table_utils_exports,
       tmapofrecordgroups,
+      timapofrecordgroups,
       tilistofrecordfields,
-      tipermute_inplace
+      tipermute_inplace,
+      table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
         'empty_table',
