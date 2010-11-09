@@ -70,7 +70,11 @@ local empty_table,
       tivalues,
       treadonly,
       treadonly_ex,
-      table_utils_exports
+      tmap_kv,
+      table_utils_exports,
+      tmapofrecordgroups,
+      tilistofrecordfields,
+      tipermute_inplace
       = import 'lua-nucleo/table-utils.lua'
       {
         'empty_table',
@@ -112,7 +116,12 @@ local empty_table,
         'timapofrecords',
         'tivalues',
         'treadonly',
-        'treadonly_ex'
+        'treadonly_ex',
+        'tmap_kv',
+        'tmapofrecordgroups',
+        'timapofrecordgroups',
+        'tilistofrecordfields',
+        'tipermute_inplace'
       }
 
 --------------------------------------------------------------------------------
@@ -1641,6 +1650,11 @@ test:UNTESTED 'timapofrecords'
 test:UNTESTED 'tivalues'
 test:UNTESTED 'treadonly'
 test:UNTESTED 'treadonly_ex'
+test:UNTESTED 'tmap_kv'
+test:UNTESTED 'tmapofrecordgroups'
+test:UNTESTED 'timapofrecordgroups'
+test:UNTESTED 'tilistofrecordfields'
+test:UNTESTED 'tipermute_inplace'
 
 --------------------------------------------------------------------------------
 

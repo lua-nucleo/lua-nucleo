@@ -553,6 +553,70 @@ do
   end
 end
 
+local tmap_kv = function(fn, t)
+  local r = { }
+  for k, v in pairs(t) do
+    k, v = fn(k, v)
+    r[k] = v
+  end
+  return r
+end
+
+local tmapofrecordgroups = function(t, key_name)
+  local r = { }
+  for k, v in pairs(t) do
+    local v = t[k]
+    local key = assert(v[key_name], "missing required key")
+    local g = r[key]
+    if not g then
+      g = { }
+      r[key] = g
+    end
+    g[#g + 1] = v
+  end
+
+  return r
+end
+
+local timapofrecordgroups = function(t, key_name)
+  local r = { }
+  for i = 1, #t do
+    local v = t[i]
+    local key = assert(v[key_name], "missing required key")
+    local g = r[key]
+    if not g then
+      g = { }
+      r[key] = g
+    end
+    g[#g + 1] = v
+  end
+
+  return r
+end
+
+local tilistofrecordfields = function(t, k)
+  local r = { }
+  for i = 1, #t do
+    local v = t[i][k]
+    assert(v ~= nil, "missing required key")
+    r[#r + 1] = v
+  end
+  return r
+end
+
+local tipermute_inplace = function(t, n, count, random)
+  n = n or #t
+  count = count or n
+  random = random or math.random
+
+  for i = 1, count do
+    local j = random(i, n)
+    t[i], t[j] = t[j], t[i]
+  end
+
+  return t
+end
+
 --------------------------------------------------------------------------------
 
 return
@@ -597,4 +661,9 @@ return
   tivalues = tivalues;
   treadonly = treadonly;
   treadonly_ex = treadonly_ex;
+  tmap_kv = tmap_kv;
+  tmapofrecordgroups = tmapofrecordgroups;
+  timapofrecordgroups = timapofrecordgroups;
+  tilistofrecordfields = tilistofrecordfields;
+  tipermute_inplace = tipermute_inplace;
 }
