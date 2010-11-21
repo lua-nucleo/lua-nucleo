@@ -4,7 +4,7 @@
 
 local table_concat, table_insert = table.concat, table.insert
 local string_find, string_sub = string.find, string.sub
-local assert = assert
+local assert, pairs = assert, pairs
 
 local make_concatter -- TODO: rename, is not factory
 do
@@ -117,6 +117,19 @@ local fill_curly_placeholders = function(str, dict)
   return (str:gsub("%${(.-)}", dict))
 end
 
+local kv_concat = function(t, kv_glue, pair_glue, pairs_fn)
+  pair_glue = pair_glue or ""
+  pairs_fn = pairs_fn or pairs
+
+  local cat, concat = make_concatter()
+  local glue = ""
+  for k, v in pairs_fn(t) do
+    cat (glue) (k) (kv_glue) (v)
+    glue = pair_glue
+  end
+  return concat()
+end
+
 return
 {
   escape_string = escape_string;
@@ -130,4 +143,5 @@ return
   split_by_char = split_by_char;
   split_by_offset = split_by_offset;
   count_substrings = count_substrings;
+  kv_concat = kv_concat;
 }
