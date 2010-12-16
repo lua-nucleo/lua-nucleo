@@ -130,6 +130,29 @@ local kv_concat = function(t, kv_glue, pair_glue, pairs_fn)
   return concat()
 end
 
+local escape_lua_pattern
+do
+  local matches =
+  {
+    ["^"] = "%^";
+    ["$"] = "%$";
+    ["("] = "%(";
+    [")"] = "%)";
+    ["%"] = "%%";
+    ["."] = "%.";
+    ["["] = "%[";
+    ["]"] = "%]";
+    ["*"] = "%*";
+    ["+"] = "%+";
+    ["-"] = "%-";
+    ["?"] = "%?";
+  }
+
+  escape_lua_pattern = function(s)
+    return (s:gsub(".", matches))
+  end
+end
+
 return
 {
   escape_string = escape_string;
@@ -144,4 +167,5 @@ return
   split_by_offset = split_by_offset;
   count_substrings = count_substrings;
   kv_concat = kv_concat;
+  escape_lua_pattern = escape_lua_pattern;
 }

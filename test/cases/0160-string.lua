@@ -34,6 +34,7 @@ local make_concatter,
       split_by_offset,
       count_substrings,
       kv_concat,
+      escape_lua_pattern,
       string_exports
       = import 'lua-nucleo/string.lua'
       {
@@ -48,7 +49,8 @@ local make_concatter,
         'split_by_char',
         'split_by_offset',
         'count_substrings',
-        'kv_concat'
+        'kv_concat',
+        'escape_lua_pattern'
       }
 
 --------------------------------------------------------------------------------
@@ -221,6 +223,8 @@ test:UNTESTED 'split_by_offset'
 test:UNTESTED 'count_substrings'
 
 test:UNTESTED 'kv_concat'
+
+test:UNTESTED 'escape_lua_pattern'
 
 --------------------------------------------------------------------------------
 
