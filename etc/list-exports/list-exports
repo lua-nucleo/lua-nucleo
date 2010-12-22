@@ -1,0 +1,25 @@
+#! /bin/bash
+
+set -e
+
+ROOT="${BASH_SOURCE[0]}";
+if([ -h "${ROOT}" ]) then
+  while([ -h "${ROOT}" ]) do ROOT=`readlink "${ROOT}"`; done
+fi
+ROOT=$(cd `dirname "${ROOT}"` && cd ../.. && pwd) # Up two levels
+
+NAME="list-exports"
+CONFIG_PATH="${ROOT}/etc/list-exports/config.lua"
+
+MODULE="${NAME}.run"
+ROCK="pk-tools.${NAME}"
+#WARNING: Do not copy-paste! Hack to make import_as_require work with absolute paths.
+PRIVATE_MODULES_PATH="$(luarocks show --rock-dir ${ROCK})/src/lua/?.lua;/?.lua"
+
+pk-call-lua-module \
+  "${PRIVATE_MODULES_PATH}" \
+  "${MODULE}" \
+  "run" \
+  "--root=${ROOT}" \
+  "--base-config=${CONFIG_PATH}" \
+  $@
