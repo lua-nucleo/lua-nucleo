@@ -46,6 +46,7 @@ return
   ensure_strequals = { "lua-nucleo/ensure.lua" };
   ensure_tdeepequals = { "lua-nucleo/ensure.lua" };
   ensure_tequals = { "lua-nucleo/ensure.lua" };
+  escape_lua_pattern = { "lua-nucleo/string.lua" };
   escape_string = { "lua-nucleo/string.lua" };
   fill_curly_placeholders = { "lua-nucleo/string.lua" };
   fill_placeholders = { "lua-nucleo/string.lua" };
