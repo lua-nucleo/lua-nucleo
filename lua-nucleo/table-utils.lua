@@ -617,6 +617,14 @@ local tipermute_inplace = function(t, n, count, random)
   return t
 end
 
+local tkvtorecordlist = function(t, key_name, value_name)
+  local result = { }
+  for k, v in pairs(t) do
+    result[#result + 1] = { [key_name] = k, [value_name] = v }
+  end
+  return result
+end
+
 --------------------------------------------------------------------------------
 
 return
@@ -666,4 +674,5 @@ return
   timapofrecordgroups = timapofrecordgroups;
   tilistofrecordfields = tilistofrecordfields;
   tipermute_inplace = tipermute_inplace;
+  tkvtorecordlist = tkvtorecordlist;
 }

@@ -75,6 +75,7 @@ local empty_table,
       timapofrecordgroups,
       tilistofrecordfields,
       tipermute_inplace,
+      tkvtorecordlist,
       table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -122,6 +123,7 @@ local empty_table,
         'tmapofrecordgroups',
         'timapofrecordgroups',
         'tilistofrecordfields',
+        'tkvtorecordlist',
         'tipermute_inplace'
       }
 
@@ -1656,6 +1658,7 @@ test:UNTESTED 'tmapofrecordgroups'
 test:UNTESTED 'timapofrecordgroups'
 test:UNTESTED 'tilistofrecordfields'
 test:UNTESTED 'tipermute_inplace'
+test:UNTESTED 'tkvtorecordlist'
 
 --------------------------------------------------------------------------------
 
