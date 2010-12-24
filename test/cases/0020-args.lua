@@ -19,6 +19,7 @@ local ensure,
 local nargs,
       pack,
       eat_true,
+      amap,
       arguments,
       method_arguments,
       optional_arguments,
@@ -28,6 +29,7 @@ local nargs,
         'nargs',
         'pack',
         'eat_true',
+        'amap',
         'arguments',
         'method_arguments',
         'optional_arguments'
@@ -265,6 +267,10 @@ do
       )
   end)
 end
+
+---------------------------------------------------------------------------
+
+test:UNTESTED 'amap'
 
 ---------------------------------------------------------------------------
 

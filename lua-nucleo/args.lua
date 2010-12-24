@@ -28,6 +28,20 @@ local eat_true = function(v, ...)
   return ...
 end
 
+local amap
+do
+  local function impl(n, fn, a, ...)
+    if n > 1 then
+      return fn(a), impl(n - 1, fn, ...)
+    end
+    return fn(a)
+  end
+
+  amap = function(fn, ...)
+    return impl(select("#", ...), fn, ...)
+  end
+end
+
 local arguments, optional_arguments, method_arguments
 do
   local function impl(is_optional, arg_n, expected_type, value, ...)
@@ -99,6 +113,7 @@ return
   pack = pack;
   nargs = nargs;
   eat_true = eat_true;
+  amap = amap;
   --
   arguments = arguments;
   optional_arguments = optional_arguments;
