@@ -56,10 +56,6 @@ do
   end
 end
 
-local fill_placeholders = function(str, dict)
-  return (str:gsub("%$%((.-)%)", dict))
-end
-
 local cdata_wrap = function(value)
   -- "]]>" is escaped as ("]]" + "]]><![CDATA[" + ">")
   return '<![CDATA[' .. value:gsub("]]>", ']]]]><![CDATA[>') .. ']]>'
@@ -113,8 +109,16 @@ local split_by_offset = function(str, offset, skip_right)
   return str:sub(1, offset), str:sub(offset + 1 + (skip_right or 0))
 end
 
+local fill_placeholders_ex = function(capture, str, dict)
+  return (str:gsub("%$%((.-)%)", dict))
+end
+
+local fill_placeholders = function(str, dict)
+  return fill_placeholders_ex("%$%((.-)%)", str, dict)
+end
+
 local fill_curly_placeholders = function(str, dict)
-  return (str:gsub("%${(.-)}", dict))
+  return fill_placeholders_ex("%${(.-)}", str, dict)
 end
 
 local kv_concat = function(t, kv_glue, pair_glue, pairs_fn)
@@ -159,6 +163,7 @@ return
   make_concatter = make_concatter;
   trim = trim;
   htmlspecialchars = htmlspecialchars;
+  fill_placeholders_ex = fill_placeholders_ex;
   fill_placeholders = fill_placeholders;
   fill_curly_placeholders = fill_curly_placeholders;
   cdata_wrap = cdata_wrap;

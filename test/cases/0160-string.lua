@@ -26,6 +26,7 @@ local make_concatter,
       trim,
       escape_string,
       htmlspecialchars,
+      fill_placeholders_ex,
       fill_placeholders,
       fill_curly_placeholders,
       cdata_wrap,
@@ -42,6 +43,7 @@ local make_concatter,
         'trim',
         'escape_string',
         'htmlspecialchars',
+        'fill_placeholders_ex',
         'fill_placeholders',
         'fill_curly_placeholders',
         'cdata_wrap',
@@ -213,6 +215,8 @@ test:test_for "fill_placeholders" (function ()
 end)
 
 --------------------------------------------------------------------------------
+
+test:UNTESTED 'fill_placeholders_ex'
 
 test:UNTESTED 'fill_curly_placeholders'
 
