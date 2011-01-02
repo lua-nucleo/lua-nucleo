@@ -110,7 +110,7 @@ local split_by_offset = function(str, offset, skip_right)
 end
 
 local fill_placeholders_ex = function(capture, str, dict)
-  return (str:gsub("%$%((.-)%)", dict))
+  return (str:gsub(capture, dict))
 end
 
 local fill_placeholders = function(str, dict)
