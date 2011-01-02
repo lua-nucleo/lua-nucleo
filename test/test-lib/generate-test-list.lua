@@ -51,9 +51,11 @@ extension = extension or ".lua"
 
 -- get all library files
 local lib_files = find_all_files(lib_path, extension)
+table.sort(lib_files)
 
 -- get all test cases
 local cases = find_all_files(case_path, extension)
+table.sort(cases)
 
 -- check all library files got test cases
 print("Test list generation check:")
