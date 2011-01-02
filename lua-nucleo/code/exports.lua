@@ -10,6 +10,7 @@ return
   END_OF_LOG_MESSAGE = { "lua-nucleo/log.lua" };
   EPSILON = { "lua-nucleo/math.lua" };
   LOG_LEVEL = { "lua-nucleo/log.lua" };
+  amap = { "lua-nucleo/args.lua" };
   args_proxy = { "lua-nucleo/functional.lua" };
   arguments = { "lua-nucleo/args.lua" };
   arguments_ignorer = { "lua-nucleo/functional.lua" };
@@ -50,6 +51,7 @@ return
   escape_string = { "lua-nucleo/string.lua" };
   fill_curly_placeholders = { "lua-nucleo/string.lua" };
   fill_placeholders = { "lua-nucleo/string.lua" };
+  fill_placeholders_ex = { "lua-nucleo/string.lua" };
   format_logsystem_date = { "lua-nucleo/log.lua" };
   get_current_logsystem_date = { "lua-nucleo/log.lua" };
   get_day_timestamp = { "lua-nucleo/timestamp.lua" };
@@ -135,6 +137,7 @@ return
   tiwalker = { "lua-nucleo/table-utils.lua" };
   tkeys = { "lua-nucleo/table-utils.lua" };
   tkeysvalues = { "lua-nucleo/table-utils.lua" };
+  tkvtorecordlist = { "lua-nucleo/table-utils.lua" };
   tless = { "lua-nucleo/tdeepequals.lua" };
   tless_kv = { "lua-nucleo/tdeepequals.lua" };
   tmap_kv = { "lua-nucleo/table-utils.lua" };
