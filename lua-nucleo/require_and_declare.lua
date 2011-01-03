@@ -12,7 +12,10 @@ do
   require_and_declare = function(module_name, ...)
     assert(original_require ~= require_and_declare) -- Sanity check
     if declare and type(module_name) == "string" then
-      declare(module_name)
+      local symbol_name = module_name:match('^([^.]+)')
+      if symbol_name then
+        declare(symbol_name)
+      end
     end
     return original_require(module_name, ...)
   end
