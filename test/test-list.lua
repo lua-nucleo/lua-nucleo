@@ -57,4 +57,5 @@ return
   '0410-code-profile';
   '0420-code-foreign-globals-luajit2';
   '0430-code-foreign-globals-lua5_1';
+  '0440-require_and_declare';
 }

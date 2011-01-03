@@ -106,6 +106,7 @@ return
   pick_init = { "lua-nucleo/algorithm.lua" };
   pick_one = { "lua-nucleo/algorithm.lua" };
   remove_nil_arguments = { "lua-nucleo/functional.lua" };
+  require_and_declare = { "lua-nucleo/require_and_declare.lua" };
   resume_inner = { "lua-nucleo/coro.lua" };
   split_by_char = { "lua-nucleo/string.lua" };
   split_by_offset = { "lua-nucleo/string.lua" };
