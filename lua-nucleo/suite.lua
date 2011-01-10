@@ -3,7 +3,9 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
 --dofile('lua-nucleo/strict.lua') -- TODO: sandbox absence problem
-dofile('lua-nucleo/import.lua')
+if not import then
+  dofile('lua-nucleo/import.lua') -- attempt to get it
+end
 
 local common_method_list
       = import 'lua-nucleo/factory.lua'
