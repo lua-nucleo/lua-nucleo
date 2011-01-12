@@ -51,14 +51,22 @@ do
             local name = symbols[i]
             local v = t[name]
             if v == nil then
-              error("import: key `"..tostring(name).."' not found", 2)
+              error(
+                  "import: key `"..tostring(name).."' not found in `"
+               .. (fn_type == "string" and filename or "(table)") .. "'",
+                  2
+                )
             end
             result[i] = v
           end
         elseif sym_type == "string" then
           local v = t[symbols]
           if v == nil then
-            error("import: key `"..symbols.."' not found", 2)
+            error(
+                "import: key `"..symbols.."' not found in `"
+             .. (fn_type == "string" and filename or "(table)") .. "'",
+                2
+              )
           end
           result[1] = v
         else
