@@ -2,7 +2,7 @@ package = "lua-nucleo"
 version = "0.0.2"
 source = {
    url = "git://github.com/lua-nucleo/lua-nucleo.git",
-   branch = "master"
+   branch = "v0.0.2"
 }
 description = {
    summary = "A random collection of core and utility level Lua libraries",
