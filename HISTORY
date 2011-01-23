@@ -1,3 +1,32 @@
+Version 0.0.2 (2011-01-26)
+==========================
+
+Second fixed-version release.
+
+New stuff:
+
+      stack_with_factory
+      ordered_named_cat_manager
+      scoped_cat_tree_manager
+      timestamp: get_{quarter,minute}_timestamp
+      table-utils:
+          tmap_kv, tmapofrecordgroups,
+          timapofrecordgroups, tilistofrecordfields,
+          tipermute_inplace, tkvtorecordlist
+      string:
+          kv_concat,
+          escape_lua_pattern,
+          fill_curly_placeholders_ex
+      code: globals, exports, profile
+      args: amap
+      require_and_declare
+
+Bug fixes:
+
+      tpretty: fixed array hole handling
+
+And some other changes.
+
 Version 0.0.1 (2010-09-12)
 ==========================
 
