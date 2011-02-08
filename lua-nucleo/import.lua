@@ -16,7 +16,11 @@ do
     get_path = base_path
   elseif base_path_type == "string" then
     get_path = function(filename)
-      return base_path .. filename
+      if not filename:find("^/") then
+        return base_path .. filename
+      else
+        return filename
+      end
     end
   else
     error("import: bad base path type")
