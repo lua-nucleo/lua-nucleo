@@ -26,6 +26,12 @@ local get_yesterday_timestamp = function(timestamp)
   return get_day_timestamp(timestamp - 60 * 60 * 24)
 end
 
+local get_tomorrow_timestamp = function(timestamp)
+  timestamp = timestamp or os_time()
+
+  return get_day_timestamp(timestamp + 60 * 60 * 24)
+end
+
 local get_quarter_timestamp = function(timestamp)
   timestamp = timestamp or os_time()
 
@@ -62,6 +68,7 @@ return
 {
   get_day_timestamp = get_day_timestamp;
   get_yesterday_timestamp = get_yesterday_timestamp;
+  get_tomorrow_timestamp = get_tomorrow_timestamp;
   get_quarter_timestamp = get_quarter_timestamp;
   get_minute_timestamp = get_minute_timestamp;
 }

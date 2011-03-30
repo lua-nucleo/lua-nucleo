@@ -57,6 +57,7 @@ return
   get_day_timestamp = { "lua-nucleo/timestamp.lua" };
   get_minute_timestamp = { "lua-nucleo/timestamp.lua" };
   get_quarter_timestamp = { "lua-nucleo/timestamp.lua" };
+  get_tomorrow_timestamp = { "lua-nucleo/timestamp.lua" };
   get_yesterday_timestamp = { "lua-nucleo/timestamp.lua" };
   htmlspecialchars = { "lua-nucleo/string.lua" };
   identity = { "lua-nucleo/functional.lua" };
