@@ -36,6 +36,7 @@ local make_concatter,
       count_substrings,
       kv_concat,
       escape_lua_pattern,
+      escape_for_json,
       string_exports
       = import 'lua-nucleo/string.lua'
       {
@@ -52,7 +53,8 @@ local make_concatter,
         'split_by_offset',
         'count_substrings',
         'kv_concat',
-        'escape_lua_pattern'
+        'escape_lua_pattern',
+        'escape_for_json'
       }
 
 --------------------------------------------------------------------------------
@@ -229,6 +231,8 @@ test:UNTESTED 'count_substrings'
 test:UNTESTED 'kv_concat'
 
 test:UNTESTED 'escape_lua_pattern'
+
+test:UNTESTED 'escape_for_json'
 
 --------------------------------------------------------------------------------
 

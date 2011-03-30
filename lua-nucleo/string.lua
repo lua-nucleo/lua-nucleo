@@ -157,6 +157,43 @@ do
   end
 end
 
+local escape_for_json
+do
+  -- Based on luajson code (comments copied verbatim).
+  -- https://github.com/harningt/luajson/blob/master/lua/json/encode/strings.lua
+
+  local matches =
+  {
+    ['"'] = '\\"';
+    ['\\'] = '\\\\';
+    ['/'] = '\\/';
+    ['\b'] = '\\b';
+    ['\f'] = '\\f';
+    ['\n'] = '\\n';
+    ['\r'] = '\\r';
+    ['\t'] = '\\t';
+    ['\v'] = '\\v'; -- not in official spec, on report, removing
+  }
+
+  -- Pre-encode the control characters to speed up encoding...
+  -- NOTE: UTF-8 may not work out right w/ JavaScript
+  -- JavaScript uses 2 bytes after a \u... yet UTF-8 is a
+  -- byte-stream encoding, not pairs of bytes (it does encode
+  -- some letters > 1 byte, but base case is 1)
+  for i = 0, 255 do
+    local c = string.char(i)
+    if c:match('[%z\1-\031\128-\255]') and not matches[c] then
+      -- WARN: UTF8 specializes values >= 0x80 as parts of sequences...
+      --       without \x encoding, do not allow encoding > 7F
+      matches[c] = ('\\u%.4X'):format(i)
+    end
+  end
+
+  escape_for_json = function(s)
+    return '"' .. s:gsub('[\\"/%z\1-\031]', matches) .. '"'
+  end
+end
+
 return
 {
   escape_string = escape_string;
@@ -173,4 +210,5 @@ return
   count_substrings = count_substrings;
   kv_concat = kv_concat;
   escape_lua_pattern = escape_lua_pattern;
+  escape_for_json = escape_for_json;
 }
