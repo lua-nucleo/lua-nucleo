@@ -13,23 +13,28 @@ local get_day_timestamp = function(timestamp)
 
   local time_table = os_date("*t", timestamp)
 
-  time_table.hour = 3 -- To protect from DST changes
+  time_table.hour = 0
   time_table.min = 0
   time_table.sec = 0
+  time_table.isdst = nil -- To protect from DST changes
 
   return os_time(time_table), timestamp
 end
 
 local get_yesterday_timestamp = function(timestamp)
   timestamp = timestamp or os_time()
-
-  return get_day_timestamp(timestamp - 60 * 60 * 24)
+  local time_table = os_date("*t", timestamp)
+  time_table.isdst = nil -- To protect from DST changes
+  time_table.day = time_table.day - 1
+  return get_day_timestamp(os_time(time_table))
 end
 
 local get_tomorrow_timestamp = function(timestamp)
   timestamp = timestamp or os_time()
-
-  return get_day_timestamp(timestamp + 60 * 60 * 24)
+  local time_table = os_date("*t", timestamp)
+  time_table.isdst = nil -- To protect from DST changes
+  time_table.day = time_table.day + 1
+  return get_day_timestamp(os_time(time_table))
 end
 
 local get_quarter_timestamp = function(timestamp)
