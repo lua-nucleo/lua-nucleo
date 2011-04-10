@@ -22,6 +22,8 @@ local test = make_suite("typeassert", typeassert_imports)
 
 --------------------------------------------------------------------------------
 
+test:UNTESTED 'assert_not_nil'
+
 test:tests_for 'assert_is_nil'
                'assert_is_number'
                'assert_is_string'
