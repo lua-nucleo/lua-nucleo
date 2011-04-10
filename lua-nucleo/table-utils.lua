@@ -638,6 +638,18 @@ local function tgetpath(t, k, nextk, ...)
   return tgetpath(v, nextk, ...)
 end
 
+--  tsetpath(tabl, "a", "b", "c", d)
+--  tabl.a.b.c[d] = val
+local function tsetpath(t, k, ...)
+  if k == nil then
+    return t
+  end
+
+  t[k] = t[k] or { }
+
+  return tsetpath(t[k], ...)
+end
+
 --------------------------------------------------------------------------------
 
 return
@@ -689,4 +701,5 @@ return
   tipermute_inplace = tipermute_inplace;
   tkvtorecordlist = tkvtorecordlist;
   tgetpath = tgetpath;
+  tsetpath = tsetpath;
 }

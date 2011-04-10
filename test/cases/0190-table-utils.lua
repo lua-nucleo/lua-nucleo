@@ -76,6 +76,8 @@ local empty_table,
       tilistofrecordfields,
       tipermute_inplace,
       tkvtorecordlist,
+      tgetpath,
+      tsetpath,
       table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -124,7 +126,9 @@ local empty_table,
         'timapofrecordgroups',
         'tilistofrecordfields',
         'tkvtorecordlist',
-        'tipermute_inplace'
+        'tipermute_inplace',
+        'tgetpath',
+        'tsetpath'
       }
 
 --------------------------------------------------------------------------------
@@ -1639,6 +1643,17 @@ test "twalk_pairs-counter" (function()
 end)
 
 --------------------------------------------------------------------------------
+
+-- simple test, shows how tsetpath works
+test:test_for "tsetpath" (function()
+  local tab = { }
+  local d = "sdv"
+  tsetpath(tab, "a", "b", "c", d)
+  assert(tab.a.b.c[d] ~= nil)
+
+  tsetpath(tab, "a", "b", "c", "e")
+  assert(tab.a.b.c[d] ~= nil)
+end)
 
 test:UNTESTED 'tmap_values'
 test:UNTESTED 'torderedset'
