@@ -1659,6 +1659,7 @@ test:UNTESTED 'timapofrecordgroups'
 test:UNTESTED 'tilistofrecordfields'
 test:UNTESTED 'tipermute_inplace'
 test:UNTESTED 'tkvtorecordlist'
+test:UNTESTED 'tgetpath'
 
 --------------------------------------------------------------------------------
 

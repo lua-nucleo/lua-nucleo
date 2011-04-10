@@ -625,6 +625,19 @@ local tkvtorecordlist = function(t, key_name, value_name)
   return result
 end
 
+local function tgetpath(t, k, nextk, ...)
+  if k == nil then
+    return nil
+  end
+
+  local v = t[k]
+  if not is_table(v) or nextk == nil then
+    return v
+  end
+
+  return tgetpath(v, nextk, ...)
+end
+
 --------------------------------------------------------------------------------
 
 return
@@ -675,4 +688,5 @@ return
   tilistofrecordfields = tilistofrecordfields;
   tipermute_inplace = tipermute_inplace;
   tkvtorecordlist = tkvtorecordlist;
+  tgetpath = tgetpath;
 }
