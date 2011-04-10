@@ -47,6 +47,13 @@ local result =
            )
         or val
   end;
+
+  assert_not_nil = function(v, m, ...)
+    if v == nil then
+      error(m, 2)
+    end
+    return v, m, ...
+  end
 }
 
 for type_name, _ in pairs(lua51_types) do
