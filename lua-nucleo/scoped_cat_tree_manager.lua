@@ -30,8 +30,8 @@ do
   local cat_key = unique_object()
   local concat_key = unique_object()
 
-  local create_new_scope = function()
-    local cat, concat = make_concatter()
+  local create_new_scope = function(self)
+    local cat, concat = self:make_concatter_()
     return
     {
       [cat_key] = cat;
@@ -47,7 +47,7 @@ do
 
   -- Private method
   local push_new_scope = function(self)
-    local scope = create_new_scope()
+    local scope = create_new_scope(self)
     table_insert(self.parents_, scope)
     return scope
   end
@@ -94,9 +94,10 @@ do
     pop_current_scope(self)
   end
 
-  make_scoped_cat_tree_manager = function()
+  make_scoped_cat_tree_manager = function(custom_concatter_maker)
+    custom_concatter_maker = custom_concatter_maker or make_concatter
 
-    return
+    local result =
     {
       cat_current = cat_current;
       concat_current = concat_current;
@@ -107,8 +108,12 @@ do
       push = push;
       pop = pop;
       --
-      parents_ = { create_new_scope() };
+      make_concatter_ = custom_concatter_maker;
     }
+
+    result.parents_ = { create_new_scope(result) };
+
+    return result
   end
 end
 
