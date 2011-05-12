@@ -24,6 +24,7 @@ return
   assert_is_thread = { "lua-nucleo/typeassert.lua" };
   assert_is_type = { "lua-nucleo/typeassert.lua" };
   assert_is_userdata = { "lua-nucleo/typeassert.lua" };
+  assert_not_nil = { "lua-nucleo/typeassert.lua" };
   bind_many = { "lua-nucleo/functional.lua" };
   cdata_cat = { "lua-nucleo/string.lua" };
   cdata_wrap = { "lua-nucleo/string.lua" };
@@ -47,6 +48,7 @@ return
   ensure_strequals = { "lua-nucleo/ensure.lua" };
   ensure_tdeepequals = { "lua-nucleo/ensure.lua" };
   ensure_tequals = { "lua-nucleo/ensure.lua" };
+  escape_for_json = { "lua-nucleo/string.lua" };
   escape_lua_pattern = { "lua-nucleo/string.lua" };
   escape_string = { "lua-nucleo/string.lua" };
   fill_curly_placeholders = { "lua-nucleo/string.lua" };
@@ -119,6 +121,7 @@ return
   tequals = { "lua-nucleo/table-utils.lua" };
   tflip = { "lua-nucleo/table-utils.lua" };
   tgenerate_n = { "lua-nucleo/table-utils.lua" };
+  tgetpath = { "lua-nucleo/table-utils.lua" };
   tidentityset = { "lua-nucleo/table-utils.lua" };
   tifilter = { "lua-nucleo/table-utils.lua" };
   tiflip = { "lua-nucleo/table-utils.lua" };
@@ -162,6 +165,7 @@ return
   tset = { "lua-nucleo/table-utils.lua" };
   tset_many = { "lua-nucleo/table-utils.lua" };
   tsetof = { "lua-nucleo/table-utils.lua" };
+  tsetpath = { "lua-nucleo/table-utils.lua" };
   tsort_kv = { "lua-nucleo/tdeepequals.lua" };
   tstr = { "lua-nucleo/tstr.lua" };
   tstr_cat = { "lua-nucleo/tstr.lua" };
