@@ -2,6 +2,9 @@
 
 set -e
 
+echo "----> Generating a list of tests"
+lua "test/test-lib/generate-test-list.lua"
+
 echo "----> Creating list-exports"
 etc/list-exports/list-exports list_all
 
