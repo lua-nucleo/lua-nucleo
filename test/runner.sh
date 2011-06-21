@@ -8,4 +8,4 @@
 lua etc/rockspec/generate.lua scm-N >rockspec/lua-nucleo-scm-N.rockspec
 
 lua "test/test-lib/generate-test-list.lua"
-lua "test/test.lua" $@
+lua "test/test.lua" "$@"
