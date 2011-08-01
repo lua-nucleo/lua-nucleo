@@ -283,6 +283,22 @@ do
 end
 
 do
+  print("\nSingle BROKEN suite:")
+  local test = make_suite("test", { })
+  local counter = 0
+  test:BROKEN "to_test" (function() local counter = counter + 1 end)
+  if test:in_strict_mode() then
+    ensure_error(
+        "test:run()",
+        "Suite `test' failed:\n"
+     .. " * Test `[STRICT MODE]': detected TODOs:\n"
+     .. "   -- BROKEN TEST: to_test\n\n",
+        test:run()
+      )
+  else ensure_equals("test:run()", test:run(), true) end
+end
+
+do
   print("\nSingle TODO suite:")
   local test = make_suite("test", { })
   test:TODO "to_test"

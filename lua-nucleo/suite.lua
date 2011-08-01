@@ -64,6 +64,16 @@ do
     self.todos_[#self.todos_ + 1] = msg
   end
 
+  local BROKEN = function(self, msg)
+    -- Behave as TODO, but allow pass "unused" function inside
+    assert(type(self) == "table", "bad self")
+    assert(type(msg) == "string", "bad msg")
+    self:TODO("BROKEN TEST: " .. msg)
+    return function(fn)
+      assert(type(fn) == "function", "bad callback")
+    end
+  end
+
   local UNTESTED = function(self, import_name)
     assert(type(self) == "table", "bad self")
     assert(type(import_name) == "string", "bad import name")
@@ -357,6 +367,7 @@ do
           set_fail_on_first_error = set_fail_on_first_error; -- TODO: Test this!
           UNTESTED = UNTESTED;
           TODO = TODO;
+          BROKEN = BROKEN;
           factory = factory;
           method = method;
           methods = methods;
