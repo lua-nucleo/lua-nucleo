@@ -11,6 +11,8 @@ local rawget = rawget
 
 local table_insert, table_remove = table.insert, table.remove
 
+local math_min = math.min
+
 --------------------------------------------------------------------------------
 
 local arguments,
@@ -650,6 +652,17 @@ local function tsetpath(t, k, ...)
   return tsetpath(t[k], ...)
 end
 
+local tslice = function(t, start_i, end_i)
+  local r = { }
+
+  end_i = math_min(end_i, #t)
+  for i = start_i, end_i do
+    r[#r + 1] = t[i]
+  end
+
+  return r
+end
+
 --------------------------------------------------------------------------------
 
 return
@@ -702,4 +715,5 @@ return
   tkvtorecordlist = tkvtorecordlist;
   tgetpath = tgetpath;
   tsetpath = tsetpath;
+  tslice = tslice;
 }

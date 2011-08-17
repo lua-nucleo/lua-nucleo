@@ -166,6 +166,7 @@ return
   tset_many = { "lua-nucleo/table-utils.lua" };
   tsetof = { "lua-nucleo/table-utils.lua" };
   tsetpath = { "lua-nucleo/table-utils.lua" };
+  tslice = { "lua-nucleo/table-utils.lua" };
   tsort_kv = { "lua-nucleo/tdeepequals.lua" };
   tstr = { "lua-nucleo/tstr.lua" };
   tstr_cat = { "lua-nucleo/tstr.lua" };
