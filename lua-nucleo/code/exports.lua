@@ -115,6 +115,7 @@ return
   split_by_offset = { "lua-nucleo/string.lua" };
   taccumulate = { "lua-nucleo/table-utils.lua" };
   tappend_many = { "lua-nucleo/table-utils.lua" };
+  tarraylisttohashlist = { "lua-nucleo/table-utils.lua" };
   tclone = { "lua-nucleo/table-utils.lua" };
   tcount_elements = { "lua-nucleo/table-utils.lua" };
   tdeepequals = { "lua-nucleo/tdeepequals.lua" };

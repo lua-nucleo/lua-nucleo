@@ -663,6 +663,21 @@ local tslice = function(t, start_i, end_i)
   return r
 end
 
+local tarraylisttohashlist = function(t, ...)
+  local r = { }
+
+  local args = { select(1, ...) }
+  for i = 1, #t do
+    local item = { }
+    for ii = 1, #args do
+      item[args[ii]] = t[i][ii]
+    end
+    r[#r + 1] = item
+  end
+
+  return r
+end
+
 --------------------------------------------------------------------------------
 
 return
@@ -716,4 +731,5 @@ return
   tgetpath = tgetpath;
   tsetpath = tsetpath;
   tslice = tslice;
+  tarraylisttohashlist = tarraylisttohashlist;
 }
