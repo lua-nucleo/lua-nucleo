@@ -666,11 +666,10 @@ end
 local tarraylisttohashlist = function(t, ...)
   local r = { }
 
-  local args = { select(1, ...) }
   for i = 1, #t do
     local item = { }
-    for ii = 1, #args do
-      item[args[ii]] = t[i][ii]
+    for j = 1, select("#", ...) do
+      item[select(j, ...)] = t[i][j]
     end
     r[#r + 1] = item
   end
