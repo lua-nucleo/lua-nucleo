@@ -9,6 +9,9 @@ return
   '0030-assert';
   '0040-checker';
   '0050-coro';
+  '0050-coro';
+  '0051-pcall';
+  '0051-pcall';
   '0060-deque';
   '0070-factory';
   '0080-functional';
