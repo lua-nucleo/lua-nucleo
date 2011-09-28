@@ -37,6 +37,7 @@ build = {
          ["lua-nucleo.misc"] = "lua-nucleo/misc.lua";
          ["lua-nucleo.module"] = "lua-nucleo/module.lua";
          ["lua-nucleo.ordered_named_cat_manager"] = "lua-nucleo/ordered_named_cat_manager.lua";
+         ["lua-nucleo.pcall"] = "lua-nucleo/pcall.lua";
          ["lua-nucleo.prettifier"] = "lua-nucleo/prettifier.lua";
          ["lua-nucleo.priority_queue"] = "lua-nucleo/priority_queue.lua";
          ["lua-nucleo.random"] = "lua-nucleo/random.lua";

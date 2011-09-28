@@ -105,7 +105,6 @@ return
   optional_arguments = { "lua-nucleo/args.lua" };
   ordered_pairs = { "lua-nucleo/tdeepequals.lua" };
   pack = { "lua-nucleo/args.lua" };
-  pcall = { "lua-nucleo/coro.lua" };
   pick_init = { "lua-nucleo/algorithm.lua" };
   pick_one = { "lua-nucleo/algorithm.lua" };
   remove_nil_arguments = { "lua-nucleo/functional.lua" };
