@@ -39,26 +39,6 @@ local yield_outer = function(...)
   return coroutine_yield(outer_yield_tag, ...)
 end
 
-local pcall
-do
-  local coroutine_cache = setmetatable(
-      {},
-      {
-        __mode = "k";
-        __index = function(t, k)
-          local v = coroutine.create(k)
-          t[k] = v
-          return v
-        end;
-      }
-    )
-
-  pcall = function(f, ...)
-    -- TODO: What if f() contains native coroutine.yield() call?!
-    return resume_inner(coroutine_cache[f], ...)
-  end
-end
-
 local is_outer_yield_tag = function(v)
   return v == outer_yield_tag
 end
@@ -74,7 +54,6 @@ return
 {
   resume_inner = resume_inner;
   yield_outer = yield_outer;
-  pcall = pcall;
   is_outer_yield_tag = is_outer_yield_tag;
   eat_tag = eat_tag;
 }

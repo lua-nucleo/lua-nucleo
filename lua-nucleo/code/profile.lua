@@ -18,6 +18,7 @@ PROFILE.skip = setmetatable(tset
   "lua-nucleo/suite.lua";   -- Too low-level
   "lua-nucleo/table.lua";   -- Contains aliases only, too ambiguous
   "lua-nucleo/module.lua";  -- Too low-level
+  "lua-nucleo/pcall.lua";  -- Too low-level
 }, {
   __index = function(t, k)
     -- Excluding files outside of lua-nucleo/ and inside lua-nucleo/code
