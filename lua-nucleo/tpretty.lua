@@ -8,6 +8,8 @@ local string_match, string_format = string.match, string.format
 
 local lua51_keywords = import 'lua-nucleo/language.lua' { 'lua51_keywords' }
 local make_prettifier = import 'lua-nucleo/prettifier.lua' { 'make_prettifier' }
+local is_table = import 'lua-nucleo/type.lua' { 'is_table' }
+local tstr = import 'lua-nucleo/table.lua' { 'tstr' }
 local arguments = import 'lua-nucleo/args.lua' { 'arguments' }
 
 local tpretty
@@ -93,14 +95,24 @@ do
   end
 
   tpretty = function(t, indent, cols)
+    indent = indent or "  "
+    cols = cols or 80 --standard screen width
+
+    if not is_table(t) then
+      return tstr(t)
+    end
+
     arguments(
-        "table", t,
+        -- all arguments should be listed, even though t is checked before
+        --"table", t
         "string", indent,
         "number", cols
       )
 
     local buf = {}
     local sptable = {}
+    -- make_prettifier works with external buf, so special formatter cat
+    -- is used instead of make_concatter
     local cat = function(v) buf[#buf + 1] = v end
     local pr = make_prettifier(indent, buf, cols)
     impl(t, cat, pr, {})
