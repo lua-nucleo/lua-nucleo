@@ -70,7 +70,7 @@ test "tpretty-without-optional-params" (function()
     )
 end)
 
--- TODO: Add test for default string lenght (80)
+test:TODO "Add test for default string lenght (80)"
 
 --------------------------------------------------------------------------------
 
