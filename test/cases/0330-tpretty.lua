@@ -31,6 +31,49 @@ local test = make_suite("tpretty", tpretty_exports)
 
 --------------------------------------------------------------------------------
 
+test "tpretty-not-a-table" (function()
+  ensure_strequals(
+      "t is not a table",
+      tpretty(42),
+      '42'
+    )
+end)
+
+test "tpretty-without-optional-params" (function()
+  -- TODO: Improve looks.
+  local s1 = [[
+{
+  result = {
+    stats = {
+      {
+        garden = {
+          views_total = "INTEGER";
+          unique_visits_total = "INTEGER";
+          id = "GARDEN_ID";
+          views_yesterday = "INTEGER";
+          unique_visits_yesterday = "INTEGER";
+        };
+      };
+    };
+  };
+  events = {};
+}]]
+
+  ensure_strequals(
+      [[defaul values for optional params is 80 and "  "]],
+      tpretty(assert(loadstring("return " .. s1))()),
+      tpretty(
+          assert(loadstring("return " .. s1))(),
+          "  ",
+          80
+        )
+    )
+end)
+
+-- TODO: Add test for default string lenght (80)
+
+--------------------------------------------------------------------------------
+
 test:UNTESTED "tpretty"
 
 --------------------------------------------------------------------------------
