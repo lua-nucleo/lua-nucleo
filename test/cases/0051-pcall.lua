@@ -2,8 +2,6 @@
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
--- TODO: Backport ensure (from masha2)
-
 -- TODO: Test pcall indeed caches functions with weak keys -- that they are
 --       collected properly.
 
@@ -125,52 +123,6 @@ test "yield_outer-across-pcall" (function()
   ensure_equals("outer dead", coroutine_status(outer), "dead")
 
 end)
-
---------------------------------------------------------------------------------
-
---[[
-    Mesage passing scheme for basic test:
-
-    main        outer       inner1        inner2
-      |           .           .             .
-      A--------c->*           .             .
-      |           |           .             .
-      *<=g========B           .             .
-      |           |           .             .
-      C========g=>*           .             .
-      |           |           .             .
-      *<-l--------D           .             .
-      |           |           .             .
-      E--------l->*           .             .
-      |           |           .             .
-      |           F--------c->*             .
-      |           |           |             .
-      *<=g========o===========G             .
-      |           |           |             .
-      H===========o========g=>*             .
-      |           |           |             .
-      |           <-l---------I             .
-      |           |           |             .
-      |           J--------l->*             .
-      |           |           |             .
-      |           |           K----------c->*
-      |           |           |             |
-      *<=g========o===========o=============L
-      |           |           |             |
-      M===========o===========o==========g=>*
-      |           |           |             |
-      |           |           *<-l----------N
-      |           |           |             |
-      |           |           O----------l->*
-      |           |           |             |
-      |           |           *<-r----------P
-      |           |           |             .
-      |           *<-r--------Q             .
-      |           |           .             .
-      *<-r--------R           .             .
-      |           .           .             .
-
---]]
 
 --------------------------------------------------------------------------------
 
