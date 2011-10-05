@@ -78,6 +78,8 @@ local empty_table,
       tkvtorecordlist,
       tgetpath,
       tsetpath,
+      tslice,
+      tarraylisttohashlist,
       table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -128,7 +130,9 @@ local empty_table,
         'tkvtorecordlist',
         'tipermute_inplace',
         'tgetpath',
-        'tsetpath'
+        'tsetpath',
+        'tslice',
+        'tarraylisttohashlist'
       }
 
 --------------------------------------------------------------------------------
@@ -1675,6 +1679,8 @@ test:UNTESTED 'tilistofrecordfields'
 test:UNTESTED 'tipermute_inplace'
 test:UNTESTED 'tkvtorecordlist'
 test:UNTESTED 'tgetpath'
+test:UNTESTED 'tslice'
+test:UNTESTED 'tarraylisttohashlist'
 
 --------------------------------------------------------------------------------
 
