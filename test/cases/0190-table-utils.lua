@@ -1648,6 +1648,67 @@ end)
 
 --------------------------------------------------------------------------------
 
+test:group "tslice"
+
+--------------------------------------------------------------------------------
+
+test "tslice_regular" (function()
+  local t = { 1, 2, 3, 4, 5 }
+  ensure_tequals(
+      "regular tslice",
+      tslice(t, 2, 4),
+      { 2, 3, 4}
+    )
+end)
+
+test "tslice_out_of_right_range" (function()
+  local t = { 1, 2, 3, 4, 5 }
+  ensure_tequals(
+      "right index is out of range",
+      tslice(t, 2, 6),
+      { 2, 3, 4, 5 }
+    )
+end)
+
+test "tslice_out_of_left_range" (function()
+  local t = { 1, 2, 3, 4, 5 }
+  ensure_tequals(
+      "left index is out of range",
+      tslice(t, -1, 3),
+      { 1, 2, 3 }
+    )
+end)
+
+test "tslice_both_out_of_range" (function()
+  local t = { 1, 2, 3, 4, 5 }
+  ensure_tequals(
+      "both indices are out of range",
+      tslice(t, -1, 6),
+      t
+    )
+end)
+
+test "tslice_empty_table" (function()
+  local t = { }
+  ensure_tequals(
+      "input table is empty",
+      tslice(t, 1, 5),
+      { }
+    )
+end)
+
+test "tslice_table_contains_nil" (function()
+  local t = { 1, nil, 3, nil, nil, 6 }
+
+  ensure_tequals(
+      "input table contains nil",
+      tslice(t, 1, 6),
+      { 1, nil, 3, nil, nil, 6 }
+    )
+end)
+
+--------------------------------------------------------------------------------
+
 -- simple test, shows how tsetpath works
 test:test_for "tsetpath" (function()
   local tab = { }
@@ -1679,7 +1740,6 @@ test:UNTESTED 'tilistofrecordfields'
 test:UNTESTED 'tipermute_inplace'
 test:UNTESTED 'tkvtorecordlist'
 test:UNTESTED 'tgetpath'
-test:UNTESTED 'tslice'
 test:UNTESTED 'tarraylisttohashlist'
 
 --------------------------------------------------------------------------------
