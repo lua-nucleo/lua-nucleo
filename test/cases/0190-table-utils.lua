@@ -1709,6 +1709,102 @@ end)
 
 --------------------------------------------------------------------------------
 
+test:group "tarraylisttohashlist"
+
+--------------------------------------------------------------------------------
+
+test "tarraylisttohashlist_regular" (function()
+  local t = { { 10, 20 }, { 30, 40 } }
+
+  ensure_tdeepequals(
+      "regular tarraylisttohashlist",
+      tarraylisttohashlist(t, "a", "b"),
+      { { a = 10, b = 20 }, { a = 30, b = 40 } }
+    )
+end)
+
+test "tarraylisttohashlist_empty_table" (function()
+  local t = { }
+
+  ensure_tdeepequals(
+      "tarraylisttohashlist input table is empty",
+      tarraylisttohashlist(t, "a", "b"),
+      { }
+    )
+end)
+
+test "tarraylisttohashlist_empty_table_2" (function()
+  local t = { {}, { 30, 40 } }
+
+  ensure_tdeepequals(
+      "tarraylisttohashlist input table contains empty table",
+      tarraylisttohashlist(t, "a", "b"),
+      { { }, { a = 30, b = 40 } }
+    )
+end)
+
+test "tarraylisttohashlist_empty_argument_list" (function()
+  local t = { { 10, 20 }, { 30, 40 } }
+
+  ensure_tdeepequals(
+      "tarraylisttohashlist argument list is empty",
+      tarraylisttohashlist(t),
+      { { }, { } }
+    )
+end)
+
+test "tarraylisttohashlist_empty_params" (function()
+  local t = { }
+
+  ensure_tdeepequals(
+      "tarraylisttohashlist both params are empty",
+      tarraylisttohashlist(t),
+      { }
+    )
+end)
+
+test "tarraylisttohashlist_nil_in_table" (function()
+  local t = { { nil, 20 }, { 30, 40 } }
+
+  ensure_tdeepequals(
+      "tarraylisttohashlist input table contains nil",
+      tarraylisttohashlist(t, "a", "b"),
+      { { a = nil, b = 20 }, { a = 30, b = 40 } }
+    )
+end)
+
+test "tarraylisttohashlist_nil_in_arguments" (function()
+  local t = { { 10, 20 }, { 30, 40 } }
+
+  ensure_tdeepequals(
+      "tarraylisttohashlist argument list contains nil",
+      tarraylisttohashlist(t, nil, "b"),
+      { { b = 20 }, { b = 40 } }
+    )
+end)
+
+test "tarraylisttohashlist_length_not_matches" (function()
+  local t = { { 10, 20 }, { 30, 40 } }
+
+  ensure_tdeepequals(
+      "tarraylisttohashlist too many values",
+      tarraylisttohashlist(t, "a"),
+      { { a = 10 }, { a = 30 } }
+    )
+end)
+
+test "tarraylisttohashlist_length_not_matches_2" (function()
+  local t = { { 10 }, { 30, 40 } }
+
+  ensure_tdeepequals(
+      "tarraylisttohashlist too many arguments",
+      tarraylisttohashlist(t, "a", "b"),
+      { { a = 10 }, { a = 30, b = 40 } }
+    )
+end)
+
+--------------------------------------------------------------------------------
+
 -- simple test, shows how tsetpath works
 test:test_for "tsetpath" (function()
   local tab = { }
@@ -1740,7 +1836,6 @@ test:UNTESTED 'tilistofrecordfields'
 test:UNTESTED 'tipermute_inplace'
 test:UNTESTED 'tkvtorecordlist'
 test:UNTESTED 'tgetpath'
-test:UNTESTED 'tarraylisttohashlist'
 
 --------------------------------------------------------------------------------
 
