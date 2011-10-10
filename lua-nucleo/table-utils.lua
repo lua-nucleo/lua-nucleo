@@ -652,6 +652,7 @@ local function tsetpath(t, k, ...)
   return tsetpath(t[k], ...)
 end
 
+-- TODO: rename to tislice
 local tslice = function(t, start_i, end_i)
   local r = { }
 
