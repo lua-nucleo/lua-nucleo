@@ -1688,6 +1688,24 @@ test "tslice_both_out_of_range" (function()
     )
 end)
 
+test "tslice_left_index_exceeds_right" (function()
+  local t = { 1, 2, 3, 4, 5 }
+  ensure_tequals(
+      "left index exceeds the right one",
+      tslice(t, 4, 2),
+      { }
+    )
+end)
+
+test "tslice_left_index_equals_to_right" (function()
+  local t = { 1, 2, 3, 4, 5 }
+  ensure_tequals(
+      "left index equals to the right one",
+      tslice(t, 3, 3),
+      { 3 }
+    )
+end)
+
 test "tslice_empty_table" (function()
   local t = { }
   ensure_tequals(
