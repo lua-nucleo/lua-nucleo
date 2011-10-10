@@ -11,7 +11,7 @@ local rawget = rawget
 
 local table_insert, table_remove = table.insert, table.remove
 
-local math_min = math.min
+local math_min, math_max = math.min, math.max
 
 --------------------------------------------------------------------------------
 
@@ -655,9 +655,10 @@ end
 local tslice = function(t, start_i, end_i)
   local r = { }
 
+  start_i = math_max(start_i, 1)
   end_i = math_min(end_i, #t)
   for i = start_i, end_i do
-    r[#r + 1] = t[i]
+    r[i - start_i + 1] = t[i]
   end
 
   return r
@@ -670,7 +671,10 @@ local tarraylisttohashlist = function(t, ...)
   for i = 1, #t do
     local item = { }
     for j = 1, nargs do
-      item[select(j, ...)] = t[i][j]
+      local hash = select(j, ...)
+      if hash ~= nil then -- ignore nil from arguments
+        item[hash] = t[i][j]
+      end
     end
     r[#r + 1] = item
   end
