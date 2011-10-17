@@ -31,6 +31,12 @@ local is_table
         'is_table'
       }
 
+local assert_is_table
+      = import 'lua-nucleo/typeassert.lua'
+      {
+        'assert_is_table'
+      }
+
 --------------------------------------------------------------------------------
 
 -- Warning: it is possible to corrupt this with rawset and debug.setmetatable.
@@ -642,14 +648,34 @@ end
 
 --  tsetpath(tabl, "a", "b", "c", d)
 --  tabl.a.b.c[d] = val
-local function tsetpath(t, k, ...)
-  if k == nil then
-    return t
+local tsetpath
+do
+  local function impl(nargs, dest, key, ...)
+
+    if nargs == 0 then
+      return dest
+    end
+
+    if key == nil then
+      error("tsetpath: nil can't be a table key")
+    end
+
+    dest[key] = assert_is_table(
+        dest[key] or { },
+        'key "' .. key .. '" already exists and its value is not a table'
+      )
+
+    return impl(nargs - 1, dest[key], ...)
   end
 
-  t[k] = t[k] or { }
+  tsetpath = function(dest, ...)
+    local nargs = select("#", ...)
+    if nargs == 0 then
+      return dest
+    end
 
-  return tsetpath(t[k], ...)
+    return impl(nargs, dest, ...)
+  end
 end
 
 -- TODO: rename to tislice
