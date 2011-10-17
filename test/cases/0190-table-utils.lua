@@ -78,6 +78,7 @@ local empty_table,
       tkvtorecordlist,
       tgetpath,
       tsetpath,
+      tsetpathvalue,
       tslice,
       tarraylisttohashlist,
       table_utils_exports
@@ -131,6 +132,7 @@ local empty_table,
         'tipermute_inplace',
         'tgetpath',
         'tsetpath',
+        'tsetpathvalue',
         'tslice',
         'tarraylisttohashlist'
       }
@@ -1823,16 +1825,113 @@ end)
 
 --------------------------------------------------------------------------------
 
--- simple test, shows how tsetpath works
-test:test_for "tsetpath" (function()
-  local tab = { }
-  local d = "sdv"
-  tsetpath(tab, "a", "b", "c", d)
-  assert(tab.a.b.c[d] ~= nil)
+test:group "tsetpathvalue"
 
-  tsetpath(tab, "a", "b", "c", "e")
-  assert(tab.a.b.c[d] ~= nil)
+--------------------------------------------------------------------------------
+
+test "tsetpathvalue_basic" (function()
+  local value = 42
+  local dest = { }
+  local d = 'some key'
+  local path = { "a", "b", "c", d }
+
+  tsetpathvalue(value, dest, unpack(path))
+  ensure_tdeepequals(
+      'basic tsetpathvalue',
+      dest,
+      { ["a"] = { ["b"] = { ["c"] = { [d] = value } } } }
+    )
 end)
+
+test "tsetpathvalue_destination_is_filled_ok" (function()
+  local value = 42
+  local d = 'some key'
+  local dest = { ["a"] = { ["b"] = { ["c"] = { [d] = 'not 42' } } } }
+  local path = { "a", "b", "c", d }
+
+  tsetpathvalue(value, dest, unpack(path))
+  ensure_tdeepequals(
+      'tsetpathvalue destination table already contanis keys form the path',
+      dest,
+      { ["a"] = { ["b"] = { ["c"] = { [d] = value } } } }
+    )
+end)
+
+test "tsetpathvalue_destination_is_filled_not_ok" (function()
+  local value = 42
+  local d = 'some key'
+  local dest = { ["a"] = { ["b"] = { ["c"] = '42' } } }
+  local path = { "a", "b", "c", d }
+
+  ensure_fails_with_substring(
+      'value of existing key in the destination table is not a table',
+      function() tsetpathvalue(value, dest, unpack(path)) end,
+      "already exists and its value is not a table"
+    )
+end)
+
+test "tsetpathvalue_path_of_single_key" (function()
+  local value = 42
+  local dest = { }
+  local d = 'some key'
+  local path = { d }
+
+  tsetpathvalue(value, dest, unpack(path))
+  ensure_tdeepequals(
+      'tsetpathvalue path contains single key',
+      dest,
+      { [d] = value}
+    )
+end)
+
+test "tsetpathvalue_empty_path" (function()
+  local value = 42
+  local dest = { }
+  -- no path - no value assignment, destination table will not be changed
+  local path = { }
+
+  tsetpathvalue(value, dest, unpack(path))
+  ensure_tdeepequals(
+      'tsetpathvalue empty path, empty dest',
+      dest,
+      { }
+    )
+
+  dest = { ["1"] = 1, ["2"] = 2, ["3"] = { 3 } }
+
+  tsetpathvalue(value, dest, unpack(path))
+  ensure_tdeepequals(
+      'tsetpathvalue empty path, filled dest',
+      dest,
+      { ["1"] = 1, ["2"] = 2, ["3"] = { 3 } }
+    )
+end)
+
+test "tsetpathvalue_nil_in_the middle" (function()
+  local value = 42
+  local dest = { }
+  local d = 'some key'
+  local path = { "a", nil, "c", d }
+
+  ensure_fails_with_substring(
+      'tsetpathvalue path contains nil in the middle',
+      function() tsetpathvalue(value, dest, unpack(path)) end,
+      "tsetpathvalue: nil can't be a table key"
+    )
+end)
+
+test "tsetpathvalue_nil_in_the_end" (function()
+  local value = 42
+  local dest = { }
+
+  ensure_fails_with_substring(
+      'tsetpathvalue end key is nil',
+      function() tsetpathvalue(value, dest, nil) end,
+      "tsetpathvalue: nil can't be a table key"
+    )
+end)
+
+--------------------------------------------------------------------------------
 
 test:UNTESTED 'tmap_values'
 test:UNTESTED 'torderedset'
