@@ -1933,6 +1933,107 @@ end)
 
 --------------------------------------------------------------------------------
 
+test:group "tsetpath"
+
+--------------------------------------------------------------------------------
+
+test "tsetpath_basic" (function()
+  local dest = { }
+  local d = 'some key'
+  local path = { "a", "b", "c", d }
+
+  tsetpath(dest, unpack(path))
+  ensure_tdeepequals(
+      'basic tsetpath',
+      dest,
+      { ["a"] = { ["b"] = { ["c"] = { [d] = { } } } } }
+    )
+end)
+
+test "tsetpath_destination_is_filled_ok" (function()
+  local d = 'some key'
+  local dest = { ["a"] = { ["b"] = { ["c"] = { } } } }
+  local path = { "a", "b", "c", d }
+
+  tsetpath(dest, unpack(path))
+  ensure_tdeepequals(
+      'tsetpath destination table already contanis keys form the path',
+      dest,
+      { ["a"] = { ["b"] = { ["c"] = { [d] = { } } } } }
+    )
+end)
+
+test "tsetpath_destination_is_filled_not_ok" (function()
+  local d = 'some key'
+  local dest = { ["a"] = { ["b"] = { ["c"] = '42' } } }
+  local path = { "a", "b", "c", d }
+
+  ensure_fails_with_substring(
+      'value of existing key in the destination table is not a table',
+      function() tsetpath(dest, unpack(path)) end,
+      "already exists and its value is not a table"
+    )
+end)
+
+test "tsetpath_path_of_single_key" (function()
+  local dest = { }
+  local d = 'some key'
+  local path = { d }
+
+  tsetpath(dest, unpack(path))
+  ensure_tdeepequals(
+      'tsetpath path contains single key',
+      dest,
+      { [d] = { } }
+    )
+end)
+
+test "tsetpath_empty_path" (function()
+  local dest = { }
+  -- no path - no value assignment, destination table will not be changed
+  local path = { }
+
+  tsetpath(dest, unpack(path))
+  ensure_tdeepequals(
+      'tsetpath empty path, empty dest',
+      dest,
+      { }
+    )
+
+  dest = { ["a"] = { ["b"] = { ["c"] = { } } } }
+
+  tsetpath(dest, unpack(path))
+  ensure_tdeepequals(
+      'tsetpath empty path, filled dest',
+      dest,
+      { ["a"] = { ["b"] = { ["c"] = { } } } }
+    )
+end)
+
+test "tsetpath_nil_in_the middle" (function()
+  local dest = { }
+  local d = 'some key'
+  local path = { "a", nil, "c", d }
+
+  ensure_fails_with_substring(
+      'tsetpath path contains nil in the middle',
+      function() tsetpath(dest, unpack(path)) end,
+      "tsetpath: nil can't be a table key"
+    )
+end)
+
+test "tsetpath_nil_in_the_end" (function()
+  local dest = { }
+
+  ensure_fails_with_substring(
+      'tsetpath end key is nil',
+      function() tsetpath(dest, nil) end,
+      "tsetpath: nil can't be a table key"
+    )
+end)
+
+--------------------------------------------------------------------------------
+
 test:UNTESTED 'tmap_values'
 test:UNTESTED 'torderedset'
 test:UNTESTED 'torderedset_insert'
