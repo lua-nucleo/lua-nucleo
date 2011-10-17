@@ -56,7 +56,6 @@ local get_quarter_timestamp = function(timestamp)
   return os_time(t)
 end
 
--- TODO: Generalize to lua-nucleo
 local get_minute_timestamp = function(timestamp)
   timestamp = timestamp or os_time()
 
