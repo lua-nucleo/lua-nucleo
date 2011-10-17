@@ -678,6 +678,38 @@ do
   end
 end
 
+local tsetpathvalue
+do
+  local function impl(nargs, value, dest, key, ...)
+    assert(nargs > 0)
+
+    if key == nil then
+      error("tsetpathvalue: nil can't be a table key")
+    end
+
+    if nargs == 1 then
+       dest[key] = value
+      return dest
+    end
+
+    dest[key] = assert_is_table(
+        dest[key] or { },
+        'key "' .. key .. '" already exists and its value is not a table'
+      )
+
+    return impl(nargs - 1, value, dest[key], ...)
+  end
+
+  tsetpathvalue = function(value, dest, ...)
+    local nargs = select("#", ...)
+    if nargs == 0 then
+      return dest
+    end
+
+    return impl(nargs, value, dest, ...)
+  end
+end
+
 -- TODO: rename to tislice
 local tslice = function(t, start_i, end_i)
   local r = { }
@@ -761,6 +793,7 @@ return
   tkvtorecordlist = tkvtorecordlist;
   tgetpath = tgetpath;
   tsetpath = tsetpath;
+  tsetpathvalue = tsetpathvalue;
   tslice = tslice;
   tarraylisttohashlist = tarraylisttohashlist;
 }
