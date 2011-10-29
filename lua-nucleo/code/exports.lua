@@ -9,6 +9,8 @@ return
 {
   END_OF_LOG_MESSAGE = { "lua-nucleo/log.lua" };
   EPSILON = { "lua-nucleo/math.lua" };
+  FLUSH_SECONDS_DEFAULT = { "lua-nucleo/log.lua" };
+  LOG_FLUSH_MODE = { "lua-nucleo/log.lua" };
   LOG_LEVEL = { "lua-nucleo/log.lua" };
   amap = { "lua-nucleo/args.lua" };
   args_proxy = { "lua-nucleo/functional.lua" };
@@ -166,6 +168,7 @@ return
   tset_many = { "lua-nucleo/table-utils.lua" };
   tsetof = { "lua-nucleo/table-utils.lua" };
   tsetpath = { "lua-nucleo/table-utils.lua" };
+  tsetpathvalue = { "lua-nucleo/table-utils.lua" };
   tslice = { "lua-nucleo/table-utils.lua" };
   tsort_kv = { "lua-nucleo/tdeepequals.lua" };
   tstr = { "lua-nucleo/tstr.lua" };
