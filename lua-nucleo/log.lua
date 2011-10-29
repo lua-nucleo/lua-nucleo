@@ -51,12 +51,14 @@ local assert_is_table,
 local tflip,
       tstr_cat,
       tclone,
+      tset,
       empty_table
       = import 'lua-nucleo/table.lua'
       {
         'tflip',
         'tstr_cat',
         'tclone',
+        'tset',
         'empty_table'
       }
 
@@ -98,6 +100,15 @@ local LOG_LEVEL =
   DEBUG = 3;
   SPAM  = 4;
 }
+
+local LOG_FLUSH_MODE =
+{
+  ALWAYS = 1;
+  EVERY_N_SECONDS = 2;
+  NEVER = 3;
+}
+
+local FLUSH_SECONDS_DEFAULT = 1
 
 local END_OF_LOG_MESSAGE = "\n"
 
@@ -182,18 +193,29 @@ do
       )
   end
 
-  make_common_logging_config = function(levels_config, modules_config)
-    optional_arguments(
-        "table", levels_config,
-        "table", modules_config
-      )
+  make_common_logging_config = function(
+      levels_config,
+      modules_config,
+      flush_type,
+      flush_time
+    )
     levels_config = levels_config or empty_table
     modules_config = modules_config or empty_table
-
+    flush_type = flush_type or LOG_FLUSH_MODE.EVERY_N_SECONDS
+    flush_time = flush_time or FLUSH_SECONDS_DEFAULT
+    arguments(
+        "table", levels_config,
+        "table", modules_config,
+        "number", flush_type,
+        "number", flush_time
+      )
     return
     {
       set_log_enabled = set_log_enabled;
       is_log_enabled = is_log_enabled; -- Required method
+      last_flush_time = 0;
+      flush_type = flush_type;
+      flush_time = flush_time;
       --
       cache_ = make_config_cache(levels_config, modules_config);
     }
@@ -229,7 +251,9 @@ do
         module_name,
         level,
         sink,
+        flush,
         date_fn,
+        get_time,
         logger_id,
         suffix
       )
@@ -238,7 +262,9 @@ do
           "string", module_name,
           "number", level,
           "function", sink,
+          "function", flush,
           "function", date_fn,
+          "function", get_time,
           --"string", logger_id, -- TODO: Need metatype, may be function or string
           "string", suffix
         )
@@ -246,9 +272,16 @@ do
       if is_function(logger_id) then
         return function(...)
           if logging_config:is_log_enabled(module_name, level) then
-            sink "[" (date_fn()) "] " (logger_id())
+            local time = get_time()
+            sink "[" (date_fn(time)) "] " (logger_id())
                 "[" (suffix) "] "
-
+            if
+              logging_config.flush_type == LOG_FLUSH_MODE.EVERY_N_SECONDS
+                and time > logging_config.last_flush_time + logging_config.flush_time
+            then
+              flush()
+              logging_config.last_flush_time = time
+            end
             -- NOTE: Using explicit size since we have to support holes in the vararg.
             return impl(sink, select("#", ...), ...)
           end
@@ -257,9 +290,16 @@ do
         assert_is_string(logger_id)
         return function(...)
           if logging_config:is_log_enabled(module_name, level) then
-            sink "[" (date_fn()) "] " (logger_id)
+            local time = get_time()
+            sink "[" (date_fn(time)) "] " (logger_id)
                 "[" (suffix) "] "
-
+            if
+              logging_config.flush_type == LOG_FLUSH_MODE.EVERY_N_SECONDS
+                and time > logging_config.last_flush_time + logging_config.flush_time
+            then
+              flush()
+              logging_config.last_flush_time = time
+            end
             -- NOTE: Using explicit size since we have to support holes in the vararg.
             return impl(sink, select("#", ...), ...)
           end
@@ -281,7 +321,9 @@ do
         module_name,
         level,
         self.sink_,
+        self.flush_,
         self.date_fn_,
+        self.get_time_,
         self.logger_id_,
         suffix
       )
@@ -298,15 +340,25 @@ do
   --
   -- Sink also must behave like cat(), that is, return itself.
   --
-  make_logging_system = function(logger_id, sink, logging_config, date_fn)
+  make_logging_system = function(
+      logger_id,
+      sink,
+      logging_config,
+      date_fn,
+      flush,
+      get_time
+    )
     date_fn = date_fn or get_current_logsystem_date
-
+    flush = flush or function() end
+    get_time = get_time or os_time
     assert(is_string(logger_id) or is_function(logger_id))
     arguments(
         -- "string", logger_id, -- TODO: Need metatype may be function or string
         "function", sink,
         "table", logging_config,
-        "function", date_fn
+        "function", date_fn,
+        "function", flush,
+        "function", get_time
       )
 
     return
@@ -318,6 +370,8 @@ do
       sink_ = sink;
       date_fn_ = date_fn;
       config_ = logging_config;
+      flush_ = flush;
+      get_time_ = get_time;
     }
   end
 end
@@ -347,7 +401,7 @@ do
           logger:make_module_logger(
               module_name,
               assert(info.level),
-              module_prefix..assert(info.suffix)
+              module_prefix .. assert(info.suffix)
             )
         , impl(logger, module_name, module_prefix, ...)
     end
@@ -382,6 +436,8 @@ return
 {
   LOG_LEVEL = LOG_LEVEL;
   END_OF_LOG_MESSAGE = END_OF_LOG_MESSAGE;
+  LOG_FLUSH_MODE = LOG_FLUSH_MODE;
+  FLUSH_SECONDS_DEFAULT = FLUSH_SECONDS_DEFAULT;
   --
   format_logsystem_date = format_logsystem_date;
   get_current_logsystem_date = get_current_logsystem_date;
