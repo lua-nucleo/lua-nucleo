@@ -17,13 +17,15 @@ local is_string,
 local assert_is_string,
       assert_is_table,
       assert_is_nil,
-      assert_is_function
+      assert_is_function,
+      assert_is_number
       = import 'lua-nucleo/typeassert.lua'
       {
         'assert_is_string',
         'assert_is_table',
         'assert_is_nil',
-        'assert_is_function'
+        'assert_is_function',
+        'assert_is_number'
       }
 
 local tstr,
@@ -83,6 +85,8 @@ local unique_object
 --------------------------------------------------------------------------------
 
 local LOG_LEVEL,
+      LOG_FLUSH_MODE,
+      FLUSH_SECONDS_DEFAULT,
       END_OF_LOG_MESSAGE,
       format_logsystem_date,
       get_current_logsystem_date,
@@ -94,6 +98,8 @@ local LOG_LEVEL,
       = import 'lua-nucleo/log.lua'
       {
         'LOG_LEVEL',
+        'LOG_FLUSH_MODE',
+        'FLUSH_SECONDS_DEFAULT',
         'END_OF_LOG_MESSAGE',
         'format_logsystem_date',
         'get_current_logsystem_date',
@@ -111,6 +117,14 @@ local test = make_suite("log", log_exports)
 
 test:test_for "LOG_LEVEL" (function()
   assert_is_table(LOG_LEVEL) -- Smoke test
+end)
+
+test:test_for "LOG_FLUSH_MODE" (function()
+  assert_is_table(LOG_FLUSH_MODE) -- Smoke test
+end)
+
+test:test_for "FLUSH_SECONDS_DEFAULT" (function()
+  assert_is_number(FLUSH_SECONDS_DEFAULT) -- Smoke test
 end)
 
 test:test_for "END_OF_LOG_MESSAGE" (function()
