@@ -37,6 +37,8 @@ local make_concatter,
       kv_concat,
       escape_lua_pattern,
       escape_for_json,
+      starts_with,
+      ends_with,
       string_exports
       = import 'lua-nucleo/string.lua'
       {
@@ -54,7 +56,9 @@ local make_concatter,
         'count_substrings',
         'kv_concat',
         'escape_lua_pattern',
-        'escape_for_json'
+        'escape_for_json',
+        'starts_with',
+        'ends_with'
       }
 
 --------------------------------------------------------------------------------
@@ -119,6 +123,42 @@ test "trim-basic" (function()
   ensure_equals("both", trim(" d "), "d")
   ensure_equals("middle", trim("e f"), "e f")
   ensure_equals("many", trim("\t \t    \tg  \th\t    \t "), "g  \th")
+end)
+
+--------------------------------------------------------------------------------
+
+test:tests_for "starts_with"
+
+test "starts_with-minimal" (function()
+  ensure_equals("trivial", starts_with("", ""), true)
+  ensure_equals("strings always start with empty string", starts_with("abc", ""), true)
+  ensure_equals("1..1", starts_with("abc", "a"), true)
+  ensure_equals("1..2", starts_with("abc", "ab"), true)
+  ensure_equals("1..3", starts_with("abc", "abc"), true)
+  ensure_equals("1..4", starts_with("abc", "abcb"), false)
+  ensure_equals("special char", starts_with("abc", "\000"), false)
+  ensure_equals("binary-safe", starts_with("Русский язык велик и могуч", "Русский я"), true)
+  ensure_equals("against number", starts_with("foo", 1), false)
+  ensure_equals("against boolean", starts_with("foo", false), false)
+  ensure_equals("against table", starts_with("foo", {}), false)
+  ensure_equals("against nil", starts_with("foo", nil), false)
+end)
+
+test:tests_for "ends_with"
+
+test "ends_with-minimal" (function()
+  ensure_equals("trivial", ends_with("", ""), true)
+  ensure_equals("strings always end with empty string", ends_with("abc", ""), true)
+  ensure_equals("1..1", ends_with("abc", "c"), true)
+  ensure_equals("1..2", ends_with("abc", "bc"), true)
+  ensure_equals("1..3", ends_with("abc", "abc"), true)
+  ensure_equals("1..4", ends_with("abc", "abc "), false)
+  ensure_equals("special char", ends_with("abc", "\000"), false)
+  ensure_equals("binary-safe", ends_with("Русский язык велик и могуч", "к и могуч"), true)
+  ensure_equals("against number", ends_with("foo", 1), false)
+  ensure_equals("against boolean", ends_with("foo", false), false)
+  ensure_equals("against table", ends_with("foo", {}), false)
+  ensure_equals("against nil", ends_with("foo", nil), false)
 end)
 
 --------------------------------------------------------------------------------

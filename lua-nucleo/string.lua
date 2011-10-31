@@ -194,6 +194,18 @@ do
   end
 end
 
+local starts_with = function(str, prefix)
+  if type(str) ~= 'string' or type(prefix) ~= 'string' then return false end
+  local plen = #prefix
+  return (#str >= plen) and (str:sub(1, plen) == prefix)
+end
+
+local ends_with = function(str, suffix)
+  if type(str) ~= 'string' or type(suffix) ~= 'string' then return false end
+  local slen = #suffix
+  return slen == 0 or ((#str >= slen) and (str:sub(-slen, -1) == suffix))
+end
+
 return
 {
   escape_string = escape_string;
@@ -211,4 +223,6 @@ return
   kv_concat = kv_concat;
   escape_lua_pattern = escape_lua_pattern;
   escape_for_json = escape_for_json;
+  starts_with = starts_with;
+  ends_with = ends_with;
 }
