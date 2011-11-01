@@ -40,6 +40,7 @@ return
   eat_tag = { "lua-nucleo/coro.lua" };
   eat_true = { "lua-nucleo/args.lua" };
   empty_table = { "lua-nucleo/table-utils.lua" };
+  ends_with = { "lua-nucleo/string.lua" };
   ensure = { "lua-nucleo/ensure.lua" };
   ensure_aposteriori_probability = { "lua-nucleo/ensure.lua" };
   ensure_equals = { "lua-nucleo/ensure.lua" };
@@ -114,6 +115,7 @@ return
   resume_inner = { "lua-nucleo/coro.lua" };
   split_by_char = { "lua-nucleo/string.lua" };
   split_by_offset = { "lua-nucleo/string.lua" };
+  starts_with = { "lua-nucleo/string.lua" };
   taccumulate = { "lua-nucleo/table-utils.lua" };
   tappend_many = { "lua-nucleo/table-utils.lua" };
   tarraylisttohashlist = { "lua-nucleo/table-utils.lua" };
