@@ -31,6 +31,10 @@ local test = make_suite("tpretty", tpretty_exports)
 
 --------------------------------------------------------------------------------
 
+test:UNTESTED "tpretty"
+
+---------------------------------------------------------------------------------
+
 test "tpretty-not-a-table" (function()
   ensure_strequals(
       "t is not a table",
@@ -40,13 +44,15 @@ test "tpretty-not-a-table" (function()
 end)
 
 test "tpretty-without-optional-params" (function()
-  -- TODO: Improve looks.
   local s1 = [[
 {
-  result = {
-    stats = {
+  result =
+  {
+    stats =
+    {
       {
-        garden = {
+        garden =
+       {
           views_total = "INTEGER";
           unique_visits_total = "INTEGER";
           id = "GARDEN_ID";
@@ -56,7 +62,7 @@ test "tpretty-without-optional-params" (function()
       };
     };
   };
-  events = {};
+  events = { };
 }]]
 
   ensure_strequals(
@@ -70,24 +76,14 @@ test "tpretty-without-optional-params" (function()
     )
 end)
 
-test:TODO "Add test for default string lenght (80)"
-
---------------------------------------------------------------------------------
-
-test:UNTESTED "tpretty"
-
---------------------------------------------------------------------------------
-
 -- Based on actual bug scenario
 test "tpretty-bug-concat-nil-minimal" (function()
-  -- TODO: Improve looks.
   local s1 = [[
 {
-  stats = {};
+  stats = { };
 }]]
 
-  -- TODO: Improve looks.
-  local s2 = [[{}]]
+  local s2 = [[{ }]]
 
   ensure_strequals(
       "first result matches expected",
@@ -118,27 +114,26 @@ end)
 
 -- Based on actual bug scenario
 test "tpretty-bug-concat-nil-full" (function()
-  -- TODO: Improve looks.
   local s1 = [[
 {
-  result = {
-    stats = {
+  result =
+  {
+    stats =
+    {
+      garden =
       {
-        garden = {
-          views_total = "INTEGER";
-          unique_visits_total = "INTEGER";
-          id = "GARDEN_ID";
-          views_yesterday = "INTEGER";
-          unique_visits_yesterday = "INTEGER";
-        };
+        views_total = "INTEGER";
+        unique_visits_total = "INTEGER";
+        id = "GARDEN_ID";
+        views_yesterday = "INTEGER";
+        unique_visits_yesterday = "INTEGER";
       };
     };
   };
-  events = {};
+  events = { };
 }]]
 
-  -- TODO: Improve looks. Should be
---[[
+  local s2 = [[
 {
   result =
   {
@@ -147,16 +142,6 @@ test "tpretty-bug-concat-nil-full" (function()
     money_game = "MONEY_GAME";
   };
   events = { };
-}--]]
-
-  local s2 = [[
-{
-  result = {
-    money_real = "MONEY_REAL";
-    money_referral = "MONEY_REFERRAL";
-    money_game = "MONEY_GAME";
-  };
-  events = {};
 }]]
 
   ensure_strequals(
