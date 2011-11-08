@@ -26,7 +26,7 @@ do
     local MODE_MULTILINE = 8
 
     local subst_multiline = { ";\n", "\n", ";\n", " =\n" }
-    local subst_line = { ", ", "", "", " = " }
+    local subst_line = { ", ", " ", " ", " = " }
 
     local level = 0
     local positions = { }
@@ -140,7 +140,15 @@ do
         local pos, level, stype = positions[i], levels[i], types[i]
         if stype == TABLE_BEGIN_LINE then
           mode = MODE_LINE
+          if types[i + 3] == TABLE_END then
+            -- handle special case - empty table
+            self.buffer[pos + 2] = "" -- replace TERMINATING_SEPARATOR
+          end
         elseif stype == TABLE_BEGIN_MULTILINE then
+          if level > 1 then
+            self.buffer[pos] = "\n" .. indent_cache[level - 1] .. self.buffer[pos]
+            self.buffer[pos - 1] = " ="
+          end
           mode = MODE_MULTILINE
         elseif stype == TABLE_END then
           mode = MODE_MULTILINE
