@@ -38,6 +38,7 @@ local empty_table,
       tvalues,
       tkeysvalues,
       tflip,
+      tflip_inplace,
       tiflip,
       tset,
       tiset,
@@ -92,6 +93,7 @@ local empty_table,
         'tvalues',
         'tkeysvalues',
         'tflip',
+        'tflip_inplace',
         'tiflip',
         'tset',
         'tiset',
@@ -673,6 +675,66 @@ test "tflip-many" (function()
       "many",
       tflip(t),
       { [42] = 1, [k] = "a", [false] = k }
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tflip_inplace"
+
+--------------------------------------------------------------------------------
+
+test "tflip_inplace-empty" (function()
+  ensure_tequals("empty", tflip_inplace({ }), { })
+end)
+
+test "tflip_inplace-single" (function()
+  ensure_tequals("simple", tflip_inplace({ [1] = 42 }), { [1] = 42, [42] = 1 })
+end)
+
+test "tflip_inplace-hole" (function()
+  ensure_tequals("hole", tflip_inplace({ [42] = 1 }), { [1] = 42 ,  [42] = 1 })
+end)
+
+test "tflip_inplace-hash" (function()
+  ensure_tequals("hash", tflip_inplace({ ["a"] = 42 }), { [42] = "a",  ["a"] = 42 })
+end)
+
+test "tflip_inplace-duplicate" (function()
+  local t = tflip_inplace({ [1] = 42, [2] = 42 })
+  ensure(
+      "duplicate",
+      tequals(t, { [42] = 1, [1] = 42, [2] = 42 }) or tequals(t, { [42] = 2, [1] = 42, [2] = 42 })
+    )
+end)
+
+test "tflip_inplace-duplicate-hash" (function()
+  local t = tflip_inplace({ [1] = 42, ["a"] = 42 })
+  ensure(
+      "duplicate hash",
+      tequals(t, { [42] = 1, [1] = 42, ["a"] = 42 }) or tequals(t, { [42] = "a", [1] = 42, ["a"] = 42 })
+    )
+end)
+
+test "tflip_inplace-table" (function()
+  local k = { }
+  ensure_tequals("table", tflip_inplace({ [k] = 42 }), { [42] = k, [k] = 42 })
+end)
+
+test "tflip_inplace-recursive" (function()
+  local t = { }
+  t[1] = t
+  ensure_tequals("recursive", tflip_inplace(t), { [t] = 1, [1] = t })
+end)
+
+test "tflip_inplace-many" (function()
+  local k = { }
+  local t = { [1] = 42, a = k, [k] = false }
+  local r = tflip_inplace(t)
+
+  ensure(
+      "many",
+      tequals(r, { [1] = 42, [42] = 1, [k] = "a", a = k }) or tequals(r, { [1] = 42, [42] = 1, [false] = k, [k] = false, a = k })
     )
 end)
 
