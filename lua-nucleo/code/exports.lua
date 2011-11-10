@@ -124,6 +124,7 @@ return
   tdeepequals = { "lua-nucleo/tdeepequals.lua" };
   tequals = { "lua-nucleo/table-utils.lua" };
   tflip = { "lua-nucleo/table-utils.lua" };
+  tflip_inplace = { "lua-nucleo/table-utils.lua" };
   tgenerate_n = { "lua-nucleo/table-utils.lua" };
   tgetpath = { "lua-nucleo/table-utils.lua" };
   tidentityset = { "lua-nucleo/table-utils.lua" };
