@@ -141,6 +141,16 @@ local tflip = function(t)
 end
 
 -- If table contains multiple keys with the same value,
+-- only one key is stored in the result, picked in undetermined way.
+local tflip_inplace = function(t)
+  for k, v in pairs(t) do
+    t[v] = k
+  end
+
+  return t
+end
+
+-- If table contains multiple keys with the same value,
 -- only the last such key (highest one) is stored in the result.
 local tiflip = function(t)
   local r = { }
@@ -753,6 +763,7 @@ return
   tvalues = tvalues;
   tkeysvalues = tkeysvalues;
   tflip = tflip;
+  tflip_inplace = tflip_inplace;
   tiflip = tiflip;
   tset = tset;
   tiset = tiset;
