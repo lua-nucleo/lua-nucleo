@@ -99,6 +99,10 @@ do
 
     local key_start = function(self)
       prev_table_pos = -1
+
+      -- compensate off-by-one in finish() where key replaced with
+      -- separator or indentation
+      self.buffer[#self.buffer + 1] = "";
     end
 
     local value_start = function(self)
