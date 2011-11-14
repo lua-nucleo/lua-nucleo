@@ -171,6 +171,44 @@ test "tpretty-bug-concat-nil-full" (function()
     )
 end)
 
+-- Test based on real bug scenario
+-- #2304 and #2317
+--
+-- In case of failure. `this_field_was_empty' miss in output
+test "tpretty-fieldname-bug" (function ()
+  local cache_file_contents = [[
+{
+  projects =
+  {
+    ["lua-nucleo"] =
+    {
+      clusters =
+      {
+        ["localhost-an"] =
+        {
+          machines =
+          {
+            localhost = { this_field_was_empty = true };
+          };
+        };
+      };
+    };
+  };
+}]]
+  ensure_strequals(
+    "second result matches expected",
+    ensure(
+      "render second",
+      tpretty(
+        ensure("parse error", loadstring("return " .. cache_file_contents))(),
+        "  ",
+        80
+       )
+    ),
+    cache_file_contents
+  )
+end)
+
 --------------------------------------------------------------------------------
 
 assert(test:run())
