@@ -67,9 +67,9 @@ test "tpretty-without-optional-params" (function()
 
   ensure_strequals(
       [[default values for optional params is 80 and "  "]],
-      tpretty(assert(loadstring("return " .. s1))()),
+      tpretty(ensure("parse", (loadstring("return " .. s1))())),
       tpretty(
-          assert(loadstring("return " .. s1))(),
+          ensure("parse", loadstring("return " .. s1))(),
           "  ",
           80
         )
@@ -90,7 +90,7 @@ test "tpretty-bug-concat-nil-minimal" (function()
       ensure(
           "render first",
           tpretty(
-              assert(loadstring("return " .. s1))(),
+              ensure("parse", loadstring("return " .. s1))(),
               "  ",
               80
             )
@@ -103,7 +103,7 @@ test "tpretty-bug-concat-nil-minimal" (function()
       ensure(
           "render second",
           tpretty(
-              assert(loadstring("return " .. s2))(),
+              ensure("parse", loadstring("return " .. s2))(),
               "  ",
               80
             )
@@ -149,7 +149,7 @@ test "tpretty-bug-concat-nil-full" (function()
       ensure(
           "render first",
           tpretty(
-              assert(loadstring("return " .. s1))(),
+              ensure("parse", loadstring("return " .. s1))(),
               "  ",
               80
             )
@@ -162,7 +162,7 @@ test "tpretty-bug-concat-nil-full" (function()
       ensure(
           "render second",
           tpretty(
-              assert(loadstring("return " .. s2))(),
+              ensure("parse", loadstring("return " .. s2))(),
               "  ",
               80
             )
