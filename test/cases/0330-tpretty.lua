@@ -66,7 +66,7 @@ test "tpretty-without-optional-params" (function()
 }]]
 
   ensure_strequals(
-      [[defaul values for optional params is 80 and "  "]],
+      [[default values for optional params is 80 and "  "]],
       tpretty(assert(loadstring("return " .. s1))()),
       tpretty(
           assert(loadstring("return " .. s1))(),
