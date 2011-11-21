@@ -38,7 +38,7 @@ uninstall_strict_mode_ = function()
 end
 
 if getmetatable(_G) ~= nil then
-  error("_G already got meatatable")
+  error("_G already got metatable")
 end
 
 setmetatable(_G, {
