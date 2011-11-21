@@ -4,7 +4,6 @@
 
 return
 {
-  '0330-tpretty';
   '0010-algorithm';
   '0020-args';
   '0030-assert';
