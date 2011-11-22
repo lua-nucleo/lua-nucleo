@@ -33,6 +33,7 @@ return
   collect_all_garbage = { "lua-nucleo/misc.lua" };
   common_method_list = { "lua-nucleo/factory.lua" };
   count_substrings = { "lua-nucleo/string.lua" };
+  create_escape_subst = { "lua-nucleo/string.lua" };
   create_table = { "lua-nucleo/functional.lua" };
   do_in_environment = { "lua-nucleo/sandbox.lua" };
   do_nothing = { "lua-nucleo/functional.lua" };
