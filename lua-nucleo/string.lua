@@ -6,6 +6,12 @@ local table_concat, table_insert = table.concat, table.insert
 local string_find, string_sub = string.find, string.sub
 local assert, pairs = assert, pairs
 
+local tidentityset
+      = import 'lua-nucleo/table-utils.lua'
+      {
+        'tidentityset'
+      }
+
 local make_concatter -- TODO: rename, is not factory
 do
   make_concatter = function()
@@ -30,14 +36,29 @@ local trim = function(s)
   return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
--- TODO: Rename! (urlencode?)
-local escape_string = function(str)
-  return str:gsub(
-      "[%c]",
-      function(c)
-        return ("%%%02X"):format(c:byte())
-      end
+local create_escape_subst = function(string_subst, ignore)
+  ignore = ignore or { "\n", "\t" }
+  local subst = setmetatable(
+      tidentityset(ignore),
+      {
+        __metatable = "escape.char";
+        __index = function(t, k)
+          local v = (string_subst):format(k:byte())
+          t[k] = v
+          return v
+        end;
+      }
     )
+  return subst
+end
+
+-- WARNING: This is not a suitable replacement for urlencode
+local escape_string
+do
+  local escape_subst = create_escape_subst("%%%02X")
+  escape_string = function(str)
+    return (str:gsub("[%c%z\128-\255]", escape_subst))
+  end
 end
 
 local htmlspecialchars = nil
@@ -211,6 +232,7 @@ return
   escape_string = escape_string;
   make_concatter = make_concatter;
   trim = trim;
+  create_escape_subst = create_escape_subst;
   htmlspecialchars = htmlspecialchars;
   fill_placeholders_ex = fill_placeholders_ex;
   fill_placeholders = fill_placeholders;
