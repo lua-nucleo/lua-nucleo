@@ -44,6 +44,8 @@ local tstr,
         'tset'
       }
 
+
+
 local is_table
       = import 'lua-nucleo/type.lua'
       {
@@ -72,6 +74,12 @@ local arguments,
         'arguments',
         'method_arguments',
         'optional_arguments'
+      }
+
+local create_escape_subst
+      = import 'lua-nucleo/string.lua'
+      {
+        'create_escape_subst'
       }
 
 local make_concatter = import 'lua-nucleo/string.lua' { 'make_concatter' }
@@ -210,6 +218,9 @@ test:factory "make_logging_system" (
 
 --------------------------------------------------------------------------------
 
+-- same as used in log
+local escape_subst = create_escape_subst("\\%03d")
+
 -- TODO: Generalize
 local make_test_concatter = function()
   local concatter =
@@ -306,7 +317,8 @@ local check_logger = function(
     if is_table(v) then
       tstr_cat(expected_cat, v)
     else
-      expected_cat(tostring(v))
+      -- same as used in log
+      expected_cat(tostring(v):gsub("[%c%z\128-\255]",  escape_subst))
     end
   end
 
@@ -473,6 +485,28 @@ test "make_module_logger-table" (function()
   check_make_module_logger(
       concatter, check_date_str, logging_system, logging_system_id,
       nil, { [{ 42, nil, 24 }] = { a = 42 } }, nil
+    )
+end)
+
+test "make_module_logger-binary_data" (function()
+  local concatter = make_test_concatter()
+  local logging_system_id = "{logger_id} "
+  local logging_system = ensure(
+      "make logging system",
+      make_logging_system(
+          logging_system_id,
+          concatter.cat,
+          make_common_logging_config(tset(LOG_LEVEL))
+        )
+    )
+
+  local str_test = ""
+  for i = 0, 255 do
+    str_test = str_test .. string.char(i)
+  end
+
+  check_make_module_logger(
+      concatter, check_date_str, logging_system, logging_system_id, str_test
     )
 end)
 
