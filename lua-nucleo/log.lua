@@ -62,10 +62,22 @@ local tflip,
         'empty_table'
       }
 
+local tidentityset
+      = import 'lua-nucleo/table-utils.lua'
+      {
+        'tidentityset'
+      }
+
 local do_nothing
       = import 'lua-nucleo/functional.lua'
       {
         'do_nothing'
+      }
+
+local create_escape_subst
+      = import 'lua-nucleo/string.lua'
+      {
+        'create_escape_subst'
       }
 
 --------------------------------------------------------------------------------
@@ -226,13 +238,19 @@ end
 
 local make_logging_system
 do
+  -- Emulating Lua "%q" escape style, as tstr_cat() would use it
+  local escape_subst = create_escape_subst("\\%03d")
+
   -- Private function
   local make_logger
   do
     local function impl(sink, n, v, ...)
       if n > 0 then
         if type(v) ~= "table" then
-          sink(tostring(v))
+          -- We do not dare to log any binary characters
+          -- Note that there is no sense to keep \128-\255 bytes unescaped,
+          -- since we already escape bytes in %c range, and that ruins UTF-8 anyway.
+          sink(tostring(v):gsub("[%c%z\128-\255]", escape_subst))
         else
           tstr_cat(sink, v) -- Assuming this does not emit "\n"
         end
