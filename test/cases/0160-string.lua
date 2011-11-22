@@ -39,6 +39,7 @@ local make_concatter,
       escape_for_json,
       starts_with,
       ends_with,
+      create_escape_subst,
       string_exports
       = import 'lua-nucleo/string.lua'
       {
@@ -58,7 +59,8 @@ local make_concatter,
         'escape_lua_pattern',
         'escape_for_json',
         'starts_with',
-        'ends_with'
+        'ends_with',
+        'create_escape_subst'
       }
 
 --------------------------------------------------------------------------------
@@ -166,8 +168,67 @@ end)
 test:tests_for "escape_string"
 
 test "escape_string-minimal" (function ()
-  ensure_equals("Equal strings",escape_string("simple str without wrong chars"),"simple str without wrong chars")
-  ensure_equals("escaped str",escape_string(string.char(0)..string.char(1)),"%00%01")
+
+  ensure_equals(
+       "Equal strings",
+       escape_string("simple str without wrong chars"),
+       "simple str without wrong chars"
+     )
+
+  ensure_equals("escaped str exceptions", escape_string("\009\010"), "\t\n")
+
+  ensure_equals(
+      "escaped str",
+      escape_string("\000\001\128"),
+      "%00%01%80"
+    )
+
+  local str_test = ""
+  for i = 0, 255 do
+    str_test = str_test .. string.char(i)
+  end
+
+  ensure_equals("escaped str all symbols 129 - 255",
+      escape_string(str_test),
+      [[%00%01%02%03%04%05%06%07%08]] .. "\t\n"
+   .. [[%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F !"#$%]]
+   .. [[&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghij]]
+   .. [[klmnopqrstuvwxyz{|}~%7F%80%81%82%83%84%85%86%87%88%89%8A%8B%8C%8D%8E%]]
+   .. [[8F%90%91%92%93%94%95%96%97%98%99%9A%9B%9C%9D%9E%9F%A0%A1%A2%A3%A4%A5%]]
+   .. [[A6%A7%A8%A9%AA%AB%AC%AD%AE%AF%B0%B1%B2%B3%B4%B5%B6%B7%B8%B9%BA%BB%BC%]]
+   .. [[BD%BE%BF%C0%C1%C2%C3%C4%C5%C6%C7%C8%C9%CA%CB%CC%CD%CE%CF%D0%D1%D2%D3%]]
+   .. [[D4%D5%D6%D7%D8%D9%DA%DB%DC%DD%DE%DF%E0%E1%E2%E3%E4%E5%E6%E7%E8%E9%EA%]]
+   .. [[EB%EC%ED%EE%EF%F0%F1%F2%F3%F4%F5%F6%F7%F8%F9%FA%FB%FC%FD%FE%FF]])
+
+end)
+--------------------------------------------------------------------------------
+
+test:tests_for "create_escape_subst"
+
+test "create_escape_subst-minimal" (function ()
+  local escape_subst = create_escape_subst("\\%03d")
+
+  local str_test = ""
+  for i = 0, 255 do
+    str_test = str_test .. string.char(i)
+  end
+
+  ensure_equals(
+       "Equal strings",
+       tostring( str_test ):gsub("[%c%z\128-\255]", escape_subst),
+       [[\000\001\002\003\004\005\006\007\008]] .. "\t\n"
+    .. [[\011\012\013\014\015\016\017]]
+    .. [[\018\019\020\021\022\023\024\025\026\027\028\029\030\031 !"#$%&'()*+]]
+    .. [[,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmno]]
+    .. [[pqrstuvwxyz{|}~\127\128\129\130\131\132\133\134\135\136\137\138\139\]]
+    .. [[140\141\142\143\144\145\146\147\148\149\150\151\152\153\154\155\156\]]
+    .. [[157\158\159\160\161\162\163\164\165\166\167\168\169\170\171\172\173\]]
+    .. [[174\175\176\177\178\179\180\181\182\183\184\185\186\187\188\189\190\]]
+    .. [[191\192\193\194\195\196\197\198\199\200\201\202\203\204\205\206\207\]]
+    .. [[208\209\210\211\212\213\214\215\216\217\218\219\220\221\222\223\224\]]
+    .. [[225\226\227\228\229\230\231\232\233\234\235\236\237\238\239\240\241\]]
+    .. [[242\243\244\245\246\247\248\249\250\251\252\253\254\255]]
+     )
 end)
 
 --------------------------------------------------------------------------------
