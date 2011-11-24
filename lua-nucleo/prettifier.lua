@@ -144,7 +144,7 @@ do
         local pos, level, stype = positions[i], levels[i], types[i]
         if stype == TABLE_BEGIN_LINE then
           mode = MODE_LINE
-          if types[i + 3] == TABLE_END then
+          if types[i + 3] == TABLE_END and positions[i + 1] + 1 == positions[i + 2] then
             -- handle special case - empty table
             self.buffer[pos + 2] = "" -- replace TERMINATING_SEPARATOR
           end
