@@ -43,6 +43,14 @@ test "tpretty-not-a-table" (function()
     )
 end)
 
+test "tpretty-simple-table" (function()
+  ensure_strequals(
+      "t is a simple table",
+      tpretty({"DEPLOY_MACHINE"}),
+      '{ "DEPLOY_MACHINE" }'
+    )
+end)
+
 test "tpretty-without-optional-params" (function()
   local s1 = [[
 {
