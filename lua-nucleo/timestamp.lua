@@ -48,7 +48,7 @@ local get_quarter_timestamp = function(timestamp)
   elseif t.min < 30 then
     t.min = 15
   elseif t.min < 45 then
-    t.min = 15
+    t.min = 30
   else
     t.min = 45
   end
