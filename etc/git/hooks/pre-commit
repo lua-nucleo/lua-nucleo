@@ -10,7 +10,38 @@ fi
 
 git diff-index --check --cached $against -- || exit 1
 
-# check lua syntax
-for i in `git diff-index --cached HEAD | egrep "\\.lua$" | cut -d " " -f 4`; do
-  git show $i | luac -p - || exit 1
+git diff-index --cached HEAD | while read -r LINE; do
+  rights=$(echo "${LINE}" | awk '{ print $2; }')
+  hash=$(echo "${LINE}" | awk '{ print $4; }')
+  filename=$(echo "${LINE}" | awk '{ print $6; }')
+
+  # TODO: Hack to exclude symlinks
+  if [ "${rights}" != "120000" ]; then
+    # check commit to /lib
+    case "$filename" in
+      lib/* )
+        tmp=${filename:4}
+        dir=${tmp%%/*}
+        if ls "lib/${dir}/.gitignore"; then
+          echo "$filename : file cannot be commited to lib"
+          exit 1
+        fi
+      ;;
+    esac
+    # check for empty string at the end of file
+    if !(git cat-file blob $hash | tail -c1 | grep '^$'); then
+      echo "$filename : no empty line at the end"
+      exit 1
+    fi
+    # check Lua syntax
+    case "$filename" in
+      *\.lua | *\.rockspec )
+        out=$(git show "${hash}" | luac -p - 2>&1)
+        if [ "$?" != "0" ]; then
+          echo "${out//stdin/${filename}}" >&2
+          exit 1
+        fi
+      ;;
+    esac
+  fi
 done
