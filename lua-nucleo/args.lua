@@ -42,7 +42,7 @@ do
   end
 end
 
-local arguments, optional_arguments, method_arguments
+local arguments, optional_arguments, method_arguments, check_types
 do
   local function impl(is_optional, arg_n, expected_type, value, ...)
     -- Points error on function, calling function which calls *arguments()
@@ -106,6 +106,23 @@ do
               or true
           )
   end
+
+  check_types = function(...)
+    local args = { ... }
+    if #args == 0 then
+      return true
+    end
+
+    for i = 1, #args, 3 do
+      local name, value_type, value = tostring(args[i]), tostring(args[i + 1]), args[i + 2]
+
+      if type(value) ~= value_type then
+        return nil, "Incorrect type for field " .. name .. ": required '" .. value_type .. "', have '" .. type(value) .. "'"
+      end
+    end
+
+    return true
+  end
 end
 
 return
@@ -118,4 +135,5 @@ return
   arguments = arguments;
   optional_arguments = optional_arguments;
   method_arguments = method_arguments;
+  check_types = check_types;
 }
