@@ -327,8 +327,8 @@ do
                 )
           )
 
-      if need_flush and self.flush then
-        self.flush()
+      if need_flush then
+        self.flush_()
         self.next_flush_timestamp_ = timestamp + config.flush_time
         -- TODO: Rename config.bufsize as per review.
         self.bytes_to_next_flush_ = config.bufsize
