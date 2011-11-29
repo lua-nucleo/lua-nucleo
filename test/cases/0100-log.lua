@@ -206,7 +206,7 @@ test:test_for "wrap_file_sink" (function()
   ensure_tequals(
       "call order check",
       buf,
-      { "aaa", END_OF_LOG_MESSAGE, flush_tag, "bbb" }
+      { "aaa", END_OF_LOG_MESSAGE, "bbb" }
     )
 end)
 
@@ -315,7 +315,7 @@ local check_logger = function(
     end
 
     if is_table(v) then
-      tstr_cat(expected_cat, v)
+      expected_cat(tstr(v))
     else
       -- same as used in log
       expected_cat(tostring(v):gsub("[%c%z\128-\255]",  escape_subst))
@@ -324,9 +324,14 @@ local check_logger = function(
 
   expected_cat(END_OF_LOG_MESSAGE)
 
-  --print("  actual", tstr(actual))
-  --print("expected", tstr(expected))
-  ensure_tequals("check_logger", actual, expected)
+  local res, err = pcall(ensure_tequals, "check_logger", actual, expected)
+  if not res then
+    error(
+        "err: " .. err
+     .. "\nactual:", tstr(actual)
+     .. "\nexpected", tstr(expected)
+      )
+  end
 
   concatter.reset()
 end
