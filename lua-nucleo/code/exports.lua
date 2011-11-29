@@ -30,6 +30,7 @@ return
   bind_many = { "lua-nucleo/functional.lua" };
   cdata_cat = { "lua-nucleo/string.lua" };
   cdata_wrap = { "lua-nucleo/string.lua" };
+  check_types = { "lua-nucleo/args.lua" };
   collect_all_garbage = { "lua-nucleo/misc.lua" };
   common_method_list = { "lua-nucleo/factory.lua" };
   count_substrings = { "lua-nucleo/string.lua" };
@@ -124,6 +125,7 @@ return
   tcount_elements = { "lua-nucleo/table-utils.lua" };
   tdeepequals = { "lua-nucleo/tdeepequals.lua" };
   tequals = { "lua-nucleo/table-utils.lua" };
+  tfilterkeylist = { "lua-nucleo/table-utils.lua" };
   tflip = { "lua-nucleo/table-utils.lua" };
   tflip_inplace = { "lua-nucleo/table-utils.lua" };
   tgenerate_n = { "lua-nucleo/table-utils.lua" };
@@ -148,6 +150,7 @@ return
   tiwalker = { "lua-nucleo/table-utils.lua" };
   tkeys = { "lua-nucleo/table-utils.lua" };
   tkeysvalues = { "lua-nucleo/table-utils.lua" };
+  tkvlist2kvpairs = { "lua-nucleo/table-utils.lua" };
   tkvtorecordlist = { "lua-nucleo/table-utils.lua" };
   tless = { "lua-nucleo/tdeepequals.lua" };
   tless_kv = { "lua-nucleo/tdeepequals.lua" };
