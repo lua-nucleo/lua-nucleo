@@ -761,6 +761,21 @@ local tkvlist2kvpairs = function(t)
   end
   return r
 end
+
+local tfilterkeylist = function(t, f, strict)
+  strict = strict or false
+  local r = { }
+
+  for i = 1, #f do
+    local k = f[i]
+    if t[k] ~= nil then
+      r[k] = t[k]
+    elseif strict then
+      return nil, "Field " .. k .. " is absent"
+    end
+  end
+  return r
+end
 --------------------------------------------------------------------------------
 
 return
@@ -818,4 +833,5 @@ return
   tslice = tslice;
   tarraylisttohashlist = tarraylisttohashlist;
   tkvlist2kvpairs = tkvlist2kvpairs;
+  tfilterkeylist = tfilterkeylist;
 }

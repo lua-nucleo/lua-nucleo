@@ -8,14 +8,16 @@ local ensure,
       ensure_equals,
       ensure_tequals,
       ensure_tdeepequals,
-      ensure_fails_with_substring
+      ensure_fails_with_substring,
+      ensure_error
       = import 'lua-nucleo/ensure.lua'
       {
         'ensure',
         'ensure_equals',
         'ensure_tequals',
         'ensure_tdeepequals',
-        'ensure_fails_with_substring'
+        'ensure_fails_with_substring',
+        'ensure_error'
       }
 
 local assert_is_table
@@ -83,6 +85,7 @@ local empty_table,
       tslice,
       tarraylisttohashlist,
       tkvlist2kvpairs,
+      tfilterkeylist,
       table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -138,7 +141,8 @@ local empty_table,
         'tsetpathvalue',
         'tslice',
         'tarraylisttohashlist',
-        'tkvlist2kvpairs'
+        'tkvlist2kvpairs',
+        'tfilterkeylist'
       }
 
 --------------------------------------------------------------------------------
@@ -2149,6 +2153,82 @@ test "tkvlist2kvpairs_odd_number_elements_in_table" (function()
       "tkvlist2kvpairs odd number of elements in the table",
       tkvlist2kvpairs(t),
       { ["field_1"] = "value_1", ["field_2"] = nil }
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tfilterkeylist"
+
+--------------------------------------------------------------------------------
+
+test "tfilterkeylist_regular_nonstrict" (function()
+  local t =
+  {
+    ["a"] = 1;
+    ["b"] = 2;
+    ["c"] = 3;
+  }
+  local f = { "a", "b" }
+
+  ensure_tdeepequals(
+      "regular tfilterkeylist /nonstrict/",
+      tfilterkeylist(t, f),
+      { ["a"] = 1, ["b"] = 2 }
+    )
+end)
+
+test "tfilterkeylist_regular_strict" (function()
+  local t =
+  {
+    ["a"] = 1;
+    ["b"] = 2;
+    ["c"] = 3;
+  }
+  local f = { "a", "b" }
+
+  ensure_tdeepequals(
+      "regular tfilterkeylist /nonstrict/",
+      tfilterkeylist(t, f),
+      { ["a"] = 1, ["b"] = 2 }
+    )
+end)
+
+test "tfilterkeylist_empty_table_strict" (function()
+  local t = { }
+  local f = { "a", "b" }
+
+  ensure_error(
+      "tfilterkeylist with empty /strict/",
+      "Field a is absent",
+      tfilterkeylist(t, f, true)
+    )
+end)
+
+test "tfilterkeylist_empty_table_nonstrict" (function()
+  local t = { }
+  local f = { "a", "b" }
+
+  ensure_tdeepequals(
+      "tfilterkeylist with empty /nonstrict/",
+      tfilterkeylist(t, f, false),
+      { }
+    )
+end)
+
+test "tfilterkeylist_empty_fields_list_strict" (function()
+  local t =
+  {
+    ["a"] = 1;
+    ["b"] = 2;
+    ["c"] = 3;
+  }
+  local f = { }
+
+  ensure_tdeepequals(
+      "tfilterkeylist with empty fields list/strict/",
+      tfilterkeylist(t, f, false),
+      { }
     )
 end)
 
