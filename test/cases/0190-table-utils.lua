@@ -82,6 +82,7 @@ local empty_table,
       tsetpathvalue,
       tslice,
       tarraylisttohashlist,
+      tkvlist2kvpairs,
       table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -136,7 +137,8 @@ local empty_table,
         'tsetpath',
         'tsetpathvalue',
         'tslice',
-        'tarraylisttohashlist'
+        'tarraylisttohashlist',
+        'tkvlist2kvpairs'
       }
 
 --------------------------------------------------------------------------------
@@ -2091,6 +2093,62 @@ test "tsetpath_nil_in_the_end" (function()
       'tsetpath end key is nil',
       function() tsetpath(dest, nil) end,
       "tsetpath: nil can't be a table key"
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tkvlist2kvpairs"
+
+--------------------------------------------------------------------------------
+
+test "tkvlist2kvpairs_regular" (function()
+  local t = { "field_1", "value_1", "field_2", "value_2" }
+
+  ensure_tdeepequals(
+      "regular tkvlist2kvpairs",
+      tkvlist2kvpairs(t),
+      { ["field_1"] = "value_1", ["field_2"] = "value_2" }
+    )
+end)
+
+test "tkvlist2kvpairs_empty_table" (function()
+  local t = { }
+
+  ensure_tdeepequals(
+      "tkvlist2kvpairs input table is empty",
+      tkvlist2kvpairs(t),
+      { }
+    )
+end)
+
+test "tkvlist2kvpairs_nil_in_table_keys" (function()
+  local t = { nil, "value_1", "field_2", "value_2" }
+
+  ensure_tdeepequals(
+      "tkvlist2kvpairs input table contains nil",
+      tkvlist2kvpairs(t),
+      { ["field_2"] = "value_2" }
+    )
+end)
+
+test "tkvlist2kvpairs_nil_in_table_values" (function()
+  local t = { "field_1", nil, "field_2", "value_2" }
+
+  ensure_tdeepequals(
+      "tkvlist2kvpairs input table contains nil",
+      tkvlist2kvpairs(t),
+      { ["field_1"] = nil, ["field_2"] = "value_2" }
+    )
+end)
+
+test "tkvlist2kvpairs_odd_number_elements_in_table" (function()
+  local t = { "field_1", "value_1", "field_2" }
+
+  ensure_tdeepequals(
+      "tkvlist2kvpairs odd number of elements in the table",
+      tkvlist2kvpairs(t),
+      { ["field_1"] = "value_1", ["field_2"] = nil }
     )
 end)
 

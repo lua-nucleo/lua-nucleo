@@ -751,6 +751,16 @@ local tarraylisttohashlist = function(t, ...)
   return r
 end
 
+local tkvlist2kvpairs = function(t)
+  local r = { }
+  for i = 1, #t, 2 do
+    local k, v = t[i], t[i+1]
+    if k ~= nil then
+      r[k] = v
+    end
+  end
+  return r
+end
 --------------------------------------------------------------------------------
 
 return
@@ -807,4 +817,5 @@ return
   tsetpathvalue = tsetpathvalue;
   tslice = tslice;
   tarraylisttohashlist = tarraylisttohashlist;
+  tkvlist2kvpairs = tkvlist2kvpairs;
 }
