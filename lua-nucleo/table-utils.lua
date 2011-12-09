@@ -755,6 +755,15 @@ local tisempty = function(t)
   return next(t) == nil
 end
 
+local tifindvalue_nonrecursive = function(t, v)
+  for i = 1, #t do
+    if t[i] == v then
+      return true
+    end
+  end
+  return false
+end
+
 local tkvlist2kvpairs = function(t)
   local r = { }
   for i = 1, #t, 2 do
@@ -839,4 +848,5 @@ return
   tkvlist2kvpairs = tkvlist2kvpairs;
   tfilterkeylist = tfilterkeylist;
   tisempty = tisempty;
+  tifindvalue_nonrecursive = tifindvalue_nonrecursive;
 }
