@@ -53,6 +53,7 @@ return
   ensure_strequals = { "lua-nucleo/ensure.lua" };
   ensure_tdeepequals = { "lua-nucleo/ensure.lua" };
   ensure_tequals = { "lua-nucleo/ensure.lua" };
+  epsilon_equals = { "lua-nucleo/math.lua" };
   escape_for_json = { "lua-nucleo/string.lua" };
   escape_lua_pattern = { "lua-nucleo/string.lua" };
   escape_string = { "lua-nucleo/string.lua" };
