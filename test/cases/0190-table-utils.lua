@@ -86,6 +86,7 @@ local empty_table,
       tarraylisttohashlist,
       tkvlist2kvpairs,
       tfilterkeylist,
+      tisempty,
       table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -142,7 +143,8 @@ local empty_table,
         'tslice',
         'tarraylisttohashlist',
         'tkvlist2kvpairs',
-        'tfilterkeylist'
+        'tfilterkeylist',
+        'tisempty'
       }
 
 --------------------------------------------------------------------------------
@@ -2254,6 +2256,7 @@ test:UNTESTED 'tilistofrecordfields'
 test:UNTESTED 'tipermute_inplace'
 test:UNTESTED 'tkvtorecordlist'
 test:UNTESTED 'tgetpath'
+test:UNTESTED 'tisempty'
 
 --------------------------------------------------------------------------------
 
