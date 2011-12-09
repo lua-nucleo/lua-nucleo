@@ -26,6 +26,7 @@ return
   '0171-suite-full';
   '0180-table';
   '0190-table-utils';
+  '0190-table-utils';
   '0200-tdeepequals-basic-types';
   '0201-tdeepequals-basic-tables';
   '0202-tdeepequals-autogen';

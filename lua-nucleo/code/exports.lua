@@ -143,6 +143,7 @@ return
   timapofrecords = { "lua-nucleo/table-utils.lua" };
   times_and_values_looped = { "lua-nucleo/util/anim/interpolator.lua" };
   tipermute_inplace = { "lua-nucleo/table-utils.lua" };
+  tisempty = { "lua-nucleo/table-utils.lua" };
   tiset = { "lua-nucleo/table-utils.lua" };
   tiunique = { "lua-nucleo/table-utils.lua" };
   tivalues = { "lua-nucleo/table-utils.lua" };
