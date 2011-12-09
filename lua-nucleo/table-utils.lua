@@ -751,6 +751,14 @@ local tarraylisttohashlist = function(t, ...)
   return r
 end
 
+local tisempty = function(t)
+  if is_table(t) then
+    return next(t) == nil
+  else
+    return nil, "not a table"
+  end
+end
+
 local tkvlist2kvpairs = function(t)
   local r = { }
   for i = 1, #t, 2 do
@@ -834,4 +842,5 @@ return
   tarraylisttohashlist = tarraylisttohashlist;
   tkvlist2kvpairs = tkvlist2kvpairs;
   tfilterkeylist = tfilterkeylist;
+  tisempty = tisempty;
 }
