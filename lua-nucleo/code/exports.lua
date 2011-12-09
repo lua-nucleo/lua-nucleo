@@ -132,6 +132,7 @@ return
   tgetpath = { "lua-nucleo/table-utils.lua" };
   tidentityset = { "lua-nucleo/table-utils.lua" };
   tifilter = { "lua-nucleo/table-utils.lua" };
+  tifindvalue_nonrecursive = { "lua-nucleo/table-utils.lua" };
   tiflip = { "lua-nucleo/table-utils.lua" };
   tiinsert_args = { "lua-nucleo/table-utils.lua" };
   tijoin_many = { "lua-nucleo/table-utils.lua" };
