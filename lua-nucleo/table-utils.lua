@@ -752,11 +752,7 @@ local tarraylisttohashlist = function(t, ...)
 end
 
 local tisempty = function(t)
-  if is_table(t) then
-    return next(t) == nil
-  else
-    return nil, "not a table"
-  end
+  return next(t) == nil
 end
 
 local tkvlist2kvpairs = function(t)
