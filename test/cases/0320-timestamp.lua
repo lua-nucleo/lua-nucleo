@@ -97,10 +97,26 @@ end)
 
 test 'get_quarter_timestamp_simple' (function()
   local quarter = get_quarter_timestamp(current_time)
-  ensure_equals("quarter timestamps +15", quarter - get_quarter_timestamp(current_time + 15), 15)
-  ensure_equals("quarter timestamps +30", quarter - get_quarter_timestamp(current_time + 30), 30)
-  ensure_equals("quarter timestamps +45", quarter - get_quarter_timestamp(current_time + 45), 45)
-  ensure_equals("quarter timestamps +60", quarter - get_quarter_timestamp(current_time + 60), 60)
+  ensure_equals(
+      "quarter timestamps +15 minutes",
+      get_quarter_timestamp(current_time + 15 * 60) - quarter,
+      15 * 60
+    )
+  ensure_equals(
+      "quarter timestamps +30 minutes",
+      get_quarter_timestamp(current_time + 30 * 60) - quarter,
+      30 * 60
+    )
+  ensure_equals(
+      "quarter timestamps +45 minutes",
+      get_quarter_timestamp(current_time + 45 * 60) - quarter,
+      45 * 60
+    )
+  ensure_equals(
+      "quarter timestamps +60 minutes",
+      get_quarter_timestamp(current_time + 60 * 60) - quarter,
+      60 * 60
+    )
 end)
 
 test:test_for 'get_minute_timestamp'(function()
