@@ -87,6 +87,7 @@ local empty_table,
       tkvlist2kvpairs,
       tfilterkeylist,
       tisempty,
+      tifindvalue_nonrecursive,
       table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -144,7 +145,8 @@ local empty_table,
         'tarraylisttohashlist',
         'tkvlist2kvpairs',
         'tfilterkeylist',
-        'tisempty'
+        'tisempty',
+        'tifindvalue_nonrecursive'
       }
 
 --------------------------------------------------------------------------------
@@ -2257,6 +2259,7 @@ test:UNTESTED 'tipermute_inplace'
 test:UNTESTED 'tkvtorecordlist'
 test:UNTESTED 'tgetpath'
 test:UNTESTED 'tisempty'
+test:UNTESTED 'tifindvalue_nonrecursive'
 
 --------------------------------------------------------------------------------
 
