@@ -25,8 +25,14 @@ local trunc = function(n)
   return ((n < 0) and math_ceil or math_floor)(n)
 end
 
+local epsilon_equals = function(lhs, rhs, epsilon)
+  return lhs > rhs - epsilon
+    and lhs < rhs + epsilon
+end
+
 return
 {
   EPSILON = EPSILON;
   trunc = trunc;
+  epsilon_equals = epsilon_equals;
 }
