@@ -53,6 +53,8 @@ local empty_table,
       tequals,
       tiunique,
       tgenerate_n,
+      tgenerate_1d_linear,
+      tgenerate_2d_linear,
       taccumulate,
       tnormalize,
       tnormalize_inplace,
@@ -112,6 +114,8 @@ local empty_table,
         'tequals',
         'tiunique',
         'tgenerate_n',
+        'tgenerate_1d_linear',
+        'tgenerate_2d_linear',
         'taccumulate',
         'tnormalize',
         'tnormalize_inplace',
@@ -2260,6 +2264,8 @@ test:UNTESTED 'tkvtorecordlist'
 test:UNTESTED 'tgetpath'
 test:UNTESTED 'tisempty'
 test:UNTESTED 'tifindvalue_nonrecursive'
+test:UNTESTED 'tgenerate_1d_linear'
+test:UNTESTED 'tgenerate_2d_linear'
 
 --------------------------------------------------------------------------------
 

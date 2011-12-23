@@ -258,10 +258,29 @@ local tiunique = function(t)
   return tkeys(tiflip(t))
 end
 
+-- Deprecated, use tgenerate_1d_linear instead
 local tgenerate_n = function(n, generator, ...)
   local r = { }
   for i = 1, n do
     r[i] = generator(...)
+  end
+  return r
+end
+
+local tgenerate_1d_linear = function(n, fn, ...)
+  local r = { }
+  for i = 1, n do
+    r[#r + 1] = fn(i, ...)
+  end
+  return r
+end
+
+local tgenerate_2d_linear = function(w, h, fn, ...)
+  local r = { }
+  for y = 1, h do
+    for x = 1, w do
+      r[#r + 1] = fn(x, y, ...)
+    end
   end
   return r
 end
@@ -813,7 +832,9 @@ return
   tiwalker = tiwalker;
   tequals = tequals;
   tiunique = tiunique;
-  tgenerate_n = tgenerate_n;
+  tgenerate_n = tgenerate_n; -- deprecated
+  tgenerate_1d_linear = tgenerate_1d_linear;
+  tgenerate_2d_linear = tgenerate_2d_linear;
   taccumulate = taccumulate;
   tnormalize = tnormalize;
   tnormalize_inplace = tnormalize_inplace;

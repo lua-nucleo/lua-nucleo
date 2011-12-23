@@ -129,6 +129,8 @@ return
   tfilterkeylist = { "lua-nucleo/table-utils.lua" };
   tflip = { "lua-nucleo/table-utils.lua" };
   tflip_inplace = { "lua-nucleo/table-utils.lua" };
+  tgenerate_1d_linear = { "lua-nucleo/table-utils.lua" };
+  tgenerate_2d_linear = { "lua-nucleo/table-utils.lua" };
   tgenerate_n = { "lua-nucleo/table-utils.lua" };
   tgetpath = { "lua-nucleo/table-utils.lua" };
   tidentityset = { "lua-nucleo/table-utils.lua" };
