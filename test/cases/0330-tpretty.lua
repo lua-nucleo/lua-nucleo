@@ -219,4 +219,37 @@ end)
 
 --------------------------------------------------------------------------------
 
+-- Test based on real bug scenario
+-- #3067
+--
+-- Extra = is rendered
+test "tpretty-wrong-table-list-separator" (function ()
+  local data = [[
+{
+  {
+    {
+      { };
+    };
+    {
+      { };
+    };
+  };
+}
+]]
+  ensure_strequals(
+    "second result matches expected",
+    ensure(
+      "render second",
+      tpretty(
+        ensure("data string loads", loadstring("return " .. data))(),
+        "  ",
+        80
+       )
+    ),
+    data
+  )
+end)
+
+--------------------------------------------------------------------------------
+
 assert(test:run())
