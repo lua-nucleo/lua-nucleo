@@ -135,25 +135,30 @@ do
 
     local finished = function(self)
       local indent_cache = setmetatable(
-        { indent = self.indent },
-        mt
-      )
+          { indent = self.indent },
+          mt
+        )
 
       local mode = MODE_LINE
       for i = 1, #positions do
         local pos, level, stype = positions[i], levels[i], types[i]
         if stype == TABLE_BEGIN_LINE then
           mode = MODE_LINE
-          if types[i + 3] == TABLE_END and positions[i + 1] + 1 == positions[i + 2] then
+          if
+            types[i + 3] == TABLE_END and
+            positions[i + 1] + 1 == positions[i + 2]
+          then
             -- handle special case - empty table
             self.buffer[pos + 2] = "" -- replace TERMINATING_SEPARATOR
           end
         elseif stype == TABLE_BEGIN_MULTILINE then
+          mode = MODE_MULTILINE
           if level > 1 then
-            self.buffer[pos] = "\n" .. indent_cache[level - 1] .. self.buffer[pos]
+            self.buffer[pos] = "\n"
+              .. indent_cache[level - 1]
+              .. self.buffer[pos]
             self.buffer[pos - 1] = " ="
           end
-          mode = MODE_MULTILINE
         elseif stype == TABLE_END then
           mode = MODE_MULTILINE
         elseif mode == MODE_MULTILINE then
