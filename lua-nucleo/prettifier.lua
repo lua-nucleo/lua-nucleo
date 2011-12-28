@@ -26,7 +26,7 @@ do
     local MODE_MULTILINE = 8
 
     local subst_multiline = { ";\n", "\n", ";\n", " =\n" }
-    local subst_line = { ", ", " ", " ", " = " }
+    local subst_line = { ", ", "", " ", " = " }
 
     local level = 0
     local positions = { }
@@ -66,6 +66,19 @@ do
     end
 
     local table_start = function(self)
+      if -- Hack.
+        not
+        (
+          positions[#positions] == #self.buffer and
+          (
+            types[#positions] == OPTIONAL_NEWLINE or
+            types[#positions] == TERMINATING_SEPARATOR or
+            types[#positions] == SEPARATOR
+          )
+        )
+      then
+        self:optional_nl()
+      end
       self:increase_indent()
       local pos = #self.buffer + 1
       self.buffer[pos] = "{"
@@ -145,6 +158,22 @@ do
         local pos, level, stype = positions[i], levels[i], types[i]
         if stype == TABLE_BEGIN_LINE then
           mode = MODE_LINE
+          -- Hack.
+          if i > 1 and level > 1 then
+            -- TODO: FIXME: do this only if there is enough space left
+            --       on the line. Otherwise convert table to multiline.
+            -- Bring short table back on the line with key.
+            if
+              types[i - 1] == OPTIONAL_NEWLINE and
+              self.buffer[pos - 2] == " = "
+            then
+              self.buffer[pos - 1] = ""
+            end
+          end
+
+          self.buffer[pos] = "{ " -- TODO: Should be done via subst_*
+
+          -- TODO: Get rid of this.
           if
             types[i + 3] == TABLE_END and
             positions[i + 1] + 1 == positions[i + 2]
@@ -154,11 +183,11 @@ do
           end
         elseif stype == TABLE_BEGIN_MULTILINE then
           mode = MODE_MULTILINE
-          if level > 1 then
-            self.buffer[pos] = "\n"
-              .. indent_cache[level - 1]
-              .. self.buffer[pos]
-            self.buffer[pos - 1] = " ="
+          -- TODO: FIXME: This should already be done by subst_*
+          if pos > 2 then
+            if self.buffer[pos - 2] == " = " then
+              self.buffer[pos - 2] = " ="
+            end
           end
         elseif stype == TABLE_END then
           mode = MODE_MULTILINE
