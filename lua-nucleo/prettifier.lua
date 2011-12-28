@@ -116,12 +116,13 @@ do
         end
       end
       self.buffer[pos] = " = "
-      if len + level * #self.indent >  self.cols then
+      if len + level * #self.indent > self.cols then
         self:optional_nl()
       end
     end
 
     local key_value_finish = function(self)
+      -- Do nothing
     end
 
     local mt =
