@@ -235,8 +235,7 @@ test "tpretty-wrong-table-list-separator-bug" (function ()
       { };
     };
   };
-}
-]]
+}]]
   ensure_strequals(
     "second result matches expected",
     ensure(
