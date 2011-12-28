@@ -250,6 +250,29 @@ test "tpretty-wrong-table-list-separator-bug" (function ()
   )
 end)
 
+test "tpretty-wrong-key-indent-bug" (function ()
+  local data = [[
+{
+  { };
+  foo =
+  {
+    { };
+  };
+}]]
+  ensure_strequals(
+    "second result matches expected",
+    ensure(
+      "render second",
+      tpretty(
+        ensure("data string loads", loadstring("return " .. data))(),
+        "  ",
+        80
+       )
+    ),
+    data
+  )
+end)
+
 --------------------------------------------------------------------------------
 
 assert(test:run())
