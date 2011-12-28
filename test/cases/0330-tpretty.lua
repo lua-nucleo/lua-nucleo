@@ -224,7 +224,7 @@ end)
 --
 -- Extra = is rendered as a table separator instead of ;
 -- and after opening {.
-test "tpretty-wrong-table-list-separator" (function ()
+test "tpretty-wrong-table-list-separator-bug" (function ()
   local data = [[
 {
   {
