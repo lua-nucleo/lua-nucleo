@@ -33,7 +33,7 @@ local test = make_suite("tpretty", tpretty_exports)
 
 test:group "tpretty"
 
----------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 test "tpretty-not-a-table" (function()
   ensure_strequals(
