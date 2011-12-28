@@ -222,7 +222,8 @@ end)
 -- Test based on real bug scenario
 -- #3067
 --
--- Extra = is rendered
+-- Extra = is rendered as a table separator instead of ;
+-- and after opening {.
 test "tpretty-wrong-table-list-separator" (function ()
   local data = [[
 {
