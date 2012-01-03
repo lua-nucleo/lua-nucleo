@@ -61,6 +61,14 @@ do
   end
 end
 
+local url_encode
+do
+  local escape_subst = create_escape_subst("%%%02X")
+  url_encode = function(str)
+    return string.gsub(str:gsub("([^%w-_ ])", escape_subst), " ", "+")
+  end
+end
+
 local htmlspecialchars = nil
 do
   local subst =
@@ -247,4 +255,5 @@ return
   escape_for_json = escape_for_json;
   starts_with = starts_with;
   ends_with = ends_with;
+  url_encode = url_encode;
 }
