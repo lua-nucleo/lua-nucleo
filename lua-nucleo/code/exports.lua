@@ -192,6 +192,7 @@ return
   upper_bound = { "lua-nucleo/algorithm.lua" };
   upper_bound_gt = { "lua-nucleo/algorithm.lua" };
   upper_bound_pred = { "lua-nucleo/algorithm.lua" };
+  url_encode = { "lua-nucleo/string.lua" };
   validate_probability_precise = { "lua-nucleo/random.lua" };
   validate_probability_rough = { "lua-nucleo/random.lua" };
   wrap_file_sink = { "lua-nucleo/log.lua" };
