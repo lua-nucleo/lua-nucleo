@@ -40,6 +40,7 @@ local make_concatter,
       starts_with,
       ends_with,
       create_escape_subst,
+      url_encode,
       string_exports
       = import 'lua-nucleo/string.lua'
       {
@@ -60,7 +61,8 @@ local make_concatter,
         'escape_for_json',
         'starts_with',
         'ends_with',
-        'create_escape_subst'
+        'create_escape_subst',
+        'url_encode'
       }
 
 --------------------------------------------------------------------------------
@@ -315,6 +317,20 @@ test:test_for "fill_placeholders" (function ()
 
   ensure_strequals("extra braces", fill_placeholders("$(a `$(a)')", { a = 42 }), "$(a `$(a)')")
   ensure_strequals("extra right brace", fill_placeholders("`$(a)')", { a = 42 }), "`42')")
+end)
+
+--------------------------------------------------------------------------------
+
+test:test_for "url_encode" (function ()
+  ensure_strequals("empty", url_encode(""), "")
+  ensure_strequals("simple", url_encode("test"), "test")
+  ensure_strequals("test with number", url_encode("test555"), "test555")
+  ensure_strequals("test with space", url_encode("test string"), "test+string")
+  ensure_strequals(
+      "symbols",
+      url_encode("1234567890-=!@#$%^&*()_+"),
+      "1234567890-%3D%21%40%23%24%25%5E%26%2A%28%29_%2B"
+    )
 end)
 
 --------------------------------------------------------------------------------
