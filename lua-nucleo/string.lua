@@ -65,7 +65,7 @@ local url_encode
 do
   local escape_subst = create_escape_subst("%%%02X")
   url_encode = function(str)
-    return string.gsub(str:gsub("([^%w-_ ])", escape_subst), " ", "+")
+    return str:gsub("([^%w-_ ])", escape_subst):gsub(" ", "+")
   end
 end
 
