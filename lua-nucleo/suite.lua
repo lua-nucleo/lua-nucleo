@@ -473,15 +473,24 @@ local run_tests = function(names, parameters_list)
   local nerr = #errs
 
   print()
+  print("--------------------------------------------------------------------------------")
+  print()
+  print("Finished running tests.")
+  print()
   print("Total tests:", nok + nerr)
   print("Successful:", nok)
   if nerr > 0 then
-    print()
     print("Failed:", nerr)
-    for i, err in ipairs(errs) do
-      print("["..err.stage.."]", err.name, err.err)
+    print()
+    print("Dumping error messages from failing tests:")
+    print()
+    print("--------------------------------------------------------------------------------")
+    print()
+    for i = 1, nerr do
+      print("["..errs[i].stage.."]", errs[i].name, errs[i].err)
     end
   end
+
 
   return nok, errs
 end
