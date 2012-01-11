@@ -31,6 +31,7 @@ git diff-index --check --cached $against -- || exit_code=1
 while read -r LINE; do
   rights=$(echo "${LINE}" | awk '{ print $2; }')
   hash=$(echo "${LINE}" | awk '{ print $4; }')
+  file_status=$(echo "${LINE}" | awk '{ print $5; }')
   filename=$(echo "${LINE}" | awk '{ print $6; }')
 
   # TODO: Hack to exclude symlinks
@@ -48,22 +49,26 @@ while read -r LINE; do
       ;;
     esac
 
-    # check for empty string at the end of file
-    if !(file_is_empty $filename) && !(file_is_binary $filename) && !(git cat-file blob $hash | tail -c1 | grep -q '^$'); then
-      echo "$filename : no empty line at the end"
-      exit_code=1
+    # if file was deleted, checks below are not needed
+    if [ "${file_status}" != "D" ]; then
+      #check for empty string at the end of file
+      if !(file_is_empty $filename) && !(file_is_binary $filename) && !(git cat-file blob $hash | tail -c1 | grep -q '^$'); then
+        echo "$filename : no empty line at the end"
+        exit_code=1
+      fi
+
+      # check Lua syntax
+      case "$filename" in
+        *\.lua | *\.rockspec )
+          out=$(git show "${hash}" | luac -p - 2>&1)
+          if [ "$?" != "0" ]; then
+            echo "${out//stdin/${filename}}" >&2
+            exit_code=1
+          fi
+        ;;
+      esac
     fi
 
-    # check Lua syntax
-    case "$filename" in
-      *\.lua | *\.rockspec )
-        out=$(git show "${hash}" | luac -p - 2>&1)
-        if [ "$?" != "0" ]; then
-          echo "${out//stdin/${filename}}" >&2
-          exit_code=1
-        fi
-      ;;
-    esac
   fi
 done <<<"$(git diff-index --cached HEAD)"
 
