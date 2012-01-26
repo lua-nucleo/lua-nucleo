@@ -386,18 +386,6 @@ do
   end
 end
 
-local make_suite_strict = function(...)
-  local suite = make_suite(...)
-  suite:set_strict_mode(true)
-  return suite
-end
-
-local make_suite_nonstrict = function(...)
-  local suite = make_suite(...)
-  suite:set_strict_mode(false)
-  return suite
-end
-
 local run_test = function(name, parameters_list)
   local result, stage, msg = true, nil, nil
 
@@ -411,6 +399,13 @@ local run_test = function(name, parameters_list)
   end
 
   local strict_mode = not not parameters_list.strict_mode
+  local fail_on_first_error = not not parameters_list.fail_on_first_error
+  local suite_maker = function(...)
+    local suite = make_suite(...)
+    suite:set_strict_mode(strict_mode)
+    suite:set_fail_on_first_error(fail_on_first_error)
+    return suite
+  end
 
   local gmt = getmetatable(_G) -- Preserve metatable
   math.randomseed(parameters_list.seed_value)
@@ -418,10 +413,6 @@ local run_test = function(name, parameters_list)
   if not fn then
     result, stage, msg = false, "load", load_err
   else
-    local suite_maker = strict_mode
-      and make_suite_strict
-       or make_suite_nonstrict
-
     local res, run_err = xpcall(
         function() fn(suite_maker) end,
         err_handler
@@ -451,6 +442,7 @@ local run_tests = function(names, parameters_list)
   end
 
   local strict_mode = not not parameters_list.strict_mode
+  local fail_on_first_error = not not parameters_list.fail_on_first_error
 
   if strict_mode then
     print("Enabling STRICT mode")
@@ -467,6 +459,9 @@ local run_tests = function(names, parameters_list)
     else
       print("ERR", stage)
       errs[#errs + 1] = { name = name, stage = stage, err = err }
+      if fail_on_first_error then
+        break
+      end
     end
   end
 
