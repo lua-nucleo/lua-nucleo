@@ -8,6 +8,12 @@
 
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
+local run_tests
+    = import 'lua-nucleo/suite.lua'
+    {
+      'run_tests'
+    }
+
 assert(pcall(function() make_suite() end) == false)
 
 -- test, case, run
@@ -41,4 +47,28 @@ do
 
   assert(next_i == true)
   assert(next(to_call) == nil)
+end
+
+-- run_tests, fail_on_first_error
+do
+  local names =
+  {
+    "test/data/suite/expected-error-suite.lua",
+    "test/data/suite/no-error-suite.lua"
+  }
+
+  local parameters_list = {}
+  parameters_list.seed_value = 123456
+
+  --missing fail_on_first_error, default is false
+  local nok, errs = run_tests(names, parameters_list)
+  assert(nok == 1)
+
+  parameters_list.fail_on_first_error = true
+  local nok, errs = run_tests(names, parameters_list)
+  assert(nok == 0)
+
+  parameters_list.fail_on_first_error = false
+  local nok, errs = run_tests(names, parameters_list)
+  assert(nok == 1)
 end
