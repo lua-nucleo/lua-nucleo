@@ -90,6 +90,7 @@ local empty_table,
       tfilterkeylist,
       tisempty,
       tifindvalue_nonrecursive,
+      tkvmap_unpack,
       table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -150,7 +151,8 @@ local empty_table,
         'tkvlist2kvpairs',
         'tfilterkeylist',
         'tisempty',
-        'tifindvalue_nonrecursive'
+        'tifindvalue_nonrecursive',
+        "tkvmap_unpack"
       }
 
 --------------------------------------------------------------------------------
@@ -2238,6 +2240,53 @@ test "tfilterkeylist_empty_fields_list_strict" (function()
       tfilterkeylist(t, f, false),
       { }
     )
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tkvmap_unpack"
+
+--------------------------------------------------------------------------------
+
+local find = function(t, value)
+  for i = 1, #t do
+    if t[i] == value then
+      return i
+    end
+  end
+  return false
+end
+
+test "tkvmap_unpack_simple" (function()
+  local t =
+  {
+    ["a"] = 1;
+    ["b"] = 2;
+  }
+  local r = { tkvmap_unpack(tostring, t) }
+  ensure_equals( "size", #r, 4)
+  local index = find(r, "a")
+  ensure( "'a' found", index )
+  ensure_equals( "value after key", r[index + 1], "1" )
+  index = find(r, "b")
+  ensure( "'b' found", index )
+  ensure_equals( "value after key", r[index + 1], "2" )
+end)
+
+test "tkvmap_unpack_array" (function()
+  local t =
+  {
+    "a";
+    "b";
+  }
+  local r = { tkvmap_unpack(tostring, t) }
+  ensure_equals( "size", #r, 4)
+  local index = find(r, "1")
+  ensure( "'1' found", index )
+  ensure_equals( "value after key", r[index + 1], "a" )
+  index = find(r, "2")
+  ensure( "'2' found", index )
+  ensure_equals( "value after key", r[index + 1], "b" )
 end)
 
 --------------------------------------------------------------------------------
