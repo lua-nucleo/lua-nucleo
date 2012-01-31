@@ -808,6 +808,19 @@ local tfilterkeylist = function(t, f, strict)
   end
   return r
 end
+
+local tkvmap_unpack = function(fn, t, ...)
+  local r = { }
+  for k, v in pairs(t) do
+    k, v = fn(k, ...), fn(v, ...)
+
+    if k ~= nil and v ~= nil then
+      r[#r + 1] = k
+      r[#r + 1] = v
+    end
+  end
+  return unpack(r)
+end
 --------------------------------------------------------------------------------
 
 return
@@ -870,4 +883,5 @@ return
   tfilterkeylist = tfilterkeylist;
   tisempty = tisempty;
   tifindvalue_nonrecursive = tifindvalue_nonrecursive;
+  tkvmap_unpack = tkvmap_unpack;
 }
