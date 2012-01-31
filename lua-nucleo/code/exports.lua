@@ -156,6 +156,7 @@ return
   tkeys = { "lua-nucleo/table-utils.lua" };
   tkeysvalues = { "lua-nucleo/table-utils.lua" };
   tkvlist2kvpairs = { "lua-nucleo/table-utils.lua" };
+  tkvmap_unpack = { "lua-nucleo/table-utils.lua" };
   tkvtorecordlist = { "lua-nucleo/table-utils.lua" };
   tless = { "lua-nucleo/tdeepequals.lua" };
   tless_kv = { "lua-nucleo/tdeepequals.lua" };
