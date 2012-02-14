@@ -1,3 +1,63 @@
+Version 0.0.3 (2012-02-14)
+==========================
+
+Third fixed-version release.
+
+New stuff:
+
+    table-utils:
+        tkvmap_unpack,
+        tgenerate_{1,2}d_linear added,
+        tgenerate_n deprecated,
+        tslice,
+        tarraylisttohashlist,
+        tflip_inplace,
+        tkvlist2kvpairs,
+        tfilterkeylist,
+        tsetpathvalue,
+        tisempty,
+        tifindvalue_nonrecursive
+    timestamp:
+        get_tomorrow_timestamp
+    string:
+        escape_for_json,
+        starts_with,
+        ends_with,
+        make_escape_subst,
+        url_encode
+    math:
+        epsilon_equals
+    args:
+        check_types
+
+Improvements and changes:
+
+    test suite:
+        now supports fail_on_first_error,
+        now supports test:BROKEN to mark temporarily broken tests
+    tpretty:
+        now generates better-formatted code
+        indent and cols arguments are now optional (defaulting to "  " and 80)
+    import:
+        now respects absolute paths
+    scoped_cat_tree_manager:
+        now can use custom make_concatter
+    coro, pcall:
+        pcall wrapper moved from coro.lua to a separate file
+    log:
+        configurable flush criteria
+
+Bug fixes:
+
+    table-utils:
+        tsetpath,
+        tslice,
+        tarraylisttohashlist
+    timestamp:
+        get_quarter_timestamp
+
+And some other changes.
+
 Version 0.0.2 (2011-01-26)
 ==========================
 
