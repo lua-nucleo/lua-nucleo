@@ -1,5 +1,5 @@
 package = "lua-nucleo"
-version = "0.0.2"
+version = "0.0.2-1"
 source = {
    url = "git://github.com/lua-nucleo/lua-nucleo.git",
    branch = "v0.0.2"
