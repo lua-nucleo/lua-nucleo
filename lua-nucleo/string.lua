@@ -81,6 +81,10 @@ do
   }
 
   htmlspecialchars = function(value)
+    if type(value) == "number" then
+      return value
+    end
+    value = tostring(value)
     return (value:gsub("[&\"'<>]", subst))
   end
 end
