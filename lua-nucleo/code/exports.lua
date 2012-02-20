@@ -69,6 +69,7 @@ return
   get_yesterday_timestamp = { "lua-nucleo/timestamp.lua" };
   htmlspecialchars = { "lua-nucleo/string.lua" };
   identity = { "lua-nucleo/functional.lua" };
+  integer_to_string_with_base = { "lua-nucleo/string.lua" };
   invariant = { "lua-nucleo/functional.lua" };
   is_boolean = { "lua-nucleo/type.lua" };
   is_function = { "lua-nucleo/type.lua" };
