@@ -3,6 +3,7 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 
 local table_concat, table_insert = table.concat, table.insert
+local math_floor = math.floor
 local string_find, string_sub = string.find, string.sub
 local assert, pairs = assert, pairs
 
@@ -239,6 +240,47 @@ local ends_with = function(str, suffix)
   return slen == 0 or ((#str >= slen) and (str:sub(-slen, -1) == suffix))
 end
 
+local integer_to_string_with_base
+do
+  -- TODO: use arbitrary set of digits
+  -- https://github.com/lua-nucleo/lua-nucleo/issues/2
+  local digits =
+  {
+    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B";
+    "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N";
+    "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z";
+  }
+
+  integer_to_string_with_base = function(n, base)
+    base = base or 10
+
+    assert(type(n) == "number", "n must be a number")
+    assert(type(base) == "number", "base must be a number")
+    assert(base > 0 and base <= #digits, "base out of range")
+
+    assert(n == n, "n is nan")
+    assert(n ~= 1 / 0 and n ~= -1 / 0, "n is inf")
+
+    n = math_floor(n)
+    if base == 10 or n == 0 then
+      return tostring(n)
+    end
+
+    local sign = ""
+    if n < 0 then
+      sign = "-"
+      n = -n
+    end
+
+    local r = { }
+    while n ~= 0 do
+      r[#r + 1] = digits[(n % base) + 1]
+      n = math_floor(n / base)
+    end
+    return sign .. table_concat(r, ""):reverse()
+  end
+end
+
 return
 {
   escape_string = escape_string;
@@ -260,4 +302,5 @@ return
   starts_with = starts_with;
   ends_with = ends_with;
   url_encode = url_encode;
+  integer_to_string_with_base = integer_to_string_with_base;
 }
