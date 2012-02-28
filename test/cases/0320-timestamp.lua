@@ -11,6 +11,7 @@ local get_day_timestamp,
       get_tomorrow_timestamp,
       get_quarter_timestamp,
       get_minute_timestamp,
+      get_decasecond_timestamp,
       exports
       = import 'lua-nucleo/timestamp.lua'
       {
@@ -18,13 +19,16 @@ local get_day_timestamp,
         'get_yesterday_timestamp',
         'get_tomorrow_timestamp',
         'get_quarter_timestamp',
-        'get_minute_timestamp'
+        'get_minute_timestamp',
+        'get_decasecond_timestamp'
       }
 
-local ensure_equals
+local ensure_equals,
+      ensure
       = import 'lua-nucleo/ensure.lua'
       {
-        'ensure_equals'
+        'ensure_equals',
+        'ensure'
       }
 
 --------------------------------------------------------------------------------
@@ -128,6 +132,36 @@ test:test_for 'get_minute_timestamp'(function()
       print("Hour", ( (i - current_time) / (60*60) ) .. "/24", "OK")
     end
   end
+end)
+
+test:test_for 'get_decasecond_timestamp'(function()
+  local decasecond_time_stamp
+  for i = current_time, (current_time + 60*60), 1 do
+    decasecond_time_stamp = get_decasecond_timestamp(i)
+    ensure_equals(
+        "ten seconds timestamps equals",
+        decasecond_time_stamp,
+        get_decasecond_timestamp(decasecond_time_stamp)
+      )
+  end
+
+  ensure(
+      "0 <= current_time - decasecond_timestamp < 10 sec",
+      current_time - get_decasecond_timestamp(current_time) >= 0
+        and current_time - get_decasecond_timestamp(current_time) < 10
+    )
+
+  local t = os_date("*t", current_time)
+  t.sec = 9
+  local time = os_time(t)
+  decasecond_time_stamp = get_decasecond_timestamp(time)
+
+  ensure_equals(
+      "get_ten_seconds_timestamp for 9 sec is 0",
+      time,
+      decasecond_time_stamp + 9
+    )
+
 end)
 
 --------------------------------------------------------------------------------
