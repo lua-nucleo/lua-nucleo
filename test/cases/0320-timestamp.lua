@@ -123,7 +123,7 @@ test 'get_quarter_timestamp_simple' (function()
     )
 end)
 
-test:test_for 'get_minute_timestamp'(function()
+test:test_for 'get_minute_timestamp' (function()
   local minute_time_stamp
   for i = current_time, (current_time + 24*60*60), 1 do
     minute_time_stamp = get_minute_timestamp(i)
@@ -134,7 +134,7 @@ test:test_for 'get_minute_timestamp'(function()
   end
 end)
 
-test:test_for 'get_decasecond_timestamp'(function()
+test:test_for 'get_decasecond_timestamp' (function()
   local decasecond_time_stamp
   for i = current_time, (current_time + 60*60), 1 do
     decasecond_time_stamp = get_decasecond_timestamp(i)
