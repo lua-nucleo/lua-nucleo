@@ -1,6 +1,8 @@
+--------------------------------------------------------------------------------
 -- checker.lua: complex validation helper
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
 
 local assert, tostring, select = assert, tostring, select
 local table_concat = table.concat

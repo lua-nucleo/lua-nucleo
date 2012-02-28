@@ -1,6 +1,8 @@
+--------------------------------------------------------------------------------
 -- 0170-suite.lua: a simple test suite test
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
 
 -- TODO: Test run_tests
 -- TODO: Test make_suite with imports_list argument and related methods.

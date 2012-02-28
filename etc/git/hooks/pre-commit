@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#-------------------------------------------------------------------------------
+# lua-nucleo: git pre-commit hook
+# Copyright (c) lua-nucleo authors
+# lua-nucleo is distributed under the terms of the MIT/X11 license.
+#-------------------------------------------------------------------------------
+
 # this function is based on the example from
 # http://stackoverflow.com/questions/6119956/how-to-determine-if-git-handles-a-file-as-binary-or-as-text
 # --numstat option of 'git diff' shows number of added and deleted lines in decimal

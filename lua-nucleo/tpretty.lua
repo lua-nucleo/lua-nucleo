@@ -1,6 +1,8 @@
+--------------------------------------------------------------------------------
 -- tpretty.lua: pretty visualization of non-recursive tables.
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
 
 local pairs, ipairs, type, tostring = pairs, ipairs, type, tostring
 local table_concat = table.concat

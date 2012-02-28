@@ -1,6 +1,8 @@
+--------------------------------------------------------------------------------
 -- 0051-pcall.lua: tests for pcall-part of coroutine module extensions
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
 
 -- TODO: Test pcall indeed caches functions with weak keys -- that they are
 --       collected properly.

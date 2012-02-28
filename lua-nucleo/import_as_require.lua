@@ -1,6 +1,8 @@
+--------------------------------------------------------------------------------
 -- import_as_require.lua: minimalistic Lua submodule system using require
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
 
 local type, assert, loadfile, tostring, error, unpack, require, setmetatable
     = type, assert, loadfile, tostring, error, unpack, require, setmetatable

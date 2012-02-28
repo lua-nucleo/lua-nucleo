@@ -1,6 +1,8 @@
+--------------------------------------------------------------------------------
 -- 0030-assert.lua: tests for enhanced assertions
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
 
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 

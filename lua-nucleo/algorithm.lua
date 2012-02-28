@@ -1,6 +1,8 @@
--- algorithm.lua -- various common algorithms
+--------------------------------------------------------------------------------
+-- algorithm.lua: various common algorithms
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
 
 local assert, pairs, ipairs = assert, pairs, ipairs
 local math_floor, math_random = math.floor, math.random

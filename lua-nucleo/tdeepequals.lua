@@ -1,6 +1,8 @@
+--------------------------------------------------------------------------------
 -- tdeepequals.lua: Test arbitrary lua tables for equality.
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
 
 -- Tests arbitrary lua tables for equality.
 -- Functions, threads, etc. are supported

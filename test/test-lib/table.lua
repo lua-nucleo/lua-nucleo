@@ -1,6 +1,8 @@
+--------------------------------------------------------------------------------
 -- table.lua: various utilities for managing lua tables - used in tests
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
 
 local function gen_random_dataset(num, nesting, visited, random)
   random = random or math.random

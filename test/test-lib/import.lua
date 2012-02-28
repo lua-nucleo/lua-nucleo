@@ -1,3 +1,9 @@
+--------------------------------------------------------------------------------
+-- import.lua: generates list of test files to be run
+-- This file is a part of lua-nucleo library
+-- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
+
 local test_import = function(BASE_PATH)
   assert(pcall(function() import() end) == false)
   assert(pcall(function() import 'badfile' end) == false)

@@ -1,7 +1,7 @@
+--------------------------------------------------------------------------------
 -- 0350-module.lua: tests for lua-nucleo module bootstrapper
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
-
 --------------------------------------------------------------------------------
 
 assert(

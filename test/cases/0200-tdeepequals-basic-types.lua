@@ -1,6 +1,8 @@
+--------------------------------------------------------------------------------
 -- 0200-tdeepequals-basic-types.lua: tests for basic types support for tdeepequals
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
 
 -- TODO: Employ test:tests_for idiom to check that all exports from
 --       tdeepequals.lua are covered with tests.

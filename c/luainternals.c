@@ -1,5 +1,5 @@
 /*
-* luainternals.c -- useful Lua implementation details for lua-nucleo library
+* luainternals.c: useful Lua implementation details for lua-nucleo library
 * Code quoted from MIT-licensed Lua 5.1.4 internals
 * See copyright notice in lua.h
 */

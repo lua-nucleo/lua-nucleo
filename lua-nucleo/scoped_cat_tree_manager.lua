@@ -1,7 +1,7 @@
+--------------------------------------------------------------------------------
 -- scoped_cat_tree_manager.lua: scoped cat tree manager
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
-
 --------------------------------------------------------------------------------
 
 local assert = assert

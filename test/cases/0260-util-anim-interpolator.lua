@@ -1,6 +1,8 @@
--- interpolator.lua -- tests for animation interpolators
+--------------------------------------------------------------------------------
+-- interpolator.lua: tests for animation interpolators
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
 
 -- TODO: Test times_and_values_looped, nearest_left_interpolator.
 

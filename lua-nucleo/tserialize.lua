@@ -1,6 +1,8 @@
+--------------------------------------------------------------------------------
 -- tserialize.lua: Serialize arbitrary Lua data to Lua code
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
 
 -- Serializes arbitrary lua tables to lua code
 -- that can be loaded back via loadstring()

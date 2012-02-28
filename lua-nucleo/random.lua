@@ -1,6 +1,8 @@
+--------------------------------------------------------------------------------
 -- random.lua: utilities for random generation
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
 
 local assert_is_number,
       assert_is_table

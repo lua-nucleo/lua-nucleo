@@ -1,6 +1,8 @@
+--------------------------------------------------------------------------------
 -- 0150-strict.lua: tests for global environment protection
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
 
 -- NOTE: Intentionally not using test suite,
 --       as the code is too low level for that.

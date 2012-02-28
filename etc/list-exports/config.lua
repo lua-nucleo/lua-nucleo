@@ -1,5 +1,7 @@
 --------------------------------------------------------------------------------
 -- config.lua: list-exports configuration
+-- This file is a part of lua-nucleo library
+-- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 -- Note that PROJECT_PATH is defined in the environment
 --------------------------------------------------------------------------------

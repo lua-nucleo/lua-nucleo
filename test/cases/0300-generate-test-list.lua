@@ -1,6 +1,8 @@
+--------------------------------------------------------------------------------
 -- 0300-generate-test-list.lua: tests for test list generation
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
 
 if not pcall(require, 'luarocks.require') then
   print("Warning: luarocks not found.")

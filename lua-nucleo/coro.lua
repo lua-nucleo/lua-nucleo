@@ -1,6 +1,8 @@
--- coro.lua -- coroutine module extensions
+--------------------------------------------------------------------------------
+-- coro.lua: coroutine module extensions
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
 
 -- Supports yielding from inner to outer coroutine across nested coroutines.
 -- Depends on built-in Lua coroutine module.

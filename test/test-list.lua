@@ -1,6 +1,8 @@
+--------------------------------------------------------------------------------
 -- test-list.lua: the list of all tests in the library
 -- This file is generetad by lua-nucleo library
 -- Copyright (c) lua-nucleo authors(see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
 
 return
 {

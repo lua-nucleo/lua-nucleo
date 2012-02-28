@@ -1,6 +1,8 @@
--- 0310-timestamp.lua: tests for timestamp-related utilities
+--------------------------------------------------------------------------------
+-- 0320-timestamp.lua: tests for timestamp-related utilities
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
 
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 

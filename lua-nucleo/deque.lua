@@ -1,6 +1,8 @@
+--------------------------------------------------------------------------------
 -- deque.lua: double-ended queue wrapper
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
 
 local setmetatable = setmetatable
 local table_remove, table_insert = table.remove, table.insert
