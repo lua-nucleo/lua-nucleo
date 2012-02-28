@@ -66,6 +66,16 @@ local get_minute_timestamp = function(timestamp)
   return os_time(t)
 end
 
+local get_decasecond_timestamp = function(timestamp)
+  timestamp = timestamp or os_time()
+
+  local t = os_date("*t", timestamp)
+
+  t.sec = t.sec - t.sec % 10
+
+  return os_time(t)
+end
+
 --------------------------------------------------------------------------------
 
 return
@@ -75,4 +85,5 @@ return
   get_tomorrow_timestamp = get_tomorrow_timestamp;
   get_quarter_timestamp = get_quarter_timestamp;
   get_minute_timestamp = get_minute_timestamp;
+  get_decasecond_timestamp = get_decasecond_timestamp;
 }
