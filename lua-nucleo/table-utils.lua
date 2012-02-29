@@ -770,6 +770,20 @@ local tarraylisttohashlist = function(t, ...)
   return r
 end
 
+local tarraytohash = function(t, ...)
+  local r = { }
+  local nargs = select("#", ...)
+
+  for i = 1, nargs do
+    local hash = select(i, ...)
+    if hash ~= nil then -- ignore nil from arguments
+      r[hash] = t[i]
+    end
+  end
+
+  return r
+end
+
 local tisempty = function(t)
   return next(t) == nil
 end
@@ -879,6 +893,7 @@ return
   tsetpathvalue = tsetpathvalue;
   tslice = tslice;
   tarraylisttohashlist = tarraylisttohashlist;
+  tarraytohash = tarraytohash;
   tkvlist2kvpairs = tkvlist2kvpairs;
   tfilterkeylist = tfilterkeylist;
   tisempty = tisempty;

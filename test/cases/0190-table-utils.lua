@@ -93,6 +93,7 @@ local empty_table,
       tisempty,
       tifindvalue_nonrecursive,
       tkvmap_unpack,
+      tarraytohash,
       table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -154,7 +155,8 @@ local empty_table,
         'tfilterkeylist',
         'tisempty',
         'tifindvalue_nonrecursive',
-        "tkvmap_unpack"
+        "tkvmap_unpack",
+        "tarraytohash"
       }
 
 --------------------------------------------------------------------------------
@@ -1900,6 +1902,82 @@ test "tarraylisttohashlist_length_not_matches_2" (function()
       "tarraylisttohashlist too many arguments",
       tarraylisttohashlist(t, "a", "b"),
       { { a = 10 }, { a = 30, b = 40 } }
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tarraytohash"
+
+--------------------------------------------------------------------------------
+
+test "tarraytohash_regular" (function()
+  local t = { 10, 20 }
+
+  ensure_tdeepequals(
+      "regular tarraytohash",
+      tarraytohash(t, "a", "b"),
+      { a = 10, b = 20 }
+    )
+end)
+
+test "tarraytohash_empty_table" (function()
+  local t = { }
+
+  ensure_tdeepequals(
+      "tarraytohash input table is empty",
+      tarraytohash(t, "a", "b"),
+      { }
+    )
+end)
+
+test "tarraytohash_empty_argument_list" (function()
+  local t = { 10, 20 }
+
+  ensure_tdeepequals(
+      "tarraytohash argument list is empty",
+      tarraytohash(t),
+      { }
+    )
+end)
+
+test "tarraytohash_empty_params" (function()
+  local t = { }
+
+  ensure_tdeepequals(
+      "tarraytohash both params are empty",
+      tarraytohash(t),
+      { }
+    )
+end)
+
+test "tarraytohash_nil_in_table" (function()
+  local t = { nil, 20 }
+
+  ensure_tdeepequals(
+      "tarraytohash input table contains nil",
+      tarraytohash(t, "a", "b"),
+      { a = nil, b = 20 }
+    )
+end)
+
+test "tarraytohash_nil_in_arguments" (function()
+  local t = { 10, 20 }
+
+  ensure_tdeepequals(
+      "tarraytohash argument list contains nil",
+      tarraytohash(t, nil, "b"),
+      { b = 20 }
+    )
+end)
+
+test "tarraytohash_length_not_matches" (function()
+  local t = { 10, 20 }
+
+  ensure_tdeepequals(
+      "tarraytohash too many values",
+      tarraytohash(t, "a"),
+      { a = 10 }
     )
 end)
 
