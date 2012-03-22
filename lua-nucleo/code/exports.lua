@@ -38,6 +38,7 @@ return
   count_substrings = { "lua-nucleo/string.lua" };
   create_escape_subst = { "lua-nucleo/string.lua" };
   create_table = { "lua-nucleo/functional.lua" };
+  cut_with_ellipsis = { "lua-nucleo/string.lua" };
   do_in_environment = { "lua-nucleo/sandbox.lua" };
   do_nothing = { "lua-nucleo/functional.lua" };
   dostring_in_environment = { "lua-nucleo/sandbox.lua" };
