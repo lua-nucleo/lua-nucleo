@@ -46,6 +46,7 @@ local make_concatter,
       create_escape_subst,
       url_encode,
       integer_to_string_with_base,
+      cut_with_ellipsis,
       string_exports
       = import 'lua-nucleo/string.lua'
       {
@@ -68,7 +69,8 @@ local make_concatter,
         'ends_with',
         'create_escape_subst',
         'url_encode',
-        'integer_to_string_with_base'
+        'integer_to_string_with_base',
+        'cut_with_ellipsis'
       }
 
 --------------------------------------------------------------------------------
@@ -400,6 +402,72 @@ test:test_for "integer_to_string_with_base" (function()
     )
 end)
 
+test:test_for "cut_with_ellipsis" (function()
+
+  local test_string = "test long string"
+
+  ensure_equals(
+      "test with string with correct max length",
+      cut_with_ellipsis(test_string, #test_string),
+      test_string
+    )
+
+  ensure_equals(
+      "test with string with excess max length",
+      cut_with_ellipsis(test_string, #test_string + 50),
+      test_string
+    )
+
+  ensure_equals(
+      "test with string with default max length",
+      cut_with_ellipsis(test_string),
+      test_string
+    )
+
+  ensure_equals(
+      "test with cutting long string",
+      cut_with_ellipsis(test_string, 12),
+      "test long..."
+    )
+
+  ensure_equals(
+      "test with max length = 1",
+      cut_with_ellipsis(test_string, 1),
+      "t"
+    )
+
+  ensure_equals(
+      "test with max length = 2",
+      cut_with_ellipsis(test_string, 2),
+      "te"
+    )
+
+  ensure_equals(
+      "test with max length = 3",
+      cut_with_ellipsis(test_string, 3),
+      "tes"
+    )
+
+  ensure_equals(
+      "test with max length = 4",
+      cut_with_ellipsis(test_string, 4),
+      "t..."
+    )
+
+  ensure_equals(
+      "test with empty string",
+      cut_with_ellipsis(""),
+      ""
+    )
+
+  ensure_fails_with_substring(
+      "test with non-positive required string length",
+      function()
+        cut_with_ellipsis(test_string, 0)
+      end,
+      "required string length must be positive"
+    )
+end)
 
 --------------------------------------------------------------------------------
 
