@@ -15,6 +15,12 @@ local tidentityset
         'tidentityset'
       }
 
+local arguments
+      = import 'lua-nucleo/args.lua'
+      {
+        'arguments'
+      }
+
 local make_concatter -- TODO: rename, is not factory
 do
   make_concatter = function()
@@ -283,6 +289,33 @@ do
   end
 end
 
+local cut_with_ellipsis
+do
+  local ellipsis = "..."
+  local ellipsis_length = #ellipsis
+
+  cut_with_ellipsis = function(str, max_length)
+
+    max_length = max_length or 80
+    arguments(
+        "string", str,
+        "number", max_length
+      )
+
+    assert(max_length > 0, "required string length must be positive")
+
+    if #str > max_length then
+      if max_length > ellipsis_length then
+        str = str:sub(1, max_length - ellipsis_length) .. ellipsis
+      else
+        str = str:sub(1, max_length)
+      end
+   end
+
+    return str
+  end
+end
+
 return
 {
   escape_string = escape_string;
@@ -305,4 +338,5 @@ return
   ends_with = ends_with;
   url_encode = url_encode;
   integer_to_string_with_base = integer_to_string_with_base;
+  cut_with_ellipsis = cut_with_ellipsis;
 }
