@@ -413,6 +413,24 @@ test:test_for "cut_with_ellipsis" (function()
     )
 
   ensure_equals(
+      "test with string length - 1",
+      cut_with_ellipsis(test_string, #test_string - 1),
+      "test long st..."
+    )
+
+  ensure_equals(
+      "test with string length - 2",
+      cut_with_ellipsis(test_string, #test_string - 2),
+      "test long s..."
+    )
+
+  ensure_equals(
+      "test with string length - 3",
+      cut_with_ellipsis(test_string, #test_string - 3),
+      "test long ..."
+    )
+
+  ensure_equals(
       "test with string with excess max length",
       cut_with_ellipsis(test_string, #test_string + 50),
       test_string
