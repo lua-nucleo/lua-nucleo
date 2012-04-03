@@ -1,3 +1,28 @@
+Version 0.0.4 (2012-04-03)
+==========================
+
+Fourth fixed-version release.
+
+New stuff:
+
+    string:
+        number_to_string_with_base with test
+        cut_with_ellipsis
+    timestamp:
+        get_decasecond_timestamp
+    tavle-utils:
+        tarraytohash with tests
+
+Improvements and changes:
+
+    Added headings into the files
+    Deleted obsolete 'bench' directory
+
+    string:
+        handle numbers in htmlspecialchars
+
+And some other changes.
+
 Version 0.0.3 (2012-02-14)
 ==========================
 
