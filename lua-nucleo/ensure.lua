@@ -319,8 +319,8 @@ local ensure_returns = function(msg, num, expected, ...)
       -- TODO: Enhance error reporting (especially for tables and long strings)
       checker:fail(
           "return value #" .. i .. " mismatch: "
-          .. "actual `" .. tostring((select(i, ...)))
-          .. "', expected `" .. tostring(expected[i])
+          .. "actual `" .. tstr((select(i, ...)))
+          .. "', expected `" .. tstr(expected[i])
           .. "'"
         )
     end
