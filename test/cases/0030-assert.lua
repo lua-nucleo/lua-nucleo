@@ -42,12 +42,12 @@ test:test_for "lassert" (function()
             lassert(2, nil, "my_error_message", 1)
           end
 
-          inner_function() -- Should point here
+          inner_function()
         end
 
         outer_function()
       end,
-      "assert.lua:43: my_error_message" -- TODO: HACK. Keep line number up-to-date
+      "assert.lua:%d+: my_error_message"
     )
 end)
 
