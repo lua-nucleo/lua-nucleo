@@ -1,10 +1,11 @@
 --------------------------------------------------------------------------------
--- luajit2.lua: list of globals defined in LuaJIT 2 beta 3
+-- luajit2.lua: list of globals defined in LuaJIT 2 beta 9
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 -- TODO: Update this on LJ2 release
+-- GH#3 - https://github.com/lua-nucleo/lua-nucleo/issues/3
 
 local GLOBALS =
 {
