@@ -279,6 +279,39 @@ end)
 
 --------------------------------------------------------------------------------
 
+test:tests_for "escape_lua_pattern"
+
+test "escape_lua_pattern-basic" (function ()
+  ensure_strequals(
+      "escapinng lua pattern",
+      escape_lua_pattern("abc^$()%.[]*+-?\0xyz"),
+      "abc%^%$%(%)%%%.%[%]%*%+%-%?%zxyz"
+    )
+  ensure_strequals(
+      "no escapinng",
+      escape_lua_pattern("just normal string 12345"),
+      "just normal string 12345"
+    )
+end)
+
+test "escape_lua_pattern-find" (function ()
+  local cat, concat = make_concatter()
+  for i = 0, 255 do
+    cat(string.char(i))
+  end
+  local input_string = concat() -- contains all possible symbols
+
+  for i = 0, 255 do -- check all possible symbols
+    local char = string.char(i)
+    local i_start, i_end = input_string:find(escape_lua_pattern(char))
+    ensure("match for " .. char .. " is found", i_start)
+    ensure_equals("match for " .. char .. " is one symbol", i_start, i_end)
+    ensure_equals("position for " .. char .. " is correct", i_start, i + 1)
+  end
+end)
+
+--------------------------------------------------------------------------------
+
 test:tests_for 'cdata_wrap'
                'cdata_cat'
 
@@ -500,8 +533,6 @@ test:UNTESTED 'split_by_offset'
 test:UNTESTED 'count_substrings'
 
 test:UNTESTED 'kv_concat'
-
-test:UNTESTED 'escape_lua_pattern'
 
 test:UNTESTED 'escape_for_json'
 
