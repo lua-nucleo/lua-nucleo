@@ -1,3 +1,19 @@
+Version 0.0.5 (2012-04-10)
+==========================
+
+Fifth fixed-version release.
+
+Improvements and changes:
+    ensure/returns: improved error reporting
+
+    tests:
+      fixed test 0030 and removed obsolete comments
+      fixed test data for 0300
+      added tests for escape_lua_pattern
+
+    updated luaJIT globals list according to version 2.0.0-beta9
+    added a match into escape_lua_pattern matches table
+
 Version 0.0.4 (2012-04-03)
 ==========================
 
