@@ -113,6 +113,7 @@ return
   method_arguments = { "lua-nucleo/args.lua" };
   nargs = { "lua-nucleo/args.lua" };
   nearest_left_interpolator = { "lua-nucleo/util/anim/interpolator.lua" };
+  number_to_string = { "lua-nucleo/string.lua" };
   optional_arguments = { "lua-nucleo/args.lua" };
   ordered_pairs = { "lua-nucleo/tdeepequals.lua" };
   pack = { "lua-nucleo/args.lua" };
@@ -121,6 +122,7 @@ return
   remove_nil_arguments = { "lua-nucleo/functional.lua" };
   require_and_declare = { "lua-nucleo/require_and_declare.lua" };
   resume_inner = { "lua-nucleo/coro.lua" };
+  serialize_number = { "lua-nucleo/string.lua" };
   split_by_char = { "lua-nucleo/string.lua" };
   split_by_offset = { "lua-nucleo/string.lua" };
   starts_with = { "lua-nucleo/string.lua" };
