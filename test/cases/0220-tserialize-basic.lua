@@ -44,6 +44,14 @@ test "19" (function() check_ok({ ["1"] = "str", [1] = "num" }) end)
 test "20" (function() check_ok({ [true] = true }) end)
 test "21" (function() check_ok({ [true] = true, [false] = false, 1 }) end)
 
+test "22" (function() check_ok(1/0, -1/0, 0/0) end)
+
+test "23" (function() check_ok(1/3, math.pi) end)
+test "24" (function() check_ok(
+    0.0000000000000000000000000000000000000000000000000000000000000000000000123
+  )
+end)
+
 ---------------------------------------------------------------------------
 
 assert(test:run())
