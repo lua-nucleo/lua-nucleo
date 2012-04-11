@@ -9,6 +9,7 @@ local table_concat = table.concat
 local string_match, string_format = string.match, string.format
 
 local lua51_keywords = import 'lua-nucleo/language.lua' { 'lua51_keywords' }
+local number_to_string = import 'lua-nucleo/string.lua' { 'number_to_string' }
 
 local tstr, tstr_cat
 do
@@ -77,7 +78,9 @@ do
         -- Note this loses information on recursive tables
         cat('"table (recursive)"')
       end
-    elseif t_type == "number" or t_type == "boolean" then
+    elseif t_type == "number" then
+      cat(number_to_string(t))
+    elseif t_type == "boolean" then
       cat(tostring(t))
     elseif t == nil then
       cat("nil")
