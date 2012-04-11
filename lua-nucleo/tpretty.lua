@@ -13,6 +13,7 @@ local make_prettifier = import 'lua-nucleo/prettifier.lua' { 'make_prettifier' }
 local is_table = import 'lua-nucleo/type.lua' { 'is_table' }
 local tstr = import 'lua-nucleo/table.lua' { 'tstr' }
 local arguments = import 'lua-nucleo/args.lua' { 'arguments' }
+local number_to_string = import 'lua-nucleo/string.lua' { 'number_to_string' }
 
 local tpretty
 do
@@ -86,7 +87,9 @@ do
         -- Note this loses information on recursive tables
         cat('"table (recursive)"')
       end
-    elseif t_type == "number" or t_type == "boolean" then
+    elseif t_type == "number" then
+      cat(number_to_string(t))
+    elseif t_type == "boolean" then
       cat(tostring(t))
     elseif t == nil then
       cat("nil")
