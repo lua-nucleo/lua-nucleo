@@ -20,6 +20,7 @@ do
   local string_format, string_match = string.format, string.match
 
   local lua51_keywords = import 'lua-nucleo/language.lua' { 'lua51_keywords' }
+  local serialize_number = import 'lua-nucleo/string.lua' { 'serialize_number' }
 
   local cur_buf
   local cat = function(v)
@@ -144,7 +145,7 @@ do
     elseif t_type == "string" then
       cat(string_format("%q", t))
     elseif t_type == "number" then
-      cat(string_format("%.55g",t))
+      cat(serialize_number(t))
     elseif t_type == "boolean" then
       cat(tostring(t))
     elseif t == nil then
@@ -207,7 +208,7 @@ do
     elseif t_type == "string" then
       cat(string_format("%q", t))
     elseif t_type == "number" then
-      cat(string_format("%.55g",t))
+      cat(serialize_number(t))
     elseif t_type == "boolean" then
       cat(tostring(t))
     elseif t == nil then
