@@ -6,7 +6,7 @@
 
 local table_concat, table_insert = table.concat, table.insert
 local math_floor = math.floor
-local string_find, string_sub = string.find, string.sub
+local string_find, string_sub, string_format = string.find, string.sub, string.format
 local assert, pairs = assert, pairs
 
 local tidentityset
@@ -317,6 +317,31 @@ do
   end
 end
 
+-- convert numbers into loadable string, including inf, -inf and nan
+local number_to_string
+local serialize_number
+do
+  local t =
+  {
+    [tostring(1/0)] = "1/0";
+    [tostring(-1/0)] = "-1/0";
+    [tostring(0/0)] = "0/0";
+  }
+  number_to_string = function(number)
+    -- no argument checking - called very often
+    local text = tostring(number)
+    return t[text] or text
+  end
+  serialize_number = function(number)
+    -- no argument checking - called very often
+    local text = ("%.55g"):format(number)
+    -- on the same platform tostring(x) and string.format("%.55g",x)
+    -- return the same results for 1/0, -1/0, 0/0
+    -- so we don't need separate substitution table
+    return t[text] or text
+  end
+end
+
 return
 {
   escape_string = escape_string;
@@ -340,4 +365,6 @@ return
   url_encode = url_encode;
   integer_to_string_with_base = integer_to_string_with_base;
   cut_with_ellipsis = cut_with_ellipsis;
+  number_to_string = number_to_string;
+  serialize_number = serialize_number;
 }
