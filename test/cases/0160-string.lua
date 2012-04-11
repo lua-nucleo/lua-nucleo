@@ -47,6 +47,8 @@ local make_concatter,
       url_encode,
       integer_to_string_with_base,
       cut_with_ellipsis,
+      number_to_string,
+      serialize_number,
       string_exports
       = import 'lua-nucleo/string.lua'
       {
@@ -70,7 +72,9 @@ local make_concatter,
         'create_escape_subst',
         'url_encode',
         'integer_to_string_with_base',
-        'cut_with_ellipsis'
+        'cut_with_ellipsis',
+        'number_to_string',
+        'serialize_number'
       }
 
 --------------------------------------------------------------------------------
@@ -522,6 +526,20 @@ end)
 
 --------------------------------------------------------------------------------
 
+test:test_for "number_to_string" (function ()
+  ensure_strequals("inf", number_to_string(1/0), "1/0")
+  ensure_strequals("-inf", number_to_string(-1/0), "-1/0")
+  ensure_strequals("nan", number_to_string(0/0), "0/0")
+end)
+
+test:test_for "serialize_number" (function ()
+  ensure_strequals("inf", serialize_number( 1/0), "1/0")
+  ensure_strequals("-inf", serialize_number(-1/0), "-1/0")
+  ensure_strequals("nan", serialize_number(0/0), "0/0")
+  ensure_strequals("123", serialize_number(123), "123")
+end)
+--------------------------------------------------------------------------------
+
 test:UNTESTED 'fill_placeholders_ex'
 
 test:UNTESTED 'fill_curly_placeholders'
@@ -535,7 +553,5 @@ test:UNTESTED 'count_substrings'
 test:UNTESTED 'kv_concat'
 
 test:UNTESTED 'escape_for_json'
-
---------------------------------------------------------------------------------
 
 assert(test:run())
