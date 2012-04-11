@@ -277,4 +277,25 @@ end)
 
 --------------------------------------------------------------------------------
 
+-- Test based on real bug scenario
+-- #3836
+test "tpretty-serialize-inf-bug" (function ()
+  local table_with_inf = "{ 1/0, -1/0, 0/0 }"
+
+  ensure_strequals(
+    "second result matches expected",
+    ensure(
+      "render second",
+      tpretty(
+        ensure("parse error", loadstring("return " .. table_with_inf))(),
+        "  ",
+        80
+       )
+    ),
+    table_with_inf
+  )
+end)
+
+--------------------------------------------------------------------------------
+
 assert(test:run())
