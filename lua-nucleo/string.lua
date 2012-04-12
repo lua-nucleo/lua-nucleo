@@ -334,8 +334,8 @@ do
   end
   serialize_number = function(number)
     -- no argument checking - called very often
-    local text = ("%.55g"):format(number)
-    -- on the same platform tostring(x) and string.format("%.55g",x)
+    local text = ("%.17g"):format(number)
+    -- on the same platform tostring() and string.format()
     -- return the same results for 1/0, -1/0, 0/0
     -- so we don't need separate substitution table
     return t[text] or text
