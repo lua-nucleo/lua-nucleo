@@ -22,6 +22,10 @@ common =
         root_dir_only = "lua-nucleo/";
         profile_filename = "profile.lua";
         out_filename = "exports.lua";
+        file_header = [[
+-- This file is a part of lua-nucleo library
+-- See file `COPYRIGHT` for the license and copyright information
+]]
       };
     };
   };
