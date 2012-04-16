@@ -1,3 +1,27 @@
+Version 0.0.6 (2012-04-16)
+==========================
+
+Sixth fixed-version release.
+
+Improvements and changes:
+    etc/list-exports/config.lua: header added
+    make.sh: fixes
+
+    string.lua:
+      number_to_string(), serialize_number() added, handle inf,-inf and nan
+      use "%.17g" format instead of "%.55g" for number serialization
+    tstr.lua: fix inf,-inf,nan serialization
+    tpretty.lua: fix inf,-inf,nan serialization
+    tserialize.lua: fix inf,-inf,nan serialization
+
+    tests:
+      0160-string.lua:
+        test for number_to_string and serialize_number added
+        test to ensure "%.17g" is enough for number serialization
+      0290-tstr.lua: tests for inf,-inf,nan serialization
+      0330-tpretty.lua: test for inf,-inf,nan serialization
+      0220-tserialize-basic.lua: tests for inf,-inf,nan,1/3 pi serialization
+
 Version 0.0.5 (2012-04-10)
 ==========================
 
