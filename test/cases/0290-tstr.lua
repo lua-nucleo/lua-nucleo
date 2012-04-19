@@ -232,19 +232,8 @@ local declare_tests = function(tested_fn_name, serialization_fn)
   -- Test based on real bug scenario
   -- #3836
   test(tested_fn_name .. "-serialize-inf-bug") (function ()
-    local table_with_inf = "{1/0,-1/0,0/0}"
-
-    ensure_strequals(
-      "second result matches expected",
-      ensure(
-        "render second",
-        tstr(
-          ensure("parse error", loadstring("return " .. table_with_inf))()
-        )
-      ),
-      table_with_inf
-    )
-  end)
+    local table_with_inf = { 1/0, -1/0, 0/0 }
+    check_tbl_ok("table with inf", table_with_inf, "{1/0,-1/0,0/0}")
 end
 
 --------------------------------------------------------------------------------
