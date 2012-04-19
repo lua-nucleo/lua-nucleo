@@ -96,8 +96,6 @@ do
   -- This function intentionally loses information on nested recursive tables
   -- and on non-serializable types like functions, threads and userdata.
 
-  -- TODO: Ensure this is tested.
-  -- TODO: WTF?! It should fail now with untested imports error.
   tstr_cat = function(cat, t)
     impl(t, cat, {})
   end
