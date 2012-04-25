@@ -1,3 +1,14 @@
+Version 0.0.7 (2012-04-25)
+==========================
+
+Seventh fixed-version release.
+
+    removed obsolete TODO
+    tstr: fixed number serialization
+    tests:
+      added tests for tstsr and tstr_cat
+      improved test for inf, -inf, nan serialization
+
 Version 0.0.6 (2012-04-16)
 ==========================
 
