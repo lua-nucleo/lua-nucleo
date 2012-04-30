@@ -184,12 +184,12 @@ do
     local failed_on_first_error = false
     local nok, errs = 0, {}
 
-    local check_output = function(test, res, err, text, increment)
+    local check_output = function(test, ok, err, text, increment)
       increment = increment or 0
-      if res and increment ~= 0 then
+      if ok and increment ~= 0 then
         print("OK")
         nok = nok + increment
-      elseif res == false then
+      elseif not ok then
         errs[#errs + 1] = { name = test.name, err = err }
         if not self.fail_on_first_error_ then
           print("ERR", text)
@@ -210,24 +210,50 @@ do
     for i, test in ipairs(self.tests_) do
       print("Suite test", test.name)
       if self.tests_.set_up_ ~= nil then
-        local res_up, err_up = xpcall(
+        local ok, res_up, err_up = xpcall(
             function() self.tests_.set_up_() end,
             err_handler
           )
-        if not check_output(test, res_up, err_up, "set up") then
+        if
+          not check_output(
+              test,
+              ok and not err_up,
+              not ok and res_up or err_up,
+              "set up"
+            )
+        then
           break
         end
       end
 
-      local res, err = xpcall(function() test.fn() end, err_handler)
-      if check_output(test, res, err, "", 1) == false then break end
+      local ok, res, err = xpcall(function() test.fn() end, err_handler)
+      if
+        not check_output(
+            test,
+            ok and not err,
+            not ok and res or err,
+            "",
+            1
+          )
+      then
+        break
+      end
 
       if self.tests_.tear_down_ ~= nil then
-        local res_down, err_down = xpcall(
+        local ok, res_down, err_down = xpcall(
             function() self.tests_.tear_down_() end,
             err_handler
           )
-        if not check_output(test, res_down, err_down, "tear down") then break end
+        if
+          not check_output(
+              test,
+              ok and not err_down,
+              not ok and res_down or err_down,
+              "tear down"
+            )
+        then
+          break
+        end
       end
     end
 
@@ -413,12 +439,13 @@ local run_test = function(name, parameters_list)
   if not fn then
     result, stage, msg = false, "load", load_err
   else
-    local res, run_err = xpcall(
+    local ok, res, run_err = xpcall(
         function() fn(suite_maker) end,
         err_handler
       )
-
-    if not res then
+    if not ok then
+      result, stage, msg = false, "run", res
+    elseif run_err then
       result, stage, msg = false, "run", run_err
     end
     uninstall_strict_mode_()
