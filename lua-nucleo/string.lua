@@ -7,7 +7,8 @@
 local table_concat, table_insert = table.concat, table.insert
 local math_floor = math.floor
 local string_find, string_sub, string_format = string.find, string.sub, string.format
-local assert, pairs = assert, pairs
+local string_byte, string_char = string.byte, string.char
+local assert, pairs, type = assert, pairs, type
 
 local tidentityset
       = import 'lua-nucleo/table-utils.lua'
@@ -342,6 +343,47 @@ do
   end
 end
 
+local get_escaped_chars_in_ranges
+do
+  get_escaped_chars_in_ranges = function(ranges)
+    assert(
+        type(ranges) == "table",
+        "argument must be a table"
+      )
+
+    assert(
+        #ranges % 2 == 0,
+        "argument must have even number of elements"
+      )
+
+    local cat, concat = make_concatter()
+
+    for i = 1, #ranges, 2 do
+      local char_code_start = ranges[i]
+      local char_code_end = ranges[i + 1]
+
+      if type(char_code_start) == "string" then
+        char_code_start = string_byte(char_code_start)
+      end
+      if type(char_code_end) == "string" then
+        char_code_end = string_byte(char_code_end)
+      end
+
+      assert(
+          type(char_code_start) == "number"
+            and type(char_code_end) == "number",
+          "argument elements must be numbers or strings"
+        )
+
+      for i = char_code_start, char_code_end do
+        cat "%" (string_char(i))
+      end
+    end
+
+    return concat()
+  end
+end
+
 return
 {
   escape_string = escape_string;
@@ -367,4 +409,5 @@ return
   cut_with_ellipsis = cut_with_ellipsis;
   number_to_string = number_to_string;
   serialize_number = serialize_number;
+  get_escaped_chars_in_ranges = get_escaped_chars_in_ranges;
 }
