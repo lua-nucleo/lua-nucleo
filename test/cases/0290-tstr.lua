@@ -234,8 +234,9 @@ local declare_tests = function(tested_fn_name, serialization_fn)
   test(tested_fn_name .. "-serialize-inf-bug") (function ()
     local table_with_inf = { 1/0, -1/0, 0/0 }
     check_tbl_ok("table with inf", table_with_inf, "{1/0,-1/0,0/0}")
-end
+  end)
 
+end
 --------------------------------------------------------------------------------
 
 declare_tests("tstr", tstr) -- tests fot tstr
