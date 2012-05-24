@@ -388,7 +388,15 @@ test:test_for "integer_to_string_with_base" (function()
   ensure_equals("test with negative numbers", integer_to_string_with_base(-11, 26), "-B")
   ensure_equals("test with zero and empty base", integer_to_string_with_base(0), "0")
   ensure_equals("test with zero and non-empty base", integer_to_string_with_base(0, 15), "0")
-  ensure_equals("test with negative zero and empty base", integer_to_string_with_base(-0), "0")
+
+  -- NOTE: integer_to_string_with_base(-0) can produce '0' or '-0', depending on
+  -- previous code. See:
+  -- http://thread.gmane.org/gmane.comp.lang.lua.general/90837/focus=90838
+  -- http://article.gmane.org/gmane.comp.lang.lua.general/12950
+  ensure(
+      "test with negative zero and empty base",
+      integer_to_string_with_base(-0) == "0" or integer_to_string_with_base(-0) == "-0"
+    )
 
   local n = 136
   local base = 36
