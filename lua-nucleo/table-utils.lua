@@ -835,6 +835,15 @@ local tkvmap_unpack = function(fn, t, ...)
   end
   return unpack(r)
 end
+
+local tkvlist_to_hash = function(t)
+  local r = { }
+  for i = 1, #t, 2 do
+    r[t[i]] = t[i + 1]
+  end
+  return r
+end
+
 --------------------------------------------------------------------------------
 
 return
@@ -899,4 +908,5 @@ return
   tisempty = tisempty;
   tifindvalue_nonrecursive = tifindvalue_nonrecursive;
   tkvmap_unpack = tkvmap_unpack;
+  tkvlist_to_hash = tkvlist_to_hash;
 }
