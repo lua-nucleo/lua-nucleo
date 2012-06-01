@@ -67,6 +67,7 @@ return
   get_current_logsystem_date = { "lua-nucleo/log.lua" };
   get_day_timestamp = { "lua-nucleo/timestamp.lua" };
   get_decasecond_timestamp = { "lua-nucleo/timestamp.lua" };
+  get_escaped_chars_in_ranges = { "lua-nucleo/string.lua" };
   get_minute_timestamp = { "lua-nucleo/timestamp.lua" };
   get_quarter_timestamp = { "lua-nucleo/timestamp.lua" };
   get_tomorrow_timestamp = { "lua-nucleo/timestamp.lua" };
@@ -164,6 +165,7 @@ return
   tkeys = { "lua-nucleo/table-utils.lua" };
   tkeysvalues = { "lua-nucleo/table-utils.lua" };
   tkvlist2kvpairs = { "lua-nucleo/table-utils.lua" };
+  tkvlist_to_hash = { "lua-nucleo/table-utils.lua" };
   tkvmap_unpack = { "lua-nucleo/table-utils.lua" };
   tkvtorecordlist = { "lua-nucleo/table-utils.lua" };
   tless = { "lua-nucleo/tdeepequals.lua" };
