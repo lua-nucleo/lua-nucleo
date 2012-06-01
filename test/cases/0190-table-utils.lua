@@ -94,6 +94,7 @@ local empty_table,
       tifindvalue_nonrecursive,
       tkvmap_unpack,
       tarraytohash,
+      tkvlist_to_hash,
       table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -155,8 +156,9 @@ local empty_table,
         'tfilterkeylist',
         'tisempty',
         'tifindvalue_nonrecursive',
-        "tkvmap_unpack",
-        "tarraytohash"
+        'tkvmap_unpack',
+        'tarraytohash',
+        'tkvlist_to_hash'
       }
 
 --------------------------------------------------------------------------------
@@ -2367,6 +2369,66 @@ test "tkvmap_unpack_array" (function()
   index = find(r, "2")
   ensure( "'2' found", index )
   ensure_equals( "value after key", r[index + 1], "b" )
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tkvlist_to_hash"
+
+--------------------------------------------------------------------------------
+
+test "tkvlist_to_hash_simple" (function()
+  ensure_tdeepequals(
+      "tkvlist_to_hash simple",
+      tkvlist_to_hash(
+          {
+            "key1",
+            "value1",
+            "key2",
+            "value2"
+          }
+        ),
+      { key1 = "value1", key2 = "value2" }
+    )
+end)
+
+test "tkvlist_to_hash_not_array" (function()
+  local t =
+  {
+    key1 = 1,
+    key2 = 2,
+  }
+  ensure_tdeepequals(
+      "tkvlist_to_hash_not_array",
+      tkvlist_to_hash(
+          { key1 = 1, key2 = 2 }
+        ),
+      { }
+    )
+end)
+
+test "tkvlist_to_hash_odd_array" (function()
+  local t =
+  ensure_tdeepequals(
+      "tkvlist_to_hash_odd_array",
+      tkvlist_to_hash(
+          {
+            "key",
+            "value",
+            "garbage"
+          }
+        ),
+      { key = "value" }
+    )
+end)
+
+test "tkvlist_to_hash_empty_table" (function()
+  local t =
+  ensure_tdeepequals(
+      "tkvlist_to_hash_empty_table",
+      tkvlist_to_hash({ }),
+      { }
+    )
 end)
 
 --------------------------------------------------------------------------------
