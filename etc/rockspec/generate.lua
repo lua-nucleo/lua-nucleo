@@ -59,15 +59,13 @@ build = {
 
 for i = 1, #files do
   local name = files[i]
-  if name ~= "lua-nucleo/import.lua" then -- Hack
-    io.stdout:write([[
+  io.stdout:write([[
          []] .. (
-            ("%q"):format(
-                name:gsub("/", "."):gsub("\\", "."):gsub("%.lua$", "")
-              )
-          ) .. [[] = ]] .. (("%q"):format(name)) .. [[;
+          ("%q"):format(
+              name:gsub("/", "."):gsub("\\", "."):gsub("%.lua$", "")
+            )
+        ) .. [[] = ]] .. (("%q"):format(name)) .. [[;
 ]])
-  end
 end
 
 io.stdout:write([[
