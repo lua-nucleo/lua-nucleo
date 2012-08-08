@@ -418,6 +418,35 @@ do
 end
 
 --------------------------------------------------------------------------------
+-- test:with decorators
+do
+  print("\nTesting test decorators:")
+  local test = make_suite("test decorators", { })
+
+  test:set_up (function(test_env) test_env["status"] = "set up" end)
+  test:tear_down (function(test_env)
+    ensure_equals("test passed", test_env.status, "tear down")
+  end)
+
+  local decorator = function(decorated_test)
+    return function(test_env)
+      ensure_equals("setup passed", test_env.status, "set up")
+      test_env.status = "decorated"
+      return decorated_test(test_env)
+    end
+  end
+
+  test "decorated" :with(decorator) (function(env)
+    ensure_equals("test decorated", env.status, "decorated")
+
+    -- Later check this value in tear down hook
+    env.status = "tear down"
+  end)
+  test:run()
+
+end
+
+--------------------------------------------------------------------------------
 -- test:factory table input test
 do
   print("\nComplex factory table input test:")
