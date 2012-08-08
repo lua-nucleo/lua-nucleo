@@ -209,9 +209,10 @@ do
 
     for i, test in ipairs(self.tests_) do
       print("Suite test", test.name)
+      local env = { }
       if self.tests_.set_up_ ~= nil then
         local ok, res_up, err_up = xpcall(
-            function() self.tests_.set_up_() end,
+            function() self.tests_.set_up_(env) end,
             err_handler
           )
         if
@@ -226,7 +227,7 @@ do
         end
       end
 
-      local ok, res, err = xpcall(function() test.fn() end, err_handler)
+      local ok, res, err = xpcall(function() test.fn(env) end, err_handler)
       if
         not check_output(
             test,
@@ -241,7 +242,7 @@ do
 
       if self.tests_.tear_down_ ~= nil then
         local ok, res_down, err_down = xpcall(
-            function() self.tests_.tear_down_() end,
+            function() self.tests_.tear_down_(env) end,
             err_handler
           )
         if
