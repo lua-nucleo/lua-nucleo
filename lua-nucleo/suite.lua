@@ -22,11 +22,63 @@ local getmetatable, setmetatable
 local _G = _G -- TODO: ?!
 
 local debug_traceback = debug.traceback
-local table_concat = table.concat
+local table_concat, table_insert = table.concat, table.insert
 
 local err_handler = function(err)
   print(debug_traceback(err, 2))
   return err
+end
+
+local make_single_test
+do
+  local with = function(self, decorator)
+    assert(type(self) == "table", "bad self")
+    assert(type(decorator) == "function", "bad function")
+
+    local decorators = self.decorators_
+    table_insert(decorators, 1, decorator)
+    return self
+  end
+
+  local add_test = function(self, fn)
+    assert(type(self) == "table", "bad self")
+    assert(type(fn) == "function", "bad callback")
+
+    -- This assertion prevents construction line
+    -- test:case "name" (function() ... end) (function() ... end)
+    assert(self.called_ == false, "already called")
+
+    -- decorate tests in reverse order
+    local decorators = self.decorators_
+    for i = 1, #decorators do
+      fn = decorators[i](fn)
+    end
+
+    self.called_ = true
+    self.test_adder_fn_(fn)
+  end
+
+  local single_test_mt =
+  {
+    __call = add_test;
+  }
+
+  make_single_test = function(test_adder_fn)
+    assert(type(fn) == "function", "bad callback")
+
+    return setmetatable(
+        {
+          with = with;
+          add_test = add_test;
+
+          -- fields
+          decorators_ = { };
+          test_adder_fn_ = test_adder_fn;
+          called_ = false;
+        },
+        single_test_mt
+      )
+  end
 end
 
 local make_suite
@@ -108,10 +160,10 @@ do
     assert(type(name) == "string", "bad import name")
     check_duplicate(self, name)
 
-    return function(fn)
+    return make_single_test(function(fn)
       assert(type(fn) == "function", "bad callback")
       self.tests_[#self.tests_ + 1] = { name = name, fn = fn }
-    end
+    end)
   end
 
   local add_methods = function(self, methods_list)
