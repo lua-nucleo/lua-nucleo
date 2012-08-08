@@ -13,8 +13,8 @@ local common_method_list
         'common_method_list'
       }
 
-local print, loadfile, xpcall, error, ipairs, assert, type, next, pairs =
-      print, loadfile, xpcall, error, ipairs, assert, type, next, pairs
+local print, loadfile, xpcall, error, assert, type, next, pairs =
+      print, loadfile, xpcall, error, assert, type, next, pairs
 
 local getmetatable, setmetatable
     = getmetatable, setmetatable
@@ -259,7 +259,8 @@ do
       return true
     end
 
-    for i, test in ipairs(self.tests_) do
+    for i = 1, #self.tests_ do
+      local test = self.tests_[i]
       print("Suite test", test.name)
       local env = { }
       if self.tests_.set_up_ ~= nil then
@@ -341,7 +342,8 @@ do
 
       if #self.todos_ > 0 then
         todo_messages = { }
-        for i, todo in ipairs(self.todos_) do
+        for i = 1, #self.todos_ do
+          local todo = self.todos_[i]
           todo_messages[#todo_messages + 1] = "   -- "
           todo_messages[#todo_messages + 1] = todo
           todo_messages[#todo_messages + 1] = "\n"
@@ -372,7 +374,8 @@ do
     if nerr > 0 then
       print("Failed:", nerr)
       msg = {"Suite `", self.name_, "' failed:\n"}
-      for i, err in ipairs(errs) do
+      for i = 1, #errs do
+        local err = errs[i]
         print(err.name, err.err)
         msg[#msg + 1] = " * Test `"
         msg[#msg + 1] = err.name
@@ -530,7 +533,8 @@ local run_tests = function(names, parameters_list)
     print("STRICT mode is disabled")
   end
 
-  for _, name in ipairs(names) do
+  for i = 1, #names do
+    local name = names[i]
     print("Running test", name)
     local res, stage, err, todo = run_test(name, parameters_list)
     if res then
