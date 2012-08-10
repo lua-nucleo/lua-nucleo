@@ -19,7 +19,7 @@ local print, loadfile, xpcall, error, assert, type, next, pairs =
 local getmetatable, setmetatable
     = getmetatable, setmetatable
 
-local _G = _G -- TODO: ?!
+local _G = _G
 
 local debug_traceback = debug.traceback
 local table_concat, table_insert = table.concat, table.insert
