@@ -64,7 +64,7 @@ do
   }
 
   make_single_test = function(test_adder_fn)
-    assert(type(fn) == "function", "bad callback")
+    assert(type(test_adder_fn) == "function", "bad callback")
 
     return setmetatable(
         {
