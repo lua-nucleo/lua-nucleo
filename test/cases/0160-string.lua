@@ -345,25 +345,25 @@ end)
 --------------------------------------------------------------------------------
 
 test:test_for "fill_placeholders_ex" (function ()
-  ensure_strequals("both empty", fill_placeholders("", {}), "")
-  ensure_strequals("empty dict", fill_placeholders("test", {}), "test")
-  ensure_strequals("empty str", fill_placeholders("", { a = 42 }), "")
-  ensure_strequals("missing key", fill_placeholders("$(b)", { a = 42 }), "$(b)")
+  ensure_strequals("both empty", fill_placeholders_ex("%$%((.-)%)", "", {}), "")
+  ensure_strequals("empty dict", fill_placeholders_ex("%$%((.-)%)", "test", {}), "test")
+  ensure_strequals("empty str", fill_placeholders_ex("%$%((.-)%)", "", { a = 42 }), "")
+  ensure_strequals("missing key", fill_placeholders_ex("%$%((.-)%)", "$(b)", { a = 42 }), "$(b)")
 
-  ensure_strequals("bad format", fill_placeholders("$a", { a = 42 }), "$a")
-  ensure_strequals("missing right brace", fill_placeholders("$a)", { a = 42 }), "$a)")
-  ensure_strequals("missing left brace", fill_placeholders("$(a", { a = 42 }), "$(a")
+  ensure_strequals("bad format", fill_placeholders_ex("%$%((.-)%)", "$a", { a = 42 }), "$a")
+  ensure_strequals("missing right brace", fill_placeholders_ex("%$%((.-)%)", "$a)", { a = 42 }), "$a)")
+  ensure_strequals("missing left brace", fill_placeholders_ex("%$%((.-)%)", "$(a", { a = 42 }), "$(a")
 
-  ensure_strequals("ok", fill_placeholders("a = `$(a)'", { a = 42 }), "a = `42'")
-  ensure_tequals("no extra data", { fill_placeholders("a = `$(a)'", { a = 42 }) }, { "a = `42'" })
+  ensure_strequals("ok", fill_placeholders_ex("%$%((.-)%)", "a = `$(a)'", { a = 42 }), "a = `42'")
+  ensure_tequals("no extra data", { fill_placeholders_ex("%$%((.-)%)", "a = `$(a)'", { a = 42 }) }, { "a = `42'" })
 
-  ensure_strequals("extra key", fill_placeholders("a = `$(a)'", { a = 42, b = 43 }), "a = `42'")
-  ensure_strequals("two keys", fill_placeholders("`$(key)' = `$(value)'", { key = "a", value = 42 }), "`a' = `42'")
+  ensure_strequals("extra key", fill_placeholders_ex("%$%((.-)%)", "a = `$(a)'", { a = 42, b = 43 }), "a = `42'")
+  ensure_strequals("two keys", fill_placeholders_ex("%$%((.-)%)", "`$(key)' = `$(value)'", { key = "a", value = 42 }), "`a' = `42'")
 
-  ensure_strequals("empty string key", fill_placeholders("`$()'", { [""] = 42 }), "`42'")
+  ensure_strequals("empty string key", fill_placeholders_ex("%$%((.-)%)", "`$()'", { [""] = 42 }), "`42'")
 
-  ensure_strequals("extra braces", fill_placeholders("$(a `$(a)')", { a = 42 }), "$(a `$(a)')")
-  ensure_strequals("extra right brace", fill_placeholders("`$(a)')", { a = 42 }), "`42')")
+  ensure_strequals("extra braces", fill_placeholders_ex("%$%((.-)%)", "$(a `$(a)')", { a = 42 }), "$(a `$(a)')")
+  ensure_strequals("extra right brace", fill_placeholders_ex("%$%((.-)%)", "`$(a)')", { a = 42 }), "`42')")
 end)
 
 --------------------------------------------------------------------------------
@@ -388,6 +388,30 @@ test:test_for "fill_placeholders" (function ()
 
   ensure_strequals("extra braces", fill_placeholders("$(a `$(a)')", { a = 42 }), "$(a `$(a)')")
   ensure_strequals("extra right brace", fill_placeholders("`$(a)')", { a = 42 }), "`42')")
+end)
+
+--------------------------------------------------------------------------------
+
+test:test_for "fill_curly_placeholders" (function ()
+  ensure_strequals("both empty", fill_curly_placeholders("", {}), "")
+  ensure_strequals("empty dict", fill_curly_placeholders("test", {}), "test")
+  ensure_strequals("empty str", fill_curly_placeholders("", { a = 42 }), "")
+  ensure_strequals("missing key", fill_curly_placeholders("${b}", { a = 42 }), "${b}")
+
+  ensure_strequals("bad format", fill_curly_placeholders("$a", { a = 42 }), "$a")
+  ensure_strequals("missing right brace", fill_curly_placeholders("$a}", { a = 42 }), "$a}")
+  ensure_strequals("missing left brace", fill_curly_placeholders("${a", { a = 42 }), "${a")
+
+  ensure_strequals("ok", fill_curly_placeholders("a = `${a}'", { a = 42 }), "a = `42'")
+  ensure_tequals("no extra data", { fill_curly_placeholders("a = `${a}'", { a = 42 }) }, { "a = `42'" })
+
+  ensure_strequals("extra key", fill_curly_placeholders("a = `${a}'", { a = 42, b = 43 }), "a = `42'")
+  ensure_strequals("two keys", fill_curly_placeholders("`${key}' = `${value}'", { key = "a", value = 42 }), "`a' = `42'")
+
+  ensure_strequals("empty string key", fill_curly_placeholders("`${}'", { [""] = 42 }), "`42'")
+
+  ensure_strequals("extra braces", fill_curly_placeholders("${a `${a}'}", { a = 42 }), "${a `${a}'}")
+  ensure_strequals("extra right brace", fill_curly_placeholders("`${a}'}", { a = 42 }), "`42'}")
 end)
 
 --------------------------------------------------------------------------------
@@ -626,10 +650,6 @@ test:test_for "serialize_number" (function ()
     end)
 
 --------------------------------------------------------------------------------
-
--- test:UNTESTED 'fill_placeholders_ex'
-
-test:UNTESTED 'fill_curly_placeholders'
 
 test:UNTESTED 'split_by_char'
 
