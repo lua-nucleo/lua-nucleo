@@ -344,6 +344,44 @@ end)
 
 --------------------------------------------------------------------------------
 
+test:test_for "split_by_char" (function ()
+  ensure_equals("both empty", split_by_char("",""), false )
+  ensure_equals("empty divider", split_by_char("\nMy \tsplit_by_char?#$%^&*()_+|~/\t \0test \007string.\n",""), false )
+  ensure_equals("empty divider & bad arg type for string", split_by_char( 1, ""), false )
+  ensure_tequals("empty string", split_by_char(""," "), {} )
+--  ensure_tequals("space string", split_by_char(" "," "), {"",""} )     -- Probably not a bug but feature
+-- Bug found here, will be reported
+--  ensure_tequals("two-char string with trailing divider", split_by_char("t "," "), {"t"} )
+--  ensure_tequals("two-char string with leading divider", split_by_char(" t"," "), {"t"} )
+--  ensure_tequals("3-char string with leading and trailing divider", split_by_char(" t "," "), {"t"} )
+
+-- Bug found here, will be reported
+--  ensure_tequals("word divided", split_by_char("triceratops?","t"), {"ricera", "ops?"} )
+  ensure_tequals("word not divided", split_by_char("Dinozavr!","t"), {"Dinozavr!"} )
+  ensure_tequals(
+      "phrase with escapes",
+      split_by_char("\nMy \tsplit_by_char?#$%^&*()_+|~/\t \001test \007string.\n"," "),
+      {"\nMy", "\tsplit_by_char?#$%^&*()_+|~/\t", "\001test", "\007string.\n"}
+    )
+  ensure_tequals(
+      "phrase with escapes and zero",
+      split_by_char("\nMy \tsplit_by_char?#$%^&*()_+|~/\t \0test \007string.\n"," "),
+      {"\nMy", "\tsplit_by_char?#$%^&*()_+|~/\t", "\0test", "\007string.\n"}
+    )
+  ensure_tequals(
+      "space string & divider with escapes and zero",
+      split_by_char(" ", "\nMy \tsplit_by_char?#$%^&*()_+|~/\t \0test \007string.\n"),
+      {" "}
+    )
+  ensure_tequals(
+      "empthy string & divider with escapes and zero",
+      split_by_char("", "\nMy \tsplit_by_char?#$%^&*()_+|~/\t \0test \007string.\n"),
+      {}
+    )
+end)
+
+--------------------------------------------------------------------------------
+
 test:test_for "fill_placeholders_ex" (function ()
   ensure_strequals("both empty", fill_placeholders_ex("%$%((.-)%)", "", {}), "")
   ensure_strequals("empty dict", fill_placeholders_ex("%$%((.-)%)", "test", {}), "test")
@@ -675,8 +713,6 @@ test:test_for "serialize_number" (function ()
     end)
 
 --------------------------------------------------------------------------------
-
-test:UNTESTED 'split_by_char'
 
 test:UNTESTED 'split_by_offset'
 
