@@ -349,14 +349,14 @@ test:test_for "split_by_char" (function ()
   ensure_equals("empty divider", split_by_char("\nMy \tsplit_by_char?#$%^&*()_+|~/\t \0test \007string.\n",""), false )
   ensure_equals("empty divider & bad arg type for string", split_by_char( 1, ""), false )
   ensure_tequals("empty string", split_by_char(""," "), {} )
---  ensure_tequals("space string", split_by_char(" "," "), {"",""} )     -- Probably not a bug but feature
--- Bug found here, will be reported
---  ensure_tequals("two-char string with trailing divider", split_by_char("t "," "), {"t"} )
---  ensure_tequals("two-char string with leading divider", split_by_char(" t"," "), {"t"} )
---  ensure_tequals("3-char string with leading and trailing divider", split_by_char(" t "," "), {"t"} )
 
--- Bug found here, will be reported
---  ensure_tequals("word divided", split_by_char("triceratops?","t"), {"ricera", "ops?"} )
+  -- NOTE: Test logic for split_* must be based on reversability of spliting, f.e.:
+  -- split_by_char("triceratopst","t") must return {"","ricera", "ops", ""} .
+  ensure_tequals("word divided", split_by_char("triceratopst","t"), {"","ricera", "ops", ""} )
+  ensure_tequals("string with trailing divider", split_by_char("t "," "), {"t", ""} )
+  ensure_tequals("string with leading divider", split_by_char(" t"," "), {"","t"} )
+  ensure_tequals("string with leading and trailing divider", split_by_char(" t "," "),{"","t",""} )
+
   ensure_tequals("word not divided", split_by_char("Dinozavr!","t"), {"Dinozavr!"} )
   ensure_tequals(
       "phrase with escapes",
