@@ -148,7 +148,7 @@ local count_substrings = function(str, substr)
 end
 
 local split_by_offset = function(str, offset, skip_right)
-  assert(offset <= #str)
+  assert(offset <= #str, "offset greater str length")
   return str:sub(1, offset), str:sub(offset + 1 + (skip_right or 0))
 end
 
