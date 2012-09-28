@@ -376,11 +376,9 @@ do
       print("Failed on first error")
     end
 
-    local msg
-
     if nerr > 0 then
       print("Failed:", nerr)
-      msg = {"Suite `", self.name_, "' failed:\n"}
+      local msg = { "Suite `", self.name_, "' failed:\n" }
       for i = 1, #errs do
         local err = errs[i]
         print(err.name, err.err)
@@ -390,7 +388,8 @@ do
         msg[#msg + 1] = err.err
         msg[#msg + 1] = "\n"
       end
-      msg = table_concat(msg)
+      assert(self.error_message_ == nil, "error message was already filled up")
+      self.error_message_ = table_concat(msg)
     end
 
     if todo_messages and not self.strict_mode_ then
@@ -398,11 +397,7 @@ do
       print(todo_messages)
     end
 
-    if nerr ~= 0 then
-      return nil, msg
-    end
-
-    return true
+    self.error_count_ = nerr
     self.is_completed_ = true
   end
 
@@ -424,6 +419,14 @@ do
   {
     __call = test;
   }
+
+  local get_error_count = function(self)
+    return self.error_count_
+  end
+
+  local get_error_message = function(self)
+    return self.error_message_
+  end
 
   make_suite = function(name, imports)
     assert(type(name) == "string", "bad name")
@@ -461,6 +464,8 @@ do
           factory = factory;
           method = method;
           methods = methods;
+          get_error_count = get_error_count;
+          get_error_message = get_error_message;
           --
           name_ = name;
           strict_mode_ = false;
@@ -470,6 +475,9 @@ do
           tests_ = {};
           test_names_ = {};
           todos_ = {};
+          --
+          error_count_ = 0;
+          error_message_ = nil;
           is_completed_ = false;
         },
         suite_mt
