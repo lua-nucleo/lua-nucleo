@@ -84,6 +84,181 @@ do
   end
 end
 
+-- It's a hackish semi-private method that uses private `suite`
+-- properties outside a `suite` object
+-- TODO: refactor this in order to not use private properties from
+-- outer functions
+-- https://github.com/lua-nucleo/lua-nucleo/issues/6
+local run = function(self)
+  assert(type(self) == "table", "bad self")
+
+  if self.is_completed_ then
+    error("suited was already completed")
+  end
+
+  print("Running suite", self.name_, self.strict_mode_ and "in STRICT mode")
+
+  local failed_on_first_error = false
+  local nok, errs = 0, {}
+
+  local check_output = function(test, ok, err, text, increment)
+    increment = increment or 0
+    if ok and increment ~= 0 then
+      print("OK")
+      nok = nok + increment
+    elseif not ok then
+      errs[#errs + 1] = { name = test.name, err = err }
+      if not self.fail_on_first_error_ then
+        print("ERR", text)
+      else
+        errs[#errs + 1] =
+        {
+          name = "[FAIL ON FIRST ERROR]",
+          err = "FAILED AS REQUESTED"
+        }
+        print("ERR (failing on first error)", text)
+        failed_on_first_error = true
+        return false
+      end
+    end
+    return true
+  end
+
+  for i = 1, #self.tests_ do
+    local test = self.tests_[i]
+    print("Suite test", test.name)
+    local env = { }
+    if self.tests_.set_up_ ~= nil then
+      local ok, res_up, err_up = xpcall(
+          function() self.tests_.set_up_(env) end,
+          err_handler
+        )
+      if
+        not check_output(
+            test,
+            ok and not err_up,
+            not ok and res_up or err_up,
+            "set up"
+          )
+      then
+        break
+      end
+    end
+
+    local ok, res, err = xpcall(function() test.fn(env) end, err_handler)
+    if
+      not check_output(
+          test,
+          ok and not err,
+          not ok and res or err,
+          "",
+          1
+        )
+    then
+      break
+    end
+
+    if self.tests_.tear_down_ ~= nil then
+      local ok, res_down, err_down = xpcall(
+          function() self.tests_.tear_down_(env) end,
+          err_handler
+        )
+      if
+        not check_output(
+            test,
+            ok and not err_down,
+            not ok and res_down or err_down,
+            "tear down"
+          )
+      then
+        break
+      end
+    end
+  end
+
+  local todo_messages = nil
+  if not failed_on_first_error then
+    local imports_set = self.imports_set_
+    if imports_set then
+      print("Checking suite completeness")
+      if #self.tests_ == 0 and #self.todos_ == 0 then
+        print("ERR")
+        errs[#errs + 1] = { name = "[completeness check]", err = "empty" }
+      elseif next(imports_set) == nil then
+        print("OK")
+        nok = nok + 1
+      else
+        print("ERR")
+
+        local list = { }
+        for name, _ in pairs(imports_set) do
+          list[#list + 1] = name
+        end
+
+        errs[#errs + 1] =
+        {
+          name = "[completeness check]";
+          err = "detected untested imports: "
+            .. table_concat(list, ", ")
+            ;
+        }
+      end
+    end
+
+    if #self.todos_ > 0 then
+      todo_messages = { }
+      for i = 1, #self.todos_ do
+        local todo = self.todos_[i]
+        todo_messages[#todo_messages + 1] = "   -- "
+        todo_messages[#todo_messages + 1] = todo
+        todo_messages[#todo_messages + 1] = "\n"
+      end
+      todo_messages = table_concat(todo_messages)
+
+      if self.strict_mode_ then
+        errs[#errs + 1] =
+        {
+          name = "[STRICT MODE]";
+          err = "detected TODOs:\n" .. todo_messages;
+        }
+      end
+    end
+  end
+
+  local nerr = #errs
+
+  print("Total tests in suite:", nok + nerr)
+  print("Successful:", nok)
+
+  if failed_on_first_error then
+    print("Failed on first error")
+  end
+
+  if nerr > 0 then
+    print("Failed:", nerr)
+    local msg = { "Suite `", self.name_, "' failed:\n" }
+    for i = 1, #errs do
+      local err = errs[i]
+      print(err.name, err.err)
+      msg[#msg + 1] = " * Test `"
+      msg[#msg + 1] = err.name
+      msg[#msg + 1] = "': "
+      msg[#msg + 1] = err.err
+      msg[#msg + 1] = "\n"
+    end
+    assert(self.error_message_ == nil, "error message was already filled up")
+    self.error_message_ = table_concat(msg)
+  end
+
+  if todo_messages and not self.strict_mode_ then
+    print("\nTODO:")
+    print(todo_messages)
+  end
+
+  self.error_count_ = nerr
+  self.is_completed_ = true
+end
+
 local make_suite
 do
   local check_name = function(self, import_name)
@@ -231,176 +406,6 @@ do
 
   local case = test -- Useful alias
 
-  local run = function(self)
-    assert(type(self) == "table", "bad self")
-
-    if self.is_completed_ then
-      error("suited was already completed")
-    end
-
-    print("Running suite", self.name_, self.strict_mode_ and "in STRICT mode")
-
-    local failed_on_first_error = false
-    local nok, errs = 0, {}
-
-    local check_output = function(test, ok, err, text, increment)
-      increment = increment or 0
-      if ok and increment ~= 0 then
-        print("OK")
-        nok = nok + increment
-      elseif not ok then
-        errs[#errs + 1] = { name = test.name, err = err }
-        if not self.fail_on_first_error_ then
-          print("ERR", text)
-        else
-          errs[#errs + 1] =
-          {
-            name = "[FAIL ON FIRST ERROR]",
-            err = "FAILED AS REQUESTED"
-          }
-          print("ERR (failing on first error)", text)
-          failed_on_first_error = true
-          return false
-        end
-      end
-      return true
-    end
-
-    for i = 1, #self.tests_ do
-      local test = self.tests_[i]
-      print("Suite test", test.name)
-      local env = { }
-      if self.tests_.set_up_ ~= nil then
-        local ok, res_up, err_up = xpcall(
-            function() self.tests_.set_up_(env) end,
-            err_handler
-          )
-        if
-          not check_output(
-              test,
-              ok and not err_up,
-              not ok and res_up or err_up,
-              "set up"
-            )
-        then
-          break
-        end
-      end
-
-      local ok, res, err = xpcall(function() test.fn(env) end, err_handler)
-      if
-        not check_output(
-            test,
-            ok and not err,
-            not ok and res or err,
-            "",
-            1
-          )
-      then
-        break
-      end
-
-      if self.tests_.tear_down_ ~= nil then
-        local ok, res_down, err_down = xpcall(
-            function() self.tests_.tear_down_(env) end,
-            err_handler
-          )
-        if
-          not check_output(
-              test,
-              ok and not err_down,
-              not ok and res_down or err_down,
-              "tear down"
-            )
-        then
-          break
-        end
-      end
-    end
-
-    local todo_messages = nil
-    if not failed_on_first_error then
-      local imports_set = self.imports_set_
-      if imports_set then
-        print("Checking suite completeness")
-        if #self.tests_ == 0 and #self.todos_ == 0 then
-          print("ERR")
-          errs[#errs + 1] = { name = "[completeness check]", err = "empty" }
-        elseif next(imports_set) == nil then
-          print("OK")
-          nok = nok + 1
-        else
-          print("ERR")
-
-          local list = { }
-          for name, _ in pairs(imports_set) do
-            list[#list + 1] = name
-          end
-
-          errs[#errs + 1] =
-          {
-            name = "[completeness check]";
-            err = "detected untested imports: "
-              .. table_concat(list, ", ")
-              ;
-          }
-        end
-      end
-
-      if #self.todos_ > 0 then
-        todo_messages = { }
-        for i = 1, #self.todos_ do
-          local todo = self.todos_[i]
-          todo_messages[#todo_messages + 1] = "   -- "
-          todo_messages[#todo_messages + 1] = todo
-          todo_messages[#todo_messages + 1] = "\n"
-        end
-        todo_messages = table_concat(todo_messages)
-
-        if self.strict_mode_ then
-          errs[#errs + 1] =
-          {
-            name = "[STRICT MODE]";
-            err = "detected TODOs:\n" .. todo_messages;
-          }
-        end
-      end
-    end
-
-    local nerr = #errs
-
-    print("Total tests in suite:", nok + nerr)
-    print("Successful:", nok)
-
-    if failed_on_first_error then
-      print("Failed on first error")
-    end
-
-    if nerr > 0 then
-      print("Failed:", nerr)
-      local msg = { "Suite `", self.name_, "' failed:\n" }
-      for i = 1, #errs do
-        local err = errs[i]
-        print(err.name, err.err)
-        msg[#msg + 1] = " * Test `"
-        msg[#msg + 1] = err.name
-        msg[#msg + 1] = "': "
-        msg[#msg + 1] = err.err
-        msg[#msg + 1] = "\n"
-      end
-      assert(self.error_message_ == nil, "error message was already filled up")
-      self.error_message_ = table_concat(msg)
-    end
-
-    if todo_messages and not self.strict_mode_ then
-      print("\nTODO:")
-      print(todo_messages)
-    end
-
-    self.error_count_ = nerr
-    self.is_completed_ = true
-  end
-
   local set_strict_mode = function(self, flag)
     assert(type(self) == "table", "bad self")
     assert(type(flag) == "boolean", "bad flag")
@@ -454,7 +459,6 @@ do
           case = case; -- Note this is an alias for test().
           set_up = set_up;
           tear_down = tear_down;
-          run = run;
           set_strict_mode = set_strict_mode;
           in_strict_mode = in_strict_mode;
           -- TODO: test set_fail_on_first_error
