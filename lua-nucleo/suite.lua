@@ -524,8 +524,16 @@ local run_test = function(name, parameters_list)
   if not fn then
     result, stage, msg = false, "load", load_err
   else
-    local ok, res, run_err = xpcall(
-        function() fn(suite_maker) end,
+    local ok, res = xpcall(
+        function()
+          fn(suite_maker)
+
+          if suite ~= nil then
+            run(suite)
+          else
+            error("suite wasn't initialized")
+          end
+        end,
         err_handler
       )
     if not ok then
