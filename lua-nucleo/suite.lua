@@ -457,7 +457,9 @@ do
           run = run;
           set_strict_mode = set_strict_mode;
           in_strict_mode = in_strict_mode;
-          set_fail_on_first_error = set_fail_on_first_error; -- TODO: Test this!
+          -- TODO: test set_fail_on_first_error
+          -- https://github.com/lua-nucleo/lua-nucleo/issues/4
+          set_fail_on_first_error = set_fail_on_first_error;
           UNTESTED = UNTESTED;
           TODO = TODO;
           BROKEN = BROKEN;
@@ -472,9 +474,9 @@ do
           fail_on_first_error_ = false;
           imports_set_ = imports_set;
           current_group_ = "";
-          tests_ = {};
-          test_names_ = {};
-          todos_ = {};
+          tests_ = { };
+          test_names_ = { };
+          todos_ = { };
           --
           error_count_ = 0;
           error_message_ = nil;
@@ -499,6 +501,7 @@ local run_test = function(name, parameters_list)
 
   local strict_mode = not not parameters_list.strict_mode
   local fail_on_first_error = not not parameters_list.fail_on_first_error
+
   local suite_maker = function(...)
     local suite = make_suite(...)
     suite:set_strict_mode(strict_mode)
