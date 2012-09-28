@@ -526,8 +526,8 @@ local run_test = function(name, parameters_list)
       )
     if not ok then
       result, stage, msg = false, "run", res
-    elseif run_err then
-      result, stage, msg = false, "run", run_err
+    elseif suite:get_error_count() > 0 then
+      result, stage, msg = false, "run", suite:get_error_message()
     end
     uninstall_strict_mode_()
   end
