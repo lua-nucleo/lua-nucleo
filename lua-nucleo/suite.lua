@@ -501,12 +501,17 @@ local run_test = function(name, parameters_list)
 
   local strict_mode = not not parameters_list.strict_mode
   local fail_on_first_error = not not parameters_list.fail_on_first_error
+  local suite
 
   local suite_maker = function(...)
-    local suite = make_suite(...)
-    suite:set_strict_mode(strict_mode)
-    suite:set_fail_on_first_error(fail_on_first_error)
-    return suite
+    if suite ~= nil then
+      error("suite was already initialized")
+    else
+      suite = make_suite(...)
+      suite:set_strict_mode(strict_mode)
+      suite:set_fail_on_first_error(fail_on_first_error)
+      return suite
+    end
   end
 
   local gmt = getmetatable(_G) -- Preserve metatable
