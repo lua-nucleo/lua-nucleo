@@ -344,6 +344,75 @@ end)
 
 --------------------------------------------------------------------------------
 
+test:test_for "split_by_offset" (function ()
+  local st="dinozavrostring"
+  local offset_assert="offset greater str length"
+  local x,y
+  ensure_fails_with_substring(
+      "test with offset > #str",
+      function()
+        split_by_offset(st, 100)
+      end,
+      offset_assert
+    )
+  ensure_fails_with_substring(
+      "test with offset = #str+1",
+      function()
+        split_by_offset(st, 1+#st)
+      end,
+      offset_assert
+    )
+  x,y=split_by_offset(st,-1)
+  ensure_strequals("offset < 0, 1st", x, st)
+  ensure_strequals("offset < 0, 2nd", y, st)
+
+  x,y=split_by_offset(st,0)
+  ensure_strequals("offset = 0, 1st", x, "")
+  ensure_strequals("offset = 0, 2nd", y, st)
+
+  x,y=split_by_offset(st,1)
+  ensure_strequals("offset 1, 1st", x, "d")
+  ensure_strequals("offset 1, 2nd", y, "inozavrostring")
+
+  x,y=split_by_offset(st, #st)
+  ensure_strequals("max offset, 1st", x, st)
+  ensure_strequals("max offset, 2nd", y, "")
+
+  x,y=split_by_offset(st, #st, 0)
+  ensure_strequals("max offset and skip 0, 1st", x, st)
+  ensure_strequals("max offset and skip 0, 2nd", y, "")
+
+  x,y=split_by_offset(st, #st, -2)
+  ensure_strequals("max offset and skip -2, 1st", x, st)
+  ensure_strequals("max offset and skip -2, 2nd", y, "ng")
+
+  x,y=split_by_offset(st, #st, -(#st) )
+  ensure_strequals("max offset and skip -max, 1st", x, st)
+  ensure_strequals("max offset and skip -max, 2nd", y, st)
+
+  x,y=split_by_offset(st, #st, -1-(#st) )
+  ensure_strequals("max offset and skip under begin, 1st", x, st)
+  ensure_strequals("max offset and skip under begin, 2nd", y, st)
+
+  x,y=split_by_offset(st, #st, 1+(#st) )
+  ensure_strequals("max offset and skip max, 1st", x, st)
+  ensure_strequals("max offset and skip max, 2nd", y, "")
+
+  x,y=split_by_offset(st,1,0)
+  ensure_strequals("offset 1 and skip 0, 1st", x, "d")
+  ensure_strequals("offset 1 and skip 0, 2nd", y, "inozavrostring")
+
+  x,y=split_by_offset(st,1,5)
+  ensure_strequals("offset 1 and skip 5, 1st", x, "d")
+  ensure_strequals("offset 1 and skip 5, 2nd", y, "vrostring")
+
+  x,y=split_by_offset(st,5,5)
+  ensure_strequals("offset 5 and skip 5, 1st", x, "dinoz")
+  ensure_strequals("offset 5 and skip 5, 2nd", y, "tring")
+end)
+
+--------------------------------------------------------------------------------
+
 test:test_for "split_by_char" (function ()
   ensure_equals("both empty", split_by_char("",""), false )
   ensure_equals("empty divider", split_by_char("\nMy \tsplit_by_char?#$%^&*()_+|~/\t \0test \007string.\n",""), false )
@@ -713,8 +782,6 @@ test:test_for "serialize_number" (function ()
     end)
 
 --------------------------------------------------------------------------------
-
-test:UNTESTED 'split_by_offset'
 
 test:UNTESTED 'count_substrings'
 
