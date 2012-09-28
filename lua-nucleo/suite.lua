@@ -234,6 +234,10 @@ do
   local run = function(self)
     assert(type(self) == "table", "bad self")
 
+    if self.is_completed_ then
+      error("suited was already completed")
+    end
+
     print("Running suite", self.name_, self.strict_mode_ and "in STRICT mode")
 
     local failed_on_first_error = false
@@ -399,6 +403,7 @@ do
     end
 
     return true
+    self.is_completed_ = true
   end
 
   local set_strict_mode = function(self, flag)
@@ -465,6 +470,7 @@ do
           tests_ = {};
           test_names_ = {};
           todos_ = {};
+          is_completed_ = false;
         },
         suite_mt
       )
