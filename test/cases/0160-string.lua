@@ -344,10 +344,13 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:test_for "split_by_offset" (function ()
+test:tests_for 'split_by_offset'
+
+test:test "split_by_offset-basic" (function ()
   local st="dinozavrostring"
   local offset_assert="offset greater str length"
   local x,y
+
   ensure_fails_with_substring(
       "test with offset > #str",
       function()
@@ -413,7 +416,9 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:test_for "split_by_char" (function ()
+test:tests_for 'split_by_char'
+
+test:test "split_by_char-basic" (function ()
   ensure_equals("both empty", split_by_char("",""), false )
   ensure_equals("empty divider", split_by_char("\nMy \tsplit_by_char?#$%^&*()_+|~/\t \0test \007string.\n",""), false )
   ensure_equals("empty divider & bad arg type for string", split_by_char( 1, ""), false )
@@ -451,7 +456,26 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:test_for "fill_placeholders_ex" (function ()
+test:tests_for 'count_substrings'
+
+test:test "count_substrings-basic" (function ()
+  local st="tridinozavra i tri triceratopsa tritri tozhetri"
+  local sts="\ntridinozavra \tsplit_by_chartriceratopsa tritri?#$triceratopsa%^&*()_+|~/\t \001test \007string.tozhetri\n"
+
+  ensure_equals("both empty", count_substrings("",""), 0 )
+  ensure_equals("str empty", count_substrings("",st), 0 )
+  ensure_equals("substr empty", count_substrings(st,""), 0 )
+  ensure_equals("str equal substr", count_substrings("t","t"), 1 )
+  ensure_equals("zero count", count_substrings(st,"diplodok"), 0 )
+  ensure_equals("positive count", count_substrings(st,"tri"), 6 )
+  ensure_equals("special character string", count_substrings(sts,"tri"), 7 )
+end)
+
+--------------------------------------------------------------------------------
+
+test:tests_for 'fill_placeholders_ex'
+
+test:test "fill_placeholders_ex-basic" (function ()
   ensure_strequals("both empty", fill_placeholders_ex("%$%((.-)%)", "", {}), "")
   ensure_strequals("empty dict", fill_placeholders_ex("%$%((.-)%)", "test", {}), "test")
   ensure_strequals("empty str", fill_placeholders_ex("%$%((.-)%)", "", { a = 42 }), "")
@@ -500,7 +524,9 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:test_for "fill_placeholders" (function ()
+test:tests_for 'fill_placeholders'
+
+test:test "fill_placeholders-basic" (function ()
   ensure_strequals("both empty", fill_placeholders("", {}), "")
   ensure_strequals("empty dict", fill_placeholders("test", {}), "test")
   ensure_strequals("empty str", fill_placeholders("", { a = 42 }), "")
@@ -524,7 +550,9 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:test_for "fill_curly_placeholders" (function ()
+test:tests_for 'fill_curly_placeholders'
+
+test:test "fill_curly_placeholders-basic" (function ()
   ensure_strequals("both empty", fill_curly_placeholders("", {}), "")
   ensure_strequals("empty dict", fill_curly_placeholders("test", {}), "test")
   ensure_strequals("empty str", fill_curly_placeholders("", { a = 42 }), "")
@@ -548,7 +576,9 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:test_for "url_encode" (function ()
+test:tests_for 'url_encode'
+
+test:test "url_encode-basic" (function ()
   ensure_strequals("empty", url_encode(""), "")
   ensure_strequals("simple", url_encode("test"), "test")
   ensure_strequals("test with number", url_encode("test555"), "test555")
@@ -562,7 +592,9 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:test_for "integer_to_string_with_base" (function()
+test:tests_for 'integer_to_string_with_base'
+
+test:test "integer_to_string_with_base-basic" (function()
   ensure_equals("simple", integer_to_string_with_base(10, 26), "A")
   ensure_equals("empty base", integer_to_string_with_base(10), "10")
   ensure_equals("test with negative numbers", integer_to_string_with_base(-11, 26), "-B")
@@ -629,7 +661,11 @@ test:test_for "integer_to_string_with_base" (function()
     )
 end)
 
-test:test_for "cut_with_ellipsis" (function()
+--------------------------------------------------------------------------------
+
+test:tests_for 'cut_with_ellipsis'
+
+test:test "cut_with_ellipsis-basic" (function()
 
   local test_string = "test long string"
 
@@ -716,7 +752,9 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:test_for "number_to_string" (function ()
+test:tests_for 'number_to_string'
+
+test:test "number_to_string-basic" (function ()
   ensure_strequals("inf", number_to_string(1/0), "1/0")
   ensure_strequals("-inf", number_to_string(-1/0), "-1/0")
   ensure_strequals("nan", number_to_string(0/0), "0/0")
@@ -782,8 +820,6 @@ test:test_for "serialize_number" (function ()
     end)
 
 --------------------------------------------------------------------------------
-
-test:UNTESTED 'count_substrings'
 
 test:UNTESTED 'kv_concat'
 
