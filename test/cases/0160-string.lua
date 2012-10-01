@@ -412,6 +412,11 @@ test:test "split_by_offset-basic" (function ()
   x,y=split_by_offset(st,5,5)
   ensure_strequals("offset 5 and skip 5, 1st", x, "dinoz")
   ensure_strequals("offset 5 and skip 5, 2nd", y, "tring")
+
+  x,y=split_by_offset(st,5,5)
+  ensure_strequals("offset 5 and skip 5, 1st", x, "dinoz")
+  ensure_strequals("offset 5 and skip 5, 2nd", y, "tring")
+
 end)
 
 --------------------------------------------------------------------------------
@@ -572,6 +577,41 @@ test:test "fill_curly_placeholders-basic" (function ()
 
   ensure_strequals("extra braces", fill_curly_placeholders("${a `${a}'}", { a = 42 }), "${a `${a}'}")
   ensure_strequals("extra right brace", fill_curly_placeholders("`${a}'}", { a = 42 }), "`42'}")
+end)
+
+--------------------------------------------------------------------------------
+
+test:tests_for 'kv_concat'
+
+test:test "kv_concat-basic" (function ()
+  local t={3,"2",1,"pusk"}
+  local t_kv={x=3,y="2",z=1,aaa="pusk"}
+  local t_key={x=3,y="2",1,"pusk"}
+  local t_err={3,"2",{1,"pusk"}}
+
+  -- kv_concat(t, kv_glue, pair_glue, pairs_fn) is key,value cat with different glues and optional iterator
+  ensure_strequals("empthy everything, no iterator and pairs glue", kv_concat({}, ""), "")
+  ensure_strequals("empthy everything, no iterator", kv_concat({}, "", ""), "")
+  ensure_strequals("empthy table, no iterator", kv_concat({}, " "," "), "")
+  ensure_strequals("empthy table", kv_concat({}, " "," ", pairs), "")
+  ensure_strequals("pairs iterator", kv_concat(t, " ",",", pairs), "1 3,2 2,3 1,4 pusk")
+  ensure_strequals("ipairs iterator", kv_concat(t, " ",",", ipairs), "1 3,2 2,3 1,4 pusk")
+  ensure_strequals("emthy table and ipairs", kv_concat({}, " ",",", ipairs), "")
+  ensure_strequals("ipairs cut not an integer indexes", kv_concat(t_key, "=",",", ipairs), "1=1,2=pusk")
+  -- Feature: disordered glued string if keys are not integer
+  ensure_strequals("2 integer 2 non-integer indexes produced unorder with pairs", kv_concat(t_kv, "=",","), "y=2,x=3,aaa=pusk,z=1")
+  -- Feature: disordered glued string, if integer and key indexes mixed
+  ensure_strequals("2 integer 2 non-integer indexes produced unorder with pairs", kv_concat(t_key, "=",",", pairs), "1=1,2=pusk,y=2,x=3")
+  ensure_strequals("2 integer 2 non-integer indexes produced unorder with no function", kv_concat(t_key, "=",","), "1=1,2=pusk,y=2,x=3")
+  -- Feature: nested tables is not allowed
+  ensure_fails_with_substring(
+    "nested tables are invalid",
+    function()
+      kv_concat(t_err, " ",",", pairs)
+    end,
+    "invalid value"
+  )
+
 end)
 
 --------------------------------------------------------------------------------
@@ -820,8 +860,6 @@ test:test_for "serialize_number" (function ()
     end)
 
 --------------------------------------------------------------------------------
-
-test:UNTESTED 'kv_concat'
 
 test:UNTESTED 'escape_for_json'
 
