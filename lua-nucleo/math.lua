@@ -28,6 +28,11 @@ local trunc = function(n)
   return ((n < 0) and math_ceil or math_floor)(n)
 end
 
+--- Compare arguments lhs and rhs for equality up to epsilon.
+-- @param lhs left-hand side
+-- @param rhs rigth-hand side
+-- @param epsilon relative error epsilon
+-- @return boolean type true if arguments lhs and rhs equal up epsilon, otherwise return false 
 local epsilon_equals = function(lhs, rhs, epsilon)
   return lhs > rhs - epsilon
     and lhs < rhs + epsilon
