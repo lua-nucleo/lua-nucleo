@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- priority_queue.lua: queue of objects sorted by priority
+--- Queue of objects sorted by priority
+-- @module lua-nucleo.priority_queue
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 local arguments,

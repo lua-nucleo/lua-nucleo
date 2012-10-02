@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- timed_queue.lua: queue of objects sorted by time
+--- Queue of objects sorted by time
+-- @module lua-nucleo.times_queue
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 local math_huge = math.huge

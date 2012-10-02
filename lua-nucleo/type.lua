@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- type.lua: Lua type manipulation
+--- Lua type manipulation
+-- @module lua-nucleo.type
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 local type, pairs, assert = type, pairs, assert

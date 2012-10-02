@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- strict.lua: global environment protection
+--- Global environment protection
+-- @module lua-nucleo.strict
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 local type, pairs, error, rawget, rawset, tostring

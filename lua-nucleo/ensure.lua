@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- ensure.lua: tools to ensure correct code behaviour
+--- Tools to ensure correct code behaviour
+-- @module lua-nucleo.ensure
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 local error, tostring, pcall, type, pairs, select, next

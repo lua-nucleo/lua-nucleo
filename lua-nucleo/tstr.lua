@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- tstr.lua: visualization of non-recursive tables.
+--- Visualization of non-recursive tables.
+-- @module lua-nucleo.tstr
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 local pairs, ipairs, type, tostring = pairs, ipairs, type, tostring

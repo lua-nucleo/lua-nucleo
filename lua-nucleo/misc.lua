@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- misc.lua: various useful stuff
+--- Various useful stuff
+-- @module lua-nucleo.misc
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 -- TODO: There should be no misc.lua! Split this file to specialized files!

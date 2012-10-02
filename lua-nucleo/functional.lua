@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- functional.lua: (pseudo-)functional stuff
+--- (pseudo-)functional stuff
+-- @module lua-nucleo.functional
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 local assert, unpack, select = assert, unpack, select

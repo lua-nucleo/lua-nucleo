@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- assert.lua: enhanced assertions
+--- Enhanced assertions
+-- @module lua-nucleo.assert
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 local error = error

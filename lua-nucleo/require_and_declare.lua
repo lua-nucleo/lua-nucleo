@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- require_and_declare.lua: wrapper around require() that declare()s module names
+--- Wrapper around require() that declare()s module names
+-- @module lua-nucleo.require_and_declare
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 local type, assert

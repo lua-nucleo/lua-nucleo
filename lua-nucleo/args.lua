@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- args.lua: utils that deal with function arguments
+--- Utils that deal with function arguments
+-- @module lua-nucleo.args
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 -- TODO: Separate arguments() and method_arguments() to other module?

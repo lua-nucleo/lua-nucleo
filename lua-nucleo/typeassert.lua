@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- typeassert.lua: Lua type assertions
+--- Lua type assertions
+-- @module lua-nucleo.typeassert
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 local type, pairs, error, tostring = type, pairs, error, tostring

@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- timestamp.lua: timestamp-related utilities
+--- Timestamp-related utilities
+-- @module lua-nucleo.timestamp
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 local os_time, os_date = os.time, os.date

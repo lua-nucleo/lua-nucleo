@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- string.lua: string-related tools
+--- String-related tools
+-- @module lua-nucleo.string
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 local table_concat, table_insert = table.concat, table.insert

@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- import.lua: minimalistic Lua submodule system
+--- Minimalistic Lua submodule system
+-- @module lua-nucleo.import
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 if exports then exports 'import' end

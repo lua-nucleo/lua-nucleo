@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- checker.lua: complex validation helper
+--- Complex validation helper
+-- @module lua-nucleo.checker
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 local assert, tostring, select = assert, tostring, select

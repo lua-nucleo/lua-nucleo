@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- stack_with_factory.lua: stack manager creating new objects with factory
+--- Stack manager creating new objects with factory
+-- @module lua-nucleo.stack_with_factory
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 local table_remove, table_insert = table.remove, table.insert
