@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- generate-test-list.lua: generates list of test files to be run
+--- Generates list of test files to be run
+-- @module test.test-lib.generate-test-list
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 local print, string, io, os = print, string, io, os

@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- tdeepequals-test-utils.lua: utility functions for testing tdeepequals
+--- Utility functions for testing tdeepequals
+-- @module test.test-lib.tdeepequals-test-utils
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 assert(type(import) == "function", "Import is required to run")

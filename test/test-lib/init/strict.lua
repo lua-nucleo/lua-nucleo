@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- strict.lua: test initialization file
+--- Test initialization file
+-- @module test.test-lib.init.strict
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 dofile('lua-nucleo/strict.lua')

@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
--- tserialize-test-utils.lua: utility functions for tserialize testing
+--- Utility functions for tserialize testing
+-- @module test.test-lib.tserialize-test-utils
 -- This file is a part of lua-nucleo library
--- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+-- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
 local tdeepequals = import 'lua-nucleo/tdeepequals.lua' { 'tdeepequals' }
