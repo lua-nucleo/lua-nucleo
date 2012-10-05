@@ -320,6 +320,26 @@ end)
 
 --------------------------------------------------------------------------------
 
+test:tests_for "escape_for_json"
+
+test "escape_for_json-basic" (function ()
+  ensure_strequals("letters and slash", escape_for_json("abcXYZs/n"), "\"abcXYZs/n\"")
+  ensure_strequals("slash and backslash", escape_for_json("s/\n"), "\"s/\\n\"")
+  ensure_strequals("escape sequences", escape_for_json("\"s/\n\b\fu\rper\t\v"),
+    "\"\\\"s/\\n\\b\\fu\\rper\\t\\v\"")
+  ensure_strequals("double backslash", escape_for_json(" \\ "), "\" \\\\ \"")
+  ensure_strequals("slash num", escape_for_json(" /007 "), "\" /007 \"")
+end)
+
+test "escape_for_json-injection" (function ()
+  -- ';alert(String.fromCharCode(88,83,83))//\';alert(String.fromCharCode(88,83,83))//";alert(String.fromCharCode(88,83,83))//\";alert(String.fromCharCode(88,83,83))//--></SCRIPT>">'><SCRIPT>alert(String.fromCharCode(88,83,83))</SCRIPT>
+  ensure_strequals("common json injection",
+    escape_for_json("';alert(String.fromCharCode(88,83,83))//\';alert(String.fromCharCode(88,83,83))//\";alert(String.fromCharCode(88,83,83))//\";alert(String.fromCharCode(88,83,83))//--></SCRIPT>\">'><SCRIPT>alert(String.fromCharCode(88,83,83))</SCRIPT>"),
+    "\"';alert(String.fromCharCode(88,83,83))//';alert(String.fromCharCode(88,83,83))//\\\";alert(String.fromCharCode(88,83,83))//\\\";alert(String.fromCharCode(88,83,83))//--></SCRIPT>\\\">'><SCRIPT>alert(String.fromCharCode(88,83,83))</SCRIPT>\"")
+end)
+
+--------------------------------------------------------------------------------
+
 test:tests_for 'cdata_wrap'
                'cdata_cat'
 
@@ -591,7 +611,7 @@ test:test "kv_concat-basic" (function ()
   local t_key={x=3,y="2",1,"pusk"}
   local t_err={3,"2",{1,"pusk"}}
 
-  -- kv_concat(t, kv_glue, pair_glue, pairs_fn) is key,value cat with different glues and optional iterator
+  -- kv_concat(t, kv_glue, pair_glue, pairs_fn) is table key,value concatter with different glues and optional iterator
   ensure_strequals("empthy everything, no iterator and pairs glue", kv_concat({}, ""), "")
   ensure_strequals("empthy everything, no iterator", kv_concat({}, "", ""), "")
   ensure_strequals("empthy table, no iterator", kv_concat({}, " "," "), "")
@@ -917,6 +937,7 @@ test:test "get_escaped_chars_in_ranges-basic" (function ()
     "% %!%\"%#%$%%%&%'%(%)%*%+%,%-%.%/%0%1%2%3%4%5%6%7%8%9%:%;%<%=%>%?%@%A%B%C%D%E%F%G%H%I%J%K%L%M%N%O%P%Q%R%S%T%U%V%W%X%Y%Z%[%\\%]%^%_%`%a%b%c%d%e%f%g%h%i%j%k%l%m%n%o%p%q%r%s%t%u%v%w%x%y%z%{%|%}%~")
 
   -- Mixed
+  ensure_strequals("all mixed up", get_escaped_chars_in_ranges({"0",50}),"%0%1%2")
   ensure_strequals("from ch(32) to ~", get_escaped_chars_in_ranges({32,"~"}),
     "% %!%\"%#%$%%%&%'%(%)%*%+%,%-%.%/%0%1%2%3%4%5%6%7%8%9%:%;%<%=%>%?%@%A%B%C%D%E%F%G%H%I%J%K%L%M%N%O%P%Q%R%S%T%U%V%W%X%Y%Z%[%\\%]%^%_%`%a%b%c%d%e%f%g%h%i%j%k%l%m%n%o%p%q%r%s%t%u%v%w%x%y%z%{%|%}%~")
   ensure_strequals("from space to ch(126)", get_escaped_chars_in_ranges({" ",126}),
@@ -928,7 +949,5 @@ test:test "get_escaped_chars_in_ranges-basic" (function ()
 end)
 
 --------------------------------------------------------------------------------
-
-test:UNTESTED 'escape_for_json'
 
 assert(test:run())

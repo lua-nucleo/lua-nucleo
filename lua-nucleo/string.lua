@@ -153,18 +153,29 @@ local split_by_offset = function(str, offset, skip_right)
   return str:sub(1, offset), str:sub(offset + 1 + (skip_right or 0))
 end
 
+-- Universal value sustitution to any placeholder, f.e.
+-- fill_placeholders_ex("%$%((.-)%)", "a = `$(a)'", { a = 42 }) returns "a = `42'"
+-- Wrapper for str:gsub.
 local fill_placeholders_ex = function(capture, str, dict)
   return (str:gsub(capture, dict))
 end
 
+-- Sustitutes value to placeholder $(value), f.e.
+-- fill_placeholders("a = `$(a)'", { a = 42 }) returns "a = `42'"
+-- Wrapper for fill_placeholders_ex.
 local fill_placeholders = function(str, dict)
   return fill_placeholders_ex("%$%((.-)%)", str, dict)
 end
 
+-- Sustitutes value to curly braces placeholder ${value}, f.e.
+-- fill_placeholders("a = `${a}'", { a = 42 }) returns "a = `42'"
+-- Wrapper for fill_placeholders_ex.
 local fill_curly_placeholders = function(str, dict)
   return fill_placeholders_ex("%${(.-)}", str, dict)
 end
 
+-- Table key,value pair concatter,
+-- by different separators within pair, and between pairs, and optional iterator.
 local kv_concat = function(t, kv_glue, pair_glue, pairs_fn)
   pair_glue = pair_glue or ""
   pairs_fn = pairs_fn or pairs
@@ -202,6 +213,7 @@ do
   end
 end
 
+-- Escapes backslash sequences, follow JSON and utf-8 standarts.
 local escape_for_json
 do
   -- Based on luajson code (comments copied verbatim).
@@ -344,6 +356,16 @@ do
   end
 end
 
+-- Returns '%'-separated character string.
+--    If range[i], range[i+1] are numbers,
+-- concats all chars ('%' separated) from char with ranges[1] code to char with ranges[2] code,
+-- concats it to same way to ranges[3] - ranges[4], and so on.
+--    If range[i], range[i+1] are strings,
+-- ingnore all string chars but first, and
+-- concats all chars ('%' separated) from ranges[1][1] to ranges[2][1],
+-- concats it to ranges[3][1] - ranges[4][1], and so on.
+--    If range[i], range[i+1] are different types, also works fine, f.e.:
+-- get_escaped_chars_in_ranges({"0",50}) returns "%0%1%2".
 local get_escaped_chars_in_ranges
 do
   get_escaped_chars_in_ranges = function(ranges)
