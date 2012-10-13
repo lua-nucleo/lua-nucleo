@@ -135,13 +135,16 @@ end
 local count_substrings = function(str, substr)
   local count = 0
 
-  local s, e = 0, 0
-  while true do
-    s, e = str:find(substr, e + 1, true)
-    if s ~= nil then
-      count = count + 1
-    else
-      break
+  -- Without this 'if', this 'while' will be endless.
+  if #str > 0 and #substr > 0 then
+    local s, e = 0, 0
+    while true do
+      s, e = str:find(substr, e + 1, true)
+      if s ~= nil then
+        count = count + 1
+      else
+        break
+      end
     end
   end
 
