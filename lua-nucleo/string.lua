@@ -26,7 +26,7 @@ local arguments
 local make_concatter -- TODO: rename, is not factory
 do
   make_concatter = function()
-    local buf = {}
+    local buf = { }
 
     local function cat(v)
       buf[#buf + 1] = v
@@ -116,7 +116,7 @@ local split_by_char = function(str, div)
   local result = false
   if div ~= "" then
     local pos = 0
-    result = {}
+    result = { }
 
     if str ~= "" then
       -- for each divider found
