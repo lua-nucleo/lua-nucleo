@@ -158,7 +158,7 @@ test "starts_with-minimal" (function()
   ensure_equals("binary-safe", starts_with("Русский язык велик и могуч", "Русский я"), true)
   ensure_equals("against number", starts_with("foo", 1), false)
   ensure_equals("against boolean", starts_with("foo", false), false)
-  ensure_equals("against table", starts_with("foo", {}), false)
+  ensure_equals("against table", starts_with("foo", { }), false)
   ensure_equals("against nil", starts_with("foo", nil), false)
 end)
 
@@ -175,7 +175,7 @@ test "ends_with-minimal" (function()
   ensure_equals("binary-safe", ends_with("Русский язык велик и могуч", "к и могуч"), true)
   ensure_equals("against number", ends_with("foo", 1), false)
   ensure_equals("against boolean", ends_with("foo", false), false)
-  ensure_equals("against table", ends_with("foo", {}), false)
+  ensure_equals("against table", ends_with("foo", { }), false)
   ensure_equals("against nil", ends_with("foo", nil), false)
 end)
 
@@ -254,7 +254,7 @@ test:tests_for "htmlspecialchars"
 test "htmlspecialchars-minimal" (function ()
   -- Uses texts from PHP 5.3.0 htmlspecialchars tests
 
-  local buf = {} -- We need special cat, not using make_concatter
+  local buf = { } -- We need special cat, not using make_concatter
   local cat = function(v)
     -- Matching var_dump for strings
     arguments("string", v)
@@ -345,8 +345,8 @@ end)
 --------------------------------------------------------------------------------
 
 test:test_for "fill_placeholders" (function ()
-  ensure_strequals("both empty", fill_placeholders("", {}), "")
-  ensure_strequals("empty dict", fill_placeholders("test", {}), "test")
+  ensure_strequals("both empty", fill_placeholders("", { }), "")
+  ensure_strequals("empty dict", fill_placeholders("test", { }), "test")
   ensure_strequals("empty str", fill_placeholders("", { a = 42 }), "")
   ensure_strequals("missing key", fill_placeholders("$(b)", { a = 42 }), "$(b)")
 
