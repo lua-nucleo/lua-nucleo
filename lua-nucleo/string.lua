@@ -168,6 +168,9 @@ local fill_placeholders = function(str, dict)
   return fill_placeholders_ex("%$%((.-)%)", str, dict)
 end
 
+-- Substitutes value to curly braces placeholder ${value}, f.e.
+-- fill_placeholders("a = `${a}'", { a = 42 }) returns "a = `42'"
+-- Wrapper for fill_placeholders_ex.
 local fill_curly_placeholders = function(str, dict)
   return fill_placeholders_ex("%${(.-)}", str, dict)
 end

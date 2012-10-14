@@ -508,6 +508,57 @@ end)
 
 --------------------------------------------------------------------------------
 
+test:tests_for 'fill_curly_placeholders'
+
+test:test "fill_curly_placeholders-basic" (function ()
+  ensure_strequals("both empty", fill_curly_placeholders("", { }), "")
+  ensure_strequals("empty dict", fill_curly_placeholders("test", { }), "test")
+  ensure_strequals("empty str", fill_curly_placeholders("", { a = 42 }), "")
+  ensure_strequals("missing key",
+    fill_curly_placeholders("${b}", { a = 42 }),
+    "${b}"
+   )
+  ensure_strequals("bad format",fill_curly_placeholders("$a", { a = 42 }), "$a")
+  ensure_strequals("missing right brace",
+    fill_curly_placeholders("$a}", { a = 42 }),
+    "$a}"
+   )
+  ensure_strequals("missing left brace",
+    fill_curly_placeholders("${a", { a = 42 }),
+    "${a"
+   )
+  ensure_strequals("ok",
+    fill_curly_placeholders("a = `${a}'", { a = 42 }),
+    "a = `42'"
+   )
+  ensure_tequals("no extra data",
+    { fill_curly_placeholders("a = `${a}'", { a = 42 }) },
+    { "a = `42'" }
+   )
+  ensure_strequals("extra key",
+    fill_curly_placeholders("a = `${a}'", { a = 42, b = 43 }),
+    "a = `42'"
+   )
+  ensure_strequals("two keys",
+    fill_curly_placeholders("`${key}' = `${value}'", { key = "a", value = 42 }),
+    "`a' = `42'"
+   )
+  ensure_strequals("empty string key",
+    fill_curly_placeholders("`${}'", { [""] = 42 }),
+    "`42'"
+   )
+  ensure_strequals("extra braces",
+    fill_curly_placeholders("${a `${a}'}", { a = 42 }),
+    "${a `${a}'}"
+   )
+  ensure_strequals("extra right brace",
+    fill_curly_placeholders("`${a}'}", { a = 42 }),
+    "`42'}"
+   )
+end)
+
+--------------------------------------------------------------------------------
+
 test:test_for "url_encode" (function ()
   ensure_strequals("empty", url_encode(""), "")
   ensure_strequals("simple", url_encode("test"), "test")
@@ -742,8 +793,6 @@ test:test_for "serialize_number" (function ()
     end)
 
 --------------------------------------------------------------------------------
-
-test:UNTESTED 'fill_curly_placeholders'
 
 test:UNTESTED 'split_by_char'
 
