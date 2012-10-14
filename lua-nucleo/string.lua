@@ -156,6 +156,10 @@ local split_by_offset = function(str, offset, skip_right)
   return str:sub(1, offset), str:sub(offset + 1 + (skip_right or 0))
 end
 
+-- Universal value substitution to any placeholder, f.e.
+-- fill_placeholders_ex("%$%((.-)%)", "a = `$(a)'", { a = 42 })
+-- returns "a = `42'"
+-- Wrapper for str:gsub.
 local fill_placeholders_ex = function(capture, str, dict)
   return (str:gsub(capture, dict))
 end
