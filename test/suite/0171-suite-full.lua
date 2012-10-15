@@ -4,7 +4,15 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
-local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
+dofile('test/test-lib/init/no-suite.lua')
+
+local run_tests,
+      make_suite
+      = import 'lua-nucleo/suite.lua'
+      {
+        'run_tests',
+        'make_suite'
+      }
 
 local assert_is_number,
       assert_is_string,
@@ -80,7 +88,6 @@ do
     )
   test_self_and_name("test.method", test.method, test)
   test_self_and_name("test.methods", test.methods, test)
-  test_self_and_name("test.run", test.run, test, 0)
   test_self_and_name(
       "test.set_fail_on_first_error",
       test.set_fail_on_first_error,
@@ -113,307 +120,495 @@ do
 end
 
 --------------------------------------------------------------------------------
+-- common parameters list
+
+local parameters_list = {}
+parameters_list.seed_value = 123456
+
+--------------------------------------------------------------------------------
 -- empty suite
 do
   print("\nEmpty suite:")
-  local test = make_suite("test_empty", { })
-  ensure_error(
-      "test:run()",
-      "Suite `test_empty' failed:\n"
-   .. " * Test `[completeness check]': empty\n",
-      test:run()
+  local nok, errs = run_tests(
+      { "test/data/suite/empty-suite-error-suite.lua" },
+      parameters_list
+    )
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err == "Suite `empty-suite-error-suite' failed:\n"
+                  .. " * Test `[completeness check]': empty\n",
+      "expected fail message must match"
     )
 end
+
+--------------------------------------------------------------------------------
+-- TODO: don't use global variables in suite tests
+-- https://github.com/lua-nucleo/lua-nucleo/issues/5
+
+assert(
+  not is_declared("suite_tests_results"),
+  "global suite_tests_results variable already declared"
+)
+declare("suite_tests_results")
 
 --------------------------------------------------------------------------------
 -- simple suite tests
 do
   print("\nSingle test suite:")
-  local test = make_suite("test", { })
-  local counter = 0
-  test "test_1" (function()
-    counter = 1
-  end)
-  ensure_equals("test:run()", test:run(), true)
-  ensure_equals("Sum", counter, 1)
+
+  suite_tests_results = 0
+  local nok, errs = run_tests(
+      { "test/data/suite/single-test-suite.lua" },
+      parameters_list
+    )
+
+  assert(nok == 1, "1 tests must be successfull")
+  assert(#errs == 0, "0 test must be fail")
+  assert(
+      suite_tests_results == 1,
+      "suite_tests_results must be set to 1"
+    )
 end
 
 do
   print("\nSingle case suite:")
-  local test = make_suite("test", { })
-  local counter = 0
-  test:case "test_1" (function()
-    counter = 1
-  end)
-  ensure_equals("test:run()", test:run(), true)
-  ensure_equals("Sum", counter, 1)
+
+  suite_tests_results = 0
+  local nok, errs = run_tests(
+      { "test/data/suite/single-case-suite.lua" },
+      parameters_list
+    )
+
+  assert(nok == 1, "1 tests must be successfull")
+  assert(#errs == 0, "0 test must be fail")
+  assert(
+      suite_tests_results == 1,
+      "suite_tests_results must be set to 1"
+    )
 end
 
 do
   print("\nSingle test_for suite:")
-  local test = make_suite("test", { to_test = true })
-  local counter = 0
-  test:test_for "to_test" (function()
-    counter = counter + 1
-  end)
-  ensure_equals("test:run()", test:run(), true)
-  ensure_equals("Sum", counter, 1)
+
+  suite_tests_results = 0
+  local nok, errs = run_tests(
+      { "test/data/suite/single-test_for-suite.lua" },
+      parameters_list
+    )
+
+  assert(nok == 1, "1 tests must be successfull")
+  assert(#errs == 0, "0 test must be fail")
+  assert(
+      suite_tests_results == 1,
+      "suite_tests_results must be set to 1"
+    )
 end
 
 do
   print("\nSingle tests_for suite:")
-  local test = make_suite("test", { to_test = true })
-  local counter = 0
-  test:tests_for "to_test"
-  test "any" (function()
-    counter = counter + 1
-  end)
-  ensure_equals("test:run()", test:run(), true)
-  ensure_equals("Sum", counter, 1)
+
+  suite_tests_results = 0
+  local nok, errs = run_tests(
+      { "test/data/suite/single-tests_for-suite.lua" },
+      parameters_list
+    )
+
+  assert(nok == 1, "1 tests must be successfull")
+  assert(#errs == 0, "0 test must be fail")
+  assert(
+      suite_tests_results == 1,
+      "suite_tests_results must be set to 1"
+    )
 end
 
 do
   print("\nSingle tests_for error:")
-  local test = make_suite("test", { })
-  ensure_fails_with_substring(
-      "test.tests_for('')",
-      function() test:tests_for("to_test") end,
-      "unknown import"
+
+  local nok, errs = run_tests(
+      { "test/data/suite/single-tests_for-error.lua" },
+      parameters_list
+    )
+
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err:find("suite: unknown import `to_test'", 1, true) ~= nil,
+      "expected fail message must match"
     )
 end
 
 do
   print("\nSingle group suite:")
-  local test = make_suite("test", { to_test = true })
-  local counter = 0
-  test:group "to_test"
-  test "any" (function()
-    counter = counter + 1
-  end)
-  ensure_equals("test:run()", test:run(), true)
-  ensure_equals("Sum", counter, 1)
+
+  suite_tests_results = 0
+  local nok, errs = run_tests(
+      { "test/data/suite/single-group-suite.lua" },
+      parameters_list
+    )
+
+  assert(nok == 1, "1 tests must be successfull")
+  assert(#errs == 0, "0 test must be fail")
+  assert(
+      suite_tests_results == 1,
+      "suite_tests_results must be set to 1"
+    )
 end
 
 do
   print("\nSet_strict_mode false suite:")
-  local test = make_suite("test", { to_test = true })
-  test:set_strict_mode(false)
-  local counter = 0
-  test:UNTESTED "to_test"
-  test "any" (function()
-    counter = counter + 1
-    if test:in_strict_mode() then
-      counter = counter + 10
-    end
-  end)
-  ensure_equals("in strict mode", test:in_strict_mode(), false)
-  ensure_equals("test:run()", test:run(), true)
-  ensure_equals("Sum", counter, 1)
+
+  suite_tests_results = 0
+  local nok, errs = run_tests(
+      { "test/data/suite/set_strict_mode-false-suite.lua" },
+      parameters_list
+    )
+
+  assert(nok == 1, "1 tests must be successfull")
+  assert(#errs == 0, "0 test must be fail")
+  assert(
+      suite_tests_results == 1,
+      "suite_tests_results must be set to 1"
+    )
 end
 
 do
   print("\nSet_strict_mode true suite:")
-  local test = make_suite("test", { to_test = true })
-  test:set_strict_mode(true)
-  local counter = 0
-  test:UNTESTED "to_test"
-  test "any" (function()
-    counter = counter + 1
-    if test:in_strict_mode() then
-      counter = counter + 10
-    end
-  end)
-  ensure_equals("in strict mode", test:in_strict_mode(), true)
-  ensure_error(
-      "test:run()",
-      "Suite `test' failed:\n"
-   .. " * Test `[STRICT MODE]': detected TODOs:\n"
-   .. "   -- write tests for `to_test'\n\n",
-      test:run()
+
+  suite_tests_results = 0
+  local nok, errs = run_tests(
+      { "test/data/suite/set_strict_mode-true-suite.lua" },
+      parameters_list
     )
-  ensure_equals("Sum", counter, 11)
+
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err == "Suite `set_strict_mode-true-suite' failed:\n"
+                  .. " * Test `[STRICT MODE]': detected TODOs:\n"
+                  .. "   -- write tests for `to_test'\n"
+                  .. "\n",
+      "expected fail message must match"
+    )
 end
 
 do
   print("\nSingle set_fail_on_first_error false suite:")
-  local test = make_suite("test", { })
-  test:set_fail_on_first_error(false)
-  local counter = 0
-  test "fail_one" (function() counter = counter + 1 error("any error", 0) end)
-  test "fail_two" (function() counter = counter + 10 error("any error", 0) end)
-  ensure_error(
-       "test:run()",
-       "Suite `test' failed:\n"
-    .. " * Test `fail_one': any error\n"
-    .. " * Test `fail_two': any error\n",
-       test:run()
-     )
-   ensure_equals("Sum", counter, 11)
+
+  suite_tests_results = 0
+  local nok, errs = run_tests(
+      { "test/data/suite/single-set_fail_on_first_error-false-suite.lua" },
+      parameters_list
+    )
+
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 tests must be fail")
+  assert(
+      errs[1].err ==
+              "Suite `single-set_fail_on_first_error-false-suite' failed:\n"
+           .. " * Test `fail_one': any error\n"
+           .. " * Test `fail_two': any error\n",
+      "expected fail message must match"
+    )
+  assert(
+      suite_tests_results == 11,
+      "suite_tests_results must be set to 11"
+    )
 end
 
 do
   print("\nSingle set_fail_on_first_error true suite:")
-  local test = make_suite("test", { })
-  test:set_fail_on_first_error(true)
-  local counter = 0
-  test "fail_one" (function() counter = counter + 1 error("any error", 0) end)
-  test "fail_two" (function() counter = counter + 10 error("any error", 0) end)
-  ensure_error(
-      "test:run()",
-      "Suite `test' failed:\n"
-   .. " * Test `fail_one': any error\n"
-   .. " * Test `[FAIL ON FIRST ERROR]': FAILED AS REQUESTED\n",
-      test:run()
+
+  suite_tests_results = 0
+  local nok, errs = run_tests(
+      { "test/data/suite/single-set_fail_on_first_error-true-suite.lua" },
+      parameters_list
     )
-  ensure_equals("Sum", counter, 1)
-  print("ABOVE FAIL WAS EXPECTED")
+
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 tests must be fail")
+  assert(
+      errs[1].err ==
+              "Suite `single-set_fail_on_first_error-true-suite' failed:\n"
+           .. " * Test `fail_one': any error\n"
+           .. " * Test `[FAIL ON FIRST ERROR]': FAILED AS REQUESTED\n",
+      "expected fail message must match"
+    )
+  assert(
+      suite_tests_results == 1,
+      "suite_tests_results must be set to 1"
+    )
 end
 
 do
-  print("\nSingle UNTESTED suite:")
-  local test = make_suite("test", { to_test = true })
-  test:UNTESTED "to_test"
-  if test:in_strict_mode() then
-    ensure_error(
-        "test:run()",
-        "Suite `test' failed:\n"
-     .. " * Test `[STRICT MODE]': detected TODOs:\n"
-     .. "   -- write tests for `to_test'\n\n",
-        test:run()
-      )
-  else ensure_equals("test:run()", test:run(), true) end
+  print("\nSingle UNTESTED unstrict mode suite:")
+
+  local nok, errs = run_tests(
+      { "test/data/suite/single-UNTESTED-unstrict-mode-suite.lua" },
+      parameters_list
+    )
+
+  assert(nok == 1, "1 tests must be successfull")
+  assert(#errs == 0, "0 test must be fail")
 end
 
 do
-  print("\nSingle BROKEN suite:")
-  local test = make_suite("test", { })
-  local counter = 0
-  test:BROKEN "to_test" (function() local counter = counter + 1 end)
-  if test:in_strict_mode() then
-    ensure_error(
-        "test:run()",
-        "Suite `test' failed:\n"
-     .. " * Test `[STRICT MODE]': detected TODOs:\n"
-     .. "   -- BROKEN TEST: to_test\n\n",
-        test:run()
-      )
-  else ensure_equals("test:run()", test:run(), true) end
+  print("\nSingle UNTESTED strict mode suite:")
+
+  local nok, errs = run_tests(
+      { "test/data/suite/single-UNTESTED-strict-mode-suite.lua" },
+      parameters_list
+    )
+
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err ==
+              "Suite `single-UNTESTED-strict-mode-suite' failed:\n"
+           .. " * Test `[STRICT MODE]': detected TODOs:\n"
+           .. "   -- write tests for `to_test'\n"
+           .. "\n",
+      "expected fail message must match"
+    )
 end
 
 do
-  print("\nSingle TODO suite:")
-  local test = make_suite("test", { })
-  test:TODO "to_test"
-  if test:in_strict_mode() then
-    ensure_error(
-        "test:run()",
-        "Suite `test' failed:\n"
-     .. " * Test `[STRICT MODE]': detected TODOs:\n"
-     .. "   -- to_test\n\n",
-        test:run()
-      )
-  else ensure_equals("test:run()", test:run(), true) end
+  print("\nSingle BROKEN unstrict mode suite:")
+
+  local nok, errs = run_tests(
+      { "test/data/suite/single-BROKEN-unstrict-mode-suite.lua" },
+      parameters_list
+    )
+
+  assert(nok == 1, "1 tests must be successfull")
+  assert(#errs == 0, "0 test must be fail")
+end
+
+do
+  print("\nSingle BROKEN strict mode suite:")
+
+  local nok, errs = run_tests(
+      { "test/data/suite/single-BROKEN-strict-mode-suite.lua" },
+      parameters_list
+    )
+
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err ==
+              "Suite `single-BROKEN-strict-mode-suite' failed:\n"
+           .. " * Test `[STRICT MODE]': detected TODOs:\n"
+           .. "   -- BROKEN TEST: to_test\n"
+           .. "\n",
+      "expected fail message must match"
+    )
+end
+
+do
+  print("\nSingle TODO unstrict mode suite:")
+
+  local nok, errs = run_tests(
+      { "test/data/suite/single-TODO-unstrict-mode-suite.lua" },
+      parameters_list
+    )
+
+  assert(nok == 1, "1 tests must be successfull")
+  assert(#errs == 0, "0 test must be fail")
+end
+
+do
+  print("\nSingle TODO strict mode suite:")
+
+  local nok, errs = run_tests(
+      { "test/data/suite/single-TODO-strict-mode-suite.lua" },
+      parameters_list
+    )
+
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err ==
+              "Suite `single-TODO-strict-mode-suite' failed:\n"
+           .. " * Test `[STRICT MODE]': detected TODOs:\n"
+           .. "   -- to_test\n"
+           .. "\n",
+      "expected fail message must match"
+    )
 end
 
 do
   print("\nSingle factory suite:")
-  local test = make_suite("test", { to_test = true })
-  test:factory "to_test" { }
-  test "any" (function() end)
-  ensure_equals("test:run()", test:run(), true)
+
+  local nok, errs = run_tests(
+      { "test/data/suite/single-factory-suite.lua" },
+      parameters_list
+    )
+
+  assert(nok == 1, "1 tests must be successfull")
+  assert(#errs == 0, "0 test must be fail")
 end
 
 do
   print("\nSingle method suite:")
-  local test = make_suite("test", { to_test = true })
-  local counter = 0
-  test:factory "to_test" { "method" }
-  test:method "method" (function() counter = 1 end)
-  ensure_equals("test:run()", test:run(), true)
-  ensure_equals("Sum", counter, 1)
+
+  suite_tests_results = 0
+  local nok, errs = run_tests(
+      { "test/data/suite/single-method-suite.lua" },
+      parameters_list
+    )
+
+  assert(nok == 1, "1 tests must be successfull")
+  assert(#errs == 0, "0 test must be fail")
+  assert(
+      suite_tests_results == 1,
+      "suite_tests_results must be set to 1"
+    )
 end
 
 do
   print("\nSingle methods suite:")
-  local test = make_suite("test", { to_test = true })
-  test:factory "to_test" { "method1", "method2" }
-  test:methods "method1" "method2"
-  test "any" (function() end)
-  ensure_equals("test:run()", test:run(), true)
+
+  local nok, errs = run_tests(
+      { "test/data/suite/single-methods-suite.lua" },
+      parameters_list
+    )
+
+  assert(nok == 1, "1 tests must be successfull")
+  assert(#errs == 0, "0 test must be fail")
 end
 
 do
   print("\nRandomseed value test:")
-  local test = make_suite("test", {})
-  local value, other_value
-  test "any" (function() value = math.random() end)
-  test "any_other" (function() other_value = math.random() end)
-  ensure_equals("test:run()", test:run(), true)
+
+  suite_tests_results =
+  {
+    value = nil,
+    other_value = nil
+  }
+  local nok, errs = run_tests(
+      { "test/data/suite/randomseed-value-test.lua" },
+      { seed_value = 12345 }
+    )
+
+  assert(nok == 1, "1 tests must be successfull")
+  assert(#errs == 0, "0 test must be fail")
+
   math.randomseed(12345)
-  ensure_equals("random values equal", value == math.random(), true)
+  assert(suite_tests_results.value == math.random(), "random values equal")
+
   -- math.randomseed(12345)
   -- ensure_equals("test:run()", other_value == math.random(), true)
   -- TODO: we get one randomseed for suite, not for case
+
   math.randomseed(12346)
-  ensure_equals("random values not equal", value == math.random(), false)
+  assert(suite_tests_results.value ~= math.random(), "random values not equal")
 end
 
 do
   print("\nSet_up and tear_down test:")
-  local test = make_suite("test", {})
-  local value, other_value
-  local counter = 0
-  test:set_up (function()
-    math.randomseed(12345)
-  end)
-  test:tear_down (function()
-    counter = counter + 1
-  end)
-  test "any" (function() value = math.random() end)
-  test "any_other" (function() other_value = math.random() end)
-  ensure_equals("test:run()", test:run(), true)
-  ensure_equals("tear_down results", counter == 2, true)
+
+  suite_tests_results =
+  {
+    value = nil,
+    other_value = nil,
+    counter = 0
+  }
+  local nok, errs = run_tests(
+      { "test/data/suite/set_up-and-tear_down-test.lua" },
+      parameters_list
+    )
+
+  assert(nok == 1, "1 tests must be successfull")
+  assert(#errs == 0, "0 test must be fail")
+
+  assert(
+      suite_tests_results.counter == 2,
+      "tear_down results: counter must be equals 2"
+    )
   math.randomseed(12345)
-  ensure_equals("random values equal", value == math.random(), true)
+  assert(
+      suite_tests_results.value == math.random(),
+      "random values equal"
+    )
   math.randomseed(12345)
-  ensure_equals("random values equal", other_value == math.random(), true)
+  assert(
+      suite_tests_results.other_value == math.random(),
+      "random values equal"
+    )
   math.randomseed(12346)
-  ensure_equals("random values not equal", value == math.random(), false)
-  ensure_fails_with_substring(
-    "double set_up",
-    function() test:set_up (function() end) end,
-    "set_up duplication"
-  )
-  ensure_fails_with_substring(
-    "double tear_down",
-    function() test:tear_down (function() end) end,
-    "tear_down duplication"
-  )
+  assert(
+      suite_tests_results.value ~= math.random(),
+      "random values not equal"
+    )
+end
+
+do
+  print("\nSet_up duplication test:")
+
+  local nok, errs = run_tests(
+      { "test/data/suite/set_up-duplication-test.lua" },
+      parameters_list
+    )
+
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err:find("set_up duplication", 1, true) ~= nil,
+      "expected fail message must match"
+    )
+end
+
+do
+  print("\nTear_down duplication test:")
+
+  local nok, errs = run_tests(
+      { "test/data/suite/tear_down-duplication-test.lua" },
+      parameters_list
+    )
+
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err:find("tear_down duplication", 1, true) ~= nil,
+      "expected fail message must match"
+    )
 end
 
 do
   print("\nSet_up test fail:")
-  local test = make_suite("test", {})
-  test:set_up (function() error("expected error") end)
-  test "any" (function() end)
-  ensure_error_with_substring(
-      "test:run()",
-      "Suite `test' failed:\n"
-   .. " %* Test `any':(.-) expected error\n",
-      test:run()
+
+  local nok, errs = run_tests(
+      { "test/data/suite/set_up-test-fail.lua" },
+      parameters_list
+    )
+
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err:find(
+          "Suite `set_up%-test%-fail' failed:\n"
+       .. " %* Test `any':(.-) expected error\n"
+        ) ~= nil,
+      "expected fail message must match"
     )
 end
 
 do
   print("\nTear_down test fail:")
-  local test = make_suite("test", {})
-  test:tear_down (function() error("expected error") end)
-  test "any" (function() end)
-  ensure_error_with_substring(
-      "test:run()",
-      "Suite `test' failed:\n"
-   .. " %* Test `any':(.-) expected error\n",
-      test:run()
+
+  local nok, errs = run_tests(
+      { "test/data/suite/tear_down-test-fail.lua" },
+      parameters_list
+    )
+
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err:find(
+          "Suite `tear_down%-test%-fail' failed:\n"
+       .. " %* Test `any':(.-) expected error\n"
+        ) ~= nil,
+      "expected fail message must match"
     )
 end
 
@@ -421,234 +616,213 @@ end
 -- test:with decorators
 do
   print("\nTesting test decorators:")
-  local test = make_suite("test decorators", { })
 
-  test:set_up (function(test_env) test_env["status"] = "set up" end)
-  test:tear_down (function(test_env)
-    ensure_equals("test passed", test_env.status, "tear down")
-  end)
+  local nok, errs = run_tests(
+      { "test/data/suite/decorators-suite.lua" },
+      parameters_list
+    )
 
-  local decorator = function(decorated_test)
-    return function(test_env)
-      ensure_equals("setup passed", test_env.status, "set up")
-      test_env.status = "decorated"
-      return decorated_test(test_env)
-    end
-  end
-
-  test "decorated" :with(decorator) (function(env)
-    ensure_equals("test decorated", env.status, "decorated")
-
-    -- Later check this value in tear down hook
-    env.status = "tear down"
-  end)
-  test:run()
-
+  assert(nok == 1, "1 tests must be successfull")
+  assert(#errs == 0, "0 test must be fail")
 end
 
 --------------------------------------------------------------------------------
 -- test:factory table input test
 do
-  print("\nComplex factory table input test:")
-  local test = make_suite(
-      "test",
-      {
-        some_factory = true,
-        other_factory = true
-      }
-    )
-  local var = 1
+  print("\nComplex factory table input test 1:")
 
-  test:factory "some_factory" { "method0", "method1", "method2", "method3" }
-  test:method "method0" (function() end)
-  ensure_error(
-      "test:run()",
-      "Suite `test' failed:\n"
-   .. " * Test `[completeness check]': detected untested imports:"
-   .. " some_factory:method3, some_factory:method1,"
-   .. " other_factory, some_factory:method2\n",
-      test:run()
+  local nok, errs = run_tests(
+      { "test/data/suite/complex-factory-table-input-test-1.lua" },
+      parameters_list
     )
 
-  test:method "method1" (function() var = 2 end)
-  ensure_error(
-      "test:run()",
-      "Suite `test' failed:\n"
-   .. " * Test `[completeness check]': detected untested imports:"
-   .. " some_factory:method3,"
-   .. " other_factory, some_factory:method2\n",
-      test:run()
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err == "Suite `complex-factory-table-input-test-1' failed:\n"
+                  .. " * Test `[completeness check]':"
+                  .. " detected untested imports:"
+                  .. " some_factory:method3, some_factory:method1,"
+                  .. " other_factory, some_factory:method2\n",
+      "expected fail message must match"
     )
-  ensure_equals("var == 2", var, 2)
+end
 
-  test:methods "method2" "method3"
-  ensure_error(
-      "test:run()",
-      "Suite `test' failed:\n"
-   .. " * Test `[completeness check]': detected untested imports:"
-   .. " other_factory\n",
-      test:run()
+do
+  print("\nComplex factory table input test 2:")
+
+  suite_tests_results = 1
+  local nok, errs = run_tests(
+      { "test/data/suite/complex-factory-table-input-test-2.lua" },
+      parameters_list
     )
 
-  test:factory "other_factory" { }
-  ensure_equals("test:run()", test:run(), true)
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err == "Suite `complex-factory-table-input-test-2' failed:\n"
+                  .. " * Test `[completeness check]':"
+                  .. " detected untested imports:"
+                  .. " some_factory:method3,"
+                  .. " other_factory, some_factory:method2\n",
+      "expected fail message must match"
+    )
+  assert(
+      suite_tests_results == 2,
+      "suite_tests_results must be set to 2"
+    )
+end
+
+do
+  print("\nComplex factory table input test 3:")
+
+  local nok, errs = run_tests(
+      { "test/data/suite/complex-factory-table-input-test-3.lua" },
+      parameters_list
+    )
+
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err == "Suite `complex-factory-table-input-test-3' failed:\n"
+                  .. " * Test `[completeness check]':"
+                  .. " detected untested imports:"
+                  .. " other_factory\n",
+      "expected fail message must match"
+    )
 end
 
 --------------------------------------------------------------------------------
 -- test:factory function input test
 do
-  print("\nComplex factory function input test:")
-  local make_some = function()
-    return
-    {
-      method1 = 5,
-      method2 = "",
-      method3 = {}
-    }
-  end
+  print("\nComplex factory function input test 1:")
 
-  local make_another = function(a, b, c)
-    assert_is_number(a)
-    assert_is_string(b)
-    assert_is_table(c)
-    local method1 = function() end
-    local method2 = function() end
-    local method3 = function() end
-    return
-    {
-      method1 = method1,
-      method2 = method2,
-      method3 = method3
-    }
-  end
-
-  local test = make_suite(
-      "test",
-      {
-        make_some = true,
-        make_another = true
-      }
+  local nok, errs = run_tests(
+      { "test/data/suite/complex-factory-function-input-test-1.lua" },
+      parameters_list
     )
 
-  test:factory "make_another" (make_another, 1, "", {})
-  ensure_error(
-      "test:run()",
-      "Suite `test' failed:\n"
-   .. " * Test `[completeness check]': empty\n",
-      test:run()
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err == "Suite `complex-factory-function-input-test-1' failed:\n"
+                  .. " * Test `[completeness check]': empty\n",
+      "expected fail message must match"
+    )
+end
+
+do
+  print("\nComplex factory function input test 2:")
+
+  suite_tests_results = 1
+  local nok, errs = run_tests(
+      { "test/data/suite/complex-factory-function-input-test-2.lua" },
+      parameters_list
     )
 
-  local var = 1
-  test:method "method1" (function() var = var + 2 end)
-  ensure_error(
-      "test:run()",
-      "Suite `test' failed:\n"
-   .. " * Test `[completeness check]': detected untested imports:"
-   .. " make_some, make_another:method2,"
-   .. " make_another:method3\n",
-      test:run()
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err == "Suite `complex-factory-function-input-test-2' failed:\n"
+                  .. " * Test `[completeness check]':"
+                  .. " detected untested imports:"
+                  .. " make_some, make_another:method2,"
+                  .. " make_another:method3\n",
+      "expected fail message must match"
     )
-  ensure_equals("var", var, 3)
+  assert(
+      suite_tests_results == 3,
+      "suite_tests_results must be set to 3"
+    )
+end
 
-  test:methods "method2" "method3"
-  ensure_error(
-      "test:run()",
-      "Suite `test' failed:\n"
-   .. " * Test `[completeness check]': detected untested imports:"
-   .. " make_some\n",
-      test:run()
+do
+  print("\nComplex factory function input test 3:")
+
+  local nok, errs = run_tests(
+      { "test/data/suite/complex-factory-function-input-test-3.lua" },
+      parameters_list
     )
 
-  test:factory "make_some" (make_some)
-  ensure_equals("test:run()", test:run(), true)
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err == "Suite `complex-factory-function-input-test-3' failed:\n"
+                  .. " * Test `[completeness check]':"
+                  .. " detected untested imports:"
+                  .. " make_some\n",
+      "expected fail message must match"
+    )
 end
 
 --------------------------------------------------------------------------------
 -- Complex test
 do
-  print("\nComplex test:")
-  local make_another = function()
-    local method1 = function() end
-    local method2 = function() end
-    local method3 = function() end
-    return
-    {
-      method1 = method1,
-      method2 = method2,
-      method3 = method3
-    }
-  end
+  print("\nComplex test 1:")
 
-  local test = make_suite(
-      "test",
-      {
-        make_another = true,
-        func1 = true,
-        func2 = true,
-        func3 = true,
-        func4 = true
-      }
+  suite_tests_results = 1
+  local nok, errs = run_tests(
+      { "test/data/suite/complex-test-1.lua" },
+      parameters_list
     )
-  local counter = 1
-  test:set_strict_mode(false)
-  test "any" (function()
-    counter = counter * 2
-  end)
-  test:test_for "func1" (function()
-    counter = counter * 3
-  end)
-  test:tests_for "func2"
-  test:case "func2_one" (function()
-    if test:in_strict_mode() then
-      counter = counter * 5
-    end
-  end)
 
-  test "func2_two" (function()
-    counter = counter * 7
-    error("Expected error.")
-  end)
-
-  test:UNTESTED "func3"
-  test:TODO "TODOs can duplicate func names"
-  test:TODO "func4"
-  test:test_for "func4" (function() end)
-
-  test:factory "make_another" (make_another)
-  test:method "method1" (function() counter = counter * 11 end)
-  test:methods "method2" "method3"
-
-  ensure_error_with_substring(
-      "test:run()",
-      "Suite `test' failed:\n"
-   .. " %* Test `func2_two': (.-): Expected error.",
-      test:run()
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err:find(
+          "Suite `complex%-test%-1' failed:\n"
+       .. " %* Test `func2_two': (.-): Expected error."
+        ) ~= nil,
+      "expected fail message must match"
     )
-  ensure_equals("product", counter, 2 * 3 * 7 * 11)
-
-  counter = 1
-  test:set_strict_mode(true)
-  ensure_error_with_substring(
-      "test:run()",
-      "Suite `test' failed:\n"
-   .. " %* Test `func2_two': (.-): Expected error.\n"
-   .. " %* Test `%[STRICT MODE%]': detected TODOs:\n"
-   .. "   %-%- write tests for `func3'\n"
-   .. "   %-%- TODOs can duplicate func names\n"
-   .. "   %-%- func4",
-      test:run()
-    )
-  ensure_equals("product", counter, 2 * 3 * 5 * 7 * 11)
-
-  counter = 1
-  test:set_fail_on_first_error(true)
-  ensure_error_with_substring(
-      "test:run()",
-      "Suite `test' failed:\n"
-   .. " %* Test `func2_two': (.-): Expected error.\n"
-   .. " %* Test `%[FAIL ON FIRST ERROR%]': FAILED AS REQUESTED\n",
-      test:run()
-    )
-  print("ABOVE FAIL WAS EXPECTED")
-  ensure_equals("product", counter, 2 * 3 * 5 * 7)
+  assert(suite_tests_results == 2 * 3 * 7 * 11, "product")
 end
+
+do
+  print("\nComplex test 2:")
+
+  suite_tests_results = 1
+  local nok, errs = run_tests(
+      { "test/data/suite/complex-test-2.lua" },
+      parameters_list
+    )
+
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err:find(
+          "Suite `complex%-test%-2' failed:\n"
+       .. " %* Test `func2_two': (.-): Expected error.\n"
+       .. " %* Test `%[STRICT MODE%]': detected TODOs:\n"
+       .. "   %-%- write tests for `func3'\n"
+       .. "   %-%- TODOs can duplicate func names\n"
+       .. "   %-%- func4"
+        ) ~= nil,
+      "expected fail message must match"
+    )
+  assert(suite_tests_results == 2 * 3 * 5 * 7 * 11, "product")
+end
+
+do
+  print("\nComplex test 3:")
+
+  suite_tests_results = 1
+  local nok, errs = run_tests(
+      { "test/data/suite/complex-test-3.lua" },
+      parameters_list
+    )
+
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err:find(
+          "Suite `complex%-test%-3' failed:\n"
+       .. " %* Test `func2_two': (.-): Expected error.\n"
+       .. " %* Test `%[FAIL ON FIRST ERROR%]': FAILED AS REQUESTED\n"
+        ) ~= nil,
+      "expected fail message must match"
+    )
+  assert(suite_tests_results == 2 * 3 * 5 * 7, "product")
+end
+
+print("------> Full suite tests suite PASSED")

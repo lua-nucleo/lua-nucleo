@@ -11,6 +11,3 @@ local test = make_suite("no-error-suite")
 
 test "test-no-error" (function()
 end)
-
-assert(test:run())
-
