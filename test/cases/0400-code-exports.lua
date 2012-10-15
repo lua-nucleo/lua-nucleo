@@ -6,3 +6,8 @@
 
 -- TODO: Add description!
 -- TODO: Write tests!
+-- #tmp677
+
+local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
+local test = make_suite("code_exports")
+test:TODO "write tests"
