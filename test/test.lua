@@ -7,15 +7,6 @@
 -- WARNING: do not use import in this file for the test purity reasons.
 local run_tests = assert(assert(assert(loadfile('lua-nucleo/suite.lua'))()).run_tests)
 
--- TODO: Ensure each test is run in pristine environment!
---       In particular that import does not leak in from other tests.
---       Use (but ensure it is compatible with strict module):
---         setfenv(
---             setmetatable(
---                 { },
---                 { __index = _G; __newindex = _G; __metatable = true; }
---               )
---           )
 
 -- TODO: Also preserve random number generator's seed
 --       (save it and restore between suites)
@@ -39,23 +30,117 @@ parameters_list.seed_value = 12345
 local pattern = select(n, ...) or ""
 assert(type(pattern) == "string")
 
-local test_r = {}
-for _, v in ipairs(tests_pr) do
+local low_level_tests = { }
+local suite_tests = { }
+local standard_tests = { }
+for _, info in ipairs(tests_pr) do
   -- Checking directly to avoid escaping special characters (like '-')
   -- when running specific test
-  if v == pattern or string.match(v, pattern) then
-    test_r[#test_r + 1] = "test/cases/"..v..".lua"
+  if string.match(info.path, pattern) then
+    if info.type == "low-level" then
+      low_level_tests[#low_level_tests + 1] = info.path
+    else
+      if info.type == "suite" then
+        suite_tests[#suite_tests + 1] = info.path
+      else
+        standard_tests[#standard_tests + 1] = info.path
+      end
+    end
   end
 end
 
-if #test_r == 0 then
+if #low_level_tests == 0 and #suite_tests == 0 and #standard_tests == 0 then
   error("no tests match pattern `" .. pattern .. "'")
 end
 
 if pattern ~= "" then
   print(
-      "Running " .. #test_r .. " test(s) matching pattern `" .. pattern .. "'"
+      "Running " .. (#low_level_tests + #suite_tests + #standard_tests)
+   .. " test(s) matching pattern `" .. pattern .. "'"
      )
 end
 
-run_tests(test_r, parameters_list)
+local run_low_level_tests = function(test_list)
+  local shell
+  local is_shell_found, shell = pcall(function()
+    return require("lua-aplicado.shell")
+  end)
+  assert(is_shell_found, "failed to find lua-aplicado.shell, please install lua-aplicado")
+  local shell_read = assert(shell.shell_read)
+
+  local get_interpreter = function(name)
+    local ok, lua = pcall(function()
+      return shell_read("which", name)
+    end)
+
+    if ok then
+      return lua:sub(1, #lua - 1) -- remove trailing new line
+    else
+      return nil
+    end
+  end
+
+  -- TODO: use current running interpreter path for launch low-level tests
+  -- https://github.com/lua-nucleo/lua-nucleo/issues/11
+  local lua
+  if jit ~= nil then
+    lua = get_interpreter("luajit2") or get_interpreter("luajit")
+  else
+    lua = get_interpreter("lua")
+  end
+  assert(lua, "interpreter not found")
+
+  local errors = { }
+  for i = 1, #test_list do
+    local test_path = test_list[i]
+
+    local ok, output = pcall(function()
+      return shell_read(lua, test_path)
+    end)
+
+    if ok then
+      print(output)
+    else
+      errors[#errors + 1] = test_path .. ": " .. output
+    end
+  end
+
+  return #errors == 0, errors
+end
+
+if #suite_tests > 0 then
+  for i = 1, #suite_tests do
+    low_level_tests[#low_level_tests + 1] = suite_tests[i]
+  end
+end
+
+local is_low_level_success,
+      low_level_errors
+      = run_low_level_tests(low_level_tests)
+
+print("--------------------------------------------------------------------------------")
+print("------> Low-level and suite tests completed")
+print("--------------------------------------------------------------------------------")
+if #standard_tests > 0 then
+  run_tests(standard_tests, parameters_list)
+end
+
+print()
+print("--------------------------------------------------------------------------------")
+print("------> Low-level and suite tests info")
+print("--------------------------------------------------------------------------------")
+print()
+print("Total low-level and suite tests:", #low_level_tests)
+print("Successful low-level and suite:", #low_level_tests - #low_level_errors)
+
+if #low_level_errors > 0 then
+  print("Failed low-level and suite:", #low_level_errors)
+  print()
+  print("Dumping error messages from failing tests:")
+  print()
+  print("--------------------------------------------------------------------------------")
+  print()
+  for i = 1, #low_level_errors do
+    print(low_level_errors[i])
+  end
+end
