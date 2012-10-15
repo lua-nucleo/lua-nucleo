@@ -812,7 +812,3 @@ test "make_loggers-complex" (function()
     ensure_equals("logging is disabled", next(concatter.buf()), nil)
   end
 end)
-
---------------------------------------------------------------------------------
-
-assert(test:run())

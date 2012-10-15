@@ -380,7 +380,3 @@ test "pick-non-equal-weights-generated" (function()
     end
   end
 end)
-
---------------------------------------------------------------------------------
-
-assert(test:run())

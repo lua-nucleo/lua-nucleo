@@ -165,7 +165,3 @@ test:test_for 'get_decasecond_timestamp' (function()
     )
 
 end)
-
---------------------------------------------------------------------------------
-
-assert(test:run())

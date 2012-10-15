@@ -36,7 +36,3 @@ test:factory("make_ordered_named_cat_manager", make_ordered_named_cat_manager)
 --------------------------------------------------------------------------------
 
 test:TODO "test make_ordered_named_cat_manager"
-
---------------------------------------------------------------------------------
-
-assert(test:run())

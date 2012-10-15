@@ -364,7 +364,3 @@ test "many-elements-random-generated" (function()
 
   check_insert_pop_elements(elements)
 end)
-
---------------------------------------------------------------------------------
-
-assert(test:run())

@@ -295,7 +295,3 @@ test "tpretty-serialize-inf-bug" (function ()
     table_with_inf
   )
 end)
-
---------------------------------------------------------------------------------
-
-assert(test:run())

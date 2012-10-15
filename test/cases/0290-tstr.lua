@@ -247,5 +247,3 @@ local custom_serialization_fn = function(value)
   return concat()
 end
 declare_tests("tstr_cat", custom_serialization_fn) -- tests fot tstr_cat
-
-assert(test:run())

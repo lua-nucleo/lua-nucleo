@@ -36,7 +36,3 @@ test:factory("make_scoped_cat_tree_manager", make_scoped_cat_tree_manager)
 --------------------------------------------------------------------------------
 
 test:TODO "test make_scoped_cat_tree_manager"
-
---------------------------------------------------------------------------------
-
-assert(test:run())

@@ -9,5 +9,3 @@ local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 -- TODO: write tests here
 local test = make_suite("ensure", { })
 test:TODO "ensure all tests"
---------------------------------------------------------------------------------
-assert(test:run())

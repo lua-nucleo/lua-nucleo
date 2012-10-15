@@ -618,5 +618,3 @@ test:UNTESTED 'kv_concat'
 test:UNTESTED 'escape_for_json'
 
 test:UNTESTED 'get_escaped_chars_in_ranges'
-
-assert(test:run())

@@ -274,7 +274,3 @@ end
 
 test:UNTESTED 'amap'
 test:UNTESTED 'check_types'
-
----------------------------------------------------------------------------
-
-assert(test:run())

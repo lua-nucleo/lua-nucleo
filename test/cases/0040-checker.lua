@@ -149,7 +149,3 @@ test "ensure-fails-no-third-argument" (function()
   ensure_returns("1: result default", 2, { nil, "\nmy message 1: (no additional error message)" }, checker:result())
   ensure_returns("1: result custom", 2, { nil, "p:my message 1: (no additional error message)" }, checker:result("p:", ":s"))
 end)
-
---------------------------------------------------------------------------------
-
-assert(test:run())

@@ -252,7 +252,3 @@ test:test_for "looped_linear_interpolator" (function()
       )
   end
 end)
-
---------------------------------------------------------------------------------
-
-assert(test:run())

@@ -36,7 +36,3 @@ test:factory("make_stack_with_factory", make_stack_with_factory)
 --------------------------------------------------------------------------------
 
 test:TODO "test make_stack_with_factory"
-
---------------------------------------------------------------------------------
-
-assert(test:run())

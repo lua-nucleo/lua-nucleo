@@ -30,7 +30,3 @@ test:UNTESTED 'make_config_environment'
 test:UNTESTED 'do_in_environment'
 
 test:UNTESTED 'dostring_in_environment'
-
---------------------------------------------------------------------------------
-
-assert(test:run())

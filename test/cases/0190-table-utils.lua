@@ -2457,7 +2457,3 @@ test:UNTESTED 'tisempty'
 test:UNTESTED 'tifindvalue_nonrecursive'
 test:UNTESTED 'tgenerate_1d_linear'
 test:UNTESTED 'tgenerate_2d_linear'
-
---------------------------------------------------------------------------------
-
-assert(test:run())

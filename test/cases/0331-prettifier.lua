@@ -66,7 +66,3 @@ test "test broken behaivor" (function ()
   -- then check
   ensure_strequals("not broken", table_concat(buf), "{ key = value }");
 end)
-
---------------------------------------------------------------------------------
-
-assert(test:run())

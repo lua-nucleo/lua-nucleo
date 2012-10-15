@@ -235,8 +235,3 @@ test "200 locals limitation" (function()
   local b = loadstring(str)()
   check_ok(b)
 end)
-
-
----------------------------------------------------------------------------
-
-assert (test:run())

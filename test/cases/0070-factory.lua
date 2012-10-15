@@ -305,7 +305,3 @@ test "several_methods" (function()
       "`number' expected, got `nil'"
     )
 end)
-
---------------------------------------------------------------------------------
-
-assert(test:run())

@@ -331,7 +331,3 @@ test:test "eat_tag-is_outer_yield_tag-actual-tag" (function()
       { false, 42 }
     )
 end)
-
---------------------------------------------------------------------------------
-
-assert(test:run())

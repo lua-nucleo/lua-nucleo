@@ -41,7 +41,3 @@ test "10" (function()
   local t = function () end
   check_ok(t, {}, false)
 end)
-
----------------------------------------------------------------------------
-
-assert(test:run())

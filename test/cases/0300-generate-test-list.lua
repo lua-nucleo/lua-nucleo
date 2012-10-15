@@ -42,6 +42,3 @@ if test_it then
 else
   test:TODO "LFS can't require, generate-test-list can't be tested."
 end
-
---------------------------------------------------------------------------------
-assert(test:run())

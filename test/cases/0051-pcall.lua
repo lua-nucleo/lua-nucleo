@@ -125,7 +125,3 @@ test "yield_outer-across-pcall" (function()
   ensure_equals("outer dead", coroutine_status(outer), "dead")
 
 end)
-
---------------------------------------------------------------------------------
-
-assert(test:run())

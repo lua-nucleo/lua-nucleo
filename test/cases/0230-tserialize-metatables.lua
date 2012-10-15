@@ -59,7 +59,3 @@ test "3" (function()
   setmetatable(a, b)
   check_ok(a)
 end)
-
----------------------------------------------------------------------------
-
-assert(test:run())

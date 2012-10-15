@@ -389,7 +389,3 @@ test "deque-random" (function()
     check_once()
   end
 end)
-
---------------------------------------------------------------------------------
-
-assert(test:run())

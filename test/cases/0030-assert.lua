@@ -50,7 +50,3 @@ test:test_for "lassert" (function()
       "assert.lua:%d+: my_error_message"
     )
 end)
-
---------------------------------------------------------------------------------
-
-assert(test:run())

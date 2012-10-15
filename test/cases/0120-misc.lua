@@ -126,7 +126,3 @@ test 'collect_all_garbage-complex' (function()
   ensure_equals("userdata is collected", userdata_collected, true)
   ensure_equals("no objects are cached", tcount_elements(cache), 0)
 end)
-
---------------------------------------------------------------------------------
-
-assert(test:run())

@@ -33,7 +33,3 @@ test:UNTESTED 'tless_kv'
 test:UNTESTED 'tsort_kv'
 
 test:UNTESTED 'ordered_pairs'
-
---------------------------------------------------------------------------------
-
-assert(test:run())

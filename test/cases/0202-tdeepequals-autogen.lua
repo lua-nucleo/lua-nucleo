@@ -39,7 +39,3 @@ test "Random mutated test 1-500" (function()
     check_ok(c1, c2, not rez)
   end
 end)
-
----------------------------------------------------------------------------
-
-assert(test:run())
