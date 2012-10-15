@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- 0170-suite.lua: a simple test suite test
+-- 0170-suite-simple.lua: a simple test suite test
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
@@ -8,47 +8,84 @@
 -- TODO: Test make_suite with imports_list argument and related methods.
 -- TODO: Test strict mode
 
-local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
+dofile('test/test-lib/init/no-suite.lua')
 
-local run_tests
-    = import 'lua-nucleo/suite.lua'
-    {
-      'run_tests'
-    }
+local run_tests,
+      make_suite
+      = import 'lua-nucleo/suite.lua'
+      {
+        'run_tests',
+        'make_suite'
+      }
 
 assert(pcall(function() make_suite() end) == false)
 
+--------------------------------------------------------------------------------
+
+local parameters_list = {}
+parameters_list.seed_value = 123456
+
+--------------------------------------------------------------------------------
+-- TODO: don't use global variables in suite tests
+-- https://github.com/lua-nucleo/lua-nucleo/issues/5
+
+assert(
+  not is_declared("suite_tests_results"),
+  "global suite_tests_results variable already declared"
+)
+declare("suite_tests_results")
+
+--------------------------------------------------------------------------------
 -- test, case, run
 do
-  local test = make_suite("test")
-  assert(type(test) == "table")
+  suite_tests_results =
+  {
+    to_call =
+    {
+      ["1"] = true,
+      ["2"] = true,
+      ["3"] = true
+    },
+    next_i = 1
+  }
+  local nok, errs = run_tests(
+      { "test/data/suite/simple-test-1.lua" },
+      parameters_list
+    )
 
-  assert(pcall(function() test "a" (false) end) == false)
+  assert(nok == 1, "1 tests must be successfull")
+  assert(#errs == 0, "0 test must be fail")
+  assert(suite_tests_results.to_call['1'] == nil, "to_call['1'] must be nil")
+  assert(suite_tests_results.next_i == 2, "next_i must equals 2")
+end
 
-  local to_call = { ["1"] = true, ["2"] = true, ["3"] = true }
-  local next_i = 1
+do
+  suite_tests_results =
+  {
+    to_call =
+    {
+      ["1"] = true,
+      ["2"] = true,
+      ["3"] = true
+    },
+    next_i = 1
+  }
+  local nok, errs = run_tests(
+      { "test/data/suite/simple-test-2.lua" },
+      parameters_list
+    )
 
-  assert(to_call['1'] == true)
-  test '1' (function() if next_i ~= 1 then next_i = false else next_i = 2 end to_call['1'] = nil end)
-  assert(to_call['1'] == true)
-
-  assert(test:run() == true)
-  assert(to_call['1'] == nil)
-  assert(next_i == 2)
-
-  to_call['1'] = true
-  next_i = 1
-
-  test '2' (function() if next_i ~= 2 then next_i = false else next_i = 3 end to_call['2'] = nil error("this error is expected") end)
-  test '3' (function() if next_i ~= 3 then next_i = false else next_i = true end  to_call['3'] = nil end)
-
-  assert(to_call['2'] == true)
-  assert(to_call['3'] == true)
-
-  assert(test:run() == nil) -- TODO: Check actual error message.
-
-  assert(next_i == true)
-  assert(next(to_call) == nil)
+  assert(nok == 0, "0 tests must be successfull")
+  assert(#errs == 1, "1 test must be fail")
+  assert(
+      errs[1].err:find(
+          "Suite `simple%-test%-2' failed:\n"
+       .. " %* Test `2':(.-) this error is expected\n"
+        ) ~= nil,
+      "expected fail message must match"
+    )
+  assert(suite_tests_results.next_i == true, "next_i must be true")
+  assert(next(suite_tests_results.to_call) == nil, "to_call must be empty")
 end
 
 -- run_tests, fail_on_first_error
@@ -74,3 +111,5 @@ do
   local nok, errs = run_tests(names, parameters_list)
   assert(nok == 1)
 end
+
+print("------> Simple suite tests suite PASSED")
