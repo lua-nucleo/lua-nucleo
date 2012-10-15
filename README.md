@@ -9,12 +9,14 @@ Dependencies
 Lua-Núcleo itself does not have external dependencies
 except for Lua 5.1 itself.
 
-The tests are dependent on `luafilesystem`:
+The tests are dependent on `luafilesystem` and `lua-aplicado`:
 
     sudo luarocks install luafilesystem
+    sudo luarocks install lua-aplicado
 
-List of cases will not be updated without this module,
+List of cases will not be updated without  `luafilesystem`,
 but you should be able to run tests themselves.
+Low-level tests can't be executed without `lua-aplicado`.
 
 Installation
 ------------
