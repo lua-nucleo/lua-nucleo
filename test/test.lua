@@ -19,12 +19,14 @@ local run_tests = assert(assert(assert(loadfile('lua-nucleo/suite.lua'))()).run_
 
 -- TODO: Also preserve random number generator's seed
 --       (save it and restore between suites)
+-- https://github.com/lua-nucleo/lua-nucleo/issues/10
 
 local tests_pr = assert(assert(loadfile('test/test-list.lua'))())
 
 local parameters_list = {}
 local n = 1
 -- TODO: we need to implement input params parser and default values injector
+-- https://github.com/lua-nucleo/lua-nucleo/issues/9
 if select(n, ...) == "--strict" then
   parameters_list.strict_mode = true
   n = 2
