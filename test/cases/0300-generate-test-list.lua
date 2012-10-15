@@ -25,8 +25,9 @@ if test_it then
     os.remove("test/data/generate-test-list/test-list.lua")
     loadfile('test/test-lib/generate-test-list.lua')(
         "test/data/generate-test-list/lib " ..
-        "test/data/generate-test-list/cases " ..
-        "test/data/generate-test-list/test-list.lua")
+        "test/data/generate-test-list/test-list.lua " ..
+        ".lua " ..
+        "test/data/generate-test-list/cases")
 
     local file, err = io.open("test/data/generate-test-list/test-list.lua", "r")
     if err then error("Error:" .. err) end

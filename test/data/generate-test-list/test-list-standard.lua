@@ -6,8 +6,20 @@
 
 return
 {
-  '0000-othertest';
-  '0000-test-file';
-  '0000-test_file_name';
-  '0000-test_file_other-sometest';
+  {
+    type = 'data/generate-test-list/cases';
+    path = 'test/data/generate-test-list/cases/0000-othertest.lua';
+  };
+  {
+    type = 'data/generate-test-list/cases';
+    path = 'test/data/generate-test-list/cases/0000-test-file.lua';
+  };
+  {
+    type = 'data/generate-test-list/cases';
+    path = 'test/data/generate-test-list/cases/0000-test_file_name.lua';
+  };
+  {
+    type = 'data/generate-test-list/cases';
+    path = 'test/data/generate-test-list/cases/0000-test_file_other-sometest.lua';
+  };
 }
