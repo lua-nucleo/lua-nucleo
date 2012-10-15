@@ -38,17 +38,33 @@ end
 
 -- parsing input string
 local input_string = select(1, ...)
-local lib_path, case_path, file_to_save, extension
+local lib_path, case_paths, file_to_save, extension
 if input_string ~= nil then
   local input_table = { }
   for word in input_string:gmatch("[%a,._/%-]+") do
     input_table[#input_table + 1] = word
   end
-  lib_path, case_path, file_to_save, extension =
-    input_table[1], input_table[2], input_table[3], input_table[4]
+
+  local extract_parameter = function()
+    assert(#input_table > 0, "failed to extract parameter: table is empty")
+    return table.remove(input_table, 1)
+  end
+
+  lib_path = extract_parameter()
+  file_to_save = extract_parameter()
+  extension = extract_parameter()
+  case_paths = {}
+  while #input_table > 0 do
+    case_paths[#case_paths + 1] = extract_parameter()
+  end
+
+  assert(#case_paths > 0, "at least one case path need to process")
 end
+
 lib_path = lib_path or "lua-nucleo"
-case_path = case_path or "test/cases"
+if #case_paths == 0 then
+  case_paths[0] = "test/cases"
+end
 file_to_save = file_to_save or "test/test-list.lua"
 extension = extension or ".lua"
 
@@ -57,30 +73,52 @@ local lib_files = find_all_files(lib_path, extension)
 table.sort(lib_files)
 
 -- get all test cases
-local cases = find_all_files(case_path, extension)
+local cases = { }
+local case_infos = { }
+for i = 1, #case_paths do
+  local case_path = case_paths[i]
+  local case_type = case_path:sub(case_path:find("/") + 1, -1)
+  assert(case_type and #case_type > 0, "unable to detect case type")
+  local folder_cases = find_all_files(case_path, extension)
+  for j = 1, #folder_cases do
+    cases[#cases + 1] = folder_cases[j]
+    case_infos[folder_cases[j]] =
+    {
+      type = case_type;
+      path = case_path .. "/" .. folder_cases[j];
+    }
+  end
+end
 table.sort(cases)
+
+local excludes =
+{
+  import_as_require = true -- because of deprecated
+}
 
 -- check all library files got test cases
 print("Test list generation check:")
 for i = 1, #lib_files do
   local lib_file = lib_files[i]
   lib_file = lib_file:match("([%w%-_]+).lua")
-  local match_found = false
-  io.write(lib_file .. ": ")
-  lib_file = lib_file:gsub("%-", "%%%-") -- replace "-" with "%-" in names
-  for j = 1, #cases do
-    local case_j = cases[j]
-    if string.match(case_j, "%-" .. lib_file .. "[%-%.]") then
-      match_found = true
-      io.write(case_j .. "; ")
+  if not excludes[lib_file] then
+    local match_found = false
+    io.write(lib_file .. ": ")
+    lib_file = lib_file:gsub("%-", "%%%-") -- replace "-" with "%-" in names
+    for j = 1, #cases do
+      local case_j = cases[j]
+      if string.match(case_j, "%-" .. lib_file .. "[%-%.]") then
+        match_found = true
+        io.write(case_j .. "; ")
+      end
     end
+    if match_found == false then
+      print("no tests found.\nTest list generation failed!\n")
+      os.remove("test/test-list.lua")
+      return nil
+    end
+    io.write("\n")
   end
-  if match_found == false then
-    print("no tests found.\nTest list generation failed!\n")
-    os.remove("test/test-list.lua")
-    return nil
-  end
-  io.write("\n")
 end
 print("OK\n")
 
@@ -93,9 +131,14 @@ file:write("--------------------------------------------------------------------
         .. "-- Copyright (c) lua-nucleo authors"
         .. "(see file `COPYRIGHT` for the license)\n"
         .. "--------------------------------------------------------------------------------\n\n"
-        .. "return\n{\n")
+        .. "return\n"
+        .. "{\n")
 for i = 1, #cases do
-  file:write("  '" .. cases[i]:match("([%w%-_]+).lua") .. "';\n")
+  local case_info = case_infos[cases[i]]
+  file:write("  {\n")
+  file:write("    type = '" .. case_info.type .. "';\n")
+  file:write("    path = '" .. case_info.path .. "';\n")
+  file:write("  };\n")
 end
 file:write("}\n")
 file:close()
