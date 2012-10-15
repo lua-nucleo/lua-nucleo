@@ -6,8 +6,10 @@
 
 -- Intentionally not using test suite to avoid circular dependency questions.
 
-local make_suite = assert(loadfile('test/test-lib/init/no-suite.lua'))(...)
+dofile('lua-nucleo/import.lua')
 
 local test_import = assert(assert(assert(loadfile("test/test-lib/import.lua"))())["test_import"])
 
 test_import("test/data/")
+
+print("------> Import tests suite PASSED")

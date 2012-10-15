@@ -19,3 +19,5 @@ local test_import = assert(
   )
 
 test_import("test/data/")
+
+print("------> Module tests suite PASSED")

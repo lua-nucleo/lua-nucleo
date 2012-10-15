@@ -84,3 +84,5 @@ assert(getmetatable(_G) == nil)
 for name, flag in get_declared_iter_() do
   error("declared not empty")
 end
+
+print("------> Strict tests suite PASSED")
