@@ -344,6 +344,54 @@ end)
 
 --------------------------------------------------------------------------------
 
+test:tests_for 'split_by_char'
+
+test:test "split_by_char-basic" (function ()
+  ensure_equals("both empty", split_by_char("",""), false )
+  ensure_equals("empty divider",
+    split_by_char("\nLorem \tipsum_dolor?#$%^&*()_+|~/\t \0 sit \007 am.\n",""),
+    false
+   )
+  ensure_equals("empty divider & bad arg type for string",
+    split_by_char(1, ""),
+    false
+   )
+  ensure_tequals("empty string", split_by_char(""," "), { } )
+  -- NOTE: Test logic for split_* based on reversability of spliting:
+  -- split_by_char("mLoremIpsum", "m") must return { "","Lore", "Ipsu", "" }.
+  ensure_tequals("word divided",
+    split_by_char("mLoremIpsum", "m"),
+    { "","Lore", "Ipsu", "" }
+   )
+  ensure_tequals("trailing divider", split_by_char("t ", " "), { "t", "" })
+  ensure_tequals("leading divider", split_by_char(" t", " "), { "", "t" })
+  ensure_tequals("leading and trailing divider",
+    split_by_char(" t ", " "), { "", "t", "" } )
+  ensure_tequals("word not divided", split_by_char("Lorem!", "t"), { "Lorem!" })
+  ensure_tequals(
+      "phrase with escapes",
+      split_by_char("\nLorem \tipsum?#$%^&*()_+|~/\t \001dolor \007sit\n", " "),
+      { "\nLorem", "\tipsum?#$%^&*()_+|~/\t", "\001dolor", "\007sit\n" }
+     )
+  ensure_tequals(
+      "phrase with escapes and zero",
+      split_by_char("\nLorem \tipsum?#$%^&*()_+|~/\t \0dolor \007sit.\n", " "),
+      { "\nLorem", "\tipsum?#$%^&*()_+|~/\t", "\0dolor", "\007sit.\n" }
+     )
+  ensure_tequals(
+      "space string, divider with escapes and zero",
+      split_by_char(" ", "\nLorem \tipsum?#$%^&*()_+|~/\t \0dolor \007sit.\n"),
+      { " " }
+     )
+  ensure_tequals(
+      "empty string & divider with escapes and zero",
+      split_by_char("", "\nLorem \tipsum?#$%^&*()_+|~/\t \0dolor \007sit.\n"),
+      { }
+     )
+end)
+
+--------------------------------------------------------------------------------
+
 test:tests_for 'fill_placeholders_ex'
 
 test:test "fill_placeholders_ex-basic" (function ()
@@ -793,8 +841,6 @@ test:test_for "serialize_number" (function ()
     end)
 
 --------------------------------------------------------------------------------
-
-test:UNTESTED 'split_by_char'
 
 test:UNTESTED 'split_by_offset'
 
