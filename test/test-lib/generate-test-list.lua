@@ -5,10 +5,10 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
-local print, string, io, os = print, string, io, os
+local string, io, os = string, io, os
 
 if not pcall(require, 'luarocks.require') then
-  print("Warning: luarocks not found.")
+  io.write("Warning: luarocks not found.")
 end
 
 local lfs
@@ -91,13 +91,18 @@ for i = 1, #case_paths do
 end
 table.sort(cases)
 
+-- TODO: get rid of `excludes` after `import_as_require` will deprecated
+-- https://github.com/lua-nucleo/lua-nucleo/issues/12
+
 local excludes =
 {
-  import_as_require = true -- because of deprecated
+  import_as_require = true; -- we need to exclude import_as_require test
+                            -- existence check because of `import_as_require`
+                            -- module is deprecated
 }
 
 -- check all library files got test cases
-print("Test list generation check:")
+io.write("Test list generation check:")
 for i = 1, #lib_files do
   local lib_file = lib_files[i]
   lib_file = lib_file:match("([%w%-_]+).lua")
@@ -109,21 +114,21 @@ for i = 1, #lib_files do
       local case_j = cases[j]
       if string.match(case_j, "%-" .. lib_file .. "[%-%.]") then
         match_found = true
-        io.write(case_j .. "; ")
+        io.write(case_j, "; ")
       end
     end
     if match_found == false then
-      print("no tests found.\nTest list generation failed!\n")
+      io.write("no tests found.\nTest list generation failed!\n")
       os.remove("test/test-list.lua")
       return nil
     end
     io.write("\n")
   end
 end
-print("OK\n")
+io.write("OK\n")
 
 -- write test list
-print("Test list file write:")
+io.write("Test list file write:")
 local file, err = io.open(file_to_save, "w")
 file:write("--------------------------------------------------------------------------------\n"
         .. "-- test-list.lua: the list of all tests in the library\n"
@@ -142,4 +147,4 @@ for i = 1, #cases do
 end
 file:write("}\n")
 file:close()
-print("OK\n")
+io.write("OK\n")
