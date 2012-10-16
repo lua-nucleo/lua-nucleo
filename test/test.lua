@@ -63,16 +63,12 @@ end
 
 local run_low_level_tests = function(test_list)
   local shell
-  local is_shell_found, shell = pcall(function()
-    return require("lua-aplicado.shell")
-  end)
   assert(is_shell_found, "failed to find lua-aplicado.shell, please install lua-aplicado")
+  local is_shell_found, shell = pcall(require, "lua-aplicado.shell")
   local shell_read = assert(shell.shell_read)
 
   local get_interpreter = function(name)
-    local ok, lua = pcall(function()
-      return shell_read("which", name)
-    end)
+    local ok, lua = pcall(shell_read, "which", name)
 
     if ok then
       return lua:sub(1, #lua - 1) -- remove trailing newline
@@ -95,9 +91,7 @@ local run_low_level_tests = function(test_list)
   for i = 1, #test_list do
     local test_path = test_list[i]
 
-    local ok, output = pcall(function()
-      return shell_read(lua, test_path)
-    end)
+    local ok, output = pcall(shell_read, lua, test_path)
 
     if ok then
       print(output)
