@@ -3,7 +3,7 @@
 set -e
 
 echo "----> Generating a list of tests"
-lua "test/test-lib/generate-test-list.lua"
+lua "test/test-lib/generate-test-list.lua" "lua-nucleo test/test-list.lua .lua test/low-level test/suite test/cases"
 
 echo "----> Creating list-exports"
 etc/list-exports/list-exports list_all
