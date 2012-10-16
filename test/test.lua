@@ -33,10 +33,11 @@ assert(type(pattern) == "string")
 local low_level_tests = { }
 local suite_tests = { }
 local standard_tests = { }
-for _, info in ipairs(tests_pr) do
+for i = 1, #tests_pr do
+  local info = tests_pr[i]
   -- Checking directly to avoid escaping special characters (like '-')
   -- when running specific test
-  if string.match(info.path, pattern) then
+  if info.path:match(pattern) then
     if info.type == "low-level" then
       low_level_tests[#low_level_tests + 1] = info.path
     else
@@ -74,7 +75,7 @@ local run_low_level_tests = function(test_list)
     end)
 
     if ok then
-      return lua:sub(1, #lua - 1) -- remove trailing new line
+      return lua:sub(1, #lua - 1) -- remove trailing newline
     else
       return nil
     end
