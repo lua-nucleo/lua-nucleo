@@ -680,6 +680,25 @@ end)
 
 --------------------------------------------------------------------------------
 
+test:tests_for 'count_substrings'
+
+test:test "count_substrings-basic" (function ()
+  local str = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+  ensure_equals("both empty", count_substrings("",""), 0)
+  ensure_equals("str empty", count_substrings("",str), 0)
+  ensure_equals("substr empty", count_substrings(str,""), 0)
+  ensure_equals("str equal substr", count_substrings("t", "t"), 1)
+  ensure_equals("zero count", count_substrings(str, "est"), 0)
+  ensure_equals("positive count", count_substrings(str, "o"), 4)
+  ensure_equals("positive count for word", count_substrings(str, "sit"), 1)
+  ensure_equals("special character string",
+    count_substrings("\nLorem \tipsum?#$%^&*()_+|~/\t \0dolor \007sit.\n", "o"),
+    3
+   )
+end)
+
+--------------------------------------------------------------------------------
+
 test:test_for "url_encode" (function ()
   ensure_strequals("empty", url_encode(""), "")
   ensure_strequals("simple", url_encode("test"), "test")
@@ -914,8 +933,6 @@ test:test_for "serialize_number" (function ()
     end)
 
 --------------------------------------------------------------------------------
-
-test:UNTESTED 'count_substrings'
 
 test:UNTESTED 'kv_concat'
 
