@@ -217,6 +217,7 @@ do
   end
 end
 
+-- Escapes backslash sequences, follow JSON and utf-8 standarts.
 local escape_for_json
 do
   -- Based on luajson code (comments copied verbatim).

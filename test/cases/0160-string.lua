@@ -320,6 +320,41 @@ end)
 
 --------------------------------------------------------------------------------
 
+test:tests_for "escape_for_json"
+
+test "escape_for_json-basic" (function ()
+  ensure_strequals(
+    "letters and slash",
+    escape_for_json("abcXYZs/n"),
+    "\"abcXYZs/n\""
+   )
+  ensure_strequals("slash and backslash", escape_for_json("s/\n"), "\"s/\\n\"")
+  ensure_strequals(
+    "escape sequences",
+    escape_for_json("\"s/\n\b\fu\rper\t\v"),
+    "\"\\\"s/\\n\\b\\fu\\rper\\t\\v\""
+   )
+  ensure_strequals("double backslash", escape_for_json(" \\ "), "\" \\\\ \"")
+  ensure_strequals("slash num", escape_for_json(" /007 "), "\" /007 \"")
+end)
+
+test "escape_for_json-injection" (function ()
+  ensure_strequals("common json injection",
+    escape_for_json(
+      "';alert(String.fromCharCode(88,83,83))//\';alert(String.fromCharCode(" ..
+      "88,83,83))//\";alert(String.fromCharCode(88,83,83))//\";alert(String." ..
+      "fromCharCode(88,83,83))//--></SCRIPT>\">'><SCRIPT>alert(String.fromCh" ..
+      "arCode(88,83,83))</SCRIPT>"
+    ),
+    "\"';alert(String.fromCharCode(88,83,83))//';alert(String.fromCharCode(8" ..
+    "8,83,83))//\\\";alert(String.fromCharCode(88,83,83))//\\\";alert(String" ..
+    ".fromCharCode(88,83,83))//--></SCRIPT>\\\">'><SCRIPT>alert(String.fromC" ..
+    "harCode(88,83,83))</SCRIPT>\""
+   )
+end)
+
+--------------------------------------------------------------------------------
+
 test:tests_for 'cdata_wrap'
                'cdata_cat'
 
@@ -986,8 +1021,6 @@ test:test_for "serialize_number" (function ()
     end)
 
 --------------------------------------------------------------------------------
-
-test:UNTESTED 'escape_for_json'
 
 test:UNTESTED 'get_escaped_chars_in_ranges'
 
