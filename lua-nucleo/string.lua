@@ -178,6 +178,8 @@ local fill_curly_placeholders = function(str, dict)
   return fill_placeholders_ex("%${(.-)}", str, dict)
 end
 
+-- Table key, value pairs concatter to string,
+-- by custom glue between k and v, optional pair divider, and optional iterator.
 local kv_concat = function(t, kv_glue, pair_glue, pairs_fn)
   pair_glue = pair_glue or ""
   pairs_fn = pairs_fn or pairs

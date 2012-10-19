@@ -699,6 +699,59 @@ end)
 
 --------------------------------------------------------------------------------
 
+test:tests_for 'kv_concat'
+
+test:test "kv_concat-basic" (function ()
+  ensure_strequals("empty, no iterator and pairs glue", kv_concat({ }, ""), "")
+  ensure_strequals("empty, no iterator", kv_concat({ }, "", ""), "")
+  ensure_strequals("empty table, no iterator", kv_concat({ }, " "," "), "")
+  ensure_strequals("empty table", kv_concat({ }, " "," ", pairs), "")
+  ensure_strequals(
+    "pairs iterator",
+    kv_concat({ 3, "2", 1, "!?#$%^&*()_+|~/" }, " ", ",", pairs),
+    "1 3,2 2,3 1,4 !?#$%^&*()_+|~/"
+   )
+  ensure_strequals(
+    "ipairs iterator",
+    kv_concat({ 3, "2", 1, "!?#$%^&*()_+|~/" }, " ", ",", ipairs),
+    "1 3,2 2,3 1,4 !?#$%^&*()_+|~/"
+   )
+  ensure_strequals("empty table, ipairs", kv_concat({ }, " ", ",", ipairs), "")
+  ensure_strequals(
+    "ipairs cut not an integer indexes",
+    kv_concat({ x = 3, y = "2", 1, "!?#$%^&*()_+|~/" }, "=", ",", ipairs),
+    "1=1,2=!?#$%^&*()_+|~/"
+   )
+  -- Features undependent on table traverse direction (on lua and luajit2 run).
+  -- Feature: disordered glued string if keys are not integer
+  ensure_strequals(
+    "2 integer 2 non-integer indexes result unorder with pairs",
+    kv_concat({x = 3, y = "2", z = 1, aaa = "!?#$%^&*()_+|~/"}, "=", ","),
+    "y=2,x=3,aaa=!?#$%^&*()_+|~/,z=1"
+   )
+  -- Feature: disordered glued string, if integer and key indexes mixed
+  ensure_strequals(
+    "2 integer 2 non-integer indexes result unorder with pairs",
+    kv_concat({ x = 3, y = "2", 1, "!?#$%^&*()_+|~/" }, "=", ",", pairs),
+    "1=1,2=!?#$%^&*()_+|~/,y=2,x=3"
+   )
+  ensure_strequals(
+    "2 integer 2 non-integer indexes result unorder with no function",
+    kv_concat({ x = 3, y = "2", 1, "!?#$%^&*()_+|~/" }, "=", ","),
+    "1=1,2=!?#$%^&*()_+|~/,y=2,x=3"
+   )
+  -- Feature: nested tables is not allowed
+  ensure_fails_with_substring(
+    "nested tables are invalid",
+    function()
+      kv_concat({ 3, "2", {1,"!?#$%^&*()_+|~/" } }, " ", ",", pairs)
+    end,
+    "invalid value"
+   )
+end)
+
+--------------------------------------------------------------------------------
+
 test:test_for "url_encode" (function ()
   ensure_strequals("empty", url_encode(""), "")
   ensure_strequals("simple", url_encode("test"), "test")
@@ -933,8 +986,6 @@ test:test_for "serialize_number" (function ()
     end)
 
 --------------------------------------------------------------------------------
-
-test:UNTESTED 'kv_concat'
 
 test:UNTESTED 'escape_for_json'
 
