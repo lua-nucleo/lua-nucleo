@@ -1,9 +1,10 @@
 #!/bin/bash
 
 #-------------------------------------------------------------------------------
-# lua-nucleo: git pre-commit hook
-# Copyright (c) lua-nucleo authors
-# lua-nucleo is distributed under the terms of the MIT/X11 license.
+# pk-pre-commit: script to check data before committing to git
+# Copyright (c) Alexander Gladysh <ag@logiceditor.com>
+# Copyright (c) Dmitry Potapov <dp@logiceditor.com>
+# pk-pre-commit is distributed under the terms of the MIT/X11 license.
 #-------------------------------------------------------------------------------
 
 # this function is based on the example from
@@ -22,6 +23,14 @@ file_is_empty() {
   return $(stat -c%s "$1");
 }
 
+# check '-whitespace' gitattribute for file
+file_has_whitespace_unset() {
+  if [ "$(git check-attr whitespace -- "$1" | awk '{ print $3; }')" == "unset" ]; then
+    return 0
+  fi
+  return 1
+}
+
 if git-rev-parse --verify HEAD 2>/dev/null
 then
         against=HEAD
@@ -34,48 +43,48 @@ exit_code=0
 
 git diff-index --check --cached $against -- || exit_code=1
 
-while read -r LINE; do
-  rights=$(echo "${LINE}" | awk '{ print $2; }')
-  hash=$(echo "${LINE}" | awk '{ print $4; }')
-  file_status=$(echo "${LINE}" | awk '{ print $5; }')
-  filename=$(echo "${LINE}" | awk '{ print $6; }')
+#
+# N.B. We prune possible empty lines from diff-index output.
+#   They may appear due to empty commits, e.g. during commit --amend
+#
+while read -r X rights X hash file_status filename; do
 
-  # TODO: Hack to exclude symlinks
-  if [ "${rights}" != "120000" ]; then
-    # do not allow commiting to /lib/*, if it is a subtree directory
+  # exclude symlinks and empty lines in diff-index output
+  ([ "${rights}" == "120000" ] || [ "${filename}" == "" ]) && continue
+
+  # do not allow commiting to /lib/*, if it is a subtree directory
+  case "$filename" in
+    lib/* )
+      filenameRelativeToLib=${filename:4}
+      libSubdir=${filenameRelativeToLib%%/*}
+      # if .gitignore file exists in libSubdir, consider it as a subtree directory
+      if [ -f "lib/${libSubdir}/.gitignore" ]; then
+        echo "$filename : file cannot be commited into a subtree directory  "
+        exit_code=1
+      fi
+    ;;
+  esac
+
+  # if file was deleted, checks below are not needed
+  if [ "${file_status}" != "D" ]; then
+    #check for empty string at the end of file
+    if !(file_is_empty $filename) && !(file_is_binary $filename) && !(git cat-file blob $hash | tail -c1 | grep -q '^$') && !(file_has_whitespace_unset $filename); then
+      echo "$filename : no empty line at the end"
+      exit_code=1
+    fi
+
+    # check Lua syntax
     case "$filename" in
-      lib/* )
-        filenameRelativeToLib=${filename:4}
-        libSubdir=${filenameRelativeToLib%%/*}
-        # if .gitignore file exists in libSubdir, consider it as a subtree directory
-        if [ -f "lib/${libSubdir}/.gitignore" ]; then
-          echo "$filename : file cannot be commited into a subtree directory  "
+      *\.lua | *\.rockspec )
+        out=$(git show "${hash}" | luac -p - 2>&1)
+        if [ "$?" != "0" ]; then
+          echo "${out//stdin/${filename}}" >&2
           exit_code=1
         fi
       ;;
     esac
-
-    # if file was deleted, checks below are not needed
-    if [ "${file_status}" != "D" ]; then
-      #check for empty string at the end of file
-      if !(file_is_empty $filename) && !(file_is_binary $filename) && !(git cat-file blob $hash | tail -c1 | grep -q '^$'); then
-        echo "$filename : no empty line at the end"
-        exit_code=1
-      fi
-
-      # check Lua syntax
-      case "$filename" in
-        *\.lua | *\.rockspec )
-          out=$(git show "${hash}" | luac -p - 2>&1)
-          if [ "$?" != "0" ]; then
-            echo "${out//stdin/${filename}}" >&2
-            exit_code=1
-          fi
-        ;;
-      esac
-    fi
-
   fi
-done <<<"$(git diff-index --cached HEAD)"
+
+done <<<"$(git diff-index --cached HEAD | egrep '.')"
 
 exit $exit_code
