@@ -63,6 +63,20 @@ local ensure_equals = function(msg, actual, expected)
       or actual -- NOTE: Should be last to allow false and nil values.
 end
 
+local ensure_is = function(msg, value, expected_type)
+  local actual = type(value)
+  return
+      (actual ~= expected_type)
+      and error(
+          "ensure_is failed: " .. msg
+          .. ": actual type `" .. tostring(actual)
+          .. "', expected type `" .. tostring(expected_type)
+          .. "'",
+          2
+        )
+      or value -- NOTE: Should be last to allow false and nil values.
+end
+
 -- TODO: Write tests for this one
 --       https://github.com/lua-nucleo/lua-nucleo/issues/13
 local ensure_tequals = function(msg, actual, expected)
@@ -345,6 +359,7 @@ return
 {
   ensure = ensure;
   ensure_equals = ensure_equals;
+  ensure_is = ensure_is;
   ensure_tequals = ensure_tequals;
   ensure_tdeepequals = ensure_tdeepequals;
   ensure_strequals = ensure_strequals;
