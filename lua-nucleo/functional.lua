@@ -16,6 +16,12 @@ local assert_is_number,
         'assert_is_function'
       }
 
+local pack
+      = import 'lua-nucleo/args.lua'
+      {
+        'pack'
+      }
+
 local do_nothing = function() end
 
 local identity = function(...) return ... end
@@ -94,6 +100,28 @@ local args_proxy = function(fn, ...)
   return ...
 end
 
+local compose = function(f, g)
+  assert_is_function(f)
+  assert_is_function(g)
+  return function(...)
+    return f(g(...))
+  end
+end
+
+local compose_many = function(...)
+  local nfuncs, funcs = pack(...)
+  return function(...)
+    local n, values = pack(...)
+    while nfuncs > 0 do
+      n, values = pack(
+          assert_is_function(funcs[nfuncs])(unpack(values, 1, n))
+        )
+      nfuncs = nfuncs - 1
+    end
+    return unpack(values, 1, n)
+  end
+end
+
 return
 {
   do_nothing = do_nothing;
@@ -106,4 +134,6 @@ return
   bind_many = bind_many;
   remove_nil_arguments = remove_nil_arguments;
   args_proxy = args_proxy;
+  compose = compose;
+  compose_many = compose_many;
 }
