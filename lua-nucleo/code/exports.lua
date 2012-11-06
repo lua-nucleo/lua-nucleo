@@ -36,6 +36,8 @@ return
   check_types = { "lua-nucleo/args.lua" };
   collect_all_garbage = { "lua-nucleo/misc.lua" };
   common_method_list = { "lua-nucleo/factory.lua" };
+  compose = { "lua-nucleo/functional.lua" };
+  compose_many = { "lua-nucleo/functional.lua" };
   count_substrings = { "lua-nucleo/string.lua" };
   create_escape_subst = { "lua-nucleo/string.lua" };
   create_table = { "lua-nucleo/functional.lua" };
@@ -53,6 +55,7 @@ return
   ensure_error = { "lua-nucleo/ensure.lua" };
   ensure_error_with_substring = { "lua-nucleo/ensure.lua" };
   ensure_fails_with_substring = { "lua-nucleo/ensure.lua" };
+  ensure_is = { "lua-nucleo/ensure.lua" };
   ensure_returns = { "lua-nucleo/ensure.lua" };
   ensure_strequals = { "lua-nucleo/ensure.lua" };
   ensure_tdeepequals = { "lua-nucleo/ensure.lua" };
