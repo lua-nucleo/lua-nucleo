@@ -36,6 +36,7 @@ local make_checker
       }
 
 -- TODO: Write tests for this one
+--       https://github.com/lua-nucleo/lua-nucleo/issues/13
 local ensure = function(msg, value, ...)
   if not value then
     error(
@@ -48,6 +49,7 @@ local ensure = function(msg, value, ...)
 end
 
 -- TODO: Write tests for this one
+--       https://github.com/lua-nucleo/lua-nucleo/issues/13
 local ensure_equals = function(msg, actual, expected)
   return
       (actual ~= expected)
@@ -62,6 +64,7 @@ local ensure_equals = function(msg, actual, expected)
 end
 
 -- TODO: Write tests for this one
+--       https://github.com/lua-nucleo/lua-nucleo/issues/13
 local ensure_tequals = function(msg, actual, expected)
   if type(expected) ~= "table" then
     error(
