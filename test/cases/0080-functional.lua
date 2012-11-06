@@ -9,13 +9,17 @@ local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 local ensure_equals,
       ensure_tequals,
       ensure_tdeepequals,
-      ensure_returns
+      ensure_returns,
+      ensure_fails_with_substring,
+      ensure_is
       = import 'lua-nucleo/ensure.lua'
       {
         'ensure_equals',
         'ensure_tequals',
         'ensure_tdeepequals',
-        'ensure_returns'
+        'ensure_returns',
+        'ensure_fails_with_substring',
+        'ensure_is'
       }
 
 local tstr = import 'lua-nucleo/table.lua' { 'tstr' }
@@ -30,6 +34,8 @@ local do_nothing,
       bind_many,
       remove_nil_arguments,
       args_proxy,
+      compose,
+      compose_many,
       functional_exports
       = import 'lua-nucleo/functional.lua'
       {
@@ -42,7 +48,9 @@ local do_nothing,
         'list_caller',
         'bind_many',
         'remove_nil_arguments',
-        'args_proxy'
+        'args_proxy',
+        'compose',
+        'compose_many'
       }
 
 --------------------------------------------------------------------------------
@@ -480,6 +488,90 @@ test "remove_nil_arguments-all-nils" (function()
       "empty",
       0, { },
       remove_nil_arguments(nil, nil, nil)
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "compose"
+
+test:case "compose_positive_test" (function()
+  local first = function(x)
+    return "one_" .. x
+  end
+
+  local second = function(x)
+    return "two_" .. x
+  end
+
+  local composed = compose(first, second)
+
+  ensure_is("function", composed, "function")
+  ensure_returns(
+      "composed function works",
+      1, { "one_two_three" },
+      composed('three')
+    )
+end)
+
+test:case "compose_negative_test" (function()
+  local stub = function() end
+
+  ensure_fails_with_substring(
+      "check type mismatch",
+      function() compose(stub, 42, stub)() end,
+      "`function' expected, got `number'"
+    )
+
+  ensure_fails_with_substring(
+      "check type mismatch",
+      function() compose_many(nil, stub)() end,
+      "`function' expected, got `nil'"
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "compose_many"
+
+test:case "compose_many_positive_test" (function()
+  local called = { }
+  local make_func = function(const)
+    return function(x)
+      called[const] = true
+      return const .. x
+    end
+  end
+
+  local composed = compose_many(make_func("a"), make_func("b"), make_func("c"))
+  ensure_is("function", composed, "function")
+  ensure_returns(
+      "combined function works",
+      1, { "abcd" },
+      composed('d')
+    )
+  ensure_tequals(
+      "all functions called",
+      called,
+      {
+        ["a"] = true;
+        ["b"] = true;
+        ["c"] = true;
+      }
+    )
+end)
+
+test:case "compose_many_negative_test" (function()
+  local stub = function() end
+  ensure_fails_with_substring(
+      "check type mismatch",
+      function() compose_many(stub, 42, stub)() end,
+      "`function' expected, got `number'"
+    )
+  ensure_fails_with_substring(
+      "check type mismatch",
+      function() compose_many(stub, nil, stub)() end,
+      "`function' expected, got `nil'"
     )
 end)
 
