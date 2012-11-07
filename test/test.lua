@@ -66,7 +66,7 @@ local run_low_level_tests = function(test_list)
   local is_shell_found, shell = pcall(require, "lua-aplicado.shell")
   if not is_shell_found then
     print("WARNING: lua-aplicado not installed, skipping low-level tests")
-    return
+    return 0, { }
   end
 
   local shell_read = assert(shell.shell_read)
