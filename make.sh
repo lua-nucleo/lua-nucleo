@@ -17,9 +17,12 @@ sudo luarocks remove --force lua-nucleo || true
 echo "----> Making rocks"
 sudo luarocks make rockspec/lua-nucleo-scm-1.rockspec
 
-if [[ $@ != *--no-restart* ]]; then
-  echo "----> Restarting multiwatch and LJ2"
-  sudo killall multiwatch || true ; sudo killall luajit2 || true
-fi
+case "$1" in
+  --no-restart) ;; # Do nothing
+  *)
+    echo "----> Restarting multiwatch and LJ2"
+    sudo killall multiwatch || true ; sudo killall luajit2 || true
+  ;;
+esac
 
 echo "----> OK"
