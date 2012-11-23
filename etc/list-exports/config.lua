@@ -20,6 +20,7 @@ common =
       {
         sources_dir = PROJECT_PATH;
         root_dir_only = "lua-nucleo/";
+        lib_name = "lua-nucleo";
         profile_filename = "profile.lua";
         out_filename = "exports.lua";
         file_header = [[
