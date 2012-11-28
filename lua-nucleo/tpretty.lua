@@ -15,8 +15,9 @@ local is_table = import 'lua-nucleo/type.lua' { 'is_table' }
 local tstr = import 'lua-nucleo/table.lua' { 'tstr' }
 local arguments = import 'lua-nucleo/args.lua' { 'arguments' }
 local number_to_string = import 'lua-nucleo/string.lua' { 'number_to_string' }
+local ordered_pairs = import 'lua-nucleo/tdeepequals.lua' { 'ordered_pairs' }
 
-local tpretty_ex, tpretty
+local tpretty_ex, tpretty, tpretty_ordered
 do
   local add = ""
   local function impl(iterator, t, cat, prettifier, visited)
@@ -130,10 +131,15 @@ do
   tpretty = function(t, indent, cols)
     return tpretty_ex(pairs, t, indent, cols)
   end
+
+  tpretty_ordered = function(t, indent, cols)
+    return tpretty_ex(ordered_pairs, t, indent, cols)
+  end
 end
 
 return
 {
   tpretty_ex = tpretty_ex;
   tpretty = tpretty;
+  tpretty_ordered = tpretty_ordered;
 }
