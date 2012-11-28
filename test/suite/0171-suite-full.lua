@@ -405,6 +405,18 @@ do
 end
 
 do
+  print("\nSingle BROKEN with decorator suite:")
+
+  local nok, errs = run_tests(
+      { "test/data/suite/single-BROKEN-with-decorator-suite.lua" },
+      parameters_list
+    )
+
+  assert(nok == 1, "1 tests must successfull")
+  assert(#errs == 0, "0 test must fail")
+end
+
+do
   print("\nSingle TODO unstrict mode suite:")
 
   local nok, errs = run_tests(
