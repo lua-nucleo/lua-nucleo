@@ -16,10 +16,10 @@ local tstr = import 'lua-nucleo/table.lua' { 'tstr' }
 local arguments = import 'lua-nucleo/args.lua' { 'arguments' }
 local number_to_string = import 'lua-nucleo/string.lua' { 'number_to_string' }
 
-local tpretty
+local tpretty_ex, tpretty
 do
   local add = ""
-  local function impl(t, cat, prettifier, visited)
+  local function impl(iterator, t, cat, prettifier, visited)
     local t_type = type(t)
     if t_type == "table" then
       if not visited[t] then
@@ -34,7 +34,7 @@ do
           if i > 1 then -- TODO: Move condition out of the loop
             prettifier:separator()
           end
-          impl(v, cat, prettifier, visited)
+          impl(iterator, v, cat, prettifier, visited)
           next_i = i
         end
 
@@ -43,7 +43,7 @@ do
         -- Serialize hash part
         -- Skipping comma only at first element if there is no numeric part.
         local need_comma = (next_i > 1)
-        for k, v in pairs(t) do
+        for k, v in iterator(t) do
           local k_type = type(k)
           if k_type == "string" then
             if need_comma then
@@ -59,7 +59,7 @@ do
               cat(string_format("[%q]", k))
             end
             prettifier:value_start()
-            impl(v, cat, prettifier, visited)
+            impl(iterator, v, cat, prettifier, visited)
             prettifier:key_value_finish()
           else
             if
@@ -73,10 +73,10 @@ do
               need_comma = true
               prettifier:key_start()
               cat("[")
-              impl(k, cat, prettifier, visited)
+              impl(iterator, k, cat, prettifier, visited)
               cat("]")
               prettifier:value_start()
-              impl(v, cat, prettifier, visited)
+              impl(iterator, v, cat, prettifier, visited)
               prettifier:key_value_finish()
             end
           end
@@ -100,7 +100,7 @@ do
     end
   end
 
-  tpretty = function(t, indent, cols)
+  tpretty_ex = function(iterator, t, indent, cols)
     indent = indent or "  "
     cols = cols or 80 --standard screen width
 
@@ -110,6 +110,7 @@ do
 
     arguments(
         -- all arguments should be listed, even though t is checked before
+        "function", iterator,
         --"table", t
         "string", indent,
         "number", cols
@@ -121,13 +122,18 @@ do
     -- is used instead of make_concatter
     local cat = function(v) buf[#buf + 1] = v end
     local pr = make_prettifier(indent, buf, cols)
-    impl(t, cat, pr, {})
+    impl(iterator, t, cat, pr, {})
     pr:finished()
     return table_concat(buf)
+  end
+
+  tpretty = function(t, indent, cols)
+    return tpretty_ex(pairs, t, indent, cols)
   end
 end
 
 return
 {
+  tpretty_ex = tpretty_ex;
   tpretty = tpretty;
 }
