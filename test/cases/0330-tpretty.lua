@@ -21,10 +21,12 @@ local ensure,
       }
 
 local tpretty,
+      tpretty_ordered,
       tpretty_exports
       = import 'lua-nucleo/tpretty.lua'
       {
-        'tpretty'
+        'tpretty',
+        'tpretty_ordered'
       }
 
 --------------------------------------------------------------------------------
@@ -34,6 +36,7 @@ local test = make_suite("tpretty", tpretty_exports)
 --------------------------------------------------------------------------------
 
 test:group "tpretty"
+test:group "tpretty_ex"
 
 --------------------------------------------------------------------------------
 
@@ -294,4 +297,63 @@ test "tpretty-serialize-inf-bug" (function ()
     ),
     table_with_inf
   )
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tpretty_ordered"
+
+--------------------------------------------------------------------------------
+
+test "tpretty-ordered" (function()
+  local input = [[
+{
+  result =
+  {
+    stats2 =
+    {
+      a3333333333333 = "INTEGER";
+      a2222222222222 = "INTEGER";
+      a1111111111111 = "GARDEN_ID";
+    };
+    stats1 =
+    {
+      bbbbbbbbbbbbbb = "INTEGER";
+      cccccccccccccc = "INTEGER";
+      aaaaaaaaaaaaaa = "GARDEN_ID";
+    };
+  };
+}]]
+
+  local expected = [[
+{
+  result =
+  {
+    stats1 =
+    {
+      aaaaaaaaaaaaaa = "GARDEN_ID";
+      bbbbbbbbbbbbbb = "INTEGER";
+      cccccccccccccc = "INTEGER";
+    };
+    stats2 =
+    {
+      a1111111111111 = "GARDEN_ID";
+      a2222222222222 = "INTEGER";
+      a3333333333333 = "INTEGER";
+    };
+  };
+}]]
+
+  ensure_strequals(
+      "first result matches expected",
+      ensure(
+          "render first",
+          tpretty_ordered(
+              ensure("parse", loadstring("return " .. input))(),
+              "  ",
+              80
+            )
+        ),
+      expected
+    )
 end)
