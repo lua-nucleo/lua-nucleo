@@ -299,9 +299,9 @@ do
     assert(type(self) == "table", "bad self")
     assert(type(msg) == "string", "bad msg")
     self:TODO("BROKEN TEST: " .. msg)
-    return function(fn)
+    return make_single_test(function(fn)
       assert(type(fn) == "function", "bad callback")
-    end
+    end)
   end
 
   local UNTESTED = function(self, import_name)
