@@ -185,6 +185,8 @@ return
   torderedset_remove = { "lua-nucleo/table-utils.lua" };
   toverride_many = { "lua-nucleo/table-utils.lua" };
   tpretty = { "lua-nucleo/tpretty.lua" };
+  tpretty_ex = { "lua-nucleo/tpretty.lua" };
+  tpretty_ordered = { "lua-nucleo/tpretty.lua" };
   treadonly = { "lua-nucleo/table-utils.lua" };
   treadonly_ex = { "lua-nucleo/table-utils.lua" };
   tremap_to_array = { "lua-nucleo/table-utils.lua" };
