@@ -314,6 +314,34 @@ end)
 
 --------------------------------------------------------------------------------
 
+test "tpretty_ex-custom-iterator" (function()
+  local t = { 1, 2, 3 }
+  local iterator_invocations_counter = 0
+
+  local custom_iterator = function(table)
+    local iterator_function = function(table, pos)
+      iterator_invocations_counter = iterator_invocations_counter + 1
+
+      pos = pos or 0
+      if pos < #table then
+        pos = pos + 1
+        return pos, table[pos]
+      end
+    end
+    return iterator_function, table, nil
+  end
+
+  tpretty_ex(custom_iterator, t)
+
+  ensure_equals(
+      "iterator invocations counter must match expected",
+      iterator_invocations_counter,
+      4
+    )
+end)
+
+--------------------------------------------------------------------------------
+
 test:group "tpretty_ordered"
 
 --------------------------------------------------------------------------------
