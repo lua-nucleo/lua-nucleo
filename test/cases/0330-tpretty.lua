@@ -4,6 +4,8 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+local pairs = pairs
+
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
 local ensure,
@@ -20,11 +22,13 @@ local ensure,
         'ensure_fails_with_substring'
       }
 
-local tpretty,
+local tpretty_ex,
+      tpretty,
       tpretty_ordered,
       tpretty_exports
       = import 'lua-nucleo/tpretty.lua'
       {
+        'tpretty_ex',
         'tpretty',
         'tpretty_ordered'
       }
@@ -40,23 +44,23 @@ test:group "tpretty_ex"
 
 --------------------------------------------------------------------------------
 
-test "tpretty-not-a-table" (function()
+test "tpretty_ex-not-a-table" (function()
   ensure_strequals(
       "t is not a table",
-      tpretty(42),
+      tpretty_ex(pairs, 42),
       '42'
     )
 end)
 
-test "tpretty-simple-table" (function()
+test "tpretty_ex-simple-table" (function()
   ensure_strequals(
       "t is a simple table",
-      tpretty({"DEPLOY_MACHINE"}),
+      tpretty_ex(pairs, {"DEPLOY_MACHINE"}),
       '{ "DEPLOY_MACHINE" }'
     )
 end)
 
-test "tpretty-without-optional-params" (function()
+test "tpretty_ex-without-optional-params" (function()
   local s1 = [[
 {
   result =
@@ -80,8 +84,9 @@ test "tpretty-without-optional-params" (function()
 
   ensure_strequals(
       [[default values for optional params is 80 and "  "]],
-      tpretty(ensure("parse", (loadstring("return " .. s1))())),
-      tpretty(
+      tpretty_ex(pairs, ensure("parse", (loadstring("return " .. s1))())),
+      tpretty_ex(
+          pairs,
           ensure("parse", loadstring("return " .. s1))(),
           "  ",
           80
@@ -90,7 +95,7 @@ test "tpretty-without-optional-params" (function()
 end)
 
 -- Based on actual bug scenario
-test "tpretty-bug-concat-nil-minimal" (function()
+test "tpretty_ex-bug-concat-nil-minimal" (function()
   local s1 = [[
 {
   stats = { };
@@ -102,7 +107,8 @@ test "tpretty-bug-concat-nil-minimal" (function()
       "first result matches expected",
       ensure(
           "render first",
-          tpretty(
+          tpretty_ex(
+              pairs,
               ensure("parse", loadstring("return " .. s1))(),
               "  ",
               80
@@ -115,7 +121,8 @@ test "tpretty-bug-concat-nil-minimal" (function()
       "second result matches expected",
       ensure(
           "render second",
-          tpretty(
+          tpretty_ex(
+              pairs,
               ensure("parse", loadstring("return " .. s2))(),
               "  ",
               80
@@ -126,7 +133,7 @@ test "tpretty-bug-concat-nil-minimal" (function()
 end)
 
 -- Based on actual bug scenario
-test "tpretty-bug-concat-nil-full" (function()
+test "tpretty_ex-bug-concat-nil-full" (function()
   local s1 = [[
 {
   result =
@@ -161,7 +168,8 @@ test "tpretty-bug-concat-nil-full" (function()
       "first result matches expected",
       ensure(
           "render first",
-          tpretty(
+          tpretty_ex(
+              pairs,
               ensure("parse", loadstring("return " .. s1))(),
               "  ",
               80
@@ -174,7 +182,8 @@ test "tpretty-bug-concat-nil-full" (function()
       "second result matches expected",
       ensure(
           "render second",
-          tpretty(
+          tpretty_ex(
+              pairs,
               ensure("parse", loadstring("return " .. s2))(),
               "  ",
               80
@@ -188,7 +197,7 @@ end)
 -- #2304 and #2317
 --
 -- In case of failure. `this_field_was_empty' miss in output
-test "tpretty-fieldname-bug" (function ()
+test "tpretty_ex-fieldname-bug" (function ()
   local cache_file_contents = [[
 {
   projects =
@@ -212,7 +221,8 @@ test "tpretty-fieldname-bug" (function ()
     "second result matches expected",
     ensure(
       "render second",
-      tpretty(
+      tpretty_ex(
+        pairs,
         ensure("parse error", loadstring("return " .. cache_file_contents))(),
         "  ",
         80
@@ -229,7 +239,7 @@ end)
 --
 -- Extra = is rendered as a table separator instead of ;
 -- and after opening {.
-test "tpretty-wrong-table-list-separator-bug" (function ()
+test "tpretty_ex-wrong-table-list-separator-bug" (function ()
   local data = [[
 {
   {
@@ -245,7 +255,8 @@ test "tpretty-wrong-table-list-separator-bug" (function ()
     "second result matches expected",
     ensure(
       "render second",
-      tpretty(
+      tpretty_ex(
+        pairs,
         ensure("data string loads", loadstring("return " .. data))(),
         "  ",
         80
@@ -255,7 +266,7 @@ test "tpretty-wrong-table-list-separator-bug" (function ()
   )
 end)
 
-test "tpretty-wrong-key-indent-bug" (function ()
+test "tpretty_ex-wrong-key-indent-bug" (function ()
   local data = [[
 {
   { };
@@ -268,7 +279,8 @@ test "tpretty-wrong-key-indent-bug" (function ()
     "second result matches expected",
     ensure(
       "render second",
-      tpretty(
+      tpretty_ex(
+        pairs,
         ensure("data string loads", loadstring("return " .. data))(),
         "  ",
         80
@@ -282,14 +294,15 @@ end)
 
 -- Test based on real bug scenario
 -- #3836
-test "tpretty-serialize-inf-bug" (function ()
+test "tpretty_ex-serialize-inf-bug" (function ()
   local table_with_inf = "{ 1/0, -1/0, 0/0 }"
 
   ensure_strequals(
     "second result matches expected",
     ensure(
       "render second",
-      tpretty(
+      tpretty_ex(
+        pairs,
         ensure("parse error", loadstring("return " .. table_with_inf))(),
         "  ",
         80
