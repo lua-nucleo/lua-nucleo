@@ -39,7 +39,6 @@ local test = make_suite("tpretty", tpretty_exports)
 
 --------------------------------------------------------------------------------
 
-test:group "tpretty"
 test:group "tpretty_ex"
 
 --------------------------------------------------------------------------------
@@ -338,6 +337,37 @@ test "tpretty_ex-custom-iterator" (function()
       iterator_invocations_counter,
       4
     )
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tpretty"
+
+--------------------------------------------------------------------------------
+
+test "tpretty-simple" (function()
+  local input = [[
+{
+  1;
+  2;
+  3;
+  a =
+  {
+    b =
+    {
+      c = { };
+    };
+  };
+}]]
+
+  ensure_strequals(
+    "result matches expected",
+    ensure(
+      "render is OK",
+      tpretty(ensure("parse error", loadstring("return " .. input))())
+    ),
+    input
+  )
 end)
 
 --------------------------------------------------------------------------------
