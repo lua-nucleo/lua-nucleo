@@ -66,11 +66,16 @@ local run_low_level_tests = function(test_list)
   local is_shell_found, shell = pcall(require, "lua-aplicado.shell")
   if not is_shell_found then
     local err = shell
-    print(
-        "WARNING: failed to link up with lua-aplicado:\n"
-          .. err .. "\n"
+    local error_message = "failed to link up with lua-aplicado:\n" .. err
+    if parameters_list.strict_mode then
+      error(error_message)
+    else
+      print(
+          "WARNING: " .. error_message .. "\n"
           .. "skipping low-level tests"
         )
+    end
+
     return 0, { }
   end
 
