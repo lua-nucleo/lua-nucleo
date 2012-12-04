@@ -16,6 +16,14 @@ local common_method_list
         'common_method_list'
       }
 
+local is_string,
+      is_function
+      = import 'lua-nucleo/type.lua'
+      {
+        'is_string',
+        'is_function'
+      }
+
 local print, loadfile, xpcall, error, assert, type, next, pairs =
       print, loadfile, xpcall, error, assert, type, next, pairs
 
@@ -491,7 +499,7 @@ do
   end
 end
 
-local run_test = function(name, parameters_list)
+local run_test = function(target, parameters_list)
   local result, stage, msg = true, nil, nil
 
   -- TODO: Remove. Legacy code compatibility
@@ -520,7 +528,16 @@ local run_test = function(name, parameters_list)
 
   local gmt = getmetatable(_G) -- Preserve metatable
   math.randomseed(parameters_list.seed_value)
-  local fn, load_err = loadfile(name)
+
+  local fn, load_err
+  if is_function(target) then
+    fn = target
+  elseif is_string(target) then
+    fn, load_err = loadfile(target)
+  else
+    error("target should be filename or function")
+  end
+
   if not fn then
     result, stage, msg = false, "load", load_err
   else
@@ -614,5 +631,6 @@ end
 return
 {
   run_tests = run_tests;
+  run_test = run_test;
   make_suite = make_suite;
 }
