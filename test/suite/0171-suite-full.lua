@@ -7,10 +7,12 @@
 dofile('test/test-lib/init/no-suite.lua')
 
 local run_tests,
+      run_test,
       make_suite
       = import 'lua-nucleo/suite.lua'
       {
         'run_tests',
+        'run_test',
         'make_suite'
       }
 
@@ -24,13 +26,17 @@ local assert_is_number,
         'assert_is_table'
       }
 
-local ensure_equals,
+local ensure,
+      ensure_equals,
+      ensure_returns,
       ensure_error,
       ensure_error_with_substring,
       ensure_fails_with_substring
       = import 'lua-nucleo/ensure.lua'
       {
+        'ensure',
         'ensure_equals',
+        'ensure_returns',
         'ensure_error',
         'ensure_error_with_substring',
         'ensure_fails_with_substring'
@@ -835,6 +841,40 @@ do
       "expected fail message must match"
     )
   assert(suite_tests_results == 2 * 3 * 5 * 7, "product")
+end
+
+do
+  -- check run_test with filename
+  ensure_returns(
+      "run_tests accept filename as argument",
+      3, { true, nil, nil },
+      run_test("test/data/suite/decorators-suite.lua", parameters_list)
+    )
+
+  -- check run_test with function, and later ensure test inside work as well
+  local called = false
+  ensure_returns(
+      "run_tests accept function as argument",
+      3, { true, nil, nil },
+      run_test(
+          function(...)
+            local fake_test = (...)("fake_suite")
+            fake_test:case "fake" (function(env)
+              called = true
+            end)
+          end,
+          parameters_list
+        )
+    )
+  ensure("test from previous example work", called)
+
+  ensure_fails_with_substring(
+      "run_tests not accept wrong argument",
+      function()
+        run_test(42, parameters_list)
+      end,
+      "target should be filename or function"
+    )
 end
 
 print("------> Full suite tests suite PASSED")
