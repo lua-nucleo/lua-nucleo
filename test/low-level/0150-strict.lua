@@ -13,7 +13,7 @@
 --
 
 allowed_global = 1
-local make_suite = assert(loadfile('test/test-lib/init/no-suite-no-import.lua'))(...)
+assert(dofile('lua-nucleo/strict.lua'))
 allowed_global = 2
 
 local a0 = allowed_global
