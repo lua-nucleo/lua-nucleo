@@ -39,16 +39,19 @@ Initialization with require()
 
 To use lua-nucleo in require-friendly environment, do as follows:
 
-    require 'lua-nucleo.module'
+    require 'lua-nucleo'
 
 This assumes that lua-nucleo directory is somewhere in the `package.path`
 
-Note that you may also want to enable the strict mode
-(aka the Global Environment Protection):
+Note that it will enable the strict mode
+(aka the Global Environment Protection)
 
-    require 'lua-nucleo.strict'
+If you definitely want to use lua-nucleo without strict mode, please
+use instead:
 
-For all other lua-nucleo files, use `import()`.
+        require 'lua-nucleo.import'
+
+For all other lua-nucleo files with and without strict mode, use `import()`.
 
 Note that if you want to keep using `require()`,
 you may replace in your code
