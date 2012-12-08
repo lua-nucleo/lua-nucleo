@@ -55,6 +55,10 @@ return
     path = 'test/low-level/0091-import-base_path.lua';
   };
   {
+    type = 'low-level';
+    path = 'test/low-level/0092-import-by-require.lua';
+  };
+  {
     type = 'cases';
     path = 'test/cases/0100-log.lua';
   };
@@ -185,6 +189,10 @@ return
   {
     type = 'cases';
     path = 'test/cases/0331-prettifier.lua';
+  };
+  {
+    type = 'low-level';
+    path = 'test/low-level/0340-init.lua';
   };
   {
     type = 'low-level';
