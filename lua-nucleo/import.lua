@@ -21,7 +21,7 @@ local create_import = function(init_with_require, code_root)
         {
           __metatable = "name_cache";
           __index = function(t, k)
-            local v = k:gsub("/", "."):gsub("\\", "."):gsub("%.lua$", "")
+            local v = k:gsub("%.lua$", ""):gsub("/", "."):gsub("\\", ".")
             t[k] = v
             return v
           end
