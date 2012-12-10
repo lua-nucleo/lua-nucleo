@@ -13,7 +13,7 @@
 --
 
 allowed_global = 1
-assert(dofile('lua-nucleo/strict.lua'))
+dofile('lua-nucleo/strict.lua')
 allowed_global = 2
 
 local a0 = allowed_global
