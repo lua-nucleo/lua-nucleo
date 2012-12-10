@@ -52,6 +52,7 @@ build = {
          ["lua-nucleo.table-utils"] = "lua-nucleo/table-utils.lua";
          ["lua-nucleo.table"] = "lua-nucleo/table.lua";
          ["lua-nucleo.tdeepequals"] = "lua-nucleo/tdeepequals.lua";
+         ["lua-nucleo.testing.decorators"] = "lua-nucleo/testing/decorators.lua";
          ["lua-nucleo.timed_queue"] = "lua-nucleo/timed_queue.lua";
          ["lua-nucleo.timestamp"] = "lua-nucleo/timestamp.lua";
          ["lua-nucleo.tpretty"] = "lua-nucleo/tpretty.lua";
