@@ -17,10 +17,4 @@ local test_import = assert(
 
 test_import("test/data/")
 
-local arguments
-      = import 'lua-nucleo/lua/args.lua'
-      {
-        'arguments',
-      }
-
 print("------> Init tests suite PASSED")
