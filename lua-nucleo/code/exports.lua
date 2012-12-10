@@ -102,6 +102,10 @@ return
   {
     { "lua-nucleo/string.lua", w = 0 };
   };
+  check_decorator =
+  {
+    { "lua-nucleo/testing/decorators.lua", w = 0 };
+  };
   check_types =
   {
     { "lua-nucleo/args.lua", w = 0 };
@@ -137,6 +141,10 @@ return
   cut_with_ellipsis =
   {
     { "lua-nucleo/string.lua", w = 0 };
+  };
+  decoraror_checker_helper =
+  {
+    { "lua-nucleo/testing/decorators.lua", w = 0 };
   };
   do_in_environment =
   {
