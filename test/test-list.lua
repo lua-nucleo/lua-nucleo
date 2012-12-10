@@ -234,4 +234,8 @@ return
     type = 'cases';
     path = 'test/cases/0440-require_and_declare.lua';
   };
+  {
+    type = 'cases';
+    path = 'test/cases/0450-decorators.lua';
+  };
 }
