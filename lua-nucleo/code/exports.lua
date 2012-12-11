@@ -198,6 +198,10 @@ return
   {
     { "lua-nucleo/ensure.lua", w = 0 };
   };
+  ensure_has_substring =
+  {
+    { "lua-nucleo/ensure.lua", w = 0 };
+  };
   ensure_is =
   {
     { "lua-nucleo/ensure.lua", w = 0 };
