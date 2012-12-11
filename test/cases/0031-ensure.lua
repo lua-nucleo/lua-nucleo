@@ -10,6 +10,7 @@ local ensure,
       ensure_equals,
       ensure_tequals,
       ensure_fails_with_substring,
+      ensure_has_substring,
       ensure_is,
       ensure_exports
       = import 'lua-nucleo/ensure.lua'
@@ -18,6 +19,7 @@ local ensure,
         'ensure_equals',
         'ensure_tequals',
         'ensure_fails_with_substring',
+        'ensure_has_substring',
         'ensure_is'
       }
 
@@ -70,6 +72,28 @@ test:test_for "ensure_is" (function()
       end
     end
   end
+end)
+
+--------------------------------------------------------------------------------
+
+test:test_for "ensure_has_substring" (function()
+  ensure_has_substring("positive test", "the answer is 42", "42")
+  ensure_has_substring("positive test with pattern", "the answer is 42", "%d+")
+  ensure_has_substring(
+      "positive test with pattern 2",
+      "the answer is %d",
+      "the answer is %d"
+    )
+
+  ensure_fails_with_substring(
+      "negative test",
+      function()
+        ensure_has_substring("inner msg", "the answer is 42", 'not 42')
+      end,
+      "ensure_has_substring failed: inner msg:"
+      .. " can't find expected substring `not 42'"
+      .. " in string: `the answer is 42'"
+    )
 end)
 
 --------------------------------------------------------------------------------
