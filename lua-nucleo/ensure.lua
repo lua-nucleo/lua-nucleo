@@ -296,6 +296,8 @@ local ensure_has_substring = function(msg, str, substring)
       .. "' in string: `" .. str .. "'",
       str:find(substring) or (str == substring)
     )
+
+  return str
 end
 
 --------------------------------------------------------------------------------
