@@ -289,6 +289,17 @@ end
 
 --------------------------------------------------------------------------------
 
+local ensure_has_substring = function(msg, str, substring)
+  ensure(
+     'ensure_has_substring failed: ' .. msg
+      .. ": can't find expected substring `" .. tostring(substring)
+      .. "' in string: `" .. str .. "'",
+      str:find(substring) or (str == substring)
+    )
+end
+
+--------------------------------------------------------------------------------
+
 -- We want 99.9% probability of success
 -- Would not work for high-contrast weights. Use for tests only.
 local ensure_aposteriori_probability = function(num_runs, weights, stats, max_acceptable_diff)
@@ -366,6 +377,7 @@ return
   ensure_error = ensure_error;
   ensure_error_with_substring = ensure_error_with_substring;
   ensure_fails_with_substring = ensure_fails_with_substring;
+  ensure_has_substring = ensure_has_substring;
   ensure_aposteriori_probability = ensure_aposteriori_probability;
   ensure_returns = ensure_returns;
 }
