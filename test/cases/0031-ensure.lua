@@ -9,6 +9,7 @@ local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 local ensure,
       ensure_equals,
       ensure_tequals,
+      ensure_strequals,
       ensure_fails_with_substring,
       ensure_has_substring,
       ensure_is,
@@ -18,6 +19,7 @@ local ensure,
         'ensure',
         'ensure_equals',
         'ensure_tequals',
+        'ensure_strequals',
         'ensure_fails_with_substring',
         'ensure_has_substring',
         'ensure_is'
@@ -83,6 +85,12 @@ test:test_for "ensure_has_substring" (function()
       "positive test with pattern 2",
       "the answer is %d",
       "the answer is %d"
+    )
+
+  ensure_strequals(
+      "ensure_has_substring return test",
+      ensure_has_substring("inner msg", "the answer is 42", '42'),
+      "the answer is 42"
     )
 
   ensure_fails_with_substring(
