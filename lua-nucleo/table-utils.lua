@@ -845,6 +845,10 @@ local tkvlist_to_hash = function(t)
   return r
 end
 
+local tmerge_many = function(...)
+  return toverride_many({ }, ...)
+end
+
 --------------------------------------------------------------------------------
 
 return
@@ -910,4 +914,5 @@ return
   tifindvalue_nonrecursive = tifindvalue_nonrecursive;
   tkvmap_unpack = tkvmap_unpack;
   tkvlist_to_hash = tkvlist_to_hash;
+  tmerge_many = tmerge_many;
 }

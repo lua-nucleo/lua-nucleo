@@ -95,6 +95,7 @@ local empty_table,
       tkvmap_unpack,
       tarraytohash,
       tkvlist_to_hash,
+      tmerge_many,
       table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -158,7 +159,8 @@ local empty_table,
         'tifindvalue_nonrecursive',
         'tkvmap_unpack',
         'tarraytohash',
-        'tkvlist_to_hash'
+        'tkvlist_to_hash',
+        'tmerge_many'
       }
 
 --------------------------------------------------------------------------------
@@ -2427,6 +2429,67 @@ test "tkvlist_to_hash_empty_table" (function()
   ensure_tdeepequals(
       "tkvlist_to_hash_empty_table",
       tkvlist_to_hash({ }),
+      { }
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tmerge_many"
+
+--------------------------------------------------------------------------------
+
+test "tmerge_many-simple" (function()
+  ensure_tdeepequals(
+      "tmerge_many-simple",
+      tmerge_many(
+          { key1 = 1, key2 = 2 },
+          { key3 = 3, key4 = 4 }
+        ),
+      {
+        key1 = 1;
+        key2 = 2;
+        key3 = 3;
+        key4 = 4;
+      }
+    )
+end)
+
+test "tmerge_many-with-duplicate-keys" (function()
+  ensure_tdeepequals(
+      "tmerge_many-simple",
+      tmerge_many(
+          { key1 = 1, key2 = 2 },
+          { key2 = 3, key4 = 4 }
+        ),
+      {
+        key1 = 1;
+        key2 = 3;
+        key4 = 4;
+      }
+    )
+end)
+
+test "tmerge_many-with-empty-table" (function()
+  ensure_tdeepequals(
+      "tmerge_many-simple",
+      tmerge_many(
+          { key1 = 1, key2 = 2 },
+          { },
+          { key3 = 3}
+        ),
+      {
+        key1 = 1;
+        key2 = 2;
+        key3 = 3;
+      }
+    )
+end)
+
+test "tmerge_many-with-empty-arguments" (function()
+  ensure_tdeepequals(
+      "tmerge_many-simple",
+      tmerge_many(),
       { }
     )
 end)
