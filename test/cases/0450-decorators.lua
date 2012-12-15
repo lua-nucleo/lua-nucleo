@@ -30,11 +30,13 @@ local tclone,
 
 local decoraror_checker_helper,
       check_decorator,
+      environment_values,
       decorators_exports
       = import 'lua-nucleo/testing/decorators.lua'
       {
         'decoraror_checker_helper',
-        'check_decorator'
+        'check_decorator',
+        'environment_values'
       }
 
 --------------------------------------------------------------------------------
@@ -82,18 +84,6 @@ end)
 
 test:group "check_decorator"
 
---- Making "good" decorator, who adding own values, and remove them when finish
-local create_good_decorator = function(values)
-  values = values or { }
-  return function(test_fn)
-    return function(env)
-      local new_env = tclone(env)
-      toverride_many(new_env, values)
-      test_fn(new_env)
-    end
-  end
-end
-
 --- Make decorator which "forgets" garbage in environment
 local create_littering_decorator = function(garbage)
   garbage = garbage or { }
@@ -116,7 +106,7 @@ test:case 'check_decorator_ok' (function()
     numeric = 42;
   }
 
-  check_decorator(create_good_decorator(values), tkeys(values))
+  check_decorator(environment_values(values), tkeys(values))
 end)
 
 test:case "check_decorator_do_nothing" (function()
@@ -131,7 +121,7 @@ test:case "check_decorator_do_nothing" (function()
   ensure_fails_with_substring(
       "decorated function should not called, but does",
       function()
-        check_decorator(create_good_decorator({ }), { }, nil, true)
+        check_decorator(environment_values({ }), { }, nil, true)
       end,
       "decorated test skipped"
     )
@@ -146,7 +136,7 @@ test:case "check_decorator_and_missing_keys" (function()
   ensure_fails_with_substring(
       "missing keys are catching",
       function()
-        check_decorator(create_good_decorator(values), { "key", "missing" })
+        check_decorator(environment_values(values), { "key", "missing" })
       end,
       "broken decorator: required values not set in environment"
     )
@@ -162,7 +152,7 @@ test:case "check_decorator_and_unwanted_keys" (function()
   ensure_fails_with_substring(
       "unwanted keys are catched",
       function()
-        check_decorator(create_good_decorator(values), { "key" })
+        check_decorator(environment_values(values), { "key" })
       end,
       "broken decorator: unwanted keys in environment"
     )
@@ -184,7 +174,7 @@ test:case "check_decorator_and_mangled_environment" (function()
       "detection of mangled environment",
       function()
         check_decorator(
-            create_good_decorator(values),
+            environment_values(values),
             { },
             nil,
             false,

@@ -177,9 +177,29 @@ local check_decorator = function(
   return true
 end
 
+--- Creates test decorator, which adds values into the environment
+-- @param values table
+-- @return decorator
+local environment_values = function(values)
+  arguments(
+      "table", values
+    )
+
+  return function(test_function)
+    return function(env)
+      local new_env = tclone(env)
+      toverride_many(new_env, values)
+      -- NOTE: The original env is not changed, new_env is passed into the
+      --       test_function instead, so there's no clean up to do.
+      test_function(new_env)
+    end
+  end
+end
+
 return
 {
   check_decorator = check_decorator;
+  environment_values = environment_values;
 
   -- Not part of API, but exported for unit testing and also may be useful
   -- for other high-level tests.
