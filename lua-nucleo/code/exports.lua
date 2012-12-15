@@ -222,6 +222,10 @@ return
   {
     { "lua-nucleo/ensure.lua", w = 0 };
   };
+  environment_values =
+  {
+    { "lua-nucleo/testing/decorators.lua", w = 0 };
+  };
   epsilon_equals =
   {
     { "lua-nucleo/math.lua", w = 0 };
@@ -687,6 +691,10 @@ return
     { "lua-nucleo/table-utils.lua", w = 0 };
   };
   tmapofrecordgroups =
+  {
+    { "lua-nucleo/table-utils.lua", w = 0 };
+  };
+  tmerge_many =
   {
     { "lua-nucleo/table-utils.lua", w = 0 };
   };
