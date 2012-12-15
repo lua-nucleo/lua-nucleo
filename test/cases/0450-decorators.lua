@@ -11,11 +11,17 @@ local do_nothing
       }
 
 local ensure_tequals,
-      ensure_fails_with_substring
+      ensure_fails_with_substring,
+      ensure_is,
+      ensure,
+      ensure_equals
       = import 'lua-nucleo/ensure.lua'
       {
         'ensure_tequals',
-        'ensure_fails_with_substring'
+        'ensure_fails_with_substring',
+        'ensure_is',
+        'ensure',
+        'ensure_equals'
       }
 
 local tclone,
@@ -200,3 +206,66 @@ test:case "check_decorator_and_garbage" (function()
       "broken decorator: garbage after decorated function"
     )
 end)
+
+--------------------------------------------------------------------------------
+
+-- NOTE: environment_values is tested without check_decorator, because
+--       tests for check_decorator uses environment_values
+test:group "environment_values"
+
+test:case "add-and-remove-values" (function(test_env)
+  local values =
+  {
+    key = "value";
+    numeric = 42;
+  }
+  local called_ok = false
+  local good_fake_test = function(test_env)
+    ensure_equals("new env values was added: key", test_env.key, "value")
+    ensure_equals("new env values was added: numeric", test_env.numeric, 42)
+    called_ok = true
+  end
+
+  local decorator = environment_values(values)
+  ensure_is("decorator is function", decorator, "function")
+
+  local wrapped = decorator(good_fake_test)
+  ensure_is("decorated test is function", decorator, "function")
+
+  wrapped(test_env)
+  ensure("good_fake_test was called", called_ok)
+  ensure_equals("new env values was removed: key", test_env.key, nil)
+  ensure_equals("new env values was removed: numeric", test_env.numeric, nil)
+end)
+
+local original_values =
+{
+  original_key = "original value";
+  original_numeric = 42;
+}
+
+test:case "keep-original-values"
+  :with(environment_values(original_values)) (function(test_env)
+  local values =
+  {
+    key = "value";
+    numeric = 4242;
+  }
+  local called_ok = false
+  local good_fake_test = function(test_env)
+    called_ok = true
+  end
+
+  local decorator = environment_values(values)
+  ensure_is("decorator is function", decorator, "function")
+
+  local wrapped = decorator(good_fake_test)
+  ensure_is("decorated test is function", decorator, "function")
+
+  ensure_tequals("original values is set", test_env, original_values)
+  wrapped(test_env)
+  ensure("good_fake_test was called", called_ok)
+  ensure_tequals("original values is kept", test_env, original_values)
+end)
+
+--------------------------------------------------------------------------------
