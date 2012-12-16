@@ -164,7 +164,7 @@ local check_decorator = function(
       "table", exist_values
     )
 
-  local before_fn = make_before_decorator_checker(keys)
+  local before_fn = make_before_decorator_checker(keys, exist_values)
   local after_fn, is_called = make_after_decorator_checker(keys, exist_values)
   decoraror_checker_helper(decorator, before_fn, after_fn, good_test)
 
