@@ -94,11 +94,11 @@ local ensure_no_keys = function(msg, env, keys)
   end
 end
 
-local make_before_decorator_checker = function(keys, exists_values)
+local make_before_decorator_checker = function(keys, initial_environment_values)
   local before_decorator = function(test_fn)
     return function(env)
       ensure_no_keys("keys not exists before decorator", env, keys)
-      toverride_many(env, exists_values)
+      toverride_many(env, initial_environment_values)
       local copy = tclone(env)
       test_fn(env)
       ensure_no_keys("keys not exists after decorator", env, keys)
@@ -112,11 +112,11 @@ local make_before_decorator_checker = function(keys, exists_values)
   return before_decorator
 end
 
-local make_after_decorator_checker = function(keys, exists_values)
+local make_after_decorator_checker = function(keys, initial_environment_values)
   local called = false
   local checker_decorator = function(test_fn)
     return function(env)
-      for key, val in pairs(exists_values) do
+      for key, val in pairs(initial_environment_values) do
         ensure_equals(
             "broken decorator: passed values mangled",
             env[key],
@@ -129,7 +129,7 @@ local make_after_decorator_checker = function(keys, exists_values)
             env[keys[i]]
           )
       end
-      local existing_keys = tijoin_many(tkeys(exists_values), keys)
+      local existing_keys = tijoin_many(tkeys(initial_environment_values), keys)
       local env_keys = tkeys(env)
       table_sort(existing_keys)
       table_sort(env_keys)
@@ -152,20 +152,20 @@ local check_decorator = function(
     keys,
     good_test,
     expected_skip,
-    exist_values
+    initial_environment_values
   )
   good_test = good_test or do_nothing
   expected_skip = expected_skip or false
-  exist_values = exist_values or { }
+  initial_environment_values = initial_environment_values or { }
   arguments(
       "function", decorator,
       "table", keys,
       "boolean", expected_skip,
-      "table", exist_values
+      "table", initial_environment_values
     )
 
-  local before_fn = make_before_decorator_checker(keys, exist_values)
-  local after_fn, is_called = make_after_decorator_checker(keys, exist_values)
+  local before_fn = make_before_decorator_checker(keys, initial_environment_values)
+  local after_fn, is_called = make_after_decorator_checker(keys, initial_environment_values)
   decoraror_checker_helper(decorator, before_fn, after_fn, good_test)
 
   local called = is_called()
