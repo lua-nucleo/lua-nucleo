@@ -207,6 +207,16 @@ test:case "check_decorator_and_garbage" (function()
     )
 end)
 
+test:case 'check_decorator-test-function-called' (function()
+  local is_called = false
+  local test_fn = function(env)
+    is_called = true
+  end
+
+  check_decorator(environment_values({ }), { }, test_fn)
+  ensure("test function was called", is_called)
+end)
+
 --------------------------------------------------------------------------------
 
 -- NOTE: environment_values is tested without check_decorator, because
