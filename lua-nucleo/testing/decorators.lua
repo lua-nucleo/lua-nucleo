@@ -139,6 +139,7 @@ local make_after_decorator_checker = function(keys, initial_environment_values)
           env_keys
         )
       called = true
+      test_fn(env)
     end
   end
   local is_called = function()
