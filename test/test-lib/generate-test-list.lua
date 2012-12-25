@@ -91,39 +91,27 @@ for i = 1, #case_paths do
 end
 table.sort(cases)
 
--- TODO: get rid of `excludes` after `import_as_require` will deprecated
--- https://github.com/lua-nucleo/lua-nucleo/issues/12
-
-local excludes =
-{
-  import_as_require = true; -- we need to exclude import_as_require test
-                            -- existence check because of `import_as_require`
-                            -- module is deprecated
-}
-
 -- check all library files got test cases
 io.write("Test list generation check:")
 for i = 1, #lib_files do
   local lib_file = lib_files[i]
   lib_file = lib_file:match("([%w%-_]+).lua")
-  if not excludes[lib_file] then
-    local match_found = false
-    io.write(lib_file .. ": ")
-    lib_file = lib_file:gsub("%-", "%%%-") -- replace "-" with "%-" in names
-    for j = 1, #cases do
-      local case_j = cases[j]
-      if string.match(case_j, "%-" .. lib_file .. "[%-%.]") then
-        match_found = true
-        io.write(case_j, "; ")
-      end
+  local match_found = false
+  io.write(lib_file .. ": ")
+  lib_file = lib_file:gsub("%-", "%%%-") -- replace "-" with "%-" in names
+  for j = 1, #cases do
+    local case_j = cases[j]
+    if string.match(case_j, "%-" .. lib_file .. "[%-%.]") then
+      match_found = true
+      io.write(case_j, "; ")
     end
-    if match_found == false then
-      io.write("no tests found.\nTest list generation failed!\n")
-      os.remove("test/test-list.lua")
-      return nil
-    end
-    io.write("\n")
   end
+  if match_found == false then
+    io.write("no tests found.\nTest list generation failed!\n")
+    os.remove("test/test-list.lua")
+    return nil
+  end
+  io.write("\n")
 end
 io.write("OK\n")
 
