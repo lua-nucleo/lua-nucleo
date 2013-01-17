@@ -24,6 +24,12 @@ local is_string,
         'is_function'
       }
 
+local bind_many
+      = import 'lua-nucleo/functional.lua'
+      {
+        'bind_many'
+      }
+
 local print, loadfile, xpcall, error, assert, type, next, pairs =
       print, loadfile, xpcall, error, assert, type, next, pairs
 
@@ -51,13 +57,18 @@ do
     return self
   end
 
-  local add_test = function(self, fn)
+  local add_test = function(self, fn, ...)
     assert(type(self) == "table", "bad self")
     assert(type(fn) == "function", "bad callback")
 
     -- This assertion prevents construction line
     -- test:case "name" (function() ... end) (function() ... end)
     assert(self.called_ == false, "already called")
+
+    -- factories can have more than one argument
+    if select("#", ...) > 0 then
+      fn = bind_many(fn, ...)
+    end
 
     -- decorate tests in reverse order
     local decorators = self.decorators_
@@ -66,7 +77,7 @@ do
     end
 
     self.called_ = true
-    self.test_adder_fn_(fn)
+    return self.test_adder_fn_(fn)
   end
 
   local single_test_mt =
@@ -372,10 +383,12 @@ do
     check_name(self, name)
     self.current_group_ = name
 
-    return function(factory, ...)
+    return make_single_test(function(factory, ...)
       assert(type(factory) == "function", "bad factory")
-      add_methods(self, common_method_list(factory, ...))
-    end
+      -- pass clean environment to decorated factory, own arguments of factory
+      -- (if any) protected by bind_many inside make_single_test constructor
+      add_methods(self, common_method_list(factory, { }))
+    end)
   end
 
   local method = function(self, name)
