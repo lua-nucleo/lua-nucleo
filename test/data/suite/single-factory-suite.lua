@@ -6,5 +6,5 @@
 
 local make_suite = select(1, ...)
 local test = make_suite("single-factory-suite", { to_test = true })
-test:factory "to_test" { }
+test:factory "to_test" (function() return { } end)
 test "any" (function() end)
