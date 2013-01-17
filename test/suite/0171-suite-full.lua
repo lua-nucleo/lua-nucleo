@@ -90,7 +90,7 @@ do
   ensure_fails_with_substring(
       "test.factory: bad method list (number)",
       function() test:factory "name1" (0)  end,
-      "expected function or table"
+      "bad callback"
     )
   test_self_and_name("test.method", test.method, test)
   test_self_and_name("test.methods", test.methods, test)

@@ -373,13 +373,8 @@ do
     self.current_group_ = name
 
     return function(factory, ...)
-      if type(factory) == "function" then
-        add_methods(self, common_method_list(factory, ...))
-      elseif type(factory) == "table" then
-        add_methods(self, factory)
-      else
-        error("expected function or table")
-      end
+      assert(type(factory) == "function", "bad factory")
+      add_methods(self, common_method_list(factory, ...))
     end
   end
 
