@@ -708,6 +708,20 @@ do
 end
 
 --------------------------------------------------------------------------------
+-- test:factory function input test
+do
+  print("\nDecorated factory function input test 1:")
+
+  local nok, errs = run_tests(
+      { "test/data/suite/complex-factory-decorated-function-input.lua" },
+      parameters_list
+    )
+
+  assert(nok == 1, "1 test must be successful")
+  assert(#errs == 0, "0 tests must fail")
+end
+
+--------------------------------------------------------------------------------
 -- Complex test
 do
   print("\nComplex test 1:")
