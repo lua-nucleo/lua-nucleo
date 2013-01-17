@@ -372,7 +372,6 @@ do
       local method_full_name = self.current_group_ .. ":" .. method
       assert(not imports_set[method_full_name], "duplicate test name")
       imports_set[method_full_name] = true
-
     end
   end
 
