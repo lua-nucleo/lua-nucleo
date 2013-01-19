@@ -94,25 +94,37 @@ local ensure_no_keys = function(msg, env, keys)
   end
 end
 
-local make_before_decorator_checker = function(keys, initial_environment_values)
+local make_before_decorator_checker = function(
+    keys,
+    initial_environment_values
+  )
+  local return_value
   local before_decorator = function(test_fn)
     return function(env)
       ensure_no_keys("keys not exists before decorator", env, keys)
       toverride_many(env, initial_environment_values)
       local copy = tclone(env)
-      test_fn(env)
+      return_value = test_fn(env)
       ensure_no_keys("keys not exists after decorator", env, keys)
       ensure_tequals(
           "broken decorator: garbage after decorated function",
           env,
           copy
         )
+      return return_value
     end
   end
-  return before_decorator
+  local return_value_getter = function()
+    return return_value
+  end
+  return before_decorator, return_value_getter
 end
 
-local make_after_decorator_checker = function(keys, initial_environment_values)
+local make_after_decorator_checker = function(
+    keys,
+    initial_environment_values,
+    return_value
+  )
   local called = false
   local checker_decorator = function(test_fn)
     return function(env)
@@ -140,6 +152,7 @@ local make_after_decorator_checker = function(keys, initial_environment_values)
         )
       called = true
       test_fn(env)
+      return return_value
     end
   end
   local is_called = function()
@@ -165,8 +178,16 @@ local check_decorator = function(
       "table", initial_environment_values
     )
 
-  local before_fn = make_before_decorator_checker(keys, initial_environment_values)
-  local after_fn, is_called = make_after_decorator_checker(keys, initial_environment_values)
+  local expected_return_value = math.random()
+  local before_fn, return_value_getter = make_before_decorator_checker(
+      keys,
+      initial_environment_values
+    )
+  local after_fn, is_called = make_after_decorator_checker(
+      keys,
+      initial_environment_values,
+      expected_return_value
+    )
   decoraror_checker_helper(decorator, before_fn, after_fn, good_test)
 
   local called = is_called()
@@ -174,7 +195,14 @@ local check_decorator = function(
     ensure_equals("decorated test skipped", called, false)
   else
     ensure_equals("decorated test not skipped", called, true)
+    -- skipped test _can_ return nil, so relax check
+    ensure_equals(
+        "proper return value",
+        return_value_getter(),
+        expected_return_value
+      )
   end
+
   return true
 end
 
@@ -192,7 +220,7 @@ local environment_values = function(values)
       toverride_many(new_env, values)
       -- NOTE: The original env is not changed, new_env is passed into the
       --       test_function instead, so there's no clean up to do.
-      test_function(new_env)
+      return test_function(new_env)
     end
   end
 end

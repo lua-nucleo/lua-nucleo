@@ -62,7 +62,7 @@ test:case 'evaluate_decorator_ok' (function()
         local pass = env.pass or 0
         env.pass = pass + 1
         called[key] = env.pass
-        test_fn(env)
+        return test_fn(env)
       end
     end
   end
@@ -95,8 +95,9 @@ local create_littering_decorator = function(garbage)
   garbage = garbage or { }
   return function(test_fn)
     return function(env)
-      test_fn(env)
+      local value = test_fn(env)
       toverride_many(env, garbage)
+      return value
     end
   end
 end
