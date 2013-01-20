@@ -136,10 +136,12 @@ local make_after_decorator_checker = function(
           )
       end
       for i = 1, #keys do
-        ensure(
-            "broken decorator: required values not set in environment",
-            env[keys[i]]
-          )
+        if not env[keys[i]] then
+          error(
+              "broken decorator: required values not set in environment: `"
+              .. tostring(keys[i]) .. "'"
+            )
+        end
       end
       local existing_keys = tijoin_many(tkeys(initial_environment_values), keys)
       local env_keys = tkeys(env)
