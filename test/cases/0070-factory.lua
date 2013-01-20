@@ -42,16 +42,16 @@ test "wrong_input" (function()
   ensure_fails_with_substring(
       "wrong arguments",
       function() common_method_list(a, 1, 2, 3) end,
-      "`function' expected"
+      "argument #1: expected `function', got `table'"
     )
 end)
 
 test "wrong_output" (function()
   local a = function() end
   ensure_fails_with_substring(
-      "wrong arguments",
+      "wrong output",
       function() common_method_list(a, 1, 2, 3) end,
-      "`table' expected"
+      "assertion failed: `table' expected, got `nil'"
     )
 end)
 

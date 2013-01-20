@@ -5,10 +5,25 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+local assert_is_table
+      = import 'lua-nucleo/typeassert.lua'
+      {
+        'assert_is_table'
+      }
+
+local arguments
+      = import 'lua-nucleo/args.lua'
+      {
+        'arguments'
+      }
+
 local common_method_list = function(factory, ...)
-  assert(type(factory) == "function", "`function' expected")
+  arguments(
+      "function", factory
+    )
+
   local factory_return = factory(...)
-  assert(type(factory_return) == "table", "`table' expected")
+  assert_is_table(factory_return)
   local method_list = {}
   for k, v in pairs(factory_return) do
     if type(v) == "function" then
