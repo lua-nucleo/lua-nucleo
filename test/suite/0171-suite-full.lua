@@ -139,8 +139,8 @@ do
       { "test/data/suite/empty-suite-error-suite.lua" },
       parameters_list
     )
-  assert(nok == 0, "0 tests must be successfull")
-  assert(#errs == 1, "1 test must be fail")
+  assert(nok == 0, "0 tests must be successful")
+  assert(#errs == 1, "1 test must fail")
   assert(
       errs[1].err == "Suite `empty-suite-error-suite' failed:\n"
                   .. " * Test `[completeness check]': empty\n",
@@ -169,8 +169,8 @@ do
       parameters_list
     )
 
-  assert(nok == 1, "1 tests must be successfull")
-  assert(#errs == 0, "0 test must be fail")
+  assert(nok == 1, "1 test must be successful")
+  assert(#errs == 0, "0 tests must fail")
   assert(
       suite_tests_results == 1,
       "suite_tests_results must be set to 1"
@@ -186,8 +186,8 @@ do
       parameters_list
     )
 
-  assert(nok == 1, "1 tests must be successfull")
-  assert(#errs == 0, "0 test must be fail")
+  assert(nok == 1, "1 test must be successful")
+  assert(#errs == 0, "0 tests must fail")
   assert(
       suite_tests_results == 1,
       "suite_tests_results must be set to 1"
@@ -203,8 +203,8 @@ do
       parameters_list
     )
 
-  assert(nok == 1, "1 tests must be successfull")
-  assert(#errs == 0, "0 test must be fail")
+  assert(nok == 1, "1 test must be successful")
+  assert(#errs == 0, "0 tests must fail")
   assert(
       suite_tests_results == 1,
       "suite_tests_results must be set to 1"
@@ -220,8 +220,8 @@ do
       parameters_list
     )
 
-  assert(nok == 1, "1 tests must be successfull")
-  assert(#errs == 0, "0 test must be fail")
+  assert(nok == 1, "1 test must be successful")
+  assert(#errs == 0, "0 tests must fail")
   assert(
       suite_tests_results == 1,
       "suite_tests_results must be set to 1"
@@ -236,8 +236,8 @@ do
       parameters_list
     )
 
-  assert(nok == 0, "0 tests must be successfull")
-  assert(#errs == 1, "1 test must be fail")
+  assert(nok == 0, "0 tests must be successful")
+  assert(#errs == 1, "1 test must fail")
   assert(
       errs[1].err:find("suite: unknown import `to_test'", 1, true) ~= nil,
       "expected fail message must match"
@@ -253,8 +253,8 @@ do
       parameters_list
     )
 
-  assert(nok == 1, "1 tests must be successfull")
-  assert(#errs == 0, "0 test must be fail")
+  assert(nok == 1, "1 test must be successful")
+  assert(#errs == 0, "0 tests must fail")
   assert(
       suite_tests_results == 1,
       "suite_tests_results must be set to 1"
@@ -270,8 +270,8 @@ do
       parameters_list
     )
 
-  assert(nok == 1, "1 tests must be successfull")
-  assert(#errs == 0, "0 test must be fail")
+  assert(nok == 1, "1 test must be successful")
+  assert(#errs == 0, "0 tests must fail")
   assert(
       suite_tests_results == 1,
       "suite_tests_results must be set to 1"
@@ -287,8 +287,8 @@ do
       parameters_list
     )
 
-  assert(nok == 0, "0 tests must be successfull")
-  assert(#errs == 1, "1 test must be fail")
+  assert(nok == 0, "0 tests must be successful")
+  assert(#errs == 1, "1 test must fail")
   assert(
       errs[1].err == "Suite `set_strict_mode-true-suite' failed:\n"
                   .. " * Test `[STRICT MODE]': detected TODOs:\n"
@@ -307,8 +307,8 @@ do
       parameters_list
     )
 
-  assert(nok == 0, "0 tests must be successfull")
-  assert(#errs == 1, "1 tests must be fail")
+  assert(nok == 0, "0 tests must be successful")
+  assert(#errs == 1, "1 test must fail")
   assert(
       errs[1].err ==
               "Suite `single-set_fail_on_first_error-false-suite' failed:\n"
@@ -331,8 +331,8 @@ do
       parameters_list
     )
 
-  assert(nok == 0, "0 tests must be successfull")
-  assert(#errs == 1, "1 tests must be fail")
+  assert(nok == 0, "0 tests must be successful")
+  assert(#errs == 1, "1 test must fail")
   assert(
       errs[1].err ==
               "Suite `single-set_fail_on_first_error-true-suite' failed:\n"
@@ -354,8 +354,8 @@ do
       parameters_list
     )
 
-  assert(nok == 1, "1 tests must be successfull")
-  assert(#errs == 0, "0 test must be fail")
+  assert(nok == 1, "1 test must be successful")
+  assert(#errs == 0, "1 test must fail")
 end
 
 do
@@ -366,8 +366,8 @@ do
       parameters_list
     )
 
-  assert(nok == 0, "0 tests must be successfull")
-  assert(#errs == 1, "1 test must be fail")
+  assert(nok == 0, "0 tests must be successful")
+  assert(#errs == 1, "1 test must fail")
   assert(
       errs[1].err ==
               "Suite `single-UNTESTED-strict-mode-suite' failed:\n"
@@ -386,8 +386,8 @@ do
       parameters_list
     )
 
-  assert(nok == 1, "1 tests must be successfull")
-  assert(#errs == 0, "0 test must be fail")
+  assert(nok == 1, "1 test must be successful")
+  assert(#errs == 0, "0 tests must fail")
 end
 
 do
@@ -398,8 +398,8 @@ do
       parameters_list
     )
 
-  assert(nok == 0, "0 tests must be successfull")
-  assert(#errs == 1, "1 test must be fail")
+  assert(nok == 0, "0 tests must be successful")
+  assert(#errs == 1, "1 test must fail")
   assert(
       errs[1].err ==
               "Suite `single-BROKEN-strict-mode-suite' failed:\n"
@@ -418,8 +418,8 @@ do
       parameters_list
     )
 
-  assert(nok == 1, "1 tests must successfull")
-  assert(#errs == 0, "0 test must fail")
+  assert(nok == 1, "1 test must successful")
+  assert(#errs == 0, "1 test must fail")
 end
 
 do
@@ -430,8 +430,8 @@ do
       parameters_list
     )
 
-  assert(nok == 1, "1 tests must be successfull")
-  assert(#errs == 0, "0 test must be fail")
+  assert(nok == 1, "1 test must be successful")
+  assert(#errs == 0, "0 tests must fail")
 end
 
 do
@@ -442,8 +442,8 @@ do
       parameters_list
     )
 
-  assert(nok == 0, "0 tests must be successfull")
-  assert(#errs == 1, "1 test must be fail")
+  assert(nok == 0, "0 tests must be successful")
+  assert(#errs == 1, "1 test must fail")
   assert(
       errs[1].err ==
               "Suite `single-TODO-strict-mode-suite' failed:\n"
@@ -462,8 +462,8 @@ do
       parameters_list
     )
 
-  assert(nok == 1, "1 tests must be successfull")
-  assert(#errs == 0, "0 test must be fail")
+  assert(nok == 1, "1 test must be successful")
+  assert(#errs == 0, "1 test must fail")
 end
 
 do
@@ -475,8 +475,8 @@ do
       parameters_list
     )
 
-  assert(nok == 1, "1 tests must be successfull")
-  assert(#errs == 0, "0 test must be fail")
+  assert(nok == 1, "1 test must be successful")
+  assert(#errs == 0, "1 test must fail")
   assert(
       suite_tests_results == 1,
       "suite_tests_results must be set to 1"
@@ -491,8 +491,8 @@ do
       parameters_list
     )
 
-  assert(nok == 1, "1 tests must be successfull")
-  assert(#errs == 0, "0 test must be fail")
+  assert(nok == 1, "1 test must be successful")
+  assert(#errs == 0, "1 test must fail")
 end
 
 do
@@ -508,8 +508,8 @@ do
       { seed_value = 12345 }
     )
 
-  assert(nok == 1, "1 tests must be successfull")
-  assert(#errs == 0, "0 test must be fail")
+  assert(nok == 1, "1 test must be successful")
+  assert(#errs == 0, "1 test must fail")
 
   math.randomseed(12345)
   assert(suite_tests_results.value == math.random(), "random values equal")
@@ -536,8 +536,8 @@ do
       parameters_list
     )
 
-  assert(nok == 1, "1 tests must be successfull")
-  assert(#errs == 0, "0 test must be fail")
+  assert(nok == 1, "1 test must be successful")
+  assert(#errs == 0, "1 test must fail")
 
   assert(
       suite_tests_results.counter == 2,
@@ -568,8 +568,8 @@ do
       parameters_list
     )
 
-  assert(nok == 0, "0 tests must be successfull")
-  assert(#errs == 1, "1 test must be fail")
+  assert(nok == 0, "0 tests must be successful")
+  assert(#errs == 1, "1 test must fail")
   assert(
       errs[1].err:find("set_up duplication", 1, true) ~= nil,
       "expected fail message must match"
@@ -584,8 +584,8 @@ do
       parameters_list
     )
 
-  assert(nok == 0, "0 tests must be successfull")
-  assert(#errs == 1, "1 test must be fail")
+  assert(nok == 0, "0 tests must be successful")
+  assert(#errs == 1, "1 test must fail")
   assert(
       errs[1].err:find("tear_down duplication", 1, true) ~= nil,
       "expected fail message must match"
@@ -600,8 +600,8 @@ do
       parameters_list
     )
 
-  assert(nok == 0, "0 tests must be successfull")
-  assert(#errs == 1, "1 test must be fail")
+  assert(nok == 0, "0 tests must be successful")
+  assert(#errs == 1, "1 test must fail")
   assert(
       errs[1].err:find(
           "Suite `set_up%-test%-fail' failed:\n"
@@ -619,8 +619,8 @@ do
       parameters_list
     )
 
-  assert(nok == 0, "0 tests must be successfull")
-  assert(#errs == 1, "1 test must be fail")
+  assert(nok == 0, "0 tests must be successful")
+  assert(#errs == 1, "1 test must fail")
   assert(
       errs[1].err:find(
           "Suite `tear_down%-test%-fail' failed:\n"
@@ -640,8 +640,8 @@ do
       parameters_list
     )
 
-  assert(nok == 1, "1 tests must be successfull")
-  assert(#errs == 0, "0 test must be fail")
+  assert(nok == 1, "1 test must be successful")
+  assert(#errs == 0, "1 test must fail")
 end
 
 --------------------------------------------------------------------------------
@@ -654,8 +654,8 @@ do
       parameters_list
     )
 
-  assert(nok == 0, "0 tests must be successfull")
-  assert(#errs == 1, "1 test must be fail")
+  assert(nok == 0, "0 tests must be successful")
+  assert(#errs == 1, "1 test must fail")
   assert(
       errs[1].err == "Suite `complex-factory-function-input-test-1' failed:\n"
                   .. " * Test `[completeness check]': empty\n",
@@ -672,8 +672,8 @@ do
       parameters_list
     )
 
-  assert(nok == 0, "0 tests must be successfull")
-  assert(#errs == 1, "1 test must be fail")
+  assert(nok == 0, "0 tests must be successful")
+  assert(#errs == 1, "1 test must fail")
   assert(
       errs[1].err == "Suite `complex-factory-function-input-test-2' failed:\n"
                   .. " * Test `[completeness check]':"
@@ -696,8 +696,8 @@ do
       parameters_list
     )
 
-  assert(nok == 0, "0 tests must be successfull")
-  assert(#errs == 1, "1 test must be fail")
+  assert(nok == 0, "0 tests must be successful")
+  assert(#errs == 1, "1 test must fail")
   assert(
       errs[1].err == "Suite `complex-factory-function-input-test-3' failed:\n"
                   .. " * Test `[completeness check]':"
@@ -732,8 +732,8 @@ do
       parameters_list
     )
 
-  assert(nok == 0, "0 tests must be successfull")
-  assert(#errs == 1, "1 test must be fail")
+  assert(nok == 0, "0 tests must be successful")
+  assert(#errs == 1, "1 test must fail")
   assert(
       errs[1].err:find(
           "Suite `complex%-test%-1' failed:\n"
@@ -753,8 +753,8 @@ do
       parameters_list
     )
 
-  assert(nok == 0, "0 tests must be successfull")
-  assert(#errs == 1, "1 test must be fail")
+  assert(nok == 0, "0 tests must be successful")
+  assert(#errs == 1, "1 test must fail")
   assert(
       errs[1].err:find(
           "Suite `complex%-test%-2' failed:\n"
@@ -778,8 +778,8 @@ do
       parameters_list
     )
 
-  assert(nok == 0, "0 tests must be successfull")
-  assert(#errs == 1, "1 test must be fail")
+  assert(nok == 0, "0 tests must be successful")
+  assert(#errs == 1, "1 test must fail")
   assert(
       errs[1].err:find(
           "Suite `complex%-test%-3' failed:\n"
