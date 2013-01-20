@@ -94,7 +94,7 @@ local ensure_no_keys = function(msg, env, keys)
   end
 end
 
-local make_before_decorator_checker = function(
+local create_before_decorator_checker = function(
     keys,
     initial_environment_values
   )
@@ -120,7 +120,7 @@ local make_before_decorator_checker = function(
   return before_decorator, return_value_getter
 end
 
-local make_after_decorator_checker = function(
+local create_after_decorator_checker = function(
     keys,
     initial_environment_values,
     return_value
@@ -181,11 +181,11 @@ local check_decorator = function(
     )
 
   local expected_return_value = math.random()
-  local before_fn, return_value_getter = make_before_decorator_checker(
+  local before_fn, return_value_getter = create_before_decorator_checker(
       keys,
       initial_environment_values
     )
-  local after_fn, is_called = make_after_decorator_checker(
+  local after_fn, is_called = create_after_decorator_checker(
       keys,
       initial_environment_values,
       expected_return_value
