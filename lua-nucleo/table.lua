@@ -17,5 +17,6 @@ return tappend_many(
     table_utils,
     import 'lua-nucleo/tdeepequals.lua' (),
     import 'lua-nucleo/tserialize.lua' (),
-    import 'lua-nucleo/tstr.lua' ()
+    import 'lua-nucleo/tstr.lua' (),
+    import 'lua-nucleo/tpretty.lua' ()
   )
