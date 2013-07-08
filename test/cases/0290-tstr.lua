@@ -85,7 +85,13 @@ local declare_tests = function(tested_fn_name, serialization_fn)
   test(tested_fn_name .. "-string") (function ()
     check_str_ok('tstr plain string', 'plain string', '"plain string"')
     check_str_ok('tstr empty string', "", '""')
-    check_str_ok('tstr zero symbol', "embedded\0zero", '"embedded\\000zero"')
+
+    local str_with_zero_input = "embedded\0zero"
+    local str_with_zero_output = '"embedded\\0zero"'
+    if _VERSION == "Lua 5.1" and jit == nil then
+      str_with_zero_output = '"embedded\\000zero"'
+    end
+    check_str_ok('tstr zero symbol', str_with_zero_input, str_with_zero_output)
   end)
 
   test(tested_fn_name .. "-boolean") (function ()
