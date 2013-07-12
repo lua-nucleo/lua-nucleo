@@ -6,6 +6,9 @@
 
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
+declare 'jit'
+local _VERSION, jit = _VERSION, jit
+
 local table_concat = table.concat
 local math_pi = math.pi
 local setmetatable = setmetatable
