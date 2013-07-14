@@ -8,6 +8,9 @@ local pairs = pairs
 
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
+declare 'jit'
+local jit = jit
+
 local ensure,
       ensure_equals,
       ensure_strequals,
@@ -133,7 +136,30 @@ end)
 
 -- Based on actual bug scenario
 test "tpretty_ex-bug-concat-nil-full" (function()
-  local s1 = [[
+  -- TODO: systematic solution required
+  -- https://github.com/lua-nucleo/lua-nucleo/issues/18
+  local s1
+  if jit ~= nil then
+    s1 = [[
+{
+  result =
+  {
+    stats =
+    {
+      garden =
+      {
+        views_total = "INTEGER";
+        unique_visits_yesterday = "INTEGER";
+        id = "GARDEN_ID";
+        views_yesterday = "INTEGER";
+        unique_visits_total = "INTEGER";
+      };
+    };
+  };
+  events = { };
+}]]
+  else
+    s1 = [[
 {
   result =
   {
@@ -151,6 +177,7 @@ test "tpretty_ex-bug-concat-nil-full" (function()
   };
   events = { };
 }]]
+  end
 
   local s2 = [[
 {
