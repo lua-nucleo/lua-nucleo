@@ -26,9 +26,11 @@ local arguments,
         'method_arguments'
       }
 
-local is_table
+local is_number, 
+      is_table
       = import 'lua-nucleo/type.lua'
       {
+        'is_number',
         'is_table'
       }
 
@@ -849,6 +851,19 @@ local tmerge_many = function(...)
   return toverride_many({ }, ...)
 end
 
+local tisarray = function(t)
+  local max_k = #t
+  if max_k == 0 then
+    return false
+  end
+  for k, _ in pairs(t) do
+    if not is_number(k) or k <= 0 or k > max_k or k % 1 ~= 0 then
+      return false
+    end
+  end
+  return true  
+end
+
 --------------------------------------------------------------------------------
 
 return
@@ -865,6 +880,7 @@ return
   tiflip = tiflip;
   tset = tset;
   tiset = tiset;
+  tisarray = tisarray;
   tiinsert_args = tiinsert_args;
   timap_inplace = timap_inplace;
   timap = timap;
