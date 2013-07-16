@@ -662,6 +662,10 @@ return
   {
     { "lua-nucleo/table-utils.lua", w = 0 };
   };
+  tisarray =
+  {
+    { "lua-nucleo/table-utils.lua", w = 0 };
+  };
   tisempty =
   {
     { "lua-nucleo/table-utils.lua", w = 0 };
