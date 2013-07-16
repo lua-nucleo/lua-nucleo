@@ -2524,6 +2524,10 @@ test "tisarray-sparse-array" (function()
       not tisarray({ [1] = 1, [3] = 3})
     )
   ensure(
+      "Should return false on an array with nils", 
+      not tisarray({ 1, 2, nil, 3 })
+    )
+  ensure(
       "Should return false on an array with gaps", 
       not tisarray({ [1] = 1, [3] = 3})
     )
@@ -2542,6 +2546,10 @@ test "tisarray-fraction-index" (function()
   ensure(
       "Should return false on a dict with fractional indices", 
       not tisarray({ [3.1415] = 1, [2.71] = 3 })
+    )
+  ensure(
+      "Should return false on a dict with fractional indices", 
+      not tisarray({ [0.1] = 4 })
     )
 end)
 
