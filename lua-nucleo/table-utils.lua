@@ -851,13 +851,12 @@ local tmerge_many = function(...)
   return toverride_many({ }, ...)
 end
 
+-- Returns true is a table is an array
+-- Returns false otherwise
+-- Note the empty table is treated as an array
 local tisarray = function(t)
-  local max_k = #t
-  if max_k == 0 then
-    return false
-  end
   for k, _ in pairs(t) do
-    if not is_number(k) or k <= 0 or k > max_k or k % 1 ~= 0 then
+    if not is_number(k) or k < 1 or (k > 1 and t[k - 1] == nil) or k % 1 ~= 0 then
       return false
     end
   end
