@@ -2551,6 +2551,11 @@ test "tisarray-fraction-index" (function()
       "Should return false on a dict with fractional indices", 
       not tisarray({ [0.1] = 4 })
     )
+
+  ensure(
+      "Should return false in case of double percision overflow", 
+      not tisarray({ [10 ^ 16] = 0 })
+    )
 end)
 
 --------------------------------------------------------------------------------
