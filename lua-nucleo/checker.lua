@@ -37,6 +37,11 @@ do
   end
 
   local fail = function(self, msg)
+    -- Not masking nil msg, as it is a likely error
+    if msg ~= nil and not is_string(msg) then
+      msg = tostring(msg)
+    end
+
     assert(is_self(self))
     assert(is_string(msg))
 
