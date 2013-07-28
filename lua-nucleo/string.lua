@@ -153,6 +153,17 @@ local split_by_offset = function(str, offset, skip_right)
   return str:sub(1, offset), str:sub(offset + 1 + (skip_right or 0))
 end
 
+--- Expands variables in input string matched by capture string with values
+-- from dictionary.
+-- @tparam string capture Variable matching expression
+-- @tparam string str Input string, containing variables to expand
+-- @tparam table dict Dictionary, containing variables's values
+-- @treturn string A result string, where variables substituted with values
+-- @usage Universal value substitution to any placeholder, for example:
+--   fill_placeholders_ex("%$%((.-)%)", "a = $(a)", { a = 42 })
+--   returns "a = 42"
+-- @see fill_placeholders
+-- @see fill_curly_placeholders
 local fill_placeholders_ex = function(capture, str, dict)
   return (str:gsub(capture, dict))
 end
