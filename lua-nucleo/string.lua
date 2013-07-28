@@ -217,6 +217,18 @@ local fill_curly_placeholders = function(str, dict)
   return fill_placeholders_ex("%${(.-)}", str, dict)
 end
 
+--- Convert non-hierarchical table into string.
+--
+-- Values of key and value are concatted using custom glue `kv_glue`.
+-- Allowed values for key and value are numbers and strings.
+-- Pairs are concatted using custom glue `pair_glue`.
+-- Table can be traversed using custom iterator `pairs_fn`.
+-- @tparam table t Non-hierarchical table with [key]=value pairs
+-- @tparam string kv_glue Glue between key and value
+-- @tparam string pair_glue Glue between pairs (defaut: "")
+-- @tparam function pairs_fn Table iterator (default: pairs)
+-- @treturn string A result string
+-- @usage kv_concat({a = 1, b = 2}, " => ", "; ", pairs)
 local kv_concat = function(t, kv_glue, pair_glue, pairs_fn)
   pair_glue = pair_glue or ""
   pairs_fn = pairs_fn or pairs
