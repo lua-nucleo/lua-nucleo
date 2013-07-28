@@ -178,6 +178,12 @@ local fill_placeholders = function(str, dict)
   return fill_placeholders_ex("%$%((.-)%)", str, dict)
 end
 
+--- Expands variables like ${varname} with values from dictionary.
+-- @tparam string str Input string, containing variables to expand
+-- @tparam table dict Dictionary, containing variables's values
+-- @treturn string A result string, where variables substituted with values
+-- @usage fill_placeholders("a = ${a}", { a = 42 })
+--   returns "a = 42"
 local fill_curly_placeholders = function(str, dict)
   return fill_placeholders_ex("%${(.-)}", str, dict)
 end
