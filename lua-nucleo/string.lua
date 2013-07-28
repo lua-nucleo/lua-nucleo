@@ -149,10 +149,17 @@ local split_by_char = function(str, delimiter)
   return result
 end
 
+--- Count the number of substring occurrences.
+-- @tparam string str The string to search in
+-- @tparam string substr The substring to search for, must be not empty
+-- @treturn number Returns the number of substring occurrences
 local count_substrings = function(str, substr)
-  local count = 0
+  -- Check substring length to prevent infinite loop
+  assert(#substr > 0, "substring must be not empty")
 
-  local s, e = 0, 0
+  -- Main calculation loop
+  local count = 0
+  local s, e = nil, 0
   while true do
     s, e = str:find(substr, e + 1, true)
     if s ~= nil then
