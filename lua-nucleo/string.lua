@@ -110,25 +110,42 @@ local cdata_cat = function(cat, value)
   cat '<![CDATA[' (value:gsub("]]>", ']]]]><![CDATA[>')) ']]>'
 end
 
+--- Split a string by char.
+--
+-- Returns an array of strings, each of which is a substring of string formed by
+-- splitting it on boundaries formed by the char delimiter.
+--
 -- TODO: Looks ugly and slow. Rewrite.
+-- #21
+--
 -- Based on http://lua-users.org/wiki/MakingLuaLikePhp
-local split_by_char = function(str, div)
-  local result = false
-  if div ~= "" then
-    local pos = 0
-    result = { }
+-- @tparam string str Input string
+-- @tparam string delimiter Boundary char
+-- @treturn table Returns an array of strings created by splitting the string
+--   parameter on boundaries formed by the delimiter
+local split_by_char = function(str, delimiter)
+  assert(type(str) == "string", "Param str must be a string")
+  assert(
+      type(delimiter) == "string" and #delimiter == 1,
+      "Invalid delimiter"
+    )
 
-    if str ~= "" then
-      -- for each divider found
-      for st, sp in function() return string_find(str, div, pos, true) end do
-        -- Attach chars left of current divider
-        table_insert(result, string_sub(str, pos, st - 1))
-        pos = sp + 1 -- Jump past current divider
-      end
-      -- Attach chars right of last divider
-      table_insert(result, string_sub(str, pos))
-    end
+  if str == "" then
+    return { }
   end
+  
+  local result = { }
+  local pos = 0
+
+  -- for each delimiter found
+  for st, sp in function() return string_find(str, delimiter, pos, true) end do
+    -- Attach chars left of current delimiter
+    table_insert(result, string_sub(str, pos, st - 1))
+    pos = sp + 1 -- Jump past current delimiter
+  end
+  -- Attach chars right of last delimiter
+  table_insert(result, string_sub(str, pos))
+
   return result
 end
 

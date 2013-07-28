@@ -78,6 +78,7 @@ local make_concatter,
       }
 
 local math_pi = math.pi
+local table_concat = table.concat
 
 --------------------------------------------------------------------------------
 
@@ -340,6 +341,85 @@ test "cdata_wrap-cdata_cat" (function()
   check("", "<![CDATA[]]>")
   check("embedded\0zero", "<![CDATA[embedded\0zero]]>")
   check("<![CDATA[xxx]]>", "<![CDATA[<![CDATA[xxx]]]]><![CDATA[>]]>")
+end)
+
+--------------------------------------------------------------------------------
+
+test:tests_for "split_by_char"
+
+test "split_by_char-basic" (function()
+  ensure_fails_with_substring(
+      "both empty",
+      function()
+        split_by_char("", "")
+      end,
+      "Invalid delimiter"
+    )
+  ensure_fails_with_substring(
+      "empty delimiter",
+      function()
+        split_by_char("abc", "")
+      end,
+      "Invalid delimiter"
+    )
+  ensure_fails_with_substring(
+      "empty delimiter & bad arg type for string",
+      function()
+        split_by_char(1, "")
+      end,
+      "Param str must be a string"
+    )
+
+  ensure_tequals("empty string", split_by_char("", " "), { })
+
+  -- NOTE: Test logic for split_* based on reversability of spliting:
+  -- split_by_char("mLoremIpsum", "m") must return { "", "Lore", "Ipsu", "" }.
+  ensure_tequals(
+      "string explode",
+      split_by_char("mLoremIpsum", "m"),
+      { "", "Lore", "Ipsu", "" }
+    )
+  ensure_strequals(
+      "reversability: string implode after explode",
+      table_concat(split_by_char("mLoremIpsum", "m"), "m"),
+      "mLoremIpsum"
+    )
+  ensure_tequals("trailing delimiter", split_by_char("t ", " "), { "t", "" })
+  ensure_tequals("leading delimiter", split_by_char(" t", " "), { "", "t" })
+  ensure_tequals(
+      "leading and trailing delimiter",
+      split_by_char(" t ", " "),
+      { "", "t", "" }
+    )
+  ensure_tequals(
+      "word not divided",
+      split_by_char("Lorem!", "t"),
+      { "Lorem!" }
+    )
+  ensure_tequals(
+      "phrase with escapes",
+      split_by_char("\nLorem \tipsum?#$%^&*()_+|~/\t \001dolor \007sit\n", " "),
+      { "\nLorem", "\tipsum?#$%^&*()_+|~/\t", "\001dolor", "\007sit\n" }
+    )
+  ensure_tequals(
+      "phrase with escapes and zero",
+      split_by_char("\nLorem \tipsum?#$%^&*()_+|~/\t \0dolor \007sit.\n", " "),
+      { "\nLorem", "\tipsum?#$%^&*()_+|~/\t", "\0dolor", "\007sit.\n" }
+    )
+  ensure_fails_with_substring(
+      "space string, delimiter with escapes and zero",
+      function()
+        split_by_char(" ", "\nLorem \tipsum?#$%^&*()_+|~/\t \0dolor \007sit.\n")
+      end,
+      "Invalid delimiter"
+    )
+  ensure_fails_with_substring(
+      "empty string & delimiter with escapes and zero",
+      function()
+        split_by_char("", "\nLorem \tipsum?#$%^&*()_+|~/\t \0dolor \007sit.\n")
+      end,
+      "Invalid delimiter"
+    )
 end)
 
 --------------------------------------------------------------------------------
@@ -910,8 +990,6 @@ test:test_for "serialize_number" (function()
     end)
 
 --------------------------------------------------------------------------------
-
-test:UNTESTED 'split_by_char'
 
 test:UNTESTED 'split_by_offset'
 
