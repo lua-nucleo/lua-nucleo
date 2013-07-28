@@ -158,7 +158,7 @@ test "starts_with-minimal" (function()
   ensure_equals("binary-safe", starts_with("Русский язык велик и могуч", "Русский я"), true)
   ensure_equals("against number", starts_with("foo", 1), false)
   ensure_equals("against boolean", starts_with("foo", false), false)
-  ensure_equals("against table", starts_with("foo", {}), false)
+  ensure_equals("against table", starts_with("foo", { }), false)
   ensure_equals("against nil", starts_with("foo", nil), false)
 end)
 
@@ -175,7 +175,7 @@ test "ends_with-minimal" (function()
   ensure_equals("binary-safe", ends_with("Русский язык велик и могуч", "к и могуч"), true)
   ensure_equals("against number", ends_with("foo", 1), false)
   ensure_equals("against boolean", ends_with("foo", false), false)
-  ensure_equals("against table", ends_with("foo", {}), false)
+  ensure_equals("against table", ends_with("foo", { }), false)
   ensure_equals("against nil", ends_with("foo", nil), false)
 end)
 
@@ -183,7 +183,7 @@ end)
 
 test:tests_for "escape_string"
 
-test "escape_string-minimal" (function ()
+test "escape_string-minimal" (function()
 
   ensure_equals(
        "Equal strings",
@@ -221,7 +221,7 @@ end)
 
 test:tests_for "create_escape_subst"
 
-test "create_escape_subst-minimal" (function ()
+test "create_escape_subst-minimal" (function()
   local escape_subst = create_escape_subst("\\%03d")
 
   local str_test = ""
@@ -251,10 +251,10 @@ end)
 
 test:tests_for "htmlspecialchars"
 
-test "htmlspecialchars-minimal" (function ()
+test "htmlspecialchars-minimal" (function()
   -- Uses texts from PHP 5.3.0 htmlspecialchars tests
 
-  local buf = {} -- We need special cat, not using make_concatter
+  local buf = { } -- We need special cat, not using make_concatter
   local cat = function(v)
     -- Matching var_dump for strings
     arguments("string", v)
@@ -287,7 +287,7 @@ end)
 
 test:tests_for "escape_lua_pattern"
 
-test "escape_lua_pattern-basic" (function ()
+test "escape_lua_pattern-basic" (function()
   ensure_strequals(
       "escapinng lua pattern",
       escape_lua_pattern("abc^$()%.[]*+-?\0xyz"),
@@ -300,7 +300,7 @@ test "escape_lua_pattern-basic" (function ()
     )
 end)
 
-test "escape_lua_pattern-find" (function ()
+test "escape_lua_pattern-find" (function()
   local cat, concat = make_concatter()
   for i = 0, 255 do
     cat(string.char(i))
@@ -323,7 +323,7 @@ test:tests_for 'cdata_wrap'
 
 --------------------------------------------------------------------------------
 
-test "cdata_wrap-cdata_cat" (function ()
+test "cdata_wrap-cdata_cat" (function()
   local check = function(value, expected)
     do
       local actual = cdata_wrap(value)
@@ -344,9 +344,9 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:test_for "fill_placeholders" (function ()
-  ensure_strequals("both empty", fill_placeholders("", {}), "")
-  ensure_strequals("empty dict", fill_placeholders("test", {}), "test")
+test:test_for "fill_placeholders" (function()
+  ensure_strequals("both empty", fill_placeholders("", { }), "")
+  ensure_strequals("empty dict", fill_placeholders("test", { }), "test")
   ensure_strequals("empty str", fill_placeholders("", { a = 42 }), "")
   ensure_strequals("missing key", fill_placeholders("$(b)", { a = 42 }), "$(b)")
 
@@ -368,7 +368,7 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:test_for "url_encode" (function ()
+test:test_for "url_encode" (function()
   ensure_strequals("empty", url_encode(""), "")
   ensure_strequals("simple", url_encode("test"), "test")
   ensure_strequals("test with number", url_encode("test555"), "test555")
@@ -536,13 +536,13 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:test_for "number_to_string" (function ()
+test:test_for "number_to_string" (function()
   ensure_strequals("inf", number_to_string(1/0), "1/0")
   ensure_strequals("-inf", number_to_string(-1/0), "-1/0")
   ensure_strequals("nan", number_to_string(0/0), "0/0")
 end)
 
-test:test_for "serialize_number" (function ()
+test:test_for "serialize_number" (function()
   ensure_strequals("inf", serialize_number( 1/0), "1/0")
   ensure_strequals("-inf", serialize_number(-1/0), "-1/0")
   ensure_strequals("nan", serialize_number(0/0), "0/0")
