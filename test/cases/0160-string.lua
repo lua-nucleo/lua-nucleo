@@ -51,6 +51,7 @@ local make_concatter,
       cut_with_ellipsis,
       number_to_string,
       serialize_number,
+      get_escaped_chars_in_ranges,
       string_exports
       = import 'lua-nucleo/string.lua'
       {
@@ -76,7 +77,8 @@ local make_concatter,
         'integer_to_string_with_base',
         'cut_with_ellipsis',
         'number_to_string',
-        'serialize_number'
+        'serialize_number',
+        'get_escaped_chars_in_ranges'
       }
 
 local ordered_pairs
@@ -1227,4 +1229,134 @@ test:test_for "serialize_number" (function()
 
 --------------------------------------------------------------------------------
 
-test:UNTESTED 'get_escaped_chars_in_ranges'
+test:tests_for 'get_escaped_chars_in_ranges'
+
+test:test "get_escaped_chars_in_ranges-basic" (function()
+  -- Invalid tests (argument errors).
+  ensure_fails_with_substring(
+      "missed argument",
+      get_escaped_chars_in_ranges,
+      "argument must be a table"
+    )
+  ensure_fails_with_substring(
+      "invalid type argument",
+      function()
+        get_escaped_chars_in_ranges("asd")
+      end,
+      "argument must be a table"
+    )
+  ensure_fails_with_substring(
+      "one element in table",
+      function()
+        get_escaped_chars_in_ranges({ "asd" })
+      end,
+      "argument must have even number of elements"
+    )
+  ensure_fails_with_substring(
+      "three elements in table",
+      function()
+        get_escaped_chars_in_ranges({ "1", "2", "3" })
+      end,
+      "argument must have even number of elements"
+    )
+
+  -- Valid tests:
+  -- Chars range boundaries
+  ensure_strequals("equal str", get_escaped_chars_in_ranges({ "e", "e" }), "%e")
+  ensure_strequals("equal int", get_escaped_chars_in_ranges({ "6", "6" }), "%6")
+  ensure_strequals(
+      "2 integers in string",
+      get_escaped_chars_in_ranges({ "7", "8" }),
+      "%7%8"
+    )
+  ensure_strequals(
+      "4 ints in string",
+      get_escaped_chars_in_ranges({ "7", "8", "45", "33" }),
+      "%7%8"
+    )
+  ensure_strequals(
+      "2-digit int in string",
+      get_escaped_chars_in_ranges({ "66", "77", "45", "33" }),
+      "%6%7"
+    )
+  ensure_strequals(
+      "range in int in string",
+      get_escaped_chars_in_ranges({ "22", "77", "4", "254" }),
+      "%2%3%4%5%6%7"
+    )
+  ensure_strequals(
+      "max range in int in string",
+      get_escaped_chars_in_ranges({ "0", "9", "A", "Z" }),
+      "%0%1%2%3%4%5%6%7%8%9%A%B%C%D%E%F%G%H%I%J%K%L%M%N%O%P%Q%R%S%T%U%V%W%X%Y%Z"
+    )
+  ensure_strequals(
+      "char range",
+      get_escaped_chars_in_ranges({ "a", "d", "4", "25" }),
+      "%a%b%c%d"
+    )
+  ensure_strequals(
+      "char and int in str range",
+      get_escaped_chars_in_ranges({ "a", "d", "4", "9" }),
+      "%a%b%c%d%4%5%6%7%8%9"
+    )
+  ensure_strequals(
+      "from 0 to A",
+      get_escaped_chars_in_ranges({ "0", "A" }),
+      "%0%1%2%3%4%5%6%7%8%9%:%;%<%=%>%?%@%A"
+    )
+  ensure_strequals(
+      "from space to ~",
+      get_escaped_chars_in_ranges({ " ", "~" }),
+      "% %!%\"%#%$%%%&%'%(%)%*%+%,%-%.%/%0%1%2%3%4%5%6%7%8%9%:%;%<%=%>%?%@%A" ..
+      "%B%C%D%E%F%G%H%I%J%K%L%M%N%O%P%Q%R%S%T%U%V%W%X%Y%Z%[%\\%]%^%_%`%a%b%c" ..
+      "%d%e%f%g%h%i%j%k%l%m%n%o%p%q%r%s%t%u%v%w%x%y%z%{%|%}%~"
+    )
+
+  -- Integers range boundaries
+  ensure_strequals(
+      "integer range",
+      get_escaped_chars_in_ranges({ 32, 58 }),
+      "% %!%\"%#%$%%%&%'%(%)%*%+%,%-%.%/%0%1%2%3%4%5%6%7%8%9%:"
+    )
+  ensure_strequals(
+      "from ch(32) to ch(32)",
+      get_escaped_chars_in_ranges({ 32, 126 }),
+      "% %!%\"%#%$%%%&%'%(%)%*%+%,%-%.%/%0%1%2%3%4%5%6%7%8%9%:%;%<%=%>%?%@%A" ..
+      "%B%C%D%E%F%G%H%I%J%K%L%M%N%O%P%Q%R%S%T%U%V%W%X%Y%Z%[%\\%]%^%_%`%a%b%c" ..
+      "%d%e%f%g%h%i%j%k%l%m%n%o%p%q%r%s%t%u%v%w%x%y%z%{%|%}%~"
+    )
+
+  -- Mixed range boundaries
+  ensure_strequals(
+      "all mixed up",
+      get_escaped_chars_in_ranges({ "0", 50 }),
+      "%0%1%2"
+    )
+  ensure_strequals(
+      "from ch(32) to ~",
+      get_escaped_chars_in_ranges({ 32, "~" }),
+      "% %!%\"%#%$%%%&%'%(%)%*%+%,%-%.%/%0%1%2%3%4%5%6%7%8%9%:%;%<%=%>%?%@%A" ..
+      "%B%C%D%E%F%G%H%I%J%K%L%M%N%O%P%Q%R%S%T%U%V%W%X%Y%Z%[%\\%]%^%_%`%a%b%c" ..
+      "%d%e%f%g%h%i%j%k%l%m%n%o%p%q%r%s%t%u%v%w%x%y%z%{%|%}%~"
+    )
+  ensure_strequals(
+      "from space to ch(126)",
+      get_escaped_chars_in_ranges({ " ", 126 }),
+      "% %!%\"%#%$%%%&%'%(%)%*%+%,%-%.%/%0%1%2%3%4%5%6%7%8%9%:%;%<%=%>%?%@%A" ..
+      "%B%C%D%E%F%G%H%I%J%K%L%M%N%O%P%Q%R%S%T%U%V%W%X%Y%Z%[%\\%]%^%_%`%a%b%c" ..
+      "%d%e%f%g%h%i%j%k%l%m%n%o%p%q%r%s%t%u%v%w%x%y%z%{%|%}%~"
+    )
+  ensure_strequals(
+      "integer range and letters",
+      get_escaped_chars_in_ranges({ 32, 58, "a", "h" }),
+      "% %!%\"%#%$%%%&%'%(%)%*%+%,%-%.%/%0%1%2%3%4%5%6%7%8%9%:%a%b%c%d%e%f%g%h"
+    )
+  ensure_strequals(
+      "all mixed up",
+      get_escaped_chars_in_ranges({ 32, 58, "a", "h", 34, 38, "0", 50 }),
+      "% %!%\"%#%$%%%&%'%(%)%*%+%,%-%.%/%0%1%2%3%4%5%6%7%8%9%:%a%b%c%d%e%f%g" ..
+      "%h%\"%#%$%%%&%0%1%2"
+    )
+end)
+
+--------------------------------------------------------------------------------

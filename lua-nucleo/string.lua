@@ -410,6 +410,20 @@ end
 
 local get_escaped_chars_in_ranges
 do
+  --- Returns '%'-separated character string.
+  -- @param ranges If range[i], range[i+1] are numbers, concats all chars ('%'
+  -- separated) from char with ranges[1] code to char with ranges[2] code,
+  -- concats it to same way to ranges[3] - ranges[4], and so on.
+  --
+  -- If range[i], range[i+1] are strings,
+  -- ignore all string chars but first, and
+  -- concats all chars ('%' separated) from ranges[1][1] to ranges[2][1],
+  -- concats it to ranges[3][1] - ranges[4][1], and so on.
+  --
+  -- If range[i], range[i+1] are different types, also works fine, for example:
+  -- get_escaped_chars_in_ranges({"0",50}) returns "%0%1%2".
+  -- @treturn string Returns '%'-separated character string.
+  -- @local here
   get_escaped_chars_in_ranges = function(ranges)
     assert(
         type(ranges) == "table",
