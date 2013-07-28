@@ -16,6 +16,7 @@ local ensure,
       ensure_equals,
       ensure_strequals,
       ensure_tequals,
+      ensure_returns,
       ensure_fails_with_substring
       = import 'lua-nucleo/ensure.lua'
       {
@@ -23,6 +24,7 @@ local ensure,
         'ensure_equals',
         'ensure_strequals',
         'ensure_tequals',
+        'ensure_returns',
         'ensure_fails_with_substring'
       }
 
@@ -419,6 +421,101 @@ test "split_by_char-basic" (function()
         split_by_char("", "\nLorem \tipsum?#$%^&*()_+|~/\t \0dolor \007sit.\n")
       end,
       "Invalid delimiter"
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+test:tests_for 'split_by_offset'
+
+test:test "split_by_offset-basic" (function()
+  local BASIC_STRING = "Lorem ipsum dolor sit amet"
+
+  ensure_fails_with_substring(
+      "test with offset > #str",
+      function()
+        split_by_offset(BASIC_STRING, 100)
+      end,
+      "offset greater than str length"
+    )
+  ensure_fails_with_substring(
+      "test with offset = #str+1",
+      function()
+        split_by_offset(BASIC_STRING, 1 + #BASIC_STRING)
+      end,
+      "offset greater than str length"
+    )
+  ensure_returns(
+      "offset < 0",
+      2,
+      { BASIC_STRING, BASIC_STRING },
+      split_by_offset(BASIC_STRING, -1)
+    )
+  ensure_returns(
+      "offset = 0",
+      2,
+      { "", BASIC_STRING },
+      split_by_offset(BASIC_STRING, 0)
+    )
+  ensure_returns(
+      "offset = 1",
+      2,
+      { "L", "orem ipsum dolor sit amet" },
+      split_by_offset(BASIC_STRING, 1)
+    )
+  ensure_returns(
+      "max offset",
+      2,
+      { BASIC_STRING, "" },
+      split_by_offset(BASIC_STRING, #BASIC_STRING)
+    )
+  ensure_returns(
+      "max offset and skip 0",
+      2,
+      { BASIC_STRING, "" },
+      split_by_offset(BASIC_STRING, #BASIC_STRING, 0)
+    )
+  ensure_returns(
+      "max offset and skip -2",
+      2,
+      { BASIC_STRING, "et" },
+      split_by_offset(BASIC_STRING, #BASIC_STRING, -2)
+    )
+  ensure_returns(
+      "max offset and skip -max",
+      2,
+      { BASIC_STRING, BASIC_STRING },
+      split_by_offset(BASIC_STRING, #BASIC_STRING, -#BASIC_STRING)
+    )
+  ensure_returns(
+      "max offset and skip under begin",
+      2,
+      { BASIC_STRING, BASIC_STRING },
+      split_by_offset(BASIC_STRING, #BASIC_STRING, -1 - #BASIC_STRING)
+    )
+  ensure_returns(
+      "max offset and skip max",
+      2,
+      { BASIC_STRING, "" },
+      split_by_offset(BASIC_STRING, #BASIC_STRING, 1 + #BASIC_STRING)
+    )
+  ensure_returns(
+      "offset 1 and skip 0",
+      2,
+      { "L", "orem ipsum dolor sit amet" },
+      split_by_offset(BASIC_STRING, 1, 0)
+    )
+  ensure_returns(
+      "offset 1 and skip 5",
+      2,
+      { "L", "ipsum dolor sit amet" },
+      split_by_offset(BASIC_STRING, 1, 5)
+    )
+  ensure_returns(
+      "offset 5 and skip 5",
+      2,
+      { "Lorem", "m dolor sit amet" },
+      split_by_offset(BASIC_STRING, 5, 5)
     )
 end)
 
@@ -990,8 +1087,6 @@ test:test_for "serialize_number" (function()
     end)
 
 --------------------------------------------------------------------------------
-
-test:UNTESTED 'split_by_offset'
 
 test:UNTESTED 'count_substrings'
 

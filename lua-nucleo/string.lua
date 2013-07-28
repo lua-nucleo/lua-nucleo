@@ -165,8 +165,13 @@ local count_substrings = function(str, substr)
   return count
 end
 
+--- Split a string into two parts at offset.
+-- @tparam string str Input string
+-- @tparam number offset Offset at which string will be splitted
+-- @treturn table Returns two strings, the first one - is to the left from offset
+--   and the second one to the right from offset
 local split_by_offset = function(str, offset, skip_right)
-  assert(offset <= #str)
+  assert(offset <= #str, "offset greater than str length")
   return str:sub(1, offset), str:sub(offset + 1 + (skip_right or 0))
 end
 
