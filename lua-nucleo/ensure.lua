@@ -247,7 +247,11 @@ local ensure_error_with_substring = function(msg, substring, res, err)
       )
   end
 
-  if not err:find(substring) and substring ~= err then
+  if
+    substring ~= err and
+    not err:find(substring, nil, true) and
+    not err:find(substring)
+  then
     error(
         "ensure_error_with_substring failed: " .. msg
         .. ": can't find expected substring `" .. tostring(substring)
@@ -278,7 +282,11 @@ local ensure_fails_with_substring = function(msg, fn, substring)
     error("ensure_fails_with_substring failed: " .. msg .. ": call failed with non-string error")
   end
 
-  if not err:find(substring) then
+  if
+    substring ~= err and
+    not err:find(substring, nil, true) and
+    not err:find(substring)
+  then
     error(
         "ensure_fails_with_substring failed: " .. msg
         .. ": can't find expected substring `" .. tostring(substring)
@@ -294,7 +302,9 @@ local ensure_has_substring = function(msg, str, substring)
      'ensure_has_substring failed: ' .. msg
       .. ": can't find expected substring `" .. tostring(substring)
       .. "' in string: `" .. str .. "'",
-      str:find(substring) or (str == substring)
+      (str == substring)
+        or str:find(substring, nil, true)
+        or str:find(substring)
     )
 
   return str
