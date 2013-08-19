@@ -4,12 +4,15 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+local pcall, loadstring, error = pcall, loadstring, error
+
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
 local ensure,
       ensure_equals,
       ensure_tequals,
       ensure_strequals,
+      ensure_error_with_substring,
       ensure_fails_with_substring,
       ensure_has_substring,
       ensure_is,
@@ -20,6 +23,7 @@ local ensure,
         'ensure_equals',
         'ensure_tequals',
         'ensure_strequals',
+        'ensure_error_with_substring',
         'ensure_fails_with_substring',
         'ensure_has_substring',
         'ensure_is'
@@ -106,14 +110,114 @@ end)
 
 --------------------------------------------------------------------------------
 
+test:tests_for "ensure_error_with_substring"
+
+test:case "ensure_error_with_substring-is-happy-on-failure" (function()
+  local res, err = loadstring("boo")
+  local pcres, pcerr = pcall(
+      ensure_error_with_substring,
+      "this fails!",
+      "",
+      res,
+      err
+    )
+  ensure("should be happy", pcres)
+end)
+
+test:case "ensure_error_with_substring-complains-on-success" (function()
+  local res, err = loadstring("x = 1")
+  local pcres, pcerr = pcall(
+      ensure_error_with_substring,
+      "this fails!",
+      "",
+      res,
+      err
+    )
+  ensure("should complain", not pcres)
+  ensure("should report the complaint", pcerr:find("this fails!"))
+end)
+
+test:case "ensure_error_with_substring-is-happy-on-message-match" (function()
+  local res, err = loadstring("boo")
+  local pcres, pcerr = pcall(
+      ensure_error_with_substring,
+      "this fails!",
+      "'=' expected near '<eof>'",
+      res,
+      err
+    )
+  ensure("should be happy", pcres)
+end)
+
+test:case "ensure_error_with_substring-complains-on-message-mismatch" (
+function()
+  local res, err = loadstring("boo")
+  local pcres, pcerr = pcall(
+      ensure_error_with_substring,
+      "this fails!",
+      "THIS IS THE BADDEST ERROR I'VE EVER SEEN",
+      res,
+      err
+    )
+  ensure("should complain", not pcres)
+  ensure("should report the complaint", pcerr:find("BADDEST"))
+end)
+
+--------------------------------------------------------------------------------
+
+test:tests_for "ensure_fails_with_substring"
+
+test:case "ensure_fails_with_substring-is-happy-on-failure" (function()
+  local pcres, pcerr = pcall(
+      ensure_fails_with_substring,
+      "this fails!",
+      function() error "(whatever)" end,
+      ""
+    )
+  ensure("should be happy", pcres)
+end)
+
+test:case "ensure_fails_with_substring-complains-on-success" (function()
+  local pcres, pcerr = pcall(
+      ensure_fails_with_substring,
+      "this fails!",
+      function() end,
+      ""
+    )
+  ensure("should complain", not pcres)
+  ensure("should report the complaint", pcerr:find("this fails!"))
+end)
+
+test:case "ensure_fails_with_substring-is-happy-on-message-match" (function()
+  local pcres, pcerr = pcall(
+      ensure_fails_with_substring,
+      "this fails!",
+      function() error "(whatever)" end,
+      "ever"
+    )
+  ensure("should be happy", pcres)
+end)
+
+test:case "ensure_fails_with_substring-complains-on-message-mismatch" (
+function()
+  local pcres, pcerr = pcall(
+      ensure_fails_with_substring,
+      "this fails!",
+      function() error "(whatever)" end,
+      "OMG WE'RE DOOMED!!!!!!!!!!!"
+    )
+  ensure("should complain", not pcres)
+  ensure("should report the complaint", pcerr:find("DOOMED"))
+end)
+
+--------------------------------------------------------------------------------
+
 -- TODO: http://redmine.tech-zeli.in/issues/2413
 test:UNTESTED "ensure"
 test:UNTESTED "ensure_error"
 test:UNTESTED "ensure_equals"
 test:UNTESTED "ensure_tdeepequals"
 test:UNTESTED "ensure_returns"
-test:UNTESTED "ensure_error_with_substring"
 test:UNTESTED "ensure_strequals"
 test:UNTESTED "ensure_aposteriori_probability"
-test:UNTESTED "ensure_fails_with_substring"
 test:UNTESTED "ensure_tequals"
