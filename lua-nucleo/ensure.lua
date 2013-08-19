@@ -223,6 +223,14 @@ end
 
 --------------------------------------------------------------------------------
 
+-- TODO: Uncomment and move to proper tests
+--[[
+ensure_error("ok", "a", nil, "a")
+ensure_error("bad1", "a", nil, "a", nil)
+ensure_error("bad2", "a", nil, "b")
+ensure_error("bad3", "a", true, "a")
+--]]
+
 local ensure_error = function(msg, expected_message, res, actual_message, ...)
   if res ~= nil then
     error(
@@ -262,15 +270,6 @@ end
 
 --------------------------------------------------------------------------------
 
--- TODO: Uncomment and move to proper tests
---[[
-ensure_error("ok", "a", nil, "a")
-ensure_error("bad1", "a", nil, "a", nil)
-ensure_error("bad2", "a", nil, "b")
-ensure_error("bad3", "a", true, "a")
---]]
-
--- TODO: Write tests for this one
 local ensure_fails_with_substring = function(msg, fn, substring)
   local res, err = pcall(fn)
 
