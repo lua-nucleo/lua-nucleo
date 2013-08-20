@@ -94,6 +94,10 @@ return
   {
     { "lua-nucleo/functional.lua", w = 0 };
   };
+  capture_source_location =
+  {
+    { "lua-nucleo/diagnostics.lua", w = 0 };
+  };
   cdata_cat =
   {
     { "lua-nucleo/string.lua", w = 0 };

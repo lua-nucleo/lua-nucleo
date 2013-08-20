@@ -238,4 +238,8 @@ return
     type = 'cases';
     path = 'test/cases/0450-decorators.lua';
   };
+  {
+    type = 'cases';
+    path = 'test/cases/0460-diagnostics.lua';
+  };
 }

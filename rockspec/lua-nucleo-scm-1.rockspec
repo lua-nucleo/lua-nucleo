@@ -27,6 +27,7 @@ build = {
          ["lua-nucleo.code.profile"] = "lua-nucleo/code/profile.lua";
          ["lua-nucleo.coro"] = "lua-nucleo/coro.lua";
          ["lua-nucleo.deque"] = "lua-nucleo/deque.lua";
+         ["lua-nucleo.diagnostics"] = "lua-nucleo/diagnostics.lua";
          ["lua-nucleo.ensure"] = "lua-nucleo/ensure.lua";
          ["lua-nucleo.factory"] = "lua-nucleo/factory.lua";
          ["lua-nucleo.functional"] = "lua-nucleo/functional.lua";

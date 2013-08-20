@@ -30,6 +30,11 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Tables">Tables</a></li>
+<li><a href="#Local_Functions">Local Functions</a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -45,7 +50,7 @@
   <li><a href="../modules/lua-nucleo.code.profile.html">lua-nucleo.code.profile</a></li>
   <li><a href="../modules/lua-nucleo.coro.html">lua-nucleo.coro</a></li>
   <li><a href="../modules/lua-nucleo.deque.html">lua-nucleo.deque</a></li>
-  <li><a href="../modules/lua-nucleo.diagnostics.html">lua-nucleo.diagnostics</a></li>
+  <li><strong>lua-nucleo.diagnostics</strong></li>
   <li><a href="../modules/lua-nucleo.ensure.html">lua-nucleo.ensure</a></li>
   <li><a href="../modules/lua-nucleo.factory.html">lua-nucleo.factory</a></li>
   <li><a href="../modules/lua-nucleo.functional.html">lua-nucleo.functional</a></li>
@@ -64,7 +69,7 @@
   <li><a href="../modules/lua-nucleo.require_and_declare.html">lua-nucleo.require_and_declare</a></li>
   <li><a href="../modules/lua-nucleo.sandbox.html">lua-nucleo.sandbox</a></li>
   <li><a href="../modules/lua-nucleo.scoped_cat_tree_manager.html">lua-nucleo.scoped_cat_tree_manager</a></li>
-  <li><strong>lua-nucleo.stack_with_factory</strong></li>
+  <li><a href="../modules/lua-nucleo.stack_with_factory.html">lua-nucleo.stack_with_factory</a></li>
   <li><a href="../modules/lua-nucleo.strict.html">lua-nucleo.strict</a></li>
   <li><a href="../modules/lua-nucleo.string.html">lua-nucleo.string</a></li>
   <li><a href="../modules/lua-nucleo.suite.html">lua-nucleo.suite</a></li>
@@ -95,9 +100,9 @@
 
 <div id="content">
 
-<h1>Module <code>lua-nucleo.stack_with_factory</code></h1>
+<h1>Module <code>lua-nucleo.diagnostics</code></h1>
 
-<p>Stack manager creating new objects with factory</p>
+<p>Various code diagnostics utilities</p>
 <p>
  This file is a part of lua-nucleo library</p>
     <h3>Info:</h3>
@@ -106,11 +111,87 @@
     </ul>
 
 
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#SourceLocation">SourceLocation</a></td>
+	<td class="summary">Source code location</td>
+	</tr>
+</table>
+<h2><a href="#Local_Functions">Local Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#capture_source_location">capture_source_location&nbsp;( [level=1])</a></td>
+	<td class="summary">Captures location in source code at given call stack level.</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2><a name="Tables"></a>Tables</h2>
+    <dl class="function">
+    <dt>
+    <a name = "SourceLocation"></a>
+    <strong>SourceLocation</strong>
+    </dt>
+    <dd>
+    Source code location
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">source</span>
+            <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+         exact source filename</li>
+        <li><span class="parameter">file</span>
+            <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+         short source filename</li>
+        <li><span class="parameter">line</span>
+            <span class="types"><span class="type">int</span></span>
+         line number in the source file</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Local_Functions"></a>Local Functions</h2>
+    <dl class="function">
+    <dt>
+    <a name = "capture_source_location"></a>
+    <strong>capture_source_location&nbsp;( [level=1])</strong>
+    </dt>
+    <dd>
+    Captures location in source code at given call stack level.
+<p> Returns `nil` if requested call stack `level` is larger than
+ number of functions currently in the call stack.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">level</span>
+            <span class="types"><span class="type">int</span></span>
+         call stack level</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><a class="type" href="../modules/lua-nucleo.diagnostics.html#SourceLocation">SourceLocation</a></span>
+        Source code location.
+    </ol>
+
+
+    <h3>see also:</h3>
+    <ul>
+         <a href="http://www.lua.org/manual/5.1/manual.html#pdf-debug.getinfo">debug.getinfo</a>
+    </ul>
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->
