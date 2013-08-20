@@ -30,6 +30,10 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Local_Functions">Local Functions</a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -37,7 +41,7 @@
   <li><a href="../modules/lua-nucleo.algorithm.html">lua-nucleo.algorithm</a></li>
   <li><a href="../modules/lua-nucleo.args.html">lua-nucleo.args</a></li>
   <li><a href="../modules/lua-nucleo.assert.html">lua-nucleo.assert</a></li>
-  <li><strong>lua-nucleo.checker</strong></li>
+  <li><a href="../modules/lua-nucleo.checker.html">lua-nucleo.checker</a></li>
   <li><a href="../modules/lua-nucleo.code.exports.html">lua-nucleo.code.exports</a></li>
   <li><a href="../modules/lua-nucleo.code.foreign-global.lua5_1.html">lua-nucleo.code.foreign-global.lua5_1</a></li>
   <li><a href="../modules/lua-nucleo.code.foreign-global.luajit2.html">lua-nucleo.code.foreign-global.luajit2</a></li>
@@ -70,7 +74,7 @@
   <li><a href="../modules/lua-nucleo.table.html">lua-nucleo.table</a></li>
   <li><a href="../modules/lua-nucleo.table-utils.html">lua-nucleo.table-utils</a></li>
   <li><a href="../modules/lua-nucleo.tdeepequals.html">lua-nucleo.tdeepequals</a></li>
-  <li><a href="../modules/lua-nucleo.testing.decorator.html">lua-nucleo.testing.decorator</a></li>
+  <li><strong>lua-nucleo.testing.decorator</strong></li>
   <li><a href="../modules/lua-nucleo.times_queue.html">lua-nucleo.times_queue</a></li>
   <li><a href="../modules/lua-nucleo.timestamp.html">lua-nucleo.timestamp</a></li>
   <li><a href="../modules/lua-nucleo.tpretty.html">lua-nucleo.tpretty</a></li>
@@ -94,9 +98,9 @@
 
 <div id="content">
 
-<h1>Module <code>lua-nucleo.checker</code></h1>
+<h1>Module <code>lua-nucleo.testing.decorator</code></h1>
 
-<p>Complex validation helper</p>
+<p>Decorators validation helper</p>
 <p>
  This file is a part of lua-nucleo library</p>
     <h3>Info:</h3>
@@ -105,11 +109,44 @@
     </ul>
 
 
+<h2><a href="#Local_Functions">Local Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#environment_values">environment_values&nbsp;(values)</a></td>
+	<td class="summary">Creates test decorator, which adds values into the environment</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2><a name="Local_Functions"></a>Local Functions</h2>
+    <dl class="function">
+    <dt>
+    <a name = "environment_values"></a>
+    <strong>environment_values&nbsp;(values)</strong>
+    </dt>
+    <dd>
+    Creates test decorator, which adds values into the environment
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">values</span>
+         table</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        decorator
+    </ol>
+
+
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->
