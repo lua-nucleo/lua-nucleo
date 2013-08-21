@@ -46,6 +46,7 @@ local empty_table,
       tiflip,
       tset,
       tiset,
+      tisarray,
       tiinsert_args,
       timap_inplace,
       timap,
@@ -111,6 +112,7 @@ local empty_table,
         'tiflip',
         'tset',
         'tiset',
+        'tisarray',
         'tiinsert_args',
         'timap_inplace',
         'timap',
@@ -2491,6 +2493,68 @@ test "tmerge_many-with-empty-arguments" (function()
       "tmerge_many-simple",
       tmerge_many(),
       { }
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tisarray"
+
+--------------------------------------------------------------------------------
+
+test "tisarray-valid-array" (function()
+  ensure("Should return true on an array", tisarray({ 1, 2, 3 }))
+  ensure(
+      "Should return true on an array", 
+      tisarray({ [1] = 1, [2] = 2, [3] = 3 })
+    )
+end)
+
+test "tisarray-dict" (function()
+  ensure("Should return false on a dictionary", not tisarray({ a = 1, b = 2 }))
+end)
+
+test "tisarray-empty-table" (function()
+  ensure("Should return false on a empty table", not tisarray({  }))
+end)
+
+test "tisarray-sparse-array" (function()
+  ensure(
+      "Should return false on an array with gaps", 
+      not tisarray({ [1] = 1, [3] = 3})
+    )
+  ensure(
+      "Should return false on an array with nils", 
+      not tisarray({ 1, 2, nil, 3 })
+    )
+  ensure(
+      "Should return false on an array with gaps", 
+      not tisarray({ [1] = 1, [3] = 3})
+    )
+  ensure(
+      "Should return false on a dict starts from 0", 
+      not tisarray({ [0] = 1, [1] = 3 })
+    )
+
+  ensure(
+      "Should return false on a shifted dict", 
+      not tisarray({ [2] = 1, [3] = 3 })
+    )
+end)
+
+test "tisarray-fraction-index" (function()
+  ensure(
+      "Should return false on a dict with fractional indices", 
+      not tisarray({ [3.1415] = 1, [2.71] = 3 })
+    )
+  ensure(
+      "Should return false on a dict with fractional indices", 
+      not tisarray({ [0.1] = 4 })
+    )
+
+  ensure(
+      "Should return false in case of double percision overflow", 
+      not tisarray({ [10 ^ 16] = 0 })
     )
 end)
 
