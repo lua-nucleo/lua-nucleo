@@ -12,6 +12,7 @@ local ensure,
       ensure_equals,
       ensure_tequals,
       ensure_strequals,
+      ensure_error,
       ensure_error_with_substring,
       ensure_fails_with_substring,
       ensure_has_substring,
@@ -23,6 +24,7 @@ local ensure,
         'ensure_equals',
         'ensure_tequals',
         'ensure_strequals',
+        'ensure_error',
         'ensure_error_with_substring',
         'ensure_fails_with_substring',
         'ensure_has_substring',
@@ -286,10 +288,60 @@ end)
 
 --------------------------------------------------------------------------------
 
+test:tests_for "ensure_error"
+
+test:case "ensure_error-is-happy-on-failure" (function()
+  local res, err = loadstring("boo")
+  local res, err = pcall(function()
+    ensure_error(
+        "inner msg",
+        [=[[string "boo"]:1: '=' expected near '<eof>']=],
+        res,
+        err
+      )
+  end)
+  ensure("should not throw error", res)
+end)
+
+test:case "ensure_error-complains-on-message-mismatch" (function()
+  local res, err = loadstring("boo")
+  local res, err = pcall(function()
+    ensure_error(
+        "inner msg",
+        "Irrelevant error message",
+        res,
+        err
+      )
+  end)
+  ensure("should throw error", not res)
+  ensure(
+      "should report the complaint",
+      err:find("Irrelevant error message")
+    )
+end)
+
+test:case "ensure_error-complains-on-success" (function()
+  local res, err = loadstring("x = 1")
+  local res, err = pcall(function()
+    ensure_error(
+        "inner msg",
+        [=[[string "boo"]:1: '=' expected near '<eof>']=],
+        res,
+        err
+      )
+  end)
+  ensure("should throw error", not res)
+  ensure(
+      "should report the complaint",
+      err:find("ensure_error failed")
+    )
+end)
+
+--------------------------------------------------------------------------------
+
 -- TODO: Write tests
 --       https://github.com/lua-nucleo/lua-nucleo/issues/13
 test:UNTESTED "ensure"
-test:UNTESTED "ensure_error"
 test:UNTESTED "ensure_equals"
 test:UNTESTED "ensure_tdeepequals"
 test:UNTESTED "ensure_returns"
