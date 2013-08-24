@@ -20,10 +20,6 @@ return
   };
   {
     type = 'cases';
-    path = 'test/cases/0031-ensure.lua';
-  };
-  {
-    type = 'cases';
     path = 'test/cases/0040-checker.lua';
   };
   {
