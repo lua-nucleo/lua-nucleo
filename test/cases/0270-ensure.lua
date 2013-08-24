@@ -155,12 +155,42 @@ test:case "ensure_error_with_substring-matches-empty-message" (function()
   ensure("should not throw error", res)
 end)
 
+test:case "ensure_error_with_substring-is-happy-on-regexp-match" (function()
+  local res, err = loadstring("boo")
+  local res, err = pcall(function()
+    ensure_error_with_substring(
+        "inner msg",
+        ".* near .*",
+        res,
+        err
+      )
+  end)
+  ensure("should not throw error", res)
+end)
+
 test:case "ensure_error_with_substring-complains-on-msg-mismatch" (function()
   local res, err = loadstring("boo")
   local res, err = pcall(function()
     ensure_error_with_substring(
         "inner msg",
         "inner msg",
+        res,
+        err
+      )
+  end)
+  ensure("should throw error", not res)
+  ensure(
+      "should report the complaint",
+      err:find("ensure_error_with_substring failed")
+    )
+end)
+
+test:case "ensure_error_with_substring-complains-on-regex-mismatch" (function()
+  local res, err = loadstring("boo")
+  local res, err = pcall(function()
+    ensure_error_with_substring(
+        "inner msg",
+        ".* far .*",
         res,
         err
       )
@@ -214,6 +244,32 @@ test:case "ensure_fails_with_substring-matches-empty-message" (function()
 end)
 
 test:case "ensure_fails_with_substring-complains-on-msg-mismatch" (function()
+  local res, err = pcall(function()
+    ensure_fails_with_substring(
+        "inner msg",
+        function() error "Lorem ipsum" end,
+        "Dolor sit amet"
+      )
+  end)
+  ensure("should throw error", not res)
+  ensure(
+      "should report the complaint",
+      err:find("ensure_fails_with_substring failed")
+    )
+end)
+
+test:case "ensure_fails_with_substring-is-happy-on-regexp-match" (function()
+  local res, err = pcall(function()
+    ensure_fails_with_substring(
+        "inner msg",
+        function() error "Lorem ipsum" end,
+        "%w+ ipsum"
+      )
+  end)
+  ensure("should not throw error", res)
+end)
+
+test:case "ensure_fails_with_substring-complains-on-regex-mismatch" (function()
   local res, err = pcall(function()
     ensure_fails_with_substring(
         "inner msg",
