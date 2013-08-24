@@ -212,7 +212,8 @@ end)
 
 --------------------------------------------------------------------------------
 
--- TODO: http://redmine.tech-zeli.in/issues/2413
+-- TODO: Write tests
+--       https://github.com/lua-nucleo/lua-nucleo/issues/13
 test:UNTESTED "ensure"
 test:UNTESTED "ensure_error"
 test:UNTESTED "ensure_equals"
