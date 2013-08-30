@@ -114,53 +114,62 @@ test:tests_for "ensure_error_with_substring"
 
 test:case "ensure_error_with_substring-is-happy-on-failure" (function()
   local res, err = loadstring("boo")
-  local pcres, pcerr = pcall(
-      ensure_error_with_substring,
-      "this fails!",
-      "",
-      res,
-      err
-    )
-  ensure("should be happy", pcres)
+  local res, err = pcall(function()
+    ensure_error_with_substring(
+        "inner msg",
+        [=[[string "boo"]:1: '=' expected near '<eof>']=],
+        res,
+        err
+      )
+  end)
+  ensure("should not throw error", res)
 end)
 
 test:case "ensure_error_with_substring-complains-on-success" (function()
   local res, err = loadstring("x = 1")
-  local pcres, pcerr = pcall(
-      ensure_error_with_substring,
-      "this fails!",
-      "",
-      res,
-      err
+  local res, err = pcall(function()
+    ensure_error_with_substring(
+        "inner msg",
+        "%.*",
+        res,
+        err
+      )
+  end)
+  ensure("should throw error", not res)
+  ensure(
+      "should report the complaint",
+      err:find("ensure_error_with_substring failed")
     )
-  ensure("should complain", not pcres)
-  ensure("should report the complaint", pcerr:find("this fails!"))
 end)
 
-test:case "ensure_error_with_substring-is-happy-on-message-match" (function()
+test:case "ensure_error_with_substring-matches-empty-message" (function()
   local res, err = loadstring("boo")
-  local pcres, pcerr = pcall(
-      ensure_error_with_substring,
-      "this fails!",
-      "'=' expected near '<eof>'",
-      res,
-      err
-    )
-  ensure("should be happy", pcres)
+  local res, err = pcall(function()
+    ensure_error_with_substring(
+        "inner msg",
+        "", -- use empty substring to match _any_ error message
+        res,
+        err
+      )
+  end)
+  ensure("should not throw error", res)
 end)
 
-test:case "ensure_error_with_substring-complains-on-message-mismatch" (
-function()
+test:case "ensure_error_with_substring-complains-on-msg-mismatch" (function()
   local res, err = loadstring("boo")
-  local pcres, pcerr = pcall(
-      ensure_error_with_substring,
-      "this fails!",
-      "THIS IS THE BADDEST ERROR I'VE EVER SEEN",
-      res,
-      err
+  local res, err = pcall(function()
+    ensure_error_with_substring(
+        "inner msg",
+        "inner msg",
+        res,
+        err
+      )
+  end)
+  ensure("should throw error", not res)
+  ensure(
+      "should report the complaint",
+      err:find("ensure_error_with_substring failed")
     )
-  ensure("should complain", not pcres)
-  ensure("should report the complaint", pcerr:find("BADDEST"))
 end)
 
 --------------------------------------------------------------------------------
@@ -168,46 +177,55 @@ end)
 test:tests_for "ensure_fails_with_substring"
 
 test:case "ensure_fails_with_substring-is-happy-on-failure" (function()
-  local pcres, pcerr = pcall(
-      ensure_fails_with_substring,
-      "this fails!",
-      function() error "(whatever)" end,
-      ""
-    )
-  ensure("should be happy", pcres)
+  local res, err = pcall(function()
+    ensure_fails_with_substring(
+        "inner msg",
+        function() error "Lorem ipsum" end,
+        "Lorem ipsum"
+      )
+  end)
+  ensure("should not throw error", res)
 end)
 
 test:case "ensure_fails_with_substring-complains-on-success" (function()
-  local pcres, pcerr = pcall(
-      ensure_fails_with_substring,
-      "this fails!",
-      function() end,
-      ""
+  local res, err = pcall(function()
+    ensure_fails_with_substring(
+        "inner msg",
+        function() end,
+        "%.*"
+      )
+  end)
+  ensure("should throw error", not res)
+  ensure(
+      "should report the complaint",
+      err:find("ensure_fails_with_substring failed")
     )
-  ensure("should complain", not pcres)
-  ensure("should report the complaint", pcerr:find("this fails!"))
 end)
 
-test:case "ensure_fails_with_substring-is-happy-on-message-match" (function()
-  local pcres, pcerr = pcall(
-      ensure_fails_with_substring,
-      "this fails!",
-      function() error "(whatever)" end,
-      "ever"
-    )
-  ensure("should be happy", pcres)
+test:case "ensure_fails_with_substring-matches-empty-message" (function()
+  local res, err = pcall(function()
+    ensure_fails_with_substring(
+        "inner msg",
+        function() error "Lorem ipsum" end,
+        "" -- use empty substring to match _any_ error message
+      )
+  end)
+  ensure("should not throw error", res)
 end)
 
-test:case "ensure_fails_with_substring-complains-on-message-mismatch" (
-function()
-  local pcres, pcerr = pcall(
-      ensure_fails_with_substring,
-      "this fails!",
-      function() error "(whatever)" end,
-      "OMG WE'RE DOOMED!!!!!!!!!!!"
+test:case "ensure_fails_with_substring-complains-on-msg-mismatch" (function()
+  local res, err = pcall(function()
+    ensure_fails_with_substring(
+        "inner msg",
+        function() error "Lorem ipsum" end,
+        "Dolor sit amet"
+      )
+  end)
+  ensure("should throw error", not res)
+  ensure(
+      "should report the complaint",
+      err:find("ensure_fails_with_substring failed")
     )
-  ensure("should complain", not pcres)
-  ensure("should report the complaint", pcerr:find("DOOMED"))
 end)
 
 --------------------------------------------------------------------------------
