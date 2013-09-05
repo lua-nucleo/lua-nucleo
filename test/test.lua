@@ -107,9 +107,9 @@ local run_low_level_tests = function(test_list)
 
   if not lua then
     for name, msg in pairs(err) do
-      print("Can't find interpreter " .. name .. " : " .. tostring(msg))
+      io.stderr:write("Can't find interpreter " .. name .. " : " .. tostring(msg))
     end
-    assert(lua, "Interpreter not found")
+    error("Interpreter not found")
   end
 
   local errors = { }
