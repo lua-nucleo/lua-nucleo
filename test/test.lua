@@ -87,19 +87,30 @@ local run_low_level_tests = function(test_list)
     if ok then
       return lua:sub(1, #lua - 1) -- remove trailing newline
     else
-      return nil
+      local err = lua
+      return nil, err
     end
   end
 
   -- TODO: use current running interpreter path for launch low-level tests
   -- https://github.com/lua-nucleo/lua-nucleo/issues/11
   local lua
+  local err = {}
   if jit ~= nil then
-    lua = get_interpreter("luajit2") or get_interpreter("luajit")
+    lua, err["luajit2"] = get_interpreter("luajit2") 
+    if not lua then
+      lua, err["luajit"] = get_interpreter("luajit")
+    end
   else
-    lua = get_interpreter("lua")
+    lua, err["lua"] = get_interpreter("lua")
   end
-  assert(lua, "interpreter not found")
+
+  if not lua then
+    for name, msg in pairs(err) do
+      print("Can't find interpreter " .. name .. " : " .. tostring(msg))
+    end
+    assert(lua, "Interpreter not found")
+  end
 
   local errors = { }
   for i = 1, #test_list do
