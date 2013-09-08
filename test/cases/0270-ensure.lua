@@ -108,6 +108,15 @@ test:test_for "ensure_has_substring" (function()
       .. " can't find expected substring `not 42'"
       .. " in string: `the answer is 42'"
     )
+
+  ensure_fails_with_substring(
+      "value is not a string",
+      function()
+        ensure_has_substring("inner msg", false, 'not 42')
+      end,
+      "ensure_has_substring failed: inner msg:"
+      .. " value is not a string"
+    )
 end)
 
 --------------------------------------------------------------------------------

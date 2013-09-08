@@ -289,6 +289,13 @@ end
 --------------------------------------------------------------------------------
 
 local ensure_has_substring = function(msg, str, substring)
+  if type(str) ~= "string" then
+    error(
+        "ensure_has_substring failed: " .. msg .. ": value is not a string",
+        2
+      )
+  end
+
   ensure(
      'ensure_has_substring failed: ' .. msg
       .. ": can't find expected substring `" .. tostring(substring)
