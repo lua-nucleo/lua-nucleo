@@ -118,6 +118,10 @@ return
   {
     { "lua-nucleo/misc.lua", w = 0 };
   };
+  common_load_schema =
+  {
+    { "lua-nucleo/dsl/common_load_schema.lua", w = 0 };
+  };
   common_method_list =
   {
     { "lua-nucleo/factory.lua", w = 0 };
@@ -134,9 +138,21 @@ return
   {
     { "lua-nucleo/string.lua", w = 0 };
   };
+  create_common_fields_by_tag =
+  {
+    { "lua-nucleo/dsl/dsl_loader.lua", w = 0 };
+  };
+  create_common_name_filter =
+  {
+    { "lua-nucleo/dsl/dsl_loader.lua", w = 0 };
+  };
   create_escape_subst =
   {
     { "lua-nucleo/string.lua", w = 0 };
+  };
+  create_simple_tagged_tree_walkers =
+  {
+    { "lua-nucleo/dsl/tagged-tree.lua", w = 0 };
   };
   create_table =
   {
@@ -161,6 +177,10 @@ return
   dostring_in_environment =
   {
     { "lua-nucleo/sandbox.lua", w = 0 };
+  };
+  dump_nodes =
+  {
+    { "lua-nucleo/dsl/dump_nodes.lua", w = 0 };
   };
   eat_tag =
   {
@@ -370,6 +390,14 @@ return
   {
     { "lua-nucleo/functional.lua", w = 0 };
   };
+  load_data_schema =
+  {
+    { "lua-nucleo/dsl/walk_data_with_schema.lua", w = 0 };
+  };
+  load_data_walkers =
+  {
+    { "lua-nucleo/dsl/walk_data_with_schema.lua", w = 0 };
+  };
   looped_linear_interpolator =
   {
     { "lua-nucleo/util/anim/interpolator.lua", w = 0 };
@@ -413,6 +441,10 @@ return
   make_deque =
   {
     { "lua-nucleo/deque.lua", w = 0 };
+  };
+  make_dsl_loader =
+  {
+    { "lua-nucleo/dsl/dsl_loader.lua", w = 0 };
   };
   make_generator_mt =
   {
@@ -841,6 +873,10 @@ return
   validate_probability_rough =
   {
     { "lua-nucleo/random.lua", w = 0 };
+  };
+  walk_tagged_tree =
+  {
+    { "lua-nucleo/dsl/tagged-tree.lua", w = 0 };
   };
   wrap_file_sink =
   {

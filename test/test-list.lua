@@ -238,4 +238,24 @@ return
     type = 'cases';
     path = 'test/cases/0460-diagnostics.lua';
   };
+  {
+    type = 'cases';
+    path = 'test/cases/0470-dsl-dsl_loader.lua';
+  };
+  {
+    type = 'cases';
+    path = 'test/cases/0480-dsl-common_load_schema.lua';
+  };
+  {
+    type = 'cases';
+    path = 'test/cases/0490-dsl-dump_nodes.lua';
+  };
+  {
+    type = 'cases';
+    path = 'test/cases/0500-dsl-tagged-tree.lua';
+  };
+  {
+    type = 'cases';
+    path = 'test/cases/0510-dsl-walk_data_with_schema.lua';
+  };
 }
