@@ -47,29 +47,33 @@ end
 
 local arguments, optional_arguments, method_arguments, check_types
 do
-  local function impl(is_optional, arg_n, expected_type, value, ...)
+  local function impl(is_optional, nargs, ...)
     -- Points error on function, calling function which calls *arguments()
 
-    if type(value) ~= expected_type then
-      if not lua51_types[expected_type] then
-        error(
-            "argument #"..arg_n..": bad expected type `"..tostring(expected_type).."'",
-            3 + arg_n
-          )
-      end
+    for i = 1, nargs, 2 do
+      local expected_type, value = select(i, ...)
 
-      if not is_optional or value ~= nil then
-        error(
-            (is_optional and "optional " or "")
-         .. "argument #"..arg_n..": expected `"..tostring(expected_type)
-         .. "', got `"..type(value).."'",
-            3 + arg_n
-          )
+      if type(value) ~= expected_type then
+        if not lua51_types[expected_type] then
+          error(
+              "argument #" .. ((i + 1) * 0.5) .. ": bad expected type `"
+              .. tostring(expected_type) .. "'",
+              3
+            )
+        end
+
+        if not is_optional or value ~= nil then
+          error(
+              (is_optional and "optional " or "")
+              .. "argument #" .. ((i + 1) * 0.5) .. ": expected `"
+              .. tostring(expected_type) .. "', got `" .. type(value) .. "'",
+              3
+            )
+        end
       end
     end
 
-    -- If have at least one more type, check it
-    return ((...) ~= nil) and impl(is_optional, arg_n + 1, ...) or true
+    return true
   end
 
   arguments = function(...)
@@ -77,7 +81,7 @@ do
     return (nargs > 0)
        and (
          (nargs % 2 == 0)
-           and impl(false, 1, ...) -- Not optional
+           and impl(false, nargs, ...) -- Not optional
             or error("arguments: bad call, dangling argument detected", 2)
        )
        or true
@@ -88,7 +92,7 @@ do
     return (nargs > 0)
        and (
          (nargs % 2 == 0)
-           and impl(true, 1, ...) -- Optional
+           and impl(true, nargs, ...) -- Optional
             or error("arguments: bad call, dangling argument detected", 2)
        )
        or true
@@ -103,7 +107,7 @@ do
             (nargs > 0)
               and (
                 (nargs % 2 == 0)
-                  and impl(false, 1, ...) -- Not optional
+                  and impl(false, nargs, ...) -- Not optional
                    or error("method_arguments: bad call, dangling argument detected", 2)
               )
               or true
