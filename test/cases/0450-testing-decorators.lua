@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- 0450-decorators.lua: Test for check_decorator and friends
+-- 0450-testing-decorators.lua: Test for check_decorator and friends
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
