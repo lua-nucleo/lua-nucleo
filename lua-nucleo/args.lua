@@ -73,45 +73,42 @@ do
       end
     end
 
-    return true
   end
 
   arguments = function(...)
     local nargs = select('#', ...)
-    return (nargs > 0)
-       and (
-         (nargs % 2 == 0)
-           and impl(false, nargs, ...) -- Not optional
-            or error("arguments: bad call, dangling argument detected", 2)
-       )
-       or true
+    if nargs > 0 then
+      if nargs % 2 == 0 then
+        impl(false, nargs, ...) -- Not optional
+        return
+      end
+      error("arguments: bad call, dangling argument detected", 2)
+    end
   end
 
   optional_arguments = function(...)
     local nargs = select('#', ...)
-    return (nargs > 0)
-       and (
-         (nargs % 2 == 0)
-           and impl(true, nargs, ...) -- Optional
-            or error("arguments: bad call, dangling argument detected", 2)
-       )
-       or true
+    if nargs > 0 then
+      if nargs % 2 == 0 then
+        impl(true, nargs, ...) -- Optional
+        return
+      end
+      error("arguments: bad call, dangling argument detected", 2)
+    end
   end
 
   method_arguments = function(self, ...)
     -- Points error on function, calling function which calls method_arguments()
     local nargs = select('#', ...)
-    return (type(self) ~= "table")
-       and error("bad self (got `"..type(self).."'); use `:'", 3)
-        or (
-            (nargs > 0)
-              and (
-                (nargs % 2 == 0)
-                  and impl(false, nargs, ...) -- Not optional
-                   or error("method_arguments: bad call, dangling argument detected", 2)
-              )
-              or true
-          )
+    if type(self) ~= "table" then
+      error("bad self (got `"..type(self).."'); use `:'", 3)
+    elseif nargs > 0 then
+      if nargs % 2 == 0 then
+        impl(false, nargs, ...) -- Not optional
+        return
+      end
+      error("arguments: bad call, dangling argument detected", 2)
+    end
   end
 
   check_types = function(...)
