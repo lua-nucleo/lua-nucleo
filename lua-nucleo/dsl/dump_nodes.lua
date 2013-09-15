@@ -25,6 +25,8 @@ local walk_tagged_tree
 
 --------------------------------------------------------------------------------
 
+-- TODO: Output should be more Lua-like!
+-- #20
 local dump_nodes = function(
     schema,
     out_filename,
