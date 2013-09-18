@@ -2515,7 +2515,7 @@ test "tisarray-dict" (function()
 end)
 
 test "tisarray-empty-table" (function()
-  ensure("Should return false on a empty table", not tisarray({  }))
+  ensure("Should return true on a empty table", tisarray({  }))
 end)
 
 test "tisarray-sparse-array" (function()
