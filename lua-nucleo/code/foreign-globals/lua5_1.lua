@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
---- List of globals defined in Lua 5.1.4
--- @module lua-nucleo.code.foreign-global.lua5_1
+--- List of globals defined in Lua 5.1.5
+-- @module lua-nucleo.code.foreign-globals.lua5_1
 -- This file is a part of lua-nucleo library
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------

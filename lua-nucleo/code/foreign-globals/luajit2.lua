@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
---- List of globals defined in LuaJIT 2 beta 9
--- @module lua-nucleo.code.foreign-global.luajit2
+--- List of globals defined in LuaJIT 2.0.2
+-- @module lua-nucleo.code.foreign-globals.luajit2
 -- This file is a part of lua-nucleo library
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
