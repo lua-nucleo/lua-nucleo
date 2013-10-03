@@ -232,7 +232,7 @@ return
   };
   {
     type = 'cases';
-    path = 'test/cases/0450-decorators.lua';
+    path = 'test/cases/0450-testing-decorators.lua';
   };
   {
     type = 'cases';
