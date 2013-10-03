@@ -30,6 +30,10 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Local_Functions">Local Functions</a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -46,6 +50,11 @@
   <li><a href="../modules/lua-nucleo.coro.html">lua-nucleo.coro</a></li>
   <li><a href="../modules/lua-nucleo.deque.html">lua-nucleo.deque</a></li>
   <li><a href="../modules/lua-nucleo.diagnostics.html">lua-nucleo.diagnostics</a></li>
+  <li><a href="../modules/lua-nucleo.dsl.common_load_schema.html">lua-nucleo.dsl.common_load_schema</a></li>
+  <li><a href="../modules/lua-nucleo.dsl.dsl_loader.html">lua-nucleo.dsl.dsl_loader</a></li>
+  <li><a href="../modules/lua-nucleo.dsl.dump_nodes.html">lua-nucleo.dsl.dump_nodes</a></li>
+  <li><a href="../modules/lua-nucleo.dsl.tagged-tree.html">lua-nucleo.dsl.tagged-tree</a></li>
+  <li><a href="../modules/lua-nucleo.dsl.walk_data_with_schema.html">lua-nucleo.dsl.walk_data_with_schema</a></li>
   <li><a href="../modules/lua-nucleo.ensure.html">lua-nucleo.ensure</a></li>
   <li><a href="../modules/lua-nucleo.factory.html">lua-nucleo.factory</a></li>
   <li><a href="../modules/lua-nucleo.functional.html">lua-nucleo.functional</a></li>
@@ -106,11 +115,324 @@
     </ul>
 
 
+<h2><a href="#Local_Functions">Local Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#split_by_char">split_by_char&nbsp;(str, delimiter)</a></td>
+	<td class="summary">Split a string by char.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#count_substrings">count_substrings&nbsp;(str, substr)</a></td>
+	<td class="summary">Count the number of substring occurrences.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#split_by_offset">split_by_offset&nbsp;(str, offset)</a></td>
+	<td class="summary">Split a string into two parts at offset.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#fill_placeholders_ex">fill_placeholders_ex&nbsp;(capture, str, dict)</a></td>
+	<td class="summary">Expands variables in input string matched by capture string with values
+ from dictionary.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#fill_placeholders">fill_placeholders&nbsp;(str, dict)</a></td>
+	<td class="summary">Expands variables like $(varname) with values from dictionary.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#fill_curly_placeholders">fill_curly_placeholders&nbsp;(str, dict)</a></td>
+	<td class="summary">Expands variables like ${varname} with values from dictionary.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#kv_concat">kv_concat&nbsp;(t, kv_glue, pair_glue, pairs_fn)</a></td>
+	<td class="summary">Convert non-hierarchical table into string.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#get_escaped_chars_in_ranges">get_escaped_chars_in_ranges&nbsp;(ranges)</a></td>
+	<td class="summary">Returns '%'-separated character string.</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2><a name="Local_Functions"></a>Local Functions</h2>
+    <dl class="function">
+    <dt>
+    <a name = "split_by_char"></a>
+    <strong>split_by_char&nbsp;(str, delimiter)</strong>
+    </dt>
+    <dd>
+    Split a string by char.
+<p> Returns an array of strings, each of which is a substring of string formed by
+ splitting it on boundaries formed by the char delimiter.
+<p> TODO: Looks ugly and slow. Rewrite.
+ #21
+<p> Based on http://lua-users.org/wiki/MakingLuaLikePhp
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+            <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+         Input string</li>
+        <li><span class="parameter">delimiter</span>
+            <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+         Boundary char</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><a class="type" href="../modules/lua-nucleo.table.html">table</a></span>
+        Returns an array of strings created by splitting the string
+   parameter on boundaries formed by the delimiter
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "count_substrings"></a>
+    <strong>count_substrings&nbsp;(str, substr)</strong>
+    </dt>
+    <dd>
+    Count the number of substring occurrences.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+            <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+         The string to search in</li>
+        <li><span class="parameter">substr</span>
+            <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+         The substring to search for, must be not empty</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">number</span></span>
+        Returns the number of substring occurrences
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "split_by_offset"></a>
+    <strong>split_by_offset&nbsp;(str, offset)</strong>
+    </dt>
+    <dd>
+    Split a string into two parts at offset.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+            <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+         Input string</li>
+        <li><span class="parameter">offset</span>
+            <span class="types"><span class="type">number</span></span>
+         Offset at which string will be splitted</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><a class="type" href="../modules/lua-nucleo.table.html">table</a></span>
+        Returns two strings, the first one - is to the left from offset
+   and the second one to the right from offset
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "fill_placeholders_ex"></a>
+    <strong>fill_placeholders_ex&nbsp;(capture, str, dict)</strong>
+    </dt>
+    <dd>
+    Expands variables in input string matched by capture string with values
+ from dictionary.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">capture</span>
+            <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+         Variable matching expression</li>
+        <li><span class="parameter">str</span>
+            <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+         Input string, containing variables to expand</li>
+        <li><span class="parameter">dict</span>
+            <span class="types"><a class="type" href="../modules/lua-nucleo.table.html">table</a></span>
+         Dictionary, containing variables's values</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+        A result string, where variables substituted with values
+    </ol>
+
+
+    <h3>see also:</h3>
+    <ul>
+         <li><a href="../modules/lua-nucleo.string.html#fill_placeholders">fill_placeholders</a></li>
+         <li><a href="../modules/lua-nucleo.string.html#fill_curly_placeholders">fill_curly_placeholders</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"> Universal value substitution to any placeholder, <span class="keyword">for</span> example:
+   fill_placeholders_ex(<span class="string">"%$%((.-)%)"</span>, <span class="string">"a = $(a)"</span>, { a = <span class="number">42</span> })
+   returns <span class="string">"a = 42"</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "fill_placeholders"></a>
+    <strong>fill_placeholders&nbsp;(str, dict)</strong>
+    </dt>
+    <dd>
+    Expands variables like $(varname) with values from dictionary.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+            <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+         Input string, containing variables to expand</li>
+        <li><span class="parameter">dict</span>
+            <span class="types"><a class="type" href="../modules/lua-nucleo.table.html">table</a></span>
+         Dictionary, containing variables's values</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+        A result string, where variables substituted with values
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">fill_placeholders(<span class="string">"a = $(a)"</span>, { a = <span class="number">42</span> })
+   returns <span class="string">"a = 42"</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "fill_curly_placeholders"></a>
+    <strong>fill_curly_placeholders&nbsp;(str, dict)</strong>
+    </dt>
+    <dd>
+    Expands variables like ${varname} with values from dictionary.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+            <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+         Input string, containing variables to expand</li>
+        <li><span class="parameter">dict</span>
+            <span class="types"><a class="type" href="../modules/lua-nucleo.table.html">table</a></span>
+         Dictionary, containing variables's values</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+        A result string, where variables substituted with values
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">fill_placeholders(<span class="string">"a = ${a}"</span>, { a = <span class="number">42</span> })
+   returns <span class="string">"a = 42"</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "kv_concat"></a>
+    <strong>kv_concat&nbsp;(t, kv_glue, pair_glue, pairs_fn)</strong>
+    </dt>
+    <dd>
+    Convert non-hierarchical table into string.
+<p> Values of key and value are concatted using custom glue `kv_glue`.
+ Allowed values for key and value are numbers and strings.
+ Pairs are concatted using custom glue `pair_glue`.
+ Table can be traversed using custom iterator `pairs_fn`.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+            <span class="types"><a class="type" href="../modules/lua-nucleo.table.html">table</a></span>
+         Non-hierarchical table with [key]=value pairs</li>
+        <li><span class="parameter">kv_glue</span>
+            <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+         Glue between key and value</li>
+        <li><span class="parameter">pair_glue</span>
+            <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+         Glue between pairs (defaut: "")</li>
+        <li><span class="parameter">pairs_fn</span>
+            <span class="types"><span class="type">function</span></span>
+         Table iterator (default: pairs)</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+        A result string
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">kv_concat({a = <span class="number">1</span>, b = <span class="number">2</span>}, <span class="string">" =&gt; "</span>, <span class="string">"; "</span>, <span class="global">pairs</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "get_escaped_chars_in_ranges"></a>
+    <strong>get_escaped_chars_in_ranges&nbsp;(ranges)</strong>
+    </dt>
+    <dd>
+    Returns '%'-separated character string.
+ separated) from char with ranges[1] code to char with ranges[2] code,
+ concats it to same way to ranges[3] - ranges[4], and so on.
+<p> If range[i], range[i+1] are strings,
+ ignore all string chars but first, and
+ concats all chars ('%' separated) from ranges[1][1] to ranges[2][1],
+ concats it to ranges[3][1] - ranges[4][1], and so on.
+<p> If range[i], range[i+1] are different types, also works fine, for example:
+ get_escaped_chars_in_ranges({"0",50}) returns "%0%1%2".
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ranges</span>
+         If range[i], range[i+1] are numbers, concats all chars ('%'</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+        Returns '%'-separated character string.
+    </ol>
+
+
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->
