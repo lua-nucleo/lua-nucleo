@@ -115,10 +115,6 @@ end
 -- Returns an array of strings, each of which is a substring of string formed by
 -- splitting it on boundaries formed by the char delimiter.
 --
--- TODO: Looks ugly and slow. Rewrite.
--- #21
---
--- Based on http://lua-users.org/wiki/MakingLuaLikePhp
 -- @tparam string str Input string
 -- @tparam string delimiter Boundary char
 -- @treturn table Returns an array of strings created by splitting the string
@@ -134,17 +130,21 @@ local split_by_char = function(str, delimiter)
     return { }
   end
   
+  local sep = delimiter:byte()
   local result = { }
-  local pos = 0
+  local pos = 1
 
-  -- for each delimiter found
-  for st, sp in function() return string_find(str, delimiter, pos, true) end do
-    -- Attach chars left of current delimiter
-    table_insert(result, string_sub(str, pos, st - 1))
-    pos = sp + 1 -- Jump past current delimiter
+  -- lookup delimiter in string
+  for i = 1, #str do
+    -- delimiter found?
+    if str:byte(i) == sep then
+      -- store chunk before delimiter
+      result[#result + 1] = str:sub(pos, i - 1)
+      pos = i + 1
+    end
   end
-  -- Attach chars right of last delimiter
-  table_insert(result, string_sub(str, pos))
+  -- store string remainder
+  result[#result + 1] = str:sub(pos)
 
   return result
 end

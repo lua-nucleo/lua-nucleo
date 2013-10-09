@@ -430,6 +430,16 @@ test "split_by_char-basic" (function()
       end,
       "Invalid delimiter"
     )
+  ensure_tequals(
+      "quirky delimiter",
+      split_by_char("\000\000", "\000"),
+      { "", "", "" }
+    )
+  ensure_tequals(
+      "rich text and zero delimiter",
+      split_by_char("Барсик!", "\000"),
+      { "Барсик!" }
+    )
 end)
 
 --------------------------------------------------------------------------------
