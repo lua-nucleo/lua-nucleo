@@ -150,6 +150,10 @@
 	<td class="name" nowrap><a href="#get_escaped_chars_in_ranges">get_escaped_chars_in_ranges&nbsp;(ranges)</a></td>
 	<td class="summary">Returns '%'-separated character string.</td>
 	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tjson_simple">tjson_simple&nbsp;(t)</a></td>
+	<td class="summary">Serialize table into json string.</td>
+	</tr>
 </table>
 
 <br/>
@@ -166,9 +170,7 @@
     Split a string by char.
 <p> Returns an array of strings, each of which is a substring of string formed by
  splitting it on boundaries formed by the char delimiter.
-<p> TODO: Looks ugly and slow. Rewrite.
- #21
-<p> Based on http://lua-users.org/wiki/MakingLuaLikePhp
+
 
     <h3>Parameters:</h3>
     <ul>
@@ -430,6 +432,39 @@
 
 
 
+
+</dd>
+    <dt>
+    <a name = "tjson_simple"></a>
+    <strong>tjson_simple&nbsp;(t)</strong>
+    </dt>
+    <dd>
+    Serialize table into json string.
+<p> Tables with string keys only becomes objects. Tables with integer keys
+ without gaps becomes arrays. Value types nil, NaN, +Inf, -Inf is not
+ supported.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+            <span class="types"><a class="type" href="../modules/lua-nucleo.table.html">table</a></span>
+         Table without self-references</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+        A result string
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">tjson_simple({a = <span class="number">1</span>, b = <span class="number">2</span>})
+   returns <span class="string">'{"a":1,"b":2}'</span></pre>
+    </ul>
 
 </dd>
 </dl>
