@@ -6,7 +6,7 @@
 --------------------------------------------------------------------------------
 
 local table_concat, table_insert = table.concat, table.insert
-local math_floor, math_inf = math.floor, math.huge
+local math_floor, math_huge = math.floor, math.huge
 local string_find, string_sub, string_format = string.find, string.sub, string.format
 local string_byte, string_char = string.byte, string.char
 local assert, pairs, type = assert, pairs, type
@@ -474,7 +474,7 @@ do
       -- Throw exceptions on NaN, +Inf, -Inf
       if v ~= v then
         error("tjson_simple: `NaN' value not supported")
-      elseif v == math_inf or v == -math_inf then
+      elseif v == math_huge or v == -math_huge then
         error("tjson_simple: `Inf' value not supported")
       end
       cat (v)
@@ -529,6 +529,16 @@ do
     visited[t] = nil
   end
 
+  --- Serialize table into json string.
+  --
+  -- Tables with string keys only becomes objects. Tables with integer keys
+  -- without gaps becomes arrays. Value types nil, NaN, +Inf, -Inf is not
+  -- supported.
+  -- @tparam table t Table without self-references
+  -- @treturn string A result string
+  -- @usage tjson_simple({a = 1, b = 2})
+  --   returns '{"a":1,"b":2}'
+  -- @local here
   tjson_simple = function(t)
     local cat, concat = make_concatter()
     impl(cat, t, { })

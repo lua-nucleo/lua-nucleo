@@ -1375,7 +1375,7 @@ end)
 
 test:test_for "tjson_simple" (function()
   -- Helpers
-  local create_thread = coroutine.create
+  local coroutine_create = coroutine.create
   local ensure_tjson_fails = function(msg, data, error_msg)
     ensure_fails_with_substring(
         msg,
@@ -1400,13 +1400,10 @@ test:test_for "tjson_simple" (function()
   ensure_strequals('single boolean (false)', tjson_simple(false), 'false')
 
   -- Unsupported types: nil, function, thread, userdata
-  local fn = function() end;
-  local thread = create_thread(function() end)
-  local userdata = newproxy()
   ensure_tjson_unsupported_type(nil)
-  ensure_tjson_unsupported_type(fn)
-  ensure_tjson_unsupported_type(thread)
-  ensure_tjson_unsupported_type(userdata)
+  ensure_tjson_unsupported_type(function() end)
+  ensure_tjson_unsupported_type(coroutine_create(function() end))
+  ensure_tjson_unsupported_type(newproxy())
 
   -- Unsupported values: NaN, +Inf, -Inf
   ensure_tjson_fails('unsupported value', 1/0, "tjson_simple: `Inf' value not supported")
@@ -1416,7 +1413,7 @@ test:test_for "tjson_simple" (function()
   -- Tables
   ensure_strequals(
       'table to array',
-      tjson_simple({1, -1, 123.123, 'abc', true, false, {}}),
+      tjson_simple({1, -1, 123.123, 'abc', true, false, { }}),
       '[1,-1,123.123,"abc",true,false,[]]'
     )
   ensure_strequals(
@@ -1426,9 +1423,11 @@ test:test_for "tjson_simple" (function()
         ),
       '{"a":1,"c":123.123,"b":-1,"e":true,"d":"abc","j":[1],"f":false}'
     )
+  ensure_strequals('empty table', tjson_simple({ }), '[]')
+  ensure_strequals('empty tables', tjson_simple({ { }, { } }), '[[],[]]')
 
   -- Exceptions
-  local self_reference_tbl = {}
+  local self_reference_tbl = { }
   self_reference_tbl[1] = self_reference_tbl
   ensure_tjson_fails(
       'self reference',
@@ -1436,7 +1435,15 @@ test:test_for "tjson_simple" (function()
       "tjson_simple: can't handle self-references"
     )
 
-  local non_string_key_tbl = {}
+  local mixed_keys_tbl = { "a", "b" }
+  mixed_keys_tbl["c"] = "d"
+  ensure_tjson_fails(
+      'mixed keys',
+      mixed_keys_tbl,
+      "tjson_simple: non-string keys are not supported"
+    )
+
+  local non_string_key_tbl = { }
   non_string_key_tbl[1.23] = 1
   ensure_tjson_fails(
       'non string keys',
