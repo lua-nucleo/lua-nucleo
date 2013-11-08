@@ -63,6 +63,8 @@ assert(is_declared("bad_1") == false)
 
 local expected =
 {
+  ["_PROMPT"] = true;
+  ["_PROMPT2"] = true;
   ["good_1"] = true;
   ["good_2"] = true;
   ["good_3"] = true;
