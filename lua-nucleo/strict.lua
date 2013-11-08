@@ -44,6 +44,10 @@ if getmetatable(_G) ~= nil then
   error("_G already got metatable")
 end
 
+-- NOTE: declare global variables for interactive mode of Lua interpreter
+declare('_PROMPT')
+declare('_PROMPT2')
+
 setmetatable(_G, {
   __index = function(t, k)
     if declared[k] then
