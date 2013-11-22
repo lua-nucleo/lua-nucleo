@@ -5,7 +5,8 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
-local socket = require "socket"
+-- debug info calculation
+--local socket = require "socket"
 
 --------------------------------------------------------------------------------
 

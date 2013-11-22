@@ -5,7 +5,8 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
-local socket = require "socket"
+-- debug info calculation
+--local socket = require "socket"
 
 -- Necessary for debug info output
 --local ffi = require "ffi"
@@ -130,7 +131,7 @@ do
     end
 
     -- debug info calculation
-    local beg_time = socket.gettime()
+    --local beg_time = socket.gettime()
     local num_buckets, num_sorted_buckets = 0, 0
 
     for k,v in pairs(self.buckets_) do
@@ -147,7 +148,7 @@ do
     end
 
     -- debug info calculation
-    self.time_sort_ = self.time_sort_ + socket.gettime() - beg_time
+    --self.time_sort_ = self.time_sort_ + socket.gettime() - beg_time
 
     -- debug info output
     --dbg("num newly sorted buckets: ", num_sorted_buckets, "/", num_buckets)
@@ -224,7 +225,7 @@ do
     self:sort()
 
     -- debug info calculation
-    local beg_time = socket.gettime()
+    --local beg_time = socket.gettime()
 
     -- debug info calculation
     local overall_keys, overall_items, overall_hits = 0, 0, 0
@@ -277,6 +278,7 @@ do
     end
 
     -- debug info output
+    --[[
     log(
       "overall keys =", overall_keys,
       "q =" , overall_items, "key hits =", overall_hits,
@@ -287,14 +289,14 @@ do
     log("min bucket size:", min_bucket_size, "max bucket size:", max_bucket_size)
 
     -- debug info calculation
-    self.time_for_each_keyvalue_ =
-      self.time_for_each_keyvalue_ + socket.gettime() - beg_time
+    --self.time_for_each_keyvalue_ =
+    --  self.time_for_each_keyvalue_ + socket.gettime() - beg_time
 
     -- debug info output
     log(
         "for_each_keyvalue time:", self.time_for_each_keyvalue_,
         "bucket data sort time:", self.time_sort_
-      )
+      )]]
   end
 
   local create_key_sort_pred = function(key_comp)
