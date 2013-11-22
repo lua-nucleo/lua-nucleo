@@ -26,7 +26,7 @@ local MAX_BUCKET_SIZE = 1024 * 1024 * 1024
 
 --------------------------------------------------------------------------------
 
-local make_key_value_store_sophisticated
+local make_sophisticated_key_value_store
 do
   local dummy_ophash_comp = function(key1, key2)
     error("Dummy hash comp was called")
@@ -315,7 +315,7 @@ do
     self.bucket_data_sorted_ = true
   end
 
-  make_key_value_store_sophisticated = function(
+  make_sophisticated_key_value_store = function(
       max_values,
       key_comp,
       order_preserving_hash_comp,
@@ -352,7 +352,9 @@ do
 
 end
 
+--------------------------------------------------------------------------------
+
 return
 {
-  make_key_value_store_sophisticated = make_key_value_store_sophisticated
+  make_sophisticated_key_value_store = make_sophisticated_key_value_store;
 }

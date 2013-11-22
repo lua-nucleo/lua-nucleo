@@ -17,7 +17,7 @@ local MAX_BUCKET_SIZE = 1024 * 1024 * 1024
 
 --------------------------------------------------------------------------------
 
-local make_key_value_store_ophash
+local make_ophash_key_value_store
 do
   local dummy_ophash_comp = function(key1, key2)
     error("Dummy hash comp was called")
@@ -142,7 +142,7 @@ do
     self.sorted_ = true
   end
 
-  make_key_value_store_ophash = function(
+  make_ophash_key_value_store = function(
       max_values,
       key_comp,
       order_preserving_hash_comp
@@ -170,7 +170,9 @@ do
 
 end
 
+--------------------------------------------------------------------------------
+
 return
 {
-  make_key_value_store_ophash = make_key_value_store_ophash
+  make_ophash_key_value_store = make_ophash_key_value_store;
 }

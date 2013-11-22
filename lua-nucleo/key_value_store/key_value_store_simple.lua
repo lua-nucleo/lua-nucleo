@@ -9,7 +9,7 @@ local table_sort = table.sort
 
 --------------------------------------------------------------------------------
 
-local make_key_value_store_simple
+local make_simple_key_value_store
 do
   local empty = function(self)
     return self.num_values_ == 0
@@ -63,7 +63,7 @@ do
     self.num_values_ = 0
   end
 
-  make_key_value_store_simple = function(max_values, key_comp)
+  make_simple_key_value_store = function(max_values, key_comp)
     local set = { }
 
     return
@@ -86,7 +86,9 @@ do
 
 end
 
+--------------------------------------------------------------------------------
+
 return
 {
-  make_key_value_store_simple = make_key_value_store_simple
+  make_simple_key_value_store = make_simple_key_value_store;
 }
