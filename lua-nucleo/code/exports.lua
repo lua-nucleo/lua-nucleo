@@ -458,6 +458,10 @@ return
   {
     { "lua-nucleo/log.lua", w = 0 };
   };
+  make_ophash_key_value_store =
+  {
+    { "lua-nucleo/key_value_store/key_value_store_ophash.lua", w = 0 };
+  };
   make_ordered_named_cat_manager =
   {
     { "lua-nucleo/ordered_named_cat_manager.lua", w = 0 };
@@ -473,6 +477,14 @@ return
   make_scoped_cat_tree_manager =
   {
     { "lua-nucleo/scoped_cat_tree_manager.lua", w = 0 };
+  };
+  make_simple_key_value_store =
+  {
+    { "lua-nucleo/key_value_store/key_value_store_simple.lua", w = 0 };
+  };
+  make_sophisticated_key_value_store =
+  {
+    { "lua-nucleo/key_value_store/key_value_store_sophisticated.lua", w = 0 };
   };
   make_stack_with_factory =
   {

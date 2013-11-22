@@ -258,4 +258,16 @@ return
     type = 'cases';
     path = 'test/cases/0510-dsl-walk_data_with_schema.lua';
   };
+  {
+    type = 'cases';
+    path = 'test/cases/0610-key_value_store_ophash.lua';
+  };
+  {
+    type = 'cases';
+    path = 'test/cases/0620-key_value_store_simple.lua';
+  };
+  {
+    type = 'cases';
+    path = 'test/cases/0630-key_value_store_sophisticated.lua';
+  };
 }
