@@ -597,7 +597,9 @@ local run_tests = function(names, parameters_list)
   for i = 1, #names do
     local name = names[i]
     print("Running test", name)
+    io.flush()
     local res, stage, err, todo = run_test(name, parameters_list)
+    io.flush()
     if res then
       print("OK")
       nok = nok + 1
