@@ -260,6 +260,10 @@ return
   };
   {
     type = 'cases';
+    path = 'test/cases/0520-dsl-path_based_walker.lua';
+  };
+  {
+    type = 'cases';
     path = 'test/cases/0610-key_value_store_ophash.lua';
   };
   {

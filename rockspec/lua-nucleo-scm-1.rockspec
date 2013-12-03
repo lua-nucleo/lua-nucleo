@@ -31,6 +31,7 @@ build = {
          ["lua-nucleo.dsl.common_load_schema"] = "lua-nucleo/dsl/common_load_schema.lua";
          ["lua-nucleo.dsl.dsl_loader"] = "lua-nucleo/dsl/dsl_loader.lua";
          ["lua-nucleo.dsl.dump_nodes"] = "lua-nucleo/dsl/dump_nodes.lua";
+         ["lua-nucleo.dsl.path_based_walker"] = "lua-nucleo/dsl/path_based_walker.lua";
          ["lua-nucleo.dsl.tagged-tree"] = "lua-nucleo/dsl/tagged-tree.lua";
          ["lua-nucleo.dsl.walk_data_with_schema"] = "lua-nucleo/dsl/walk_data_with_schema.lua";
          ["lua-nucleo.ensure"] = "lua-nucleo/ensure.lua";
