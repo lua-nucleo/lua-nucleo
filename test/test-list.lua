@@ -258,4 +258,8 @@ return
     type = 'cases';
     path = 'test/cases/0510-dsl-walk_data_with_schema.lua';
   };
+  {
+    type = 'cases';
+    path = 'test/cases/0520-dsl-path_based_walker.lua';
+  };
 }

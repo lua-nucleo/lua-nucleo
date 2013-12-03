@@ -462,6 +462,10 @@ return
   {
     { "lua-nucleo/ordered_named_cat_manager.lua", w = 0 };
   };
+  make_path_based_walker =
+  {
+    { "lua-nucleo/dsl/path_based_walker.lua", w = 0 };
+  };
   make_prettifier =
   {
     { "lua-nucleo/prettifier.lua", w = 0 };
