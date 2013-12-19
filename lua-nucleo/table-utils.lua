@@ -26,7 +26,7 @@ local arguments,
         'method_arguments'
       }
 
-local is_number, 
+local is_number,
       is_table
       = import 'lua-nucleo/type.lua'
       {
@@ -720,7 +720,7 @@ do
     end
 
     if nargs == 1 then
-       dest[key] = value
+      dest[key] = value
       return dest
     end
 
@@ -856,22 +856,22 @@ end
 -- Note the empty table is treated as an array
 local tisarray = function(t)
   for k, _ in pairs(t) do
-    if 
+    if
       -- Array keys should be numbers...
-      not is_number(k) 
+      not is_number(k)
       -- ...greater than 1...
-      or k < 1 
+      or k < 1
       -- ...in a continuous sequence...
-      or (k > 1 and t[k - 1] == nil) 
+      or (k > 1 and t[k - 1] == nil)
       -- ...of integers...
-      or k % 1 ~= 0 
-      -- ...avoiding floating point overflow 
+      or k % 1 ~= 0
+      -- ...avoiding floating point overflow
       or k == k - 1
     then
       return false
     end
   end
-  return true  
+  return true
 end
 
 --------------------------------------------------------------------------------
