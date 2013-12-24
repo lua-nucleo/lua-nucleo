@@ -26,6 +26,7 @@ local tstr = import 'lua-nucleo/table.lua' { 'tstr' }
 
 local do_nothing,
       identity,
+      less_than,
       invariant,
       create_table,
       make_generator_mt,
@@ -41,6 +42,7 @@ local do_nothing,
       {
         'do_nothing',
         'identity',
+        'less_than',
         'invariant',
         'create_table',
         'make_generator_mt',
@@ -116,6 +118,14 @@ test:test_for "identity" (function()
 end)
 
 --------------------------------------------------------------------------------
+
+test:test_for "less_than" (function()
+  ensure_equals("1 less than 2", less_than(1, 2), true)
+  ensure_equals("2 not less than 2", less_than(2, 2), false)
+  ensure_equals("3 not less than 2", less_than(3, 2), false)
+  ensure_equals("'a' less than 'b'", less_than("a", "b"), true)
+  ensure_equals("'aa' not less than 'a'", less_than("aa", "a"), false)
+end)
 
 test:test_for "invariant" (function()
   local data =

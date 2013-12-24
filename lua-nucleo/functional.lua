@@ -26,6 +26,10 @@ local do_nothing = function() end
 
 local identity = function(...) return ... end
 
+local less_than = function(lhs, rhs)
+  return lhs < rhs
+end
+
 -- TODO: Backport advanced version with caching for primitive types
 local invariant = function(v)
   return function()
@@ -126,6 +130,7 @@ return
 {
   do_nothing = do_nothing;
   identity = identity;
+  less_than = less_than;
   invariant = invariant;
   create_table = create_table;
   make_generator_mt = make_generator_mt;
