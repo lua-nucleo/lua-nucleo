@@ -51,6 +51,7 @@ build = {
          ["lua-nucleo.pcall"] = "lua-nucleo/pcall.lua";
          ["lua-nucleo.prettifier"] = "lua-nucleo/prettifier.lua";
          ["lua-nucleo.priority_queue"] = "lua-nucleo/priority_queue.lua";
+         ["lua-nucleo.quicksort"] = "lua-nucleo/quicksort.lua";
          ["lua-nucleo.random"] = "lua-nucleo/random.lua";
          ["lua-nucleo.require_and_declare"] = "lua-nucleo/require_and_declare.lua";
          ["lua-nucleo.sandbox"] = "lua-nucleo/sandbox.lua";

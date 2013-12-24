@@ -386,6 +386,10 @@ return
   {
     { "lua-nucleo/tdeepequals.lua", w = 0 };
   };
+  less_than =
+  {
+    { "lua-nucleo/functional.lua", w = 0 };
+  };
   list_caller =
   {
     { "lua-nucleo/functional.lua", w = 0 };
@@ -533,6 +537,10 @@ return
   pick_one =
   {
     { "lua-nucleo/algorithm.lua", w = 0 };
+  };
+  quicksort =
+  {
+    { "lua-nucleo/quicksort.lua", w = 0 };
   };
   remove_nil_arguments =
   {

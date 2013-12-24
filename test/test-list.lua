@@ -274,4 +274,8 @@ return
     type = 'cases';
     path = 'test/cases/0630-key_value_store_sophisticated.lua';
   };
+  {
+    type = 'cases';
+    path = 'test/cases/0640-quicksort.lua';
+  };
 }
