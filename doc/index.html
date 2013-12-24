@@ -31,6 +31,9 @@
 
 <h2>Modules</h2>
 <ul>
+  <li><a href="modules/key_value_store.key_value_store_ophash.html">key_value_store.key_value_store_ophash</a></li>
+  <li><a href="modules/key_value_store.key_value_store_simple.html">key_value_store.key_value_store_simple</a></li>
+  <li><a href="modules/key_value_store.key_value_store_sophisticated.html">key_value_store.key_value_store_sophisticated</a></li>
   <li><a href="modules/lua-nucleo.algorithm.html">lua-nucleo.algorithm</a></li>
   <li><a href="modules/lua-nucleo.args.html">lua-nucleo.args</a></li>
   <li><a href="modules/lua-nucleo.assert.html">lua-nucleo.assert</a></li>
@@ -46,6 +49,7 @@
   <li><a href="modules/lua-nucleo.dsl.common_load_schema.html">lua-nucleo.dsl.common_load_schema</a></li>
   <li><a href="modules/lua-nucleo.dsl.dsl_loader.html">lua-nucleo.dsl.dsl_loader</a></li>
   <li><a href="modules/lua-nucleo.dsl.dump_nodes.html">lua-nucleo.dsl.dump_nodes</a></li>
+  <li><a href="modules/lua-nucleo.dsl.path_based_walker.html">lua-nucleo.dsl.path_based_walker</a></li>
   <li><a href="modules/lua-nucleo.dsl.tagged-tree.html">lua-nucleo.dsl.tagged-tree</a></li>
   <li><a href="modules/lua-nucleo.dsl.walk_data_with_schema.html">lua-nucleo.dsl.walk_data_with_schema</a></li>
   <li><a href="modules/lua-nucleo.ensure.html">lua-nucleo.ensure</a></li>
@@ -62,6 +66,7 @@
   <li><a href="modules/lua-nucleo.pcall.html">lua-nucleo.pcall</a></li>
   <li><a href="modules/lua-nucleo.prettifier.html">lua-nucleo.prettifier</a></li>
   <li><a href="modules/lua-nucleo.priority_queue.html">lua-nucleo.priority_queue</a></li>
+  <li><a href="modules/lua-nucleo.quicksort.html">lua-nucleo.quicksort</a></li>
   <li><a href="modules/lua-nucleo.random.html">lua-nucleo.random</a></li>
   <li><a href="modules/lua-nucleo.require_and_declare.html">lua-nucleo.require_and_declare</a></li>
   <li><a href="modules/lua-nucleo.sandbox.html">lua-nucleo.sandbox</a></li>
@@ -87,6 +92,7 @@
   <li><a href="modules/test.test-lib.init.no-suite.html">test.test-lib.init.no-suite</a></li>
   <li><a href="modules/test.test-lib.init.no-suite-no-import.html">test.test-lib.init.no-suite-no-import</a></li>
   <li><a href="modules/test.test-lib.init.strict.html">test.test-lib.init.strict</a></li>
+  <li><a href="modules/test.test-lib.init.strict-import-as-require.html">test.test-lib.init.strict-import-as-require</a></li>
   <li><a href="modules/test.test-lib.table.html">test.test-lib.table</a></li>
   <li><a href="modules/test.test-lib.tdeepequals-test-utils.html">test.test-lib.tdeepequals-test-utils</a></li>
   <li><a href="modules/test.test-lib.tserialize-test-utils.html">test.test-lib.tserialize-test-utils</a></li>
@@ -104,6 +110,24 @@
 
 <h2>Modules</h2>
 <table class="module_list">
+	<tr>
+		<td class="name"  nowrap><a href="modules/key_value_store.key_value_store_ophash.html">key_value_store.key_value_store_ophash</a></td>
+		<td class="summary">key_value_store_ophash.lua: store for key-falue, fast to add and enumerate
+ Implemenation using order preserving hash
+ This file is a part of lua-nucleo library</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="modules/key_value_store.key_value_store_simple.html">key_value_store.key_value_store_simple</a></td>
+		<td class="summary">key_value_store_simple.lua: store for key-falue, fast to add and enumerate
+ Simple implementation
+ This file is a part of lua-nucleo library</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="modules/key_value_store.key_value_store_sophisticated.html">key_value_store.key_value_store_sophisticated</a></td>
+		<td class="summary">key_value_store_sophisticated.lua: store for key-falue
+ Implementation using order preserving hash and trying to sort during addition
+ This file is a part of lua-nucleo library</td>
+	</tr>
 	<tr>
 		<td class="name"  nowrap><a href="modules/lua-nucleo.algorithm.html">lua-nucleo.algorithm</a></td>
 		<td class="summary">Various common algorithms</td>
@@ -163,6 +187,10 @@
 	<tr>
 		<td class="name"  nowrap><a href="modules/lua-nucleo.dsl.dump_nodes.html">lua-nucleo.dsl.dump_nodes</a></td>
 		<td class="summary">Schema node dumper</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="modules/lua-nucleo.dsl.path_based_walker.html">lua-nucleo.dsl.path_based_walker</a></td>
+		<td class="summary">Path-based data walker</td>
 	</tr>
 	<tr>
 		<td class="name"  nowrap><a href="modules/lua-nucleo.dsl.tagged-tree.html">lua-nucleo.dsl.tagged-tree</a></td>
@@ -227,6 +255,10 @@
 	<tr>
 		<td class="name"  nowrap><a href="modules/lua-nucleo.priority_queue.html">lua-nucleo.priority_queue</a></td>
 		<td class="summary">Queue of objects sorted by priority</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="modules/lua-nucleo.quicksort.html">lua-nucleo.quicksort</a></td>
+		<td class="summary">Table quicksort implementation</td>
 	</tr>
 	<tr>
 		<td class="name"  nowrap><a href="modules/lua-nucleo.random.html">lua-nucleo.random</a></td>
@@ -327,6 +359,10 @@
 	<tr>
 		<td class="name"  nowrap><a href="modules/test.test-lib.init.strict.html">test.test-lib.init.strict</a></td>
 		<td class="summary">Test initialization file</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="modules/test.test-lib.init.strict-import-as-require.html">test.test-lib.init.strict-import-as-require</a></td>
+		<td class="summary">Test initialization file with import as require</td>
 	</tr>
 	<tr>
 		<td class="name"  nowrap><a href="modules/test.test-lib.table.html">test.test-lib.table</a></td>
