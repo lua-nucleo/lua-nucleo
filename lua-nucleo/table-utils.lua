@@ -694,8 +694,7 @@ do
 
     dest[key] = assert_is_table(
         dest[key] or { },
-        "key `" .. tostring(key)
-     .. "' already exists and its value is not a table"
+        'key "' .. key .. '" already exists and its value is not a table'
       )
 
     return impl(nargs - 1, dest[key], ...)
@@ -721,14 +720,13 @@ do
     end
 
     if nargs == 1 then
-      dest[key] = value
+       dest[key] = value
       return dest
     end
 
     dest[key] = assert_is_table(
         dest[key] or { },
-        "key `" .. tostring(key)
-     .. "' already exists and its value is not a table"
+        'key "' .. key .. '" already exists and its value is not a table'
       )
 
     return impl(nargs - 1, value, dest[key], ...)
@@ -822,7 +820,7 @@ local tfilterkeylist = function(t, f, strict)
     if t[k] ~= nil then
       r[k] = t[k]
     elseif strict then
-      return nil, "Field `" .. tostring(k) .. "' is absent"
+      return nil, "Field " .. k .. " is absent"
     end
   end
   return r
