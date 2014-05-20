@@ -6,15 +6,17 @@
 --------------------------------------------------------------------------------
 
 local table_concat, table_insert = table.concat, table.insert
-local math_floor = math.floor
+local math_floor, math_huge = math.floor, math.huge
 local string_find, string_sub, string_format = string.find, string.sub, string.format
 local string_byte, string_char = string.byte, string.char
 local assert, pairs, type = assert, pairs, type
 
-local tidentityset
+local tidentityset,
+      tisarray
       = import 'lua-nucleo/table-utils.lua'
       {
-        'tidentityset'
+        'tidentityset',
+        'tisarray'
       }
 
 local arguments
@@ -463,6 +465,87 @@ do
   end
 end
 
+local tjson_simple
+do
+  local cat_value = function(cat, v, v_type)
+    if v_type == "string" then
+      cat (escape_for_json(v))
+    elseif v_type == "number" then
+      -- Throw exceptions on NaN, +Inf, -Inf
+      if v ~= v then
+        error("tjson_simple: `NaN' value not supported")
+      elseif v == math_huge or v == -math_huge then
+        error("tjson_simple: `Inf' value not supported")
+      end
+      cat (v)
+    elseif v_type == "boolean" then
+      cat (tostring(v))
+    else
+      error("tjson_simple: value type `" .. v_type .. "' not supported")
+    end
+  end
+
+  local function impl(cat, t, visited)
+    local t_type = type(t)
+    if t_type ~= "table" then
+      cat_value(cat, t, t_type)
+      return
+    end
+
+    if visited[t] then
+      error("tjson_simple: can't handle self-references")
+    end
+    visited[t] = true
+
+    if tisarray(t) then
+      cat '['
+      if #t > 0 then -- Suppress joining for empty array
+        impl(cat, t[1], visited)
+        for i = 2, #t do -- Implicit conversion to zero-based array.
+          cat ','
+          impl(cat, t[i], visited)
+        end
+      end
+      cat ']'
+    else
+      cat '{'
+      local need_comma = false
+      for k, v in pairs(t) do
+        local k_type = type(k)
+        if k_type ~= "string" then
+          error("tjson_simple: non-string keys are not supported")
+        end
+        if need_comma then
+          cat ','
+        end
+        cat_value(cat, k, k_type)
+        cat ':'
+        impl(cat, v, visited)
+        need_comma = true
+      end
+      cat '}'
+    end
+
+    visited[t] = nil
+  end
+
+  --- Serialize table into json string.
+  --
+  -- Tables with string keys only becomes objects. Tables with integer keys
+  -- without gaps becomes arrays. Value types nil, NaN, +Inf, -Inf is not
+  -- supported.
+  -- @tparam table t Table without self-references
+  -- @treturn string A result string
+  -- @usage tjson_simple({a = 1, b = 2})
+  --   returns '{"a":1,"b":2}'
+  -- @local here
+  tjson_simple = function(t)
+    local cat, concat = make_concatter()
+    impl(cat, t, { })
+    return concat()
+  end
+end
+
 return
 {
   escape_string = escape_string;
@@ -489,4 +572,5 @@ return
   number_to_string = number_to_string;
   serialize_number = serialize_number;
   get_escaped_chars_in_ranges = get_escaped_chars_in_ranges;
+  tjson_simple = tjson_simple;
 }
