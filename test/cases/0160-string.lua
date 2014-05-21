@@ -52,6 +52,7 @@ local make_concatter,
       number_to_string,
       serialize_number,
       get_escaped_chars_in_ranges,
+      tjson_simple,
       string_exports
       = import 'lua-nucleo/string.lua'
       {
@@ -78,7 +79,8 @@ local make_concatter,
         'cut_with_ellipsis',
         'number_to_string',
         'serialize_number',
-        'get_escaped_chars_in_ranges'
+        'get_escaped_chars_in_ranges',
+        'tjson_simple'
       }
 
 local ordered_pairs
@@ -1366,6 +1368,87 @@ test:test "get_escaped_chars_in_ranges-basic" (function()
       get_escaped_chars_in_ranges({ 32, 58, "a", "h", 34, 38, "0", 50 }),
       "% %!%\"%#%$%%%&%'%(%)%*%+%,%-%.%/%0%1%2%3%4%5%6%7%8%9%:%a%b%c%d%e%f%g" ..
       "%h%\"%#%$%%%&%0%1%2"
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+test:test_for "tjson_simple" (function()
+  -- Helpers
+  local coroutine_create = coroutine.create
+  local ensure_tjson_fails = function(msg, data, error_msg)
+    ensure_fails_with_substring(
+        msg,
+        function() tjson_simple(data) end,
+        error_msg
+      )
+  end
+  local ensure_tjson_unsupported_type = function(data)
+    ensure_tjson_fails(
+        "unsupported type check",
+        data,
+        "tjson_simple: value type `" .. type(data) .. "' not supported"
+      )
+  end
+
+  -- Single values: number, string, boolean
+  ensure_strequals('single integer (positive)', tjson_simple(123), '123')
+  ensure_strequals('single integer (negative)', tjson_simple(-123), '-123')
+  ensure_strequals('single float', tjson_simple(123.123), '123.123')
+  ensure_strequals('single string', tjson_simple('Just text'), '"Just text"')
+  ensure_strequals('single boolean (true)', tjson_simple(true), 'true')
+  ensure_strequals('single boolean (false)', tjson_simple(false), 'false')
+
+  -- Unsupported types: nil, function, thread, userdata
+  ensure_tjson_unsupported_type(nil)
+  ensure_tjson_unsupported_type(function() end)
+  ensure_tjson_unsupported_type(coroutine_create(function() end))
+  ensure_tjson_unsupported_type(newproxy())
+
+  -- Unsupported values: NaN, +Inf, -Inf
+  ensure_tjson_fails('unsupported value', 1/0, "tjson_simple: `Inf' value not supported")
+  ensure_tjson_fails('unsupported value', -1/0, "tjson_simple: `Inf' value not supported")
+  ensure_tjson_fails('unsupported value', 0/0, "tjson_simple: `NaN' value not supported")
+
+  -- Tables
+  ensure_strequals(
+      'table to array',
+      tjson_simple({1, -1, 123.123, 'abc', true, false, { }}),
+      '[1,-1,123.123,"abc",true,false,[]]'
+    )
+  ensure_strequals(
+      'table to object',
+      tjson_simple(
+          {a = 1, b = -1, c = 123.123, d = 'abc', e = true, f = false, j = {1}}
+        ),
+      '{"a":1,"c":123.123,"b":-1,"e":true,"d":"abc","j":[1],"f":false}'
+    )
+  ensure_strequals('empty table', tjson_simple({ }), '[]')
+  ensure_strequals('empty tables', tjson_simple({ { }, { } }), '[[],[]]')
+
+  -- Exceptions
+  local self_reference_tbl = { }
+  self_reference_tbl[1] = self_reference_tbl
+  ensure_tjson_fails(
+      'self reference',
+      self_reference_tbl,
+      "tjson_simple: can't handle self-references"
+    )
+
+  local mixed_keys_tbl = { "a", "b" }
+  mixed_keys_tbl["c"] = "d"
+  ensure_tjson_fails(
+      'mixed keys',
+      mixed_keys_tbl,
+      "tjson_simple: non-string keys are not supported"
+    )
+
+  local non_string_key_tbl = { }
+  non_string_key_tbl[1.23] = 1
+  ensure_tjson_fails(
+      'non string keys',
+      non_string_key_tbl,
+      "tjson_simple: non-string keys are not supported"
     )
 end)
 
