@@ -244,10 +244,13 @@ local run = function(self)
     end
   end
 
-  local nerr = #errs
+  local nerr, nskipped = #errs, #self.skipped_
 
   print("Total tests in suite:", nok + nerr)
   print("Successful:", nok)
+  if nskipped > 0 then
+    print("Skipped:", nskipped)
+  end
 
   if failed_on_first_error then
     print("Failed on first error")
@@ -329,6 +332,22 @@ do
     check_duplicate(self, import_name)
     check_name(self, import_name)
     self:TODO("write tests for `" .. import_name .. "'")
+  end
+
+  local SLOW = function(self, name)
+    assert(type(self) == "table", "bad self")
+    assert(type(name) == "string", "bad import name")
+    check_duplicate(self, name)
+
+    return make_single_test(function(fn)
+      assert(type(fn) == "function", "bad callback")
+      if self.skip_slow_tests_ then
+        print("`" .. name .. "' SKIPPED because marked as SLOW")
+        self.skipped_[#self.skipped_ + 1] = { name = name, fn = fn }
+      else
+        self.tests_[#self.tests_ + 1] = { name = name, fn = fn }
+      end
+    end)
   end
 
   local test_for = function(self, name)
@@ -435,6 +454,13 @@ do
     self.fail_on_first_error_ = flag
   end
 
+  local set_skip_slow_tests = function(self, flag)
+    assert(type(self) == "table", "bad self")
+    assert(type(flag) == "boolean", "bad flag")
+
+    self.skip_slow_tests_ = flag
+  end
+
   local suite_mt =
   {
     __call = test;
@@ -479,9 +505,11 @@ do
           -- TODO: test set_fail_on_first_error
           -- https://github.com/lua-nucleo/lua-nucleo/issues/4
           set_fail_on_first_error = set_fail_on_first_error;
+          set_skip_slow_tests = set_skip_slow_tests;
           UNTESTED = UNTESTED;
           TODO = TODO;
           BROKEN = BROKEN;
+          SLOW = SLOW;
           factory = factory;
           method = method;
           methods = methods;
@@ -493,9 +521,11 @@ do
           fail_on_first_error_ = false;
           imports_set_ = imports_set;
           current_group_ = "";
+          skip_slow_tests_ = false;
           tests_ = { };
           test_names_ = { };
           todos_ = { };
+          skipped_ = { };
           --
           error_count_ = 0;
           error_message_ = nil;
@@ -520,6 +550,7 @@ local run_test = function(target, parameters_list)
 
   local strict_mode = not not parameters_list.strict_mode
   local fail_on_first_error = not not parameters_list.fail_on_first_error
+  local skip_slow_tests = not not parameters_list.quick
   local suite
 
   local suite_maker = function(...)
@@ -529,6 +560,7 @@ local run_test = function(target, parameters_list)
       suite = make_suite(...)
       suite:set_strict_mode(strict_mode)
       suite:set_fail_on_first_error(fail_on_first_error)
+      suite:set_skip_slow_tests(skip_slow_tests)
       return suite
     end
   end
@@ -598,6 +630,7 @@ local run_tests = function(names, parameters_list)
     local name = names[i]
     print("Running test", name)
     io.flush()
+    -- TODO: somehow get suite here, to extract #suite.skipped_
     local res, stage, err, todo = run_test(name, parameters_list)
     io.flush()
     if res then
