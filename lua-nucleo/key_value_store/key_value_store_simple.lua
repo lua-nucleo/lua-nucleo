@@ -5,7 +5,11 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
-local table_sort = table.sort
+local table_sort
+      = import "lua-nucleo/quicksort.lua"
+      {
+        "quicksort"
+      }
 
 --------------------------------------------------------------------------------
 

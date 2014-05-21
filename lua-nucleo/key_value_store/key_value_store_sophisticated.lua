@@ -13,13 +13,19 @@
 
 --------------------------------------------------------------------------------
 
+local table_insert = table.insert
+
+local table_sort
+      = import "lua-nucleo/quicksort.lua"
+      {
+        "quicksort"
+      }
+
 local upper_bound_pred
       = import 'lua-nucleo/algorithm.lua'
       {
         'upper_bound_pred'
       }
-
-local table_sort, table_insert = table.sort, table.insert
 
 --------------------------------------------------------------------------------
 
