@@ -38,9 +38,6 @@
 
 <h2>Modules</h2>
 <ul>
-  <li><a href="../modules/key_value_store.key_value_store_ophash.html">key_value_store.key_value_store_ophash</a></li>
-  <li><a href="../modules/key_value_store.key_value_store_simple.html">key_value_store.key_value_store_simple</a></li>
-  <li><a href="../modules/key_value_store.key_value_store_sophisticated.html">key_value_store.key_value_store_sophisticated</a></li>
   <li><a href="../modules/lua-nucleo.algorithm.html">lua-nucleo.algorithm</a></li>
   <li><a href="../modules/lua-nucleo.args.html">lua-nucleo.args</a></li>
   <li><a href="../modules/lua-nucleo.assert.html">lua-nucleo.assert</a></li>
@@ -56,7 +53,6 @@
   <li><a href="../modules/lua-nucleo.dsl.common_load_schema.html">lua-nucleo.dsl.common_load_schema</a></li>
   <li><a href="../modules/lua-nucleo.dsl.dsl_loader.html">lua-nucleo.dsl.dsl_loader</a></li>
   <li><a href="../modules/lua-nucleo.dsl.dump_nodes.html">lua-nucleo.dsl.dump_nodes</a></li>
-  <li><a href="../modules/lua-nucleo.dsl.path_based_walker.html">lua-nucleo.dsl.path_based_walker</a></li>
   <li><a href="../modules/lua-nucleo.dsl.tagged-tree.html">lua-nucleo.dsl.tagged-tree</a></li>
   <li><a href="../modules/lua-nucleo.dsl.walk_data_with_schema.html">lua-nucleo.dsl.walk_data_with_schema</a></li>
   <li><a href="../modules/lua-nucleo.ensure.html">lua-nucleo.ensure</a></li>
@@ -73,7 +69,6 @@
   <li><a href="../modules/lua-nucleo.pcall.html">lua-nucleo.pcall</a></li>
   <li><a href="../modules/lua-nucleo.prettifier.html">lua-nucleo.prettifier</a></li>
   <li><a href="../modules/lua-nucleo.priority_queue.html">lua-nucleo.priority_queue</a></li>
-  <li><a href="../modules/lua-nucleo.quicksort.html">lua-nucleo.quicksort</a></li>
   <li><a href="../modules/lua-nucleo.random.html">lua-nucleo.random</a></li>
   <li><a href="../modules/lua-nucleo.require_and_declare.html">lua-nucleo.require_and_declare</a></li>
   <li><a href="../modules/lua-nucleo.sandbox.html">lua-nucleo.sandbox</a></li>
@@ -99,7 +94,6 @@
   <li><a href="../modules/test.test-lib.init.no-suite.html">test.test-lib.init.no-suite</a></li>
   <li><a href="../modules/test.test-lib.init.no-suite-no-import.html">test.test-lib.init.no-suite-no-import</a></li>
   <li><a href="../modules/test.test-lib.init.strict.html">test.test-lib.init.strict</a></li>
-  <li><a href="../modules/test.test-lib.init.strict-import-as-require.html">test.test-lib.init.strict-import-as-require</a></li>
   <li><a href="../modules/test.test-lib.table.html">test.test-lib.table</a></li>
   <li><a href="../modules/test.test-lib.tdeepequals-test-utils.html">test.test-lib.tdeepequals-test-utils</a></li>
   <li><a href="../modules/test.test-lib.tserialize-test-utils.html">test.test-lib.tserialize-test-utils</a></li>
@@ -155,6 +149,10 @@
 	<tr>
 	<td class="name" nowrap><a href="#get_escaped_chars_in_ranges">get_escaped_chars_in_ranges&nbsp;(ranges)</a></td>
 	<td class="summary">Returns '%'-separated character string.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tjson_simple">tjson_simple&nbsp;(t)</a></td>
+	<td class="summary">Serialize table into json string.</td>
 	</tr>
 </table>
 
@@ -434,6 +432,39 @@
 
 
 
+
+</dd>
+    <dt>
+    <a name = "tjson_simple"></a>
+    <strong>tjson_simple&nbsp;(t)</strong>
+    </dt>
+    <dd>
+    Serialize table into json string.
+<p> Tables with string keys only becomes objects. Tables with integer keys
+ without gaps becomes arrays. Value types nil, NaN, +Inf, -Inf is not
+ supported.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+            <span class="types"><a class="type" href="../modules/lua-nucleo.table.html">table</a></span>
+         Table without self-references</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
+        A result string
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">tjson_simple({a = <span class="number">1</span>, b = <span class="number">2</span>})
+   returns <span class="string">'{"a":1,"b":2}'</span></pre>
+    </ul>
 
 </dd>
 </dl>
