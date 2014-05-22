@@ -91,6 +91,10 @@ return
     path = 'test/suite/0171-suite-full.lua';
   };
   {
+    type = 'suite';
+    path = 'test/suite/0172-suite-skip-slow.lua';
+  };
+  {
     type = 'cases';
     path = 'test/cases/0180-table.lua';
   };
