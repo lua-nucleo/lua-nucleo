@@ -714,6 +714,10 @@ return
   {
     { "lua-nucleo/table-utils.lua", w = 0 };
   };
+  tjson_simple =
+  {
+    { "lua-nucleo/string.lua", w = 0 };
+  };
   tkeys =
   {
     { "lua-nucleo/table-utils.lua", w = 0 };
