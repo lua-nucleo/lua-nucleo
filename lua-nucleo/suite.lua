@@ -385,7 +385,7 @@ do
     return make_single_test(function(fn)
       assert(type(fn) == "function", "bad callback")
       -- filter tests
-      -- NB: we express let simple list of names so that one could
+      -- NB: we explicitly let simple list of names so that one could
       --     specify several runs of the same test, to ensure e.g.
       --     invariance
       if not self.relevant_test_names_ or
