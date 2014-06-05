@@ -1426,6 +1426,13 @@ test:test_for "tjson_simple" (function()
   ensure_strequals('empty table', tjson_simple({ }), '[]')
   ensure_strequals('empty tables', tjson_simple({ { }, { } }), '[[],[]]')
 
+  -- Pretty print
+  ensure_strequals(
+      'pretty print',
+      tjson_simple({["firstName"] = "Иван",["lastName"] = "Иванов",["phoneNumbers"] = {[1] = "812 123-1234",[2] = "916 123-4567",},} , true),
+      '\n{\n  \"firstName\":\"Иван\",\n  \"lastName\":\"Иванов\",\n  \"phoneNumbers\":\n  [\n    \"812 123-1234\",\"916 123-4567\"\n  ]\n}\n'
+    )
+
   -- Exceptions
   local self_reference_tbl = { }
   self_reference_tbl[1] = self_reference_tbl
