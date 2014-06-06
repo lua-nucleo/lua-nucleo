@@ -469,7 +469,7 @@ local tjson_simple
 do
   local cat_value = function(cat, v, v_type)
     if v_type == "string" then
-      cat (escape_for_json(v))
+      cat(escape_for_json(v))
     elseif v_type == "number" then
       -- Throw exceptions on NaN, +Inf, -Inf
       if v ~= v then
@@ -477,9 +477,9 @@ do
       elseif v == math_huge or v == -math_huge then
         error("tjson_simple: `Inf' value not supported")
       end
-      cat (v)
+      cat(v)
     elseif v_type == "boolean" then
-      cat (tostring(v))
+      cat(tostring(v))
     else
       error("tjson_simple: value type `" .. v_type .. "' not supported")
     end
