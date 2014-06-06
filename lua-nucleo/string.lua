@@ -131,7 +131,7 @@ local split_by_char = function(str, delimiter)
   if str == "" then
     return { }
   end
-  
+
   local sep = delimiter:byte()
   local result = { }
   local pos = 1
