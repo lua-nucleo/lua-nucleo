@@ -25,6 +25,12 @@ local arguments
         'arguments'
       }
 
+local do_nothing
+      = import 'lua-nucleo/functional.lua'
+      {
+        'do_nothing'
+      }
+
 local make_concatter -- TODO: rename, is not factory
 do
   make_concatter = function()
@@ -468,13 +474,27 @@ end
 local tjson_simple
 local tjson_simple_pretty
 do
-  local pretty_print = function(cat, space_num, plus, need_pretty, need_newline)
-    if need_pretty == nil then return end
-    if need_newline == true then
-      space_num = space_num + plus
-      cat('\n' .. (' '):rep(space_num))
+
+  local mt =
+  {
+    __index = function(t, k)
+      local v = t.indent:rep(k)
+      t[k] = v
+      return v
     end
-    return space_num
+  }
+
+  local indent_cache = setmetatable(
+      { indent = ' ' },
+      mt
+    )
+
+  local pretty_print = function(cat, num_spaces, add_spaces, need_newline)
+    if need_newline == true then
+      num_spaces = num_spaces + add_spaces
+      cat ('\n'..indent_cache[num_spaces])
+    end
+    return num_spaces
   end
 
   local cat_value = function(cat, v, v_type, was_newline)
@@ -495,9 +515,12 @@ do
     end
   end
 
-  local function impl(cat, t, visited, space_num, need_pretty, need_newline)
+  local function impl(cat, t, visited, pretty_print_func, num_spaces, need_newline, need_space )
     local t_type = type(t)
     if t_type ~= "table" then
+      if need_space and pretty_print_func == pretty_print then
+        cat ' '
+      end
       cat_value(cat, t, t_type)
       return
     end
@@ -508,25 +531,28 @@ do
     visited[t] = true
 
     if tisarray(t) then
-      space_num = pretty_print(cat, space_num, 0, need_pretty, true)
+      num_spaces = pretty_print_func(cat, num_spaces, 0, true)
       cat '['
-      space_num = pretty_print(cat, space_num, 2, need_pretty, true)
+      num_spaces = pretty_print_func(cat, num_spaces, 2, true)
 
       if #t > 0 then -- Suppress joining for empty array
-        impl(cat, t[1], visited, space_num, need_pretty, false)
+        impl(cat, t[1], visited, pretty_print_func, num_spaces, false, false)
         for i = 2, #t do -- Implicit conversion to zero-based array.
           cat ',' -- mass enumeration, if need \n, put here
-          impl(cat, t[i], visited, space_num, need_pretty, true)
+          if pretty_print_func == pretty_print then
+            cat ' '
+          end
+          impl(cat, t[i], visited, pretty_print_func, num_spaces, true, false)
         end
       end
 
-      space_num = pretty_print(cat, space_num, -2, need_pretty, true)
+      num_spaces = pretty_print_func(cat, num_spaces, -2, true)
       cat ']'
     else
-      space_num = pretty_print(cat, space_num, 0, need_pretty, need_newline)
+      num_spaces = pretty_print_func(cat, num_spaces, 0, need_newline)
       need_newline = true
       cat '{'
-      space_num = pretty_print(cat, space_num, 2, need_pretty, true)
+      num_spaces = pretty_print_func(cat, num_spaces, 2, true)
 
       local need_comma = false
       for k, v in pairs(t) do
@@ -536,15 +562,15 @@ do
         end
         if need_comma then
           cat ','
-          space_num = pretty_print(cat, space_num, 0, need_pretty, true)
+          num_spaces = pretty_print_func(cat, num_spaces, 0, true)
         end
         cat_value(cat, k, k_type)
         cat ':'
-        impl(cat, v, visited, space_num, need_pretty, true)
+        impl(cat, v, visited, pretty_print_func, num_spaces, true, true)
         need_comma = true
       end
 
-      space_num = pretty_print(cat, space_num, -2, need_pretty, true)
+      num_spaces = pretty_print_func(cat, num_spaces, -2, true)
       cat '}'
     end
 
@@ -563,7 +589,7 @@ do
   -- @local here
   tjson_simple = function(t)
     local cat, concat = make_concatter()
-    impl(cat, t, { })
+    impl(cat, t, { }, do_nothing)
     return concat()
   end
 
@@ -582,9 +608,9 @@ do
   -- @local here
   tjson_simple_pretty = function(t)
     local cat, concat = make_concatter()
-    local space_num = 0;
-    impl(cat, t, { }, space_num, true, false)
-    pretty_print(cat, space_num, 0, true, true)
+    local num_spaces = 0;
+    impl(cat, t, { }, pretty_print, num_spaces, true, true)
+    pretty_print(cat, num_spaces, 0, true)
     return concat()
   end
 end
