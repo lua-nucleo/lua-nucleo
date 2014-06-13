@@ -497,7 +497,7 @@ do
     return num_spaces
   end
 
-  local cat_value = function(cat, v, v_type, was_newline)
+  local cat_value = function(cat, v, v_type)
     if v_type == "string" then
       cat (escape_for_json(v))
     elseif v_type == "number" then
