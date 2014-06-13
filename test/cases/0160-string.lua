@@ -1461,39 +1461,51 @@ test:test_for "tjson_simple_pretty" (function()
   -- Pretty print
   ensure_strequals(
       'pretty print',
-      tjson_simple_pretty({["firstName"] = "Иван",["lastName"] = "Иванов",["phoneNumbers"] = {[1] = "812 123-1234",[2] = "916 123-4567",},}),
-      [[{
-  "firstName":"Иван",
-  "lastName":"Иванов",
-  "phoneNumbers":
-  [
-    "812 123-1234","916 123-4567"
-  ]
-}
-]]
-    )
+      tjson_simple_pretty(
+        {
+          foo = "bar";
+          baz = { { ["quo"] = { life = 42 } } }
+        }
+      ),
+      [[
 
-local table_pretty_print2 = { { ["quo"] = { life = 42 } } }
-local table_pretty_print1 =
 {
-  ["foo"] = "bar";
-  ["baz"] = table_pretty_print2;
-}
-
-  ensure_strequals(
-      'pretty print',
-      tjson_simple_pretty(table_pretty_print1),
-      [[{
   "baz":
   [
     {
       "quo":
       {
-        "life":42
+        "life": 42
       }
     }
   ],
-  "foo":"bar"
+  "foo": "bar"
+}
+]]
+    )
+
+  ensure_strequals(
+      'pretty print',
+      tjson_simple_pretty(
+        {
+          firstName = "Иван";
+          lastName = "Иванов";
+          phoneNumbers =
+          {
+            "812 123-1234";
+            "916 123-4567";
+          };
+        }
+      ),
+      [[
+
+{
+  "firstName": "Иван",
+  "lastName": "Иванов",
+  "phoneNumbers":
+  [
+    "812 123-1234", "916 123-4567"
+  ]
 }
 ]]
     )
