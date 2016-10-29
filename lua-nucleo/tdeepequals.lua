@@ -151,6 +151,7 @@ do
   -- vis1 and vis2 are hashes of visited tables for first and second
   tmore = function (first, second, vis1, vis2)
     local type1, type2 = type(first), type(second)
+    vis1, vis2 = vis1 or { ['n'] = 0 }, vis2 or { ['n'] = 0 }
     if type1 ~= type2 then
       return more(type1, type2)
     else
