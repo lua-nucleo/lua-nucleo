@@ -1,3 +1,28 @@
+Version 1.0.0 (2016-12-15)
+==========================
+
+Additions and improvements:
+
+    dsl:
+      path_based_walker.lua
+
+    key_value_store:
+      Added classes to handle key-value tuples with different
+      implementations.
+
+    quicksort:
+      Added classical quick-sort implementation. Used by <key_value_store>.
+
+    Test framework extensions.
+
+    More tests (inculding tests for new features).
+
+Bug fixes:
+
+    tdeepequals:
+      ordered_pairs(). Fixed case when ordered_pairs() failed to
+      handle table with table-type key.
+
 Version 0.1.0 (2013-10-03)
 ==========================
 
