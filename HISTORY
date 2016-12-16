@@ -30,48 +30,48 @@ Another fixed-version release.
 
 What's new:
 
-      diagnostics:
-        capture_source_location()
+    diagnostics:
+      capture_source_location()
 
-      dsl:
-        some code to work with embedded DSLs
+    dsl:
+      some code to work with embedded DSLs
 
-      ensure:
-        ensure_is()
-        ensure_has_substring()
+    ensure:
+      ensure_is()
+      ensure_has_substring()
 
-      functional:
-        compose()
+    functional:
+      compose()
 
-      import_as_require:
-        removed, use plain import instead
+    import_as_require:
+      removed, use plain import instead
 
-      init:
-        `require "lua-nucleo"` now works
+    init:
+      `require "lua-nucleo"` now works
 
-      suite:
-        test decorators
+    suite:
+      test decorators
 
-      table-utils:
-        tkvlist_to_hash()
-        tisarray()
-        tmerge_many()
+    table-utils:
+      tkvlist_to_hash()
+      tisarray()
+      tmerge_many()
 
-      tpretty:
-        tpretty_ex()
-        tpretty_ordered()
+    tpretty:
+      tpretty_ex()
+      tpretty_ordered()
 
 Changes:
 
-      checker: allowing smart error messages
+    checker: allowing smart error messages
 
-      ensure: Cheaper substring checks
+    ensure: Cheaper substring checks
 
-      make.sh: Add --no-restart option
+    make.sh: Add --no-restart option
 
-      suite: Factory now should be a function, not table
+    suite: Factory now should be a function, not table
 
-      test: Obsolete table argument in test:factory
+    test: Obsolete table argument in test:factory
 
 Some bug-fixes and code tuning.
 
