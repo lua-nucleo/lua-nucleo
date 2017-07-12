@@ -62,7 +62,6 @@ if pattern ~= "" then
 end
 
 local run_low_level_tests = function(test_list)
-  local shell
   local is_shell_found, shell = pcall(require, "lua-aplicado.shell")
   if not is_shell_found then
     local err = shell
