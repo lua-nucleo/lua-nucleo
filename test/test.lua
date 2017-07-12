@@ -97,7 +97,7 @@ local run_low_level_tests = function(test_list)
   local lua
   local err = {}
   if jit ~= nil then
-    lua, err["luajit2"] = get_interpreter("luajit2") 
+    lua, err["luajit2"] = get_interpreter("luajit2")
     if not lua then
       lua, err["luajit"] = get_interpreter("luajit")
     end
