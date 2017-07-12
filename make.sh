@@ -1,6 +1,6 @@
 #! /bin/bash
 
-set -e
+set -euo pipefail
 
 echo "----> Generating a list of tests"
 lua "test/test-lib/generate-test-list.lua" "lua-nucleo test/test-list.lua .lua test/low-level test/suite test/cases"
@@ -17,7 +17,7 @@ sudo luarocks remove --force lua-nucleo || true
 echo "----> Making rocks"
 sudo luarocks make rockspec/lua-nucleo-scm-1.rockspec
 
-case "$1" in
+case "${1:-}" in
   --no-restart) ;; # Do nothing
   *)
     echo "----> Restarting multiwatch and LJ2"
