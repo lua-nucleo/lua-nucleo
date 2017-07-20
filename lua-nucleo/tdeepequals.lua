@@ -22,9 +22,7 @@ local pairs, type, ipairs, tostring, assert
 local table_concat, table_sort = table.concat, table.sort
 local string_format, string_match = string.format, string.match
 
-local tdeepequals
 local tmore
-
 do
   local p_table -- table, containing hashes of pointer-like data:
                 --functions, threads, userdata
@@ -149,7 +147,7 @@ do
 
   -- compares two generic pieces of lua data - first and second
   -- vis1 and vis2 are hashes of visited tables for first and second
-  tmore = function (first, second, vis1, vis2)
+  local function tmoreimpl(first, second, vis1, vis2)
     local type1, type2 = type(first), type(second)
     vis1, vis2 = vis1 or { ['n'] = 0 }, vis2 or { ['n'] = 0 }
     if type1 ~= type2 then
@@ -224,12 +222,16 @@ do
     end
   end
 
-  tdeepequals = function(t1, t2)
-    p_table = {n = 0}
-    local r = tmore(t1, t2, {n = 0}, {n = 0})
+  tmore = function(first, second, vis1, vis2)
+    p_table = { n = 0 }
+    local r = tmoreimpl(first, second, vis1, vis2)
     p_table = nil
-    return r == 0
+    return r
   end
+end
+
+local tdeepequals = function(t1, t2)
+  return tmore(t1, t2) == 0
 end
 
 local tless = function(lhs, rhs)
