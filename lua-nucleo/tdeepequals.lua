@@ -241,10 +241,9 @@ local less_kv = function(lhs, rhs)
 end
 
 local tless_kv = function(lhs, rhs)
-  -- TODO: WTF?! Why these extra arguments to tmore() are needed?!
-  local kless = tmore(lhs.k, rhs.k, { n = 0 }, { n = 0 })
+  local kless = tmore(lhs.k, rhs.k)
   return (kless < 0)
-    or (kless == 0 and tmore(lhs.v, rhs.v, { n = 0 }, { n = 0 }) < 0)
+    or (kless == 0 and tmore(lhs.v, rhs.v) < 0)
 end
 
 -- WARNING: Slow!
