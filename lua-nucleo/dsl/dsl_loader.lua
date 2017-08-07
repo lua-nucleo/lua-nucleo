@@ -282,7 +282,7 @@ do
 
     return finalize_data_impl(data)
   end
-  
+
   local default_data_filter = function(t, data)
     assert_is_table(data, "data should be a table")
     return tappend_many(t, data)
