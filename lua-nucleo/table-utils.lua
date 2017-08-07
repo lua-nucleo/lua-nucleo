@@ -878,6 +878,36 @@ end
 
 --------------------------------------------------------------------------------
 
+local tdeepfilter
+do
+  local function impl(predicate, t, visited)
+    if not is_table(t) then
+      return t
+    end
+
+    local r = { }
+
+    assert(not visited[t], 'recursion detected')
+    visited[t] = true
+
+    for k, v in pairs(t) do
+      if predicate(v, k, t) then
+        r[impl(predicate, k, visited)] = impl(predicate, v, visited)
+      end
+    end
+
+    visited[t] = nil
+
+    return r
+  end
+
+  tdeepfilter = function(predicate, t)
+    return impl(predicate, t, { })
+  end
+end
+
+--------------------------------------------------------------------------------
+
 return
 {
   empty_table = empty_table;
@@ -943,4 +973,5 @@ return
   tkvmap_unpack = tkvmap_unpack;
   tkvlist_to_hash = tkvlist_to_hash;
   tmerge_many = tmerge_many;
+  tdeepfilter = tdeepfilter;
 }
