@@ -63,12 +63,20 @@ local make_dsl_loader
         'make_dsl_loader'
       }
 
+local unique_object
+      = import 'lua-nucleo/misc.lua'
+      {
+        'unique_object'
+      }
+
 --------------------------------------------------------------------------------
 
 -- NOTE: Lazy! Do not create so many closures!
 local common_load_schema -- TODO: Generalize more. Apigen uses similar code.
 -- #tmp3001
 do
+  local env_mt_tag = unique_object()
+
   common_load_schema = function(
       chunks,
       extra_env,
@@ -127,10 +135,36 @@ do
         -- Calls to debug.getinfo() are slow,
         -- so we're not doing them by default.
         if need_file_line then
-          -- TODO: Hack. Depth level is too dependent on the dsl_loader
-          --       internals. Better to traverse stack until schema is found.
-          -- #tmp3008
-          local info = debug_getinfo(3, "Sl")
+          -- TODO: Hack. Implement a general solution as described in #is3008
+
+          local level, info
+          do
+            local DEFAULT_LEVEL = 3 -- Hack. Depends on implementation.
+            local cur_level = 1
+
+            local ok, env = pcall(getfenv, cur_level)
+            while ok do
+              local is_our_mt = (getmetatable(env) == env_mt_tag)
+              if is_our_mt then
+                info = debug_getinfo(cur_level, "Sl")
+                if info.what ~= 'C' and info.what ~= 'tail' then
+                  level = cur_level
+                else
+                  -- TODO: Figure out why this magic is needed.
+                  level = cur_level - 1
+                  info = nil
+                end
+                break
+              end
+
+              cur_level = cur_level + 1
+              ok, env = pcall(getfenv, cur_level)
+            end
+
+            level = level or DEFAULT_LEVEL
+            info = info or debug_getinfo(level, "Sl")
+          end
+
           data.source_ = info.source
           data.file_ = info.short_src
           data.line_ = info.currentline
@@ -174,6 +208,8 @@ do
     local environment = setmetatable(
         { },
         {
+          __metatable = env_mt_tag;
+
           __index = function(t, namespace)
             -- Can't put it as setmetatable first argument -- 
             -- we heavily change that table afterwards.
