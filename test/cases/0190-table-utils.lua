@@ -2296,7 +2296,7 @@ test "tfilterkeylist_empty_table_strict" (function()
 
   ensure_error(
       "tfilterkeylist with empty /strict/",
-      "Field `a' is absent",
+      "Field a is absent",
       tfilterkeylist(t, f, true)
     )
 end)
