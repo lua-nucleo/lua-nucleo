@@ -219,6 +219,22 @@ local fill_curly_placeholders = function(str, dict)
   return fill_placeholders_ex("%${(.-)}", str, dict)
 end
 
+local fill_placeholders_with_defaults = function (str, dict)
+  local res = (str:gsub("(%%%b{})", function(param)
+    return (param:gsub("^%%{(.+)}$", function(param)
+      local value = dict[param]
+      if value then
+        return value
+      end
+
+      local param, default = param:match('^([^=]+)=(.*)$')
+      return param and (dict[param] or default)
+    end))
+  end))
+  return res
+end
+
+
 --- Convert non-hierarchical table into string.
 --
 -- Values of key and value are concatted using custom glue `kv_glue`.
@@ -556,6 +572,7 @@ return
   fill_placeholders_ex = fill_placeholders_ex;
   fill_placeholders = fill_placeholders;
   fill_curly_placeholders = fill_curly_placeholders;
+  fill_placeholders_with_defaults = fill_placeholders_with_defaults;
   cdata_wrap = cdata_wrap;
   cdata_cat = cdata_cat;
   split_by_char = split_by_char;
