@@ -28,11 +28,13 @@ local arguments,
       }
 
 local is_table,
-      is_function
+      is_function,
+      is_string
       = import 'lua-nucleo/type.lua'
       {
         'is_table',
-        'is_function'
+        'is_function',
+        'is_string'
       }
 
 local assert_is_table
@@ -184,6 +186,13 @@ do
           value_data =
           {
             handler = value_data;
+          }
+        end
+
+        if is_string(value_data) then
+          value_data =
+          {
+            [1] = value_data;
           }
         end
 
