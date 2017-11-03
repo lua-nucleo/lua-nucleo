@@ -89,6 +89,12 @@ local ordered_pairs
         'ordered_pairs'
       }
 
+local tisarray_not
+      = import 'lua-nucleo/table-utils.lua'
+      {
+        'tisarray_not'
+      }
+
 local math_pi = math.pi
 local table_concat = table.concat
 
@@ -1422,6 +1428,11 @@ test:test_for "tjson_simple" (function()
           {a = 1, b = -1, c = 123.123, d = 'abc', e = true, f = false, j = {1}}
         ),
       '{"a":1,"c":123.123,"b":-1,"e":true,"d":"abc","j":[1],"f":false}'
+    )
+  ensure_strequals(
+      'empty table to object with tisarray_not',
+      tjson_simple(tisarray_not({})),
+      '{}'
     )
   ensure_strequals('empty table', tjson_simple({ }), '[]')
   ensure_strequals('empty tables', tjson_simple({ { }, { } }), '[[],[]]')
