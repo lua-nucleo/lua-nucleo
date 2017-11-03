@@ -853,10 +853,24 @@ local tmerge_many = function(...)
   return toverride_many({ }, ...)
 end
 
+local TISARRAY_NOT_OBJ = 'tisarray.not'
+
+-- Makes table to be treated as JSON object in tisarray()
+local tisarray_not = function(t)
+  if getmetatable(t) then 
+    error('tisarray_not: tables with metatables are not supported') 
+  end
+  
+  return setmetatable(t, { __metatable = 'tisarray.not' })
+end
+
 -- Returns true is a table is an array
 -- Returns false otherwise
 -- Note the empty table is treated as an array
 local tisarray = function(t)
+  if getmetatable(t) == TISARRAY_NOT_OBJ then 
+    return false
+  end
   for k, _ in pairs(t) do
     if
       -- Array keys should be numbers...
@@ -922,6 +936,7 @@ return
   tiflip = tiflip;
   tset = tset;
   tiset = tiset;
+  tisarray_not = tisarray_not;
   tisarray = tisarray;
   tiinsert_args = tiinsert_args;
   timap_inplace = timap_inplace;
