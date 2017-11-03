@@ -46,6 +46,7 @@ local empty_table,
       tiflip,
       tset,
       tiset,
+      tisarray_not,
       tisarray,
       tiinsert_args,
       timap_inplace,
@@ -112,6 +113,7 @@ local empty_table,
         'tiflip',
         'tset',
         'tiset',
+        'tisarray_not',
         'tisarray',
         'tiinsert_args',
         'timap_inplace',
@@ -2560,6 +2562,33 @@ end)
 
 --------------------------------------------------------------------------------
 
+test:group "tisarray_not"
+
+--------------------------------------------------------------------------------
+
+test "tisarray_not-object-mark" (function()
+  ensure(
+      "Should return false on tables marked with tisarray_not",
+      not tisarray(tisarray_not({ }))
+    )
+end)
+
+test "tisarray_not-object-with-array" (function()
+  ensure(
+      "Should return false on non-empty array marked with tisarray_not",
+      not tisarray(tisarray_not({ 42 }))
+    )
+end)
+
+test "tisarray_not-object-with-map" (function()
+  ensure(
+      "Should return false on non-empty table marked with tisarray_not",
+      not tisarray(tisarray_not({ key = "value" }))
+    )
+end)
+
+--------------------------------------------------------------------------------
+
 test:UNTESTED 'tmap_values'
 test:UNTESTED 'torderedset'
 test:UNTESTED 'torderedset_insert'
@@ -2584,3 +2613,4 @@ test:UNTESTED 'tisempty'
 test:UNTESTED 'tifindvalue_nonrecursive'
 test:UNTESTED 'tgenerate_1d_linear'
 test:UNTESTED 'tgenerate_2d_linear'
+test:UNTESTED 'tdeepfilter'
