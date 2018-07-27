@@ -53,6 +53,7 @@ local make_concatter,
       serialize_number,
       get_escaped_chars_in_ranges,
       tjson_simple,
+      tjson_simple_pretty,
       string_exports
       = import 'lua-nucleo/string.lua'
       {
@@ -80,7 +81,8 @@ local make_concatter,
         'number_to_string',
         'serialize_number',
         'get_escaped_chars_in_ranges',
-        'tjson_simple'
+        'tjson_simple',
+        'tjson_simple_pretty'
       }
 
 local ordered_pairs
@@ -1461,6 +1463,64 @@ test:test_for "tjson_simple" (function()
       non_string_key_tbl,
       "tjson_simple: non-string keys are not supported"
     )
+end)
+
+--------------------------------------------------------------------------------
+
+test:test_for "tjson_simple_pretty" (function()
+
+  -- Pretty print
+  ensure_strequals(
+      'pretty print',
+      tjson_simple_pretty(
+        {
+          foo = "bar";
+          baz = { { ["quo"] = { life = 42 } } }
+        }
+      ),
+      [[
+
+{
+  "baz":
+  [
+    {
+      "quo":
+      {
+        "life": 42
+      }
+    }
+  ],
+  "foo": "bar"
+}
+]]
+    )
+
+  ensure_strequals(
+      'pretty print',
+      tjson_simple_pretty(
+        {
+          firstName = "Иван";
+          lastName = "Иванов";
+          phoneNumbers =
+          {
+            "812 123-1234";
+            "916 123-4567";
+          };
+        }
+      ),
+      [[
+
+{
+  "firstName": "Иван",
+  "lastName": "Иванов",
+  "phoneNumbers":
+  [
+    "812 123-1234", "916 123-4567"
+  ]
+}
+]]
+    )
+
 end)
 
 --------------------------------------------------------------------------------

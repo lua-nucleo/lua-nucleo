@@ -25,6 +25,12 @@ local arguments
         'arguments'
       }
 
+local do_nothing
+      = import 'lua-nucleo/functional.lua'
+      {
+        'do_nothing'
+      }
+
 local make_concatter -- TODO: rename, is not factory
 do
   make_concatter = function()
@@ -131,7 +137,7 @@ local split_by_char = function(str, delimiter)
   if str == "" then
     return { }
   end
-  
+
   local sep = delimiter:byte()
   local result = { }
   local pos = 1
@@ -466,7 +472,31 @@ do
 end
 
 local tjson_simple
+local tjson_simple_pretty
 do
+
+  local mt =
+  {
+    __index = function(t, k)
+      local v = t.indent:rep(k)
+      t[k] = v
+      return v
+    end
+  }
+
+  local indent_cache = setmetatable(
+      { indent = ' ' },
+      mt
+    )
+
+  local pretty_print = function(cat, num_spaces, add_spaces, need_newline)
+    if need_newline == true then
+      num_spaces = num_spaces + add_spaces
+      cat ('\n'..indent_cache[num_spaces])
+    end
+    return num_spaces
+  end
+
   local cat_value = function(cat, v, v_type)
     if v_type == "string" then
       cat (escape_for_json(v))
@@ -485,9 +515,12 @@ do
     end
   end
 
-  local function impl(cat, t, visited)
+  local function impl(cat, t, visited, pretty_print_func, num_spaces, need_newline, need_space )
     local t_type = type(t)
     if t_type ~= "table" then
+      if need_space and pretty_print_func == pretty_print then
+        cat ' '
+      end
       cat_value(cat, t, t_type)
       return
     end
@@ -498,17 +531,29 @@ do
     visited[t] = true
 
     if tisarray(t) then
+      num_spaces = pretty_print_func(cat, num_spaces, 0, true)
       cat '['
+      num_spaces = pretty_print_func(cat, num_spaces, 2, true)
+
       if #t > 0 then -- Suppress joining for empty array
-        impl(cat, t[1], visited)
+        impl(cat, t[1], visited, pretty_print_func, num_spaces, false, false)
         for i = 2, #t do -- Implicit conversion to zero-based array.
-          cat ','
-          impl(cat, t[i], visited)
+          cat ',' -- mass enumeration, if need \n, put here
+          if pretty_print_func == pretty_print then
+            cat ' '
+          end
+          impl(cat, t[i], visited, pretty_print_func, num_spaces, true, false)
         end
       end
+
+      num_spaces = pretty_print_func(cat, num_spaces, -2, true)
       cat ']'
     else
+      num_spaces = pretty_print_func(cat, num_spaces, 0, need_newline)
+      need_newline = true
       cat '{'
+      num_spaces = pretty_print_func(cat, num_spaces, 2, true)
+
       local need_comma = false
       for k, v in pairs(t) do
         local k_type = type(k)
@@ -517,12 +562,15 @@ do
         end
         if need_comma then
           cat ','
+          num_spaces = pretty_print_func(cat, num_spaces, 0, true)
         end
         cat_value(cat, k, k_type)
         cat ':'
-        impl(cat, v, visited)
+        impl(cat, v, visited, pretty_print_func, num_spaces, true, true)
         need_comma = true
       end
+
+      num_spaces = pretty_print_func(cat, num_spaces, -2, true)
       cat '}'
     end
 
@@ -541,7 +589,28 @@ do
   -- @local here
   tjson_simple = function(t)
     local cat, concat = make_concatter()
-    impl(cat, t, { })
+    impl(cat, t, { }, do_nothing)
+    return concat()
+  end
+
+  --- Serialize table into json string with pretty print.
+  --
+  -- Tables with string keys only becomes objects. Tables with integer keys
+  -- without gaps becomes arrays. Value types nil, NaN, +Inf, -Inf is not
+  -- supported.
+  -- @tparam table t Table without self-references
+  -- @treturn string A result string
+  -- @usage tjson_simple({a = 1, b = 2})
+  --   returns '{
+  --              "a":1,
+  --              "b":2
+  --            }'
+  -- @local here
+  tjson_simple_pretty = function(t)
+    local cat, concat = make_concatter()
+    local num_spaces = 0;
+    impl(cat, t, { }, pretty_print, num_spaces, true, true)
+    pretty_print(cat, num_spaces, 0, true)
     return concat()
   end
 end
@@ -573,4 +642,5 @@ return
   serialize_number = serialize_number;
   get_escaped_chars_in_ranges = get_escaped_chars_in_ranges;
   tjson_simple = tjson_simple;
+  tjson_simple_pretty = tjson_simple_pretty;
 }
