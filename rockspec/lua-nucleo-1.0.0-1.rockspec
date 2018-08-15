@@ -35,6 +35,7 @@ build = {
          ["lua-nucleo.dsl.tagged-tree"] = "lua-nucleo/dsl/tagged-tree.lua";
          ["lua-nucleo.dsl.walk_data_with_schema"] = "lua-nucleo/dsl/walk_data_with_schema.lua";
          ["lua-nucleo.ensure"] = "lua-nucleo/ensure.lua";
+         ["lua-nucleo.error"] = "lua-nucleo/error.lua";
          ["lua-nucleo.factory"] = "lua-nucleo/factory.lua";
          ["lua-nucleo.functional"] = "lua-nucleo/functional.lua";
          ["lua-nucleo.import"] = "lua-nucleo/import.lua";
