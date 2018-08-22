@@ -479,7 +479,7 @@ do
   }
 
   local logging_system_id = "{TTTTT} "
-  
+
   local get_logging_system_id = function()
     return logging_system_id
   end
@@ -564,7 +564,7 @@ do
       )
 
       if not is_stdout_logging_system_initialized() then
-
+        create_stdout_logging_system()
       end
 
       return impl(
