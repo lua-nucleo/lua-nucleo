@@ -450,7 +450,71 @@ end
 
 --------------------------------------------------------------------------------
 
-local make_loggers
+local get_current_logsystem_date_microsecond = function(time)
+  time = time or socket.gettime()
+  return format_logsystem_date(time) .. ("%.6f")
+    :format(time % 1)
+    :sub(2, -1)
+end
+
+local STDOUT_LOGGERS_INFO = -- Order is important!
+{
+  { suffix = " ", level = LOG_LEVEL.LOG   };
+  { suffix = "*", level = LOG_LEVEL.DEBUG };
+  { suffix = "#", level = LOG_LEVEL.SPAM  };
+  { suffix = "!", level = LOG_LEVEL.ERROR };
+}
+
+local create_stdout_logging_system,
+      is_stdout_logging_system_initialized,
+      get_stdout_logging_system
+do
+  local STDOUT_LOG_MODULE_CONFIG = { } -- everything is enabled by default.  
+  local STDOUT_LOG_LEVEL_CONFIG =
+  {
+    [LOG_LEVEL.ERROR] = true;
+    [LOG_LEVEL.LOG]   = true;
+    [LOG_LEVEL.DEBUG] = true;
+    [LOG_LEVEL.SPAM]  = true;
+  }
+
+  local logging_system_id = "{TTTTT} "
+  
+  local get_logging_system_id = function()
+    return logging_system_id
+  end
+
+  local stdout_logging_system = nil
+
+  create_stdout_logging_system = function()
+    assert(
+        stdout_logging_system == nil,
+        "double create_stdout_logging_system call"
+      )
+
+    stdout_logging_system = make_logging_system(
+        get_logging_system_id,
+        wrap_file_sink(io.stdout),
+        make_common_logging_config(
+            STDOUT_LOG_LEVEL_CONFIG,
+            STDOUT_LOG_MODULE_CONFIG
+          ),
+        get_current_logsystem_date_microsecond
+      )
+  end
+
+  is_stdout_logging_system_initialized = function()
+    return not not stdout_logging_system
+  end
+
+  get_stdout_logging_system = function()
+    return assert(stdout_logging_system, "stdout_logging_system not created")
+  end
+end
+
+--------------------------------------------------------------------------------
+
+local make_loggers_old, make_loggers
 do
   local function impl(logger, module_name, module_prefix, info, ...)
     if info then
@@ -465,7 +529,7 @@ do
     return nil
   end
 
-  make_loggers = function(
+  make_loggers_old = function(
       module_name,
       module_prefix,
       loggers_info,
@@ -484,6 +548,46 @@ do
         module_prefix,
         unpack(loggers_info)
       )
+  end
+
+  make_loggers = function (
+      module_name,
+      module_prefix,
+      loggers_info,
+      logging_system
+    )
+
+    if loggers_info == nil then
+      arguments(
+        "string", module_name,
+        "string", module_prefix
+      )
+
+      if not is_stdout_logging_system_initialized() then
+
+      end
+
+      return impl(
+          get_stdout_logging_system(),
+          module_name,
+          module_prefix,
+          STDOUT_LOGGERS_INFO
+        )
+    else
+      arguments(
+        "string", module_name,
+        "string", module_prefix,
+        "table",  loggers_info,
+        "table",  logging_system
+      )
+
+      return impl(
+          logging_system,
+          module_name,
+          module_prefix,
+          unpack(loggers_info)
+        )
+    end    
   end
 end
 

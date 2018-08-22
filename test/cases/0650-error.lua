@@ -1,8 +1,10 @@
 --------------------------------------------------------------------------------
--- test/cases/0040-error.lua: tests for error.lua
+-- test/cases/0650-error.lua: tests for error.lua
 -- This file is a part of Lua-Aplicado library
 -- Copyright (c) Lua-Aplicado authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
+
+local make_suite = assert(loadfile("test/test-lib/init/strict.lua"))(...)
 
 local log, dbg, spam, log_error
       = import 'lua-nucleo/log.lua' { 'make_loggers' } (
@@ -66,7 +68,8 @@ local call,
 
 --------------------------------------------------------------------------------
 
-local test = (...)("error", error_exports)
+local test = make_suite("error", error_exports)
+-- local test = (...)("error", error_exports)
 
 --------------------------------------------------------------------------------
 
