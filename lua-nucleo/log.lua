@@ -571,7 +571,7 @@ do
           get_stdout_logging_system(),
           module_name,
           module_prefix,
-          STDOUT_LOGGERS_INFO
+          unpack(STDOUT_LOGGERS_INFO)
         )
     else
       arguments(
