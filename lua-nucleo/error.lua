@@ -190,4 +190,5 @@ return
   create_error_object = create_error_object;
   is_error_object = is_error_object;
   error_handler_for_call = error_handler_for_call;
+  get_error_id = get_error_id;
 }
