@@ -44,6 +44,7 @@ build = {
          ["lua-nucleo.key_value_store.key_value_store_sophisticated"] = "lua-nucleo/key_value_store/key_value_store_sophisticated.lua";
          ["lua-nucleo.language"] = "lua-nucleo/language.lua";
          ["lua-nucleo.log"] = "lua-nucleo/log.lua";
+         ["lua-nucleo.error"] = "lua-nucleo/error.lua";
          ["lua-nucleo.math"] = "lua-nucleo/math.lua";
          ["lua-nucleo.misc"] = "lua-nucleo/misc.lua";
          ["lua-nucleo.module"] = "lua-nucleo/module.lua";
