@@ -35,6 +35,14 @@ local make_checker
         'make_checker'
       }
 
+local is_error_object,
+      get_error_id
+      = import 'lua-nucleo/error.lua'
+      {
+        'is_error_object',
+        'get_error_id'
+      }
+
 -- TODO: Write tests for this one
 --       https://github.com/lua-nucleo/lua-nucleo/issues/13
 
@@ -368,6 +376,10 @@ local ensure_fails_with_substring = function(msg, fn, substring)
 
   if res then
     error("ensure_fails_with_substring failed: " .. msg .. ": call was expected to fail, but did not")
+  end
+
+  if is_error_object(err) then
+    err = get_error_id(err)
   end
 
   if type(err) ~= "string" then
