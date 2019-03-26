@@ -340,6 +340,22 @@ end
 
 --------------------------------------------------------------------------------
 
+--- Call function and ensure it fails.
+--
+-- Raises error if not.
+--
+-- @tparam string msg Message to add to error
+-- @tparam func fn Function to call
+local ensure_fails = function(msg, fn)
+  local res, err = pcall(fn)
+
+  if res then
+    error("ensure_fails failed: " .. msg .. ": call was expected to fail, but did not")
+  end
+end
+
+--------------------------------------------------------------------------------
+
 --- Call function and ensure it fails with expected string in error message.
 --
 -- Raises error if not.
@@ -497,6 +513,7 @@ return
   ensure_strequals = ensure_strequals;
   ensure_error = ensure_error;
   ensure_error_with_substring = ensure_error_with_substring;
+  ensure_fails = ensure_fails;
   ensure_fails_with_substring = ensure_fails_with_substring;
   ensure_has_substring = ensure_has_substring;
   ensure_aposteriori_probability = ensure_aposteriori_probability;
