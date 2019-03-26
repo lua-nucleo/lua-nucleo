@@ -39,6 +39,12 @@ local ordered_pairs
         'ordered_pairs'
       }
 
+local create_error_object
+      = import 'lua-nucleo/error.lua'
+      {
+        'create_error_object'
+      }
+
 --------------------------------------------------------------------------------
 
 local test = make_suite("ensure", ensure_exports)
@@ -327,6 +333,17 @@ test:case "ensure_fails_with_substring-complains-on-regex-mismatch" (function()
       "should report the complaint",
       err:find("ensure_fails_with_substring failed")
     )
+end)
+
+test:case "ensure_fails_with_substring-supports-error-object" (function()
+  local res, err = pcall(function()
+    ensure_fails_with_substring(
+        "inner msg",
+        function() error(create_error_object("Ipsum")) end,
+        "Ipsum"
+      )
+  end)
+  ensure("should not throw error", res)
 end)
 
 --------------------------------------------------------------------------------
