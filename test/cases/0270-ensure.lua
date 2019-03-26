@@ -14,6 +14,7 @@ local ensure,
       ensure_strequals,
       ensure_error,
       ensure_error_with_substring,
+      ensure_fails,
       ensure_fails_with_substring,
       ensure_has_substring,
       ensure_is,
@@ -26,6 +27,7 @@ local ensure,
         'ensure_strequals',
         'ensure_error',
         'ensure_error_with_substring',
+        'ensure_fails',
         'ensure_fails_with_substring',
         'ensure_has_substring',
         'ensure_is'
@@ -35,6 +37,12 @@ local ordered_pairs
       = import 'lua-nucleo/tdeepequals.lua'
       {
         'ordered_pairs'
+      }
+
+local create_error_object
+      = import 'lua-nucleo/error.lua'
+      {
+        'create_error_object'
       }
 
 --------------------------------------------------------------------------------
@@ -215,6 +223,38 @@ end)
 
 --------------------------------------------------------------------------------
 
+test:tests_for "ensure_fails"
+
+test:case "ensure_fails-is-happy-on-failure" (function()
+  local res, err = pcall(function()
+    ensure_fails(
+        "inner msg",
+        function() error "Lorem ipsum" end
+      )
+  end)
+  ensure("should not throw error", res)
+end)
+
+test:case "ensure_fails-complains-on-success" (function()
+  local res, err = pcall(function()
+    ensure_fails(
+        "inner msg",
+        function() end
+      )
+  end)
+  ensure("should throw error", not res)
+  ensure(
+      "should report error msg",
+      err:find("inner msg")
+    )
+  ensure(
+      "should report the complaint",
+      err:find("ensure_fails failed")
+    )
+end)
+
+--------------------------------------------------------------------------------
+
 test:tests_for "ensure_fails_with_substring"
 
 test:case "ensure_fails_with_substring-is-happy-on-failure" (function()
@@ -293,6 +333,17 @@ test:case "ensure_fails_with_substring-complains-on-regex-mismatch" (function()
       "should report the complaint",
       err:find("ensure_fails_with_substring failed")
     )
+end)
+
+test:case "ensure_fails_with_substring-supports-error-object" (function()
+  local res, err = pcall(function()
+    ensure_fails_with_substring(
+        "inner msg",
+        function() error(create_error_object("Ipsum")) end,
+        "Ipsum"
+      )
+  end)
+  ensure("should not throw error", res)
 end)
 
 --------------------------------------------------------------------------------

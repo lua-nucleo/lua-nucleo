@@ -35,8 +35,27 @@ local make_checker
         'make_checker'
       }
 
+local is_error_object,
+      get_error_id
+      = import 'lua-nucleo/error.lua'
+      {
+        'is_error_object',
+        'get_error_id'
+      }
+
 -- TODO: Write tests for this one
 --       https://github.com/lua-nucleo/lua-nucleo/issues/13
+
+--- Ensure value is true.
+--
+-- Checks that passed value is true.
+-- Raises error if not.
+--
+-- @tparam string msg Message to add to error
+-- @param value Actual value
+-- @param[opt] ... Optional parameters to add to error message
+-- @return[1] Actual value (if ensure succeeds)
+-- @return[1] Optional parameters (if ensure succeeds)
 local ensure = function(msg, value, ...)
   if not value then
     error(
@@ -50,6 +69,16 @@ end
 
 -- TODO: Write tests for this one
 --       https://github.com/lua-nucleo/lua-nucleo/issues/13
+
+--- Ensure that two values are equal.
+--
+-- Checks if actual value is equal to expected.
+-- Raises error if not.
+--
+-- @tparam string msg Message to add to error
+-- @param actual Actual value
+-- @param expected Expected value
+-- @return[1] Actual value (if ensure succeeds)
 local ensure_equals = function(msg, actual, expected)
   return
       (actual ~= expected)
@@ -63,6 +92,14 @@ local ensure_equals = function(msg, actual, expected)
       or actual -- NOTE: Should be last to allow false and nil values.
 end
 
+--- Ensure that value has expected type.
+--
+-- Raises error if not.
+--
+-- @tparam string msg Message to add to error
+-- @param value Actual value
+-- @tparam string expected_type Expected type of value
+-- @return[1] Actual value (if ensure succeeds)
 local ensure_is = function(msg, value, expected_type)
   local actual = type(value)
   return
@@ -79,6 +116,14 @@ end
 
 -- TODO: Write tests for this one
 --       https://github.com/lua-nucleo/lua-nucleo/issues/13
+--- Ensure that two flat tables are equal.
+--
+-- Raises error if not.
+--
+-- @tparam string msg Message to add to error
+-- @tparam table actual Actual table
+-- @tparam table expected Expected table
+-- @return Actual table (if ensure succeeds)
 local ensure_tequals = function(msg, actual, expected)
   if type(expected) ~= "table" then
     error(
@@ -130,6 +175,14 @@ local ensure_tequals = function(msg, actual, expected)
   return actual
 end
 
+--- Ensure that two multidimensional tables are equal.
+--
+-- Raises error if not.
+--
+-- @tparam string msg Message to add to error
+-- @tparam table actual Actual table
+-- @tparam table expected Expected table
+-- @treturn table Actual table (if ensure succeeds)
 local ensure_tdeepequals = function(msg, actual, expected)
   -- Heavy! Use ensure_tequals if possible
   if not tdeepequals(actual, expected) then
@@ -208,6 +261,17 @@ end
 
 --------------------------------------------------------------------------------
 
+--- Ensure that two strings are equal.
+--
+-- Raises error if not.
+--
+-- @tparam string msg Message to add to error
+-- @tparam string actual Actual string
+-- @tparam string expected Expected string
+-- @param[opt] ... Optional arguments to return
+-- @treturn string Actual string (if ensure succeeds)
+-- @treturn string Expected string (if ensure succeeds)
+-- @return Optional arguments (if ensure succeeds)
 local ensure_strequals = function(msg, actual, expected, ...)
   if actual == expected then
     return actual, expected, ...
@@ -223,6 +287,19 @@ end
 
 --------------------------------------------------------------------------------
 
+--- Ensure that return values of a function
+--- denote it failed with expected error message.
+--
+-- Raises error if not.
+--
+-- @tparam string msg Message to add to error
+-- @tparam string expected_message Expected error message
+-- @param res First return value of a function
+-- @tparam string actual_message Actual error message
+-- @param[opt] ... Optional arguments
+-- @treturn string Actual error message (if ensure succeeds)
+-- @treturn string Expected error message (if ensure succeeds)
+-- @return Optional arguments (if ensure succeeds)
 local ensure_error = function(msg, expected_message, res, actual_message, ...)
   if res ~= nil then
     error(
@@ -238,6 +315,15 @@ end
 
 --------------------------------------------------------------------------------
 
+--- Ensure that return values of a function
+--- denote it failed with expected substring in error message.
+--
+-- Raises error if not.
+--
+-- @tparam string msg Message to add to error
+-- @tparam string substring Expected error message
+-- @param res First return value of a function
+-- @tparam string err Actual error message
 local ensure_error_with_substring = function(msg, substring, res, err)
   if res ~= nil then
     error(
@@ -262,11 +348,38 @@ end
 
 --------------------------------------------------------------------------------
 
+--- Call function and ensure it fails.
+--
+-- Raises error if not.
+--
+-- @tparam string msg Message to add to error
+-- @tparam func fn Function to call
+local ensure_fails = function(msg, fn)
+  local res, err = pcall(fn)
+
+  if res then
+    error("ensure_fails failed: " .. msg .. ": call was expected to fail, but did not")
+  end
+end
+
+--------------------------------------------------------------------------------
+
+--- Call function and ensure it fails with expected string in error message.
+--
+-- Raises error if not.
+--
+-- @tparam string msg Message to add to error
+-- @tparam func fn Function to call
+-- @tparam string substring Substring to search for in error message
 local ensure_fails_with_substring = function(msg, fn, substring)
   local res, err = pcall(fn)
 
-  if res ~= false then
+  if res then
     error("ensure_fails_with_substring failed: " .. msg .. ": call was expected to fail, but did not")
+  end
+
+  if is_error_object(err) then
+    err = get_error_id(err)
   end
 
   if type(err) ~= "string" then
@@ -288,6 +401,14 @@ end
 
 --------------------------------------------------------------------------------
 
+--- Ensure that string contains substring.
+--
+-- Raises error if not.
+--
+-- @tparam string msg Message to add to error
+-- @tparam string str String
+-- @tparam string substring Substring to search for in string
+-- @treturn string Passed string
 local ensure_has_substring = function(msg, str, substring)
   if type(str) ~= "string" then
     error(
@@ -312,6 +433,14 @@ end
 
 -- We want 99.9% probability of success
 -- Would not work for high-contrast weights. Use for tests only.
+
+--- Ensure that Posterior probability is within acceptable range.
+--
+-- Raises error if not.
+-- @tparam number num_runs Number of observations
+-- @tparam table weights Weights (prior)
+-- @tparam table stats Stats (posterior)
+-- @tparam number max_acceptable_diff Maximum acceptable difference
 local ensure_aposteriori_probability = function(num_runs, weights, stats, max_acceptable_diff)
   ensure_equals("total sum check", taccumulate(stats), num_runs)
 
@@ -343,6 +472,16 @@ local ensure_aposteriori_probability = function(num_runs, weights, stats, max_ac
   ensure_equals("no extra data", next(aposteriori_probs), nil)
 end
 
+--- Check return values of a function.
+--
+-- Checks that number of return values of a function and
+-- their values are equal to the expected ones.
+-- Raises error if not.
+--
+-- @tparam string msg Error message to raise
+-- @tparam number Number of expected return values
+-- @tparam table expected Table with expected return values
+-- @param[opt] ... Actual values to check
 local ensure_returns = function(msg, num, expected, ...)
   local checker = make_checker()
   -- Explicit check to separate no-return-values from all-nils
@@ -386,6 +525,7 @@ return
   ensure_strequals = ensure_strequals;
   ensure_error = ensure_error;
   ensure_error_with_substring = ensure_error_with_substring;
+  ensure_fails = ensure_fails;
   ensure_fails_with_substring = ensure_fails_with_substring;
   ensure_has_substring = ensure_has_substring;
   ensure_aposteriori_probability = ensure_aposteriori_probability;
