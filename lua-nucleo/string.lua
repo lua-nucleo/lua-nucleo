@@ -131,7 +131,7 @@ local split_by_char = function(str, delimiter)
   if str == "" then
     return { }
   end
-  
+
   local sep = delimiter:byte()
   local result = { }
   local pos = 1
@@ -466,10 +466,20 @@ do
 end
 
 local tjson_simple
+local tjson_simple_pretty
 do
-  local cat_value = function(cat, v, v_type)
+  local pretty_print = function(cat, space_num, plus, need_pretty, need_newline)
+    if need_pretty == nil then return end
+    if need_newline == true then
+      space_num = space_num + plus
+      cat('\n' .. (' '):rep(space_num))
+    end
+    return space_num
+  end
+
+  local cat_value = function(cat, v, v_type, was_newline)
     if v_type == "string" then
-      cat (escape_for_json(v))
+      cat(escape_for_json(v))
     elseif v_type == "number" then
       -- Throw exceptions on NaN, +Inf, -Inf
       if v ~= v then
@@ -477,15 +487,15 @@ do
       elseif v == math_huge or v == -math_huge then
         error("tjson_simple: `Inf' value not supported")
       end
-      cat (v)
+      cat(v)
     elseif v_type == "boolean" then
-      cat (tostring(v))
+      cat(tostring(v))
     else
       error("tjson_simple: value type `" .. v_type .. "' not supported")
     end
   end
 
-  local function impl(cat, t, visited)
+  local function impl(cat, t, visited, space_num, need_pretty, need_newline)
     local t_type = type(t)
     if t_type ~= "table" then
       cat_value(cat, t, t_type)
@@ -498,17 +508,26 @@ do
     visited[t] = true
 
     if tisarray(t) then
+      space_num = pretty_print(cat, space_num, 0, need_pretty, true)
       cat '['
+      space_num = pretty_print(cat, space_num, 2, need_pretty, true)
+
       if #t > 0 then -- Suppress joining for empty array
-        impl(cat, t[1], visited)
+        impl(cat, t[1], visited, space_num, need_pretty, false)
         for i = 2, #t do -- Implicit conversion to zero-based array.
-          cat ','
-          impl(cat, t[i], visited)
+          cat ',' -- mass enumeration, if need \n, put here
+          impl(cat, t[i], visited, space_num, need_pretty, true)
         end
       end
+
+      space_num = pretty_print(cat, space_num, -2, need_pretty, true)
       cat ']'
     else
+      space_num = pretty_print(cat, space_num, 0, need_pretty, need_newline)
+      need_newline = true
       cat '{'
+      space_num = pretty_print(cat, space_num, 2, need_pretty, true)
+
       local need_comma = false
       for k, v in pairs(t) do
         local k_type = type(k)
@@ -517,12 +536,15 @@ do
         end
         if need_comma then
           cat ','
+          space_num = pretty_print(cat, space_num, 0, need_pretty, true)
         end
         cat_value(cat, k, k_type)
         cat ':'
-        impl(cat, v, visited)
+        impl(cat, v, visited, space_num, need_pretty, true)
         need_comma = true
       end
+
+      space_num = pretty_print(cat, space_num, -2, need_pretty, true)
       cat '}'
     end
 
@@ -542,6 +564,27 @@ do
   tjson_simple = function(t)
     local cat, concat = make_concatter()
     impl(cat, t, { })
+    return concat()
+  end
+
+  --- Serialize table into json string with pretty print.
+  --
+  -- Tables with string keys only becomes objects. Tables with integer keys
+  -- without gaps becomes arrays. Value types nil, NaN, +Inf, -Inf is not
+  -- supported.
+  -- @tparam table t Table without self-references
+  -- @treturn string A result string
+  -- @usage tjson_simple({a = 1, b = 2})
+  --   returns '{
+  --              "a":1,
+  --              "b":2
+  --            }'
+  -- @local here
+  tjson_simple_pretty = function(t)
+    local cat, concat = make_concatter()
+    local space_num = 0;
+    impl(cat, t, { }, space_num, true, false)
+    pretty_print(cat, space_num, 0, true, true)
     return concat()
   end
 end
@@ -573,4 +616,5 @@ return
   serialize_number = serialize_number;
   get_escaped_chars_in_ranges = get_escaped_chars_in_ranges;
   tjson_simple = tjson_simple;
+  tjson_simple_pretty = tjson_simple_pretty;
 }
