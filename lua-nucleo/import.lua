@@ -5,10 +5,12 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
-local type, assert, loadfile, tostring, error, unpack, require, setmetatable,
-      select
-    = type, assert, loadfile, tostring, error, unpack, require, setmetatable,
-      select
+if declare then declare 'unpack' end
+
+local type, assert, loadfile, tostring, error, unpack, require,
+      setmetatable, select
+    = type, assert, loadfile, tostring, error, unpack or table.unpack, require,
+      setmetatable, select
 
 local create_import = function(init_with_require, code_root)
   local get_path
