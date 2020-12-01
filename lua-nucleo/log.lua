@@ -19,7 +19,7 @@
 --------------------------------------------------------------------------------
 
 local type, setmetatable, tostring, select, assert, unpack
-    = type, setmetatable, tostring, select, assert, unpack
+    = type, setmetatable, tostring, select, assert, unpack or table.unpack
 
 local os_time, os_date
     = os.time, os.date

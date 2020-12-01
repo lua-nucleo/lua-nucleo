@@ -5,7 +5,7 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
-local assert, unpack, select = assert, unpack, select
+local assert, unpack, select = assert, unpack or table.unpack, select
 local table_remove = table.remove
 
 local assert_is_number,

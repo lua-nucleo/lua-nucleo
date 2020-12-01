@@ -5,6 +5,10 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+local unpack = unpack or table.unpack
+
+--------------------------------------------------------------------------------
+
 local function gen_random_dataset(num, nesting, visited, random)
   random = random or math.random
 
