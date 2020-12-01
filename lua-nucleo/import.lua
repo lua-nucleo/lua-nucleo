@@ -5,6 +5,8 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+if declare then declare 'unpack' end
+
 local type, assert, loadfile, tostring, error, unpack, require,
       setmetatable, select
     = type, assert, loadfile, tostring, error, unpack or table.unpack, require,
