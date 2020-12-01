@@ -5,8 +5,10 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
-local setmetatable, error, pairs, ipairs, tostring, select, type, assert
-    = setmetatable, error, pairs, ipairs, tostring, select, type, assert
+local setmetatable, error, pairs, ipairs, tostring, select, type, assert,
+      unpack
+    = setmetatable, error, pairs, ipairs, tostring, select, type, assert,
+      unpack or table.unpack
 
 local rawget = rawget
 

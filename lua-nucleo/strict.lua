@@ -48,6 +48,9 @@ end
 declare('_PROMPT')
 declare('_PROMPT2')
 
+-- NOTE: declare global variables for Lua versions compatibility
+declare('unpack')
+
 setmetatable(_G, {
   __index = function(t, k)
     if declared[k] then
