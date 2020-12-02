@@ -23,6 +23,7 @@ local table_concat = table.concat
 local math_pi = math.pi
 local setmetatable = setmetatable
 local create_thread = coroutine.create
+local unpack = unpack
 
 local loadstring
       = import 'lua-nucleo/legacy.lua'
@@ -33,15 +34,21 @@ local loadstring
 local ensure,
       ensure_equals,
       ensure_strequals,
-      ensure_tequals,
+      ensure_strlist,
       ensure_fails_with_substring
       = import 'lua-nucleo/ensure.lua'
       {
         'ensure',
         'ensure_equals',
         'ensure_strequals',
-        'ensure_tequals',
+        'ensure_strlist',
         'ensure_fails_with_substring'
+      }
+
+local is_string
+      = import 'lua-nucleo/type.lua'
+      {
+        'is_string'
       }
 
 local tdeepequals = import 'lua-nucleo/tdeepequals.lua' { 'tdeepequals' }
@@ -79,12 +86,13 @@ local declare_tests = function(tested_fn_name, serialization_fn)
 
   -- general checker
   -- checks serialization and that serialized string is what we expected
-  local check_ok = function(msg, test_value, expected_str, compare_fn)
-    ensure_strequals(
-        msg,
-        check_deserialization(msg, test_value, compare_fn),
-        expected_str
-      )
+  local check_ok = function(msg, test_value, expected, compare_fn)
+    local actual = check_deserialization(msg, test_value, compare_fn)
+    if is_string(expected) then
+      ensure_strequals(msg, actual, expected)
+    else
+      ensure_strlist(msg, actual, unpack(expected))
+    end
   end
 
   -- checker for string data
@@ -93,8 +101,8 @@ local declare_tests = function(tested_fn_name, serialization_fn)
   end
 
   -- checker for table data
-  local check_tbl_ok = function(msg, test_value, expected_str)
-    check_ok(msg, test_value, expected_str, tdeepequals)
+  local check_tbl_ok = function(msg, test_value, expected)
+    check_ok(msg, test_value, expected, tdeepequals)
   end
 
   -- Tests
@@ -175,7 +183,16 @@ local declare_tests = function(tested_fn_name, serialization_fn)
     check_tbl_ok(
         "tstr table with keys",
         tbl_with_keys,
-        '{key_1="plain string",key_3=true,key_2=42}'
+      {
+          '{';
+          {
+            'key_1="plain string"';
+            'key_3=true';
+            'key_2=42';
+          };
+          ',';
+          '}';
+        }
       )
 
     local tbl_with_nested_tbl =
