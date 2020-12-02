@@ -15,6 +15,7 @@ local arguments
 local ensure,
       ensure_equals,
       ensure_strequals,
+      ensure_strvariant,
       ensure_tequals,
       ensure_returns,
       ensure_fails_with_substring
@@ -23,6 +24,7 @@ local ensure,
         'ensure',
         'ensure_equals',
         'ensure_strequals',
+        'ensure_strvariant',
         'ensure_tequals',
         'ensure_returns',
         'ensure_fails_with_substring'
@@ -954,15 +956,22 @@ test:test "kv_concat-basic" (function()
         ),
       "aaa=!?#$%^&*()_+|~/,x=3,y=2,z=1"
     )
-  ensure_strequals(
+
+  ensure_strvariant(
       "2 integer 2 non-integer indexes result unorder with pairs",
       kv_concat({ x = 3, y = "2", 1, "!?#$%^&*()_+|~/" }, "=", ",", pairs),
-      "1=1,2=!?#$%^&*()_+|~/,y=2,x=3"
+      {
+        "1=1,2=!?#$%^&*()_+|~/,y=2,x=3";
+        "1=1,2=!?#$%^&*()_+|~/,x=3,y=2";
+      }
     )
-  ensure_strequals(
+  ensure_strvariant(
       "2 integer 2 non-integer indexes result unorder with no function",
       kv_concat({ x = 3, y = "2", 1, "!?#$%^&*()_+|~/" }, "=", ","),
-      "1=1,2=!?#$%^&*()_+|~/,y=2,x=3"
+      {
+        "1=1,2=!?#$%^&*()_+|~/,y=2,x=3";
+        "1=1,2=!?#$%^&*()_+|~/,x=3,y=2";
+      }
     )
   -- Feature: nested tables is not allowed
   ensure_fails_with_substring(
