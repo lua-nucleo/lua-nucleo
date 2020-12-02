@@ -4,6 +4,24 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+LUA51 = _VERSION == 'Lua 5.1'
+LUA52 = _VERSION == 'Lua 5.2'
+LUA53 = _VERSION == 'Lua 5.3'
+LUA54 = _VERSION == 'Lua 5.4'
+
+if LUA53 or LUA54 then
+  unpack = table.unpack
+  loadstring = load
+end
+
+if LUA52 or LUA53 or LUA54 then
+  local ldbus = require 'ldbus'
+  local bus = ldbus.bus.get('system')
+  newproxy = function()
+    return bus
+  end
+end
+
 -- WARNING: do not use import in this file for the test purity reasons.
 local run_tests = assert(assert(assert(loadfile('lua-nucleo/suite.lua'))()).run_tests)
 
