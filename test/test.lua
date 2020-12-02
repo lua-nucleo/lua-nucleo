@@ -16,6 +16,9 @@ end
 
 if LUA52 or LUA53 or LUA54 then
   newproxy = require 'lua-nucleo.newproxy'
+  setfenv = function(chunk, env)
+    return load(chunk, nil, nil, env)
+  end
 end
 
 -- WARNING: do not use import in this file for the test purity reasons.
