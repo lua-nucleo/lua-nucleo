@@ -245,6 +245,78 @@ end
 
 --------------------------------------------------------------------------------
 
+--- Checks if the `actual` string exists in the `expected` linear string array.
+-- <br />
+-- Returns all the arguments intact cutting the `msg` at beginning on success.
+-- <br />
+-- Raises the error on fail.
+-- @tparam string msg Failing message that will be used in the error message if
+--                    the check fails.
+-- @tparam string actual A string to check.
+-- @tparam string[] expected The linear array table of strings.
+-- @tparam any[] ... Custom arguments.
+-- @raise `ensure_strvariant failed error` if unable to find the `actual` string
+--        in `expected`.
+-- @treturn string `actual` intact.
+-- @treturn string[] `expected` intact.
+-- @treturn any[] ... The rest of the arguments intact.
+-- @usage
+-- local ensure_strvariant
+--       = import 'lua-nucleo/ensure.lua'
+--       {
+--         'ensure_strvariant'
+--       }
+--
+-- -- will pass without errors:
+-- ensure_strvariant('find elem1', 'elem1', { 'elem0', 'elem1', 'elem2' })
+--
+-- -- will throw the error:
+-- ensure_strvariant(
+--     'find the_element_that_cannot_be_found',
+--     'the_element_that_cannot_be_found',
+--     { 'elem0', 'elem1', 'elem2' }
+--   )
+local ensure_strvariant = function(msg, actual, expected, ...)
+  local confirmed = false
+
+  if expected == nil then
+    confirmed = actual == nil
+  elseif type(expected) == 'string' then
+    confirmed = actual == expected
+  elseif type(expected) == 'table' then
+    for i = 1, #expected do
+      if actual == expected[i] then
+        confirmed = true
+        break
+      end
+    end
+  end
+
+  if confirmed then
+    return actual, expected, ...
+  end
+
+  local expected_str
+  if expected == nil then
+    expected_str = 'nil'
+  elseif type(expected) == 'string' then
+    expected_str = expected
+  elseif type(expected) == 'table' then
+    expected_str = table.concat(expected, ' or ')
+  else
+    expected_str = 'unexpected type of the expected value: ' .. type(expected)
+  end
+
+  error(
+      "ensure_strvariant failed: " .. msg .. ":\n"
+      .. strdiff_msg(actual, expected)
+      .. "\nactual:\n" .. tostring(actual)
+      .. "\nexpected:\n" .. expected_str
+    )
+end
+
+--------------------------------------------------------------------------------
+
 --- @param msg
 -- @param expected_message
 -- @param res
@@ -429,6 +501,7 @@ return
   ensure_tequals = ensure_tequals;
   ensure_tdeepequals = ensure_tdeepequals;
   ensure_strequals = ensure_strequals;
+  ensure_strvariant = ensure_strvariant;
   ensure_error = ensure_error;
   ensure_error_with_substring = ensure_error_with_substring;
   ensure_fails_with_substring = ensure_fails_with_substring;
