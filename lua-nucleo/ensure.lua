@@ -223,6 +223,23 @@ end
 
 --------------------------------------------------------------------------------
 
+local ensure_strvariant = function(msg, actual, expected, ...)
+  for i = 1, #expected do
+    if actual == expected[i] then
+      return actual, expected, ...
+    end
+  end
+
+  error(
+      "ensure_strvariant: " .. msg .. ":\n"
+      .. strdiff_msg(actual, expected)
+      .. "\nactual:\n" .. tostring(actual)
+      .. "\nexpected:\n" .. table.concat(expected, ' or ')
+    )
+end
+
+--------------------------------------------------------------------------------
+
 local ensure_error = function(msg, expected_message, res, actual_message, ...)
   if res ~= nil then
     error(
@@ -384,6 +401,7 @@ return
   ensure_tequals = ensure_tequals;
   ensure_tdeepequals = ensure_tdeepequals;
   ensure_strequals = ensure_strequals;
+  ensure_strvariant = ensure_strvariant;
   ensure_error = ensure_error;
   ensure_error_with_substring = ensure_error_with_substring;
   ensure_fails_with_substring = ensure_fails_with_substring;
