@@ -209,10 +209,6 @@ local declare_tests = function(tested_fn_name, serialization_fn)
     local userdata = newproxy()
     ensure("tstr function", serialization_fn(fn):find("function:"))
     ensure("tstr thread", serialization_fn(thread):find("thread:"))
-    local aaa = serialization_fn(userdata)
-    print('------------------------')
-    print(aaa)
-    print('------------------------')
     ensure("tstr userdata", serialization_fn(userdata):find("userdata:"))
     assert(
         loadstring('return ' .. serialization_fn(fn)),
