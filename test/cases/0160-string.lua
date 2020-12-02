@@ -32,6 +32,7 @@ local ensure,
       ensure_equals,
       ensure_strequals,
       ensure_strvariant,
+      ensure_strlist,
       ensure_tequals,
       ensure_returns,
       ensure_fails_with_substring
@@ -41,6 +42,7 @@ local ensure,
         'ensure_equals',
         'ensure_strequals',
         'ensure_strvariant',
+        'ensure_strlist',
         'ensure_tequals',
         'ensure_returns',
         'ensure_fails_with_substring'
@@ -1453,13 +1455,26 @@ test:test_for("tjson_simple"):BROKEN_IF(not newproxy) (function()
       tjson_simple({1, -1, 123.123, 'abc', true, false, { }}),
       '[1,-1,123.123,"abc",true,false,[]]'
     )
-  ensure_strequals(
+
+  ensure_strlist(
       'table to object',
       tjson_simple(
-          {a = 1, b = -1, c = 123.123, d = 'abc', e = true, f = false, j = {1}}
-        ),
-      '{"a":1,"c":123.123,"b":-1,"e":true,"d":"abc","j":[1],"f":false}'
+        {a = 1, b = -1, c = 123.123, d = 'abc', e = true, f = false, j = {1}}
+      ),
+      '{',
+      {
+        '"a":1';
+        '"c":123.123';
+        '"b":-1';
+        '"e":true';
+        '"d":"abc"';
+        '"j":[1]';
+        '"f":false';
+      },
+      ',',
+      '}'
     )
+
   ensure_strequals(
       'empty table to object with tisarray_not',
       tjson_simple(tisarray_not({ })),
