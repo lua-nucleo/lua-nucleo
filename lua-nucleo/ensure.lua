@@ -5,8 +5,8 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
-local error, tostring, pcall, type, pairs, select, next
-    = error, tostring, pcall, type, pairs, select, next
+local error, tostring, pcall, type, pairs, ipairs, select, next
+    = error, tostring, pcall, type, pairs, ipairs, select, next
 
 local math_min, math_max, math_abs = math.min, math.max, math.abs
 local string_char = string.char
@@ -315,6 +315,127 @@ local ensure_strvariant = function(msg, actual, expected, ...)
     )
 end
 
+--- Checks if the `actual` string is constructed by the elements of
+-- the `expected_elements_list` linear string array table. Expected that
+-- elements are joined together with the `expected_sep` in between and not
+-- necessarily have the same order as in the `expected_elements_list`. Also,
+-- expected that the constructed list is prefixed by the `expected_prefix` and
+-- terminated by the `expected_suffix`.
+-- <br />
+-- Returns all the arguments intact cutting the `msg` at beginning on success.
+-- <br />
+-- Raises the error on fail.
+-- <br />
+-- Best for simple long lists.
+-- <br />
+-- <br />
+-- <b>How it works:</b> cut `expected_prefix` and `expected_suffix` from the
+-- `actual` and break by `expected_sep`. Then find missing and excess elements
+-- in two array traverses. Raises the error if found any.
+-- @tparam string msg Failing message that will be used in the error message if
+--         the check fails.
+-- @tparam string actual A string to check.
+-- @tparam string expected_prefix Expected prefix. Expected that the
+--         `actual` must start with the `expected_prefix`.
+-- @tparam string[] expected_elements_list Expected elements list. Expected that
+--         `expected_elements_list` elements exist in the `actual`
+--         whatever the original order from the `expected_elements_list`.
+-- @tparam string expected_sep Expected separator character. Expected that this
+--         separator is used to join list elements together.
+-- @tparam string expected_suffix Expected suffix character. Expected that the
+--         `actual` ends with the `expected_suffix`.
+-- @tparam any[] ... Custom arguments.
+-- @raise `ensure_strlist failed error` if the check fails.
+-- @treturn string `actual` intact.
+-- @treturn string `expected_prefix` intact.
+-- @treturn string[] `expected_elements_list` intact.
+-- @treturn string `expected_sep` intact.
+-- @treturn string `expected_suffix` intact.
+-- @treturn any[] ... The rest of the arguments intact.
+-- @usage
+-- local ensure_strlist
+--       = import 'lua-nucleo/ensure.lua'
+--       {
+--         'ensure_strlist'
+--       }
+--
+-- -- will pass without errors:
+-- ensure_strlist(
+--     'output check',
+--     '(a,b,c,d,e)',
+--     '(',
+--     { 'a', 'b', 'c', 'd', 'e' },
+--     ',',
+--     ')'
+--   )
+--
+-- -- will fail because the real separator is ', ':
+-- -- ensure_strlist(
+-- --     'output check',
+-- --     '(a, b, c, d, e)',
+-- --     '(',
+-- --     { 'a', 'b', 'c', 'd', 'e' },
+-- --     ',',
+-- --     ')'
+-- --   )
+--
+-- -- will pass without errors:
+-- ensure_strlist(
+--     'output check',
+--     '1+b*c+m^2/2',
+--     '',
+--     { '1', 'b*c', 'm^2/2' },
+--     '+',
+--     ''
+--   )
+local ensure_strlist = function(
+  msg,
+  actual,
+  expected_prefix,
+  expected_elements_list,
+  expected_sep,
+  expected_suffix,
+  ...
+)
+  if #expected_prefix > 0 then
+    ensure_strequals(msg, actual:sub(1, #expected_prefix), expected_prefix)
+  end
+  if #expected_suffix > 0 then
+    ensure_strequals(msg, actual:sub(-#expected_suffix), expected_suffix)
+  end
+
+  local actual_joined = actual:sub(1 + #expected_prefix, -1 - #expected_suffix)
+
+  local missed_elements = { }
+  local excess_elements = { }
+  for _, elem in ipairs(expected_elements_list) do
+    missed_elements[elem] = true
+  end
+
+  for elem in actual_joined:gmatch('([^' .. expected_sep .. ']+)') do
+    if missed_elements[elem] then
+      missed_elements[elem] = nil
+    else
+      excess_elements[#excess_elements + 1] = elem
+    end
+  end
+
+  for elem, _ in pairs(missed_elements) do
+    error(
+      msg .. ': expected element is not found: ' .. tostring(elem)
+    )
+  end
+
+  for _, elem in ipairs(excess_elements) do
+    error(
+      msg .. ': excess element is found: ' .. tostring(elem)
+    )
+  end
+
+  return actual, expected_prefix, expected_elements_list, expected_sep,
+         expected_suffix, ...
+end
+
 --------------------------------------------------------------------------------
 
 --- @param msg
@@ -502,6 +623,7 @@ return
   ensure_tdeepequals = ensure_tdeepequals;
   ensure_strequals = ensure_strequals;
   ensure_strvariant = ensure_strvariant;
+  ensure_strlist = ensure_strlist;
   ensure_error = ensure_error;
   ensure_error_with_substring = ensure_error_with_substring;
   ensure_fails_with_substring = ensure_fails_with_substring;
