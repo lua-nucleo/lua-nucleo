@@ -223,6 +223,47 @@ end
 
 --------------------------------------------------------------------------------
 
+local ensure_strvariant = function(msg, actual, expected, ...)
+  local confirmed = false
+
+  if expected == nil then
+    confirmed = actual == nil
+  elseif type(expected) == 'string' then
+    confirmed = actual == expected
+  elseif type(expected) == 'table' then
+    for i = 1, #expected do
+      if actual == expected[i] then
+        confirmed = true
+        break
+      end
+    end
+  end
+
+  if confirmed then
+    return actual, expected, ...
+  end
+
+  local expected_str
+  if expected == nil then
+    expected_str = 'nil'
+  elseif type(expected) == 'string' then
+    expected_str = expected
+  elseif type(expected) == 'table' then
+    expected_str = table.concat(expected, ' or ')
+  else
+    expected_str = 'unexpected type of the expected value: ' .. type(expected)
+  end
+
+  error(
+      "ensure_strvariant failed: " .. msg .. ":\n"
+      .. strdiff_msg(actual, expected)
+      .. "\nactual:\n" .. tostring(actual)
+      .. "\nexpected:\n" .. expected_str
+    )
+end
+
+--------------------------------------------------------------------------------
+
 local ensure_error = function(msg, expected_message, res, actual_message, ...)
   if res ~= nil then
     error(
@@ -384,6 +425,7 @@ return
   ensure_tequals = ensure_tequals;
   ensure_tdeepequals = ensure_tdeepequals;
   ensure_strequals = ensure_strequals;
+  ensure_strvariant = ensure_strvariant;
   ensure_error = ensure_error;
   ensure_error_with_substring = ensure_error_with_substring;
   ensure_fails_with_substring = ensure_fails_with_substring;
