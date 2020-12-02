@@ -127,10 +127,13 @@ test:tests_for "ensure_error_with_substring"
 
 test:case "ensure_error_with_substring-is-happy-on-failure" (function()
   local res, err = loadstring("boo")
+  local expected_error = LUA51
+    and [=[[string "boo"]:1: '=' expected near '<eof>']=]
+     or [=[[string "boo"]:1: syntax error near <eof>]=]
   local res, err = pcall(function()
     ensure_error_with_substring(
         "inner msg",
-        [=[[string "boo"]:1: '=' expected near '<eof>']=],
+        expected_error,
         res,
         err
       )
@@ -303,10 +306,13 @@ test:tests_for "ensure_error"
 
 test:case "ensure_error-is-happy-on-failure" (function()
   local res, err = loadstring("boo")
+  local expected_error = LUA51
+    and [=[[string "boo"]:1: '=' expected near '<eof>']=]
+     or [=[[string "boo"]:1: syntax error near <eof>]=]
   local res, err = pcall(function()
     ensure_error(
         "inner msg",
-        [=[[string "boo"]:1: '=' expected near '<eof>']=],
+        expected_error,
         res,
         err
       )
