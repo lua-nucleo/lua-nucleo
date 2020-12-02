@@ -15,16 +15,11 @@ if LUA53 or LUA54 then
 end
 
 if LUA52 or LUA53 or LUA54 then
-  local ldbus = require 'ldbus'
-  local bus = ldbus.bus.get('system')
-  newproxy = function()
-    return bus
-  end
+  newproxy = require 'lua-nucleo.newproxy'
 end
 
 -- WARNING: do not use import in this file for the test purity reasons.
 local run_tests = assert(assert(assert(loadfile('lua-nucleo/suite.lua'))()).run_tests)
-
 
 -- TODO: Also preserve random number generator's seed
 --       (save it and restore between suites)
