@@ -4,9 +4,13 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+LUA51 = _VERSION == 'Lua 5.1'
+LUA52 = _VERSION == 'Lua 5.2'
+LUA53 = _VERSION == 'Lua 5.3'
+LUA54 = _VERSION == 'Lua 5.4'
+
 -- WARNING: do not use import in this file for the test purity reasons.
 local run_tests = assert(assert(assert(loadfile('lua-nucleo/suite.lua'))()).run_tests)
-
 
 -- TODO: Also preserve random number generator's seed
 --       (save it and restore between suites)
