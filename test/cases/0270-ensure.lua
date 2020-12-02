@@ -12,6 +12,7 @@ local ensure,
       ensure_equals,
       ensure_tequals,
       ensure_strequals,
+      ensure_strvariant,
       ensure_error,
       ensure_error_with_substring,
       ensure_fails_with_substring,
@@ -24,6 +25,7 @@ local ensure,
         'ensure_equals',
         'ensure_tequals',
         'ensure_strequals',
+        'ensure_strvariant',
         'ensure_error',
         'ensure_error_with_substring',
         'ensure_fails_with_substring',
@@ -344,6 +346,39 @@ test:case "ensure_error-complains-on-success" (function()
       "should report the complaint",
       err:find("ensure_error failed")
     )
+end)
+
+--------------------------------------------------------------------------------
+
+test:tests_for "ensure_strvariant"
+
+local ensure_strvariant_test = function(expected_success, actual, expected)
+  local res, err = pcall(ensure_strvariant, "inner msg", actual, expected)
+  if not expected_success then
+    ensure("should throw error", not res)
+    ensure(
+        "should report the complaint",
+        err:find("ensure_strvariant failed")
+      )
+  else
+    ensure("should not throw error", res)
+  end
+end
+
+test:case "ensure_strvariant_simple" (function()
+  ensure_strvariant_test(false, "string1", nil)
+  ensure_strvariant_test(true, nil, nil)
+  ensure_strvariant_test(true, "", "")
+  ensure_strvariant_test(true, "str", "str")
+  ensure_strvariant_test(false, "str", "str2")
+  ensure_strvariant_test(false, "str2", "str")
+  ensure_strvariant_test(false, nil, "str")
+
+  ensure_strvariant_test(true, "str", { "str" })
+  ensure_strvariant_test(true, "str", { "123", "str" })
+  ensure_strvariant_test(false, "str", { "123", "str2" })
+  ensure_strvariant_test(false, "str", { "123", "str2", "str3" })
+  ensure_strvariant_test(true, "str3", { "123", "str2", "str3" })
 end)
 
 --------------------------------------------------------------------------------
