@@ -98,7 +98,7 @@ for i = 1, #lib_files do
   lib_file = lib_file:match("([%w%-_]+).lua")
   local match_found = false
   io.write(lib_file .. ": ")
-  lib_file = lib_file:gsub("%-", "%%%-") -- replace "-" with "%-" in names
+  lib_file = lib_file:gsub("%-", "%%-") -- replace "-" with "%-" in names
   for j = 1, #cases do
     local case_j = cases[j]
     if string.match(case_j, "%-" .. lib_file .. "[%-%.]") then
