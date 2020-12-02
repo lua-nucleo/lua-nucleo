@@ -240,7 +240,11 @@ test "deque-empty-pre-set-back" (function()
 
   ensure_equals("empty size", deque:size(), 0)
   ensure_equals("empty back", deque:back(), nil)
-  ensure_equals("empty pop_back", deque:pop_back(), nil)
+  if LUA51 then
+    ensure_equals("empty pop_back", deque:pop_back(), nil)
+  else
+    ensure_equals("empty pop_back", deque:pop_back(), "EMPTY")
+  end
 
   deque:push_back(42)
 
@@ -252,7 +256,11 @@ test "deque-empty-pre-set-back" (function()
   ensure_equals("empty size again", deque:size(), 0)
   ensure_equals("empty back again", deque:back(), nil)
 
-  ensure_equals("zero is still there", deque[0], "EMPTY")
+  if LUA51 then
+    ensure_equals("zero is still there", deque[0], "EMPTY")
+  else
+    ensure_equals("zero isn't there", deque[0], nil)
+  end
 end)
 
 test "deque-on-metatable-fails" (function()
