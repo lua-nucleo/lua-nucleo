@@ -16,6 +16,7 @@ local ensure,
       ensure_equals,
       ensure_strequals,
       ensure_strvariant,
+      ensure_strlist,
       ensure_tequals,
       ensure_returns,
       ensure_fails_with_substring
@@ -25,6 +26,7 @@ local ensure,
         'ensure_equals',
         'ensure_strequals',
         'ensure_strvariant',
+        'ensure_strlist',
         'ensure_tequals',
         'ensure_returns',
         'ensure_fails_with_substring'
@@ -1432,47 +1434,24 @@ test:test_for "tjson_simple" (function()
       '[1,-1,123.123,"abc",true,false,[]]'
     )
 
-  ------------------------------------------------------------------------------
-
-  local actual = tjson_simple(
-      {a = 1, b = -1, c = 123.123, d = 'abc', e = true, f = false, j = {1}}
+  ensure_strlist(
+      'table to object',
+      tjson_simple(
+        {a = 1, b = -1, c = 123.123, d = 'abc', e = true, f = false, j = {1}}
+      ),
+      '{',
+      {
+        '"a":1';
+        '"c":123.123';
+        '"b":-1';
+        '"e":true';
+        '"d":"abc"';
+        '"j":[1]';
+        '"f":false';
+      },
+      ',',
+      '}'
     )
-  local expected_elements =
-  {
-    ['"a":1'] = true;
-    ['"c":123.123'] = true;
-    ['"b":-1'] = true;
-    ['"e":true'] = true;
-    ['"d":"abc"'] = true;
-    ['"j":[1]'] = true;
-    ['"f":false'] = true;
-  }
-  local excess_elements = { }
-  ensure_strequals('table to object', actual:sub(1, 1), '{')
-  ensure_strequals('table to object', actual:sub(-1), '}')
-  local actual_joined = actual:sub(2, -2)
-
-  for elem in actual_joined:gmatch('([^,]+)') do
-    if expected_elements[elem] then
-      expected_elements[elem] = nil
-    else
-      excess_elements[#excess_elements + 1] = elem
-    end
-  end
-
-  for elem, _ in pairs(expected_elements) do
-    error(
-      'table to object: expected element is not found: ' .. tostring(elem)
-    )
-  end
-
-  for _, elem in ipairs(excess_elements) do
-    error(
-      'table to object: excess element is found: ' .. tostring(elem)
-    )
-  end
-
-  ------------------------------------------------------------------------------
 
   ensure_strequals(
       'empty table to object with tisarray_not',
