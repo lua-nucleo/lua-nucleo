@@ -163,13 +163,11 @@ do
       if not added[t] then
         cat("{")
         -- Serialize numeric indices
-        local next_i = 0
-        for i, v in ipairs(t) do
-          next_i = i
+        for i = 1, #t do
           if i ~= 1 then cat(",") end
-          recursive_proceed_simple(v, added)
+          recursive_proceed_simple(rawget(t, i), added)
         end
-        next_i = next_i + 1
+        local next_i = #t + 1
         -- Serialize hash part
         -- Skipping comma only at first element if there is no numeric part.
         local comma = (next_i > 1) and "," or ""
