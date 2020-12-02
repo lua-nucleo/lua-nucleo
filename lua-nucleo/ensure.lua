@@ -224,17 +224,41 @@ end
 --------------------------------------------------------------------------------
 
 local ensure_strvariant = function(msg, actual, expected, ...)
-  for i = 1, #expected do
-    if actual == expected[i] then
-      return actual, expected, ...
+  local confirmed = false
+
+  if expected == nil then
+    confirmed = actual == nil
+  elseif type(expected) == 'string' then
+    confirmed = actual == expected
+  elseif type(expected) == 'table' then
+    for i = 1, #expected do
+      if actual == expected[i] then
+        confirmed = true
+        break
+      end
     end
   end
 
+  if confirmed then
+    return actual, expected, ...
+  end
+
+  local expected_str
+  if expected == nil then
+    expected_str = 'nil'
+  elseif type(expected) == 'string' then
+    expected_str = expected
+  elseif type(expected) == 'table' then
+    expected_str = table.concat(expected, ' or ')
+  else
+    expected_str = 'unexpected type of the expected value: ' .. type(expected)
+  end
+
   error(
-      "ensure_strvariant: " .. msg .. ":\n"
+      "ensure_strvariant failed: " .. msg .. ":\n"
       .. strdiff_msg(actual, expected)
       .. "\nactual:\n" .. tostring(actual)
-      .. "\nexpected:\n" .. table.concat(expected, ' or ')
+      .. "\nexpected:\n" .. expected_str
     )
 end
 
