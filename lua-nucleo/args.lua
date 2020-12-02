@@ -56,8 +56,8 @@ do
       if type(value) ~= expected_type then
         if not lua51_types[expected_type] then
           error(
-              "argument #" .. ((i + 1) * 0.5) .. ": bad expected type `"
-              .. tostring(expected_type) .. "'",
+              "argument #" .. math.floor((i + 1) * 0.5)
+              .. ": bad expected type `" .. tostring(expected_type) .. "'",
               3
             )
         end
@@ -65,7 +65,7 @@ do
         if not is_optional or value ~= nil then
           error(
               (is_optional and "optional " or "")
-              .. "argument #" .. ((i + 1) * 0.5) .. ": expected `"
+              .. "argument #" .. math.floor(((i + 1) * 0.5)) .. ": expected `"
               .. tostring(expected_type) .. "', got `" .. type(value) .. "'",
               3
             )
