@@ -924,6 +924,47 @@ end
 
 --------------------------------------------------------------------------------
 
+local tifindallpermutations
+do
+  tifindallpermutations = function(t, results)
+    arguments(
+        'table', t,
+        'table', results
+      )
+
+    if #t == 0 then
+      return
+    elseif #t == 1 then
+      results[#results + 1] = { t[1] }
+      return
+    elseif #t == 2 then
+      results[#results + 1] = { t[1], t[2] }
+      results[#results + 1] = { t[2], t[1] }
+      return
+    end
+
+    for i = 1, #t do
+      local rest = { }
+      local rest_permutations = { }
+      for j = 1, #t do
+        if j ~= i then
+          rest[#rest + 1] = t[j]
+        end
+      end
+
+      tifindallpermutations(rest, rest_permutations)
+
+      for j = 1, #rest_permutations do
+        local permutation = rest_permutations[j]
+        permutation[#permutation + 1] = t[i]
+        results[#results + 1] = permutation
+      end
+    end
+  end
+end
+
+--------------------------------------------------------------------------------
+
 return
 {
   empty_table = empty_table;
@@ -991,4 +1032,5 @@ return
   tkvlist_to_hash = tkvlist_to_hash;
   tmerge_many = tmerge_many;
   tdeepfilter = tdeepfilter;
+  tifindallpermutations = tifindallpermutations;
 }
