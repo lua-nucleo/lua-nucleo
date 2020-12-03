@@ -4,7 +4,13 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
-local pcall, loadstring, error = pcall, loadstring, error
+local pcall, error = pcall, error
+
+local loadstring
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'loadstring'
+      }
 
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 

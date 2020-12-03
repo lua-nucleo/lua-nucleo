@@ -6,6 +6,12 @@
 
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
+local unpack
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'unpack'
+      }
+
 local ensure,
       ensure_equals,
       ensure_fails_with_substring,
