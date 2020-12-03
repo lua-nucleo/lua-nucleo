@@ -19,6 +19,7 @@ local ensure,
       ensure_tequals,
       ensure_strequals,
       ensure_strvariant,
+      ensure_strpermutations,
       ensure_error,
       ensure_error_with_substring,
       ensure_fails_with_substring,
@@ -32,6 +33,7 @@ local ensure,
         'ensure_tequals',
         'ensure_strequals',
         'ensure_strvariant',
+        'ensure_strpermutations',
         'ensure_error',
         'ensure_error_with_substring',
         'ensure_fails_with_substring',
@@ -385,6 +387,103 @@ test:case "ensure_strvariant_simple" (function()
   ensure_strvariant_test(false, "str", { "123", "str2" })
   ensure_strvariant_test(false, "str", { "123", "str2", "str3" })
   ensure_strvariant_test(true, "str3", { "123", "str2", "str3" })
+end)
+
+--------------------------------------------------------------------------------
+
+test:tests_for "ensure_strpermutations"
+
+local ensure_strpermutations_test = function(
+  expected_success,
+  actual,
+  expected_prefix,
+  expected_elements_list,
+  expected_sep,
+  expected_suffix
+)
+  local res, err = pcall(
+      ensure_strpermutations,
+      "inner msg",
+      actual,
+      expected_prefix,
+      expected_elements_list,
+      expected_sep,
+      expected_suffix
+    )
+  if not expected_success then
+    ensure("should throw error", not res)
+    ensure(
+        "should report the complaint",
+        err:find("ensure_strvariant failed")
+      )
+  else
+    ensure("should not throw error", res)
+  end
+end
+
+test:case "ensure_strpermutations_simple" (function()
+  local abc_arr = { "a", "b", "c" }
+  ensure_strpermutations_test(true, "abc", "", abc_arr,"","")
+  ensure_strpermutations_test(false, "abd", "", abc_arr,"","")
+  ensure_strpermutations_test(true, "acb", "", abc_arr,"","")
+  ensure_strpermutations_test(true, "cab", "", abc_arr,"","")
+  ensure_strpermutations_test(true, "bac", "", abc_arr,"","")
+  ensure_strpermutations_test(true, "bca", "", abc_arr,"","")
+
+  ------------------------------------------------------------------------------
+
+  ensure_strpermutations_test(false, "abc", "!", abc_arr,"","")
+  ensure_strpermutations_test(false, "acb", "!", abc_arr,"","")
+  ensure_strpermutations_test(false, "cab", "!", abc_arr,"","")
+  ensure_strpermutations_test(false, "bac", "!", abc_arr,"","")
+  ensure_strpermutations_test(false, "bca", "!", abc_arr,"","")
+
+  ensure_strpermutations_test(true, "!abc", "!", abc_arr,"","")
+  ensure_strpermutations_test(true, "!acb", "!", abc_arr,"","")
+  ensure_strpermutations_test(true, "!cab", "!", abc_arr,"","")
+  ensure_strpermutations_test(true, "!bac", "!", abc_arr,"","")
+  ensure_strpermutations_test(true, "!bca", "!", abc_arr,"","")
+
+  ------------------------------------------------------------------------------
+
+  ensure_strpermutations_test(false, "abc", "", abc_arr,"","!")
+  ensure_strpermutations_test(false, "acb", "", abc_arr,"","!")
+  ensure_strpermutations_test(false, "cab", "", abc_arr,"","!")
+  ensure_strpermutations_test(false, "bac", "", abc_arr,"","!")
+  ensure_strpermutations_test(false, "bca", "", abc_arr,"","!")
+
+  ensure_strpermutations_test(true, "abc!", "", abc_arr,"","!")
+  ensure_strpermutations_test(true, "acb!", "", abc_arr,"","!")
+  ensure_strpermutations_test(true, "cab!", "", abc_arr,"","!")
+  ensure_strpermutations_test(true, "bac!", "", abc_arr,"","!")
+  ensure_strpermutations_test(true, "bca!", "", abc_arr,"","!")
+
+  ------------------------------------------------------------------------------
+
+  ensure_strpermutations_test(false, "abc", "", abc_arr,",","")
+  ensure_strpermutations_test(false, "acb", "", abc_arr,",","")
+  ensure_strpermutations_test(false, "cab", "", abc_arr,",","")
+  ensure_strpermutations_test(false, "bac", "", abc_arr,",","")
+  ensure_strpermutations_test(false, "bca", "", abc_arr,",","")
+
+  ensure_strpermutations_test(true, "a,b,c", "", abc_arr,",","")
+  ensure_strpermutations_test(true, "a,c,b", "", abc_arr,",","")
+  ensure_strpermutations_test(true, "c,a,b", "", abc_arr,",","")
+  ensure_strpermutations_test(true, "b,a,c", "", abc_arr,",","")
+  ensure_strpermutations_test(true, "b,c,a", "", abc_arr,",","")
+  ------------------------------------------------------------------------------
+
+  ensure_strpermutations_test(false, "abc", "('", abc_arr,"'+'","')")
+  ensure_strpermutations_test(false, "acb", "('", abc_arr,"'+'","')")
+  ensure_strpermutations_test(false, "cab", "('", abc_arr,"'+'","')")
+  ensure_strpermutations_test(false, "bac", "('", abc_arr,"'+'","')")
+  ensure_strpermutations_test(false, "bca", "('", abc_arr,"'+'","')")
+
+  ensure_strpermutations_test(true, "('a'+'b'+'c')", "('", abc_arr,"'+'","')")
+  ensure_strpermutations_test(true, "('a'+'c'+'b')", "('", abc_arr,"'+'","')")
+  ensure_strpermutations_test(true, "('c'+'a'+'b')", "('", abc_arr,"'+'","')")
+  ensure_strpermutations_test(true, "('b'+'a'+'c')", "('", abc_arr,"'+'","')")
+  ensure_strpermutations_test(true, "('b'+'c'+'a')", "('", abc_arr,"'+'","')")
 end)
 
 --------------------------------------------------------------------------------
