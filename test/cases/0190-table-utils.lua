@@ -764,7 +764,9 @@ test "tflip_inplace-many" (function()
 
   ensure(
       "many",
-      tequals(r, { [1] = 42, [42] = 1, [k] = "a", a = k }) or tequals(r, { [1] = 42, [42] = 1, [false] = k, [k] = false, a = k })
+      tequals(r, { [1] = 42, [42] = 1, [k] = "a", a = k })
+        or tequals(r, { [1] = 42, [42] = 1, [false] = k, [k] = false, a = k })
+        or tequals(r, { [1] = 42, [false] = k, [k] = "a", [42] = 1, a = k })
     )
 end)
 
