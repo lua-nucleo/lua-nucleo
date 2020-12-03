@@ -7,6 +7,12 @@
 
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
+local newproxy
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'newproxy'
+      }
+
 local check_ok = import 'test/test-lib/tdeepequals-test-utils.lua' { 'check_ok' }
 
 local collect_all_garbage = import 'lua-nucleo/misc.lua' { 'collect_all_garbage' }

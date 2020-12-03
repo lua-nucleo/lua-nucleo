@@ -16,6 +16,12 @@ local math_min, math_max = math.min, math.max
 
 --------------------------------------------------------------------------------
 
+local unpack
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'unpack'
+      }
+
 local arguments,
       optional_arguments,
       method_arguments

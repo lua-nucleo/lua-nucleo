@@ -9,8 +9,16 @@
 
 --------------------------------------------------------------------------------
 
-local setmetatable, setfenv, xpcall, loadstring
-    = setmetatable, setfenv, xpcall, loadstring
+local setmetatable, xpcall
+    = setmetatable, xpcall
+
+local loadstring,
+      setfenv
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'loadstring',
+        'setfenv'
+      }
 
 --------------------------------------------------------------------------------
 

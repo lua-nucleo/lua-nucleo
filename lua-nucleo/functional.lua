@@ -5,8 +5,14 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
-local assert, unpack, select = assert, unpack, select
+local assert, select = assert, select
 local table_remove = table.remove
+
+local unpack
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'unpack'
+      }
 
 local assert_is_number,
       assert_is_function

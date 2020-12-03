@@ -8,6 +8,12 @@ local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
 --------------------------------------------------------------------------------
 
+local newproxy
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'newproxy'
+      }
+
 local ensure_equals
       = import 'lua-nucleo/ensure.lua'
       {

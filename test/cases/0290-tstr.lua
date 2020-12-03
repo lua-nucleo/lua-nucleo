@@ -13,7 +13,16 @@ local table_concat = table.concat
 local math_pi = math.pi
 local setmetatable = setmetatable
 local create_thread = coroutine.create
-local unpack = unpack
+
+local loadstring,
+      newproxy,
+      unpack
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'loadstring',
+        'newproxy',
+        'unpack'
+      }
 
 local ensure,
       ensure_equals,

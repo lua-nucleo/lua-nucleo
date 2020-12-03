@@ -4,6 +4,12 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+local loadstring
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'loadstring'
+      }
+
 local ensure_tdeepequals,
       ensure_equals
       = import 'lua-nucleo/ensure.lua'
