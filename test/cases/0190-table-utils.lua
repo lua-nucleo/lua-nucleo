@@ -106,6 +106,7 @@ local empty_table,
       tarraytohash,
       tkvlist_to_hash,
       tmerge_many,
+      tifindallpermutations,
       table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -172,7 +173,8 @@ local empty_table,
         'tkvmap_unpack',
         'tarraytohash',
         'tkvlist_to_hash',
-        'tmerge_many'
+        'tmerge_many',
+        'tifindallpermutations'
       }
 
 --------------------------------------------------------------------------------
@@ -2592,6 +2594,66 @@ test "tisarray_not-object-with-map" (function()
   ensure(
       "Should return false on non-empty table marked with tisarray_not",
       not tisarray(tisarray_not({ key = "value" }))
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+
+test:group "tifindallpermutations"
+
+--------------------------------------------------------------------------------
+
+test "tifindallpermutations-basic" (function()
+  local test_expected = function(t, expected)
+    local actual = { }
+    tifindallpermutations(t, actual)
+    ensure_tdeepequals("actual contents match expected", actual, expected)
+  end
+
+  test_expected({ }, { })
+  test_expected({ 1 }, { { 1 } })
+  test_expected({ 1, 2 }, { { 1, 2 }, { 2, 1 } })
+  test_expected(
+      { 1, 2, 3 },
+      {
+        { 2, 3, 1 },
+        { 3, 2, 1 },
+        { 1, 3, 2 },
+        { 3, 1, 2 },
+        { 1, 2, 3 },
+        { 2, 1, 3 }
+      }
+    )
+  test_expected(
+      { 1, 2, 3, 4 },
+      {
+        { 3, 4, 2, 1 },
+        { 4, 3, 2, 1 },
+        { 2, 4, 3, 1 },
+        { 4, 2, 3, 1 },
+        { 2, 3, 4, 1 },
+        { 3, 2, 4, 1 },
+        { 3, 4, 1, 2 },
+        { 4, 3, 1, 2 },
+        { 1, 4, 3, 2 },
+        { 4, 1, 3, 2 },
+        { 1, 3, 4, 2 },
+        { 3, 1, 4, 2 },
+        { 2, 4, 1, 3 },
+        { 4, 2, 1, 3 },
+        { 1, 4, 2, 3 },
+        { 4, 1, 2, 3 },
+        { 1, 2, 4, 3 },
+        { 2, 1, 4, 3 },
+        { 2, 3, 1, 4 },
+        { 3, 2, 1, 4 },
+        { 1, 3, 2, 4 },
+        { 3, 1, 2, 4 },
+        { 1, 2, 3, 4 },
+        { 2, 1, 3, 4 }
+      }
     )
 end)
 
