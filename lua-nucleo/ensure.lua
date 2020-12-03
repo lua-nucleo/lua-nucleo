@@ -23,6 +23,12 @@ local tdeepequals,
         'tnormalize'
       }
 
+local tifindallpermutations
+      = import 'lua-nucleo/table-utils.lua'
+      {
+        'tifindallpermutations'
+      }
+
 local assert_is_number
       = import 'lua-nucleo/typeassert.lua'
       {
@@ -308,6 +314,37 @@ local ensure_strlist = function(
          expected_suffix, ...
 end
 
+local ensure_strpermutations = function(
+  msg,
+  actual,
+  expected_prefix,
+  expected_elements_list,
+  expected_sep,
+  expected_suffix,
+  ...
+)
+  local expected_elements_list_permutations = { }
+  tifindallpermutations(
+    expected_elements_list, expected_elements_list_permutations
+  )
+
+  local expected_variants = { }
+  for i = 1, #expected_elements_list_permutations do
+    local p = expected_elements_list_permutations[i]
+    local expected = expected_prefix
+    for j = 1, #p do
+      if j > 1 then
+        expected = expected .. expected_sep
+      end
+      expected = expected .. tostring(p[j])
+    end
+    expected = expected .. expected_suffix
+    expected_variants[#expected_variants + 1] = expected
+  end
+
+  return ensure_strvariant(msg, actual, expected_variants)
+end
+
 --------------------------------------------------------------------------------
 
 local ensure_error = function(msg, expected_message, res, actual_message, ...)
@@ -473,6 +510,7 @@ return
   ensure_strequals = ensure_strequals;
   ensure_strvariant = ensure_strvariant;
   ensure_strlist = ensure_strlist;
+  ensure_strpermutations = ensure_strpermutations;
   ensure_error = ensure_error;
   ensure_error_with_substring = ensure_error_with_substring;
   ensure_fails_with_substring = ensure_fails_with_substring;
