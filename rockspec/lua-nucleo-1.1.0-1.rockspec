@@ -50,6 +50,7 @@ build = {
          ["lua-nucleo.key_value_store.key_value_store_simple"] = "lua-nucleo/key_value_store/key_value_store_simple.lua";
          ["lua-nucleo.key_value_store.key_value_store_sophisticated"] = "lua-nucleo/key_value_store/key_value_store_sophisticated.lua";
          ["lua-nucleo.language"] = "lua-nucleo/language.lua";
+         ["lua-nucleo.legacy"] = "lua-nucleo/legacy.lua";
          ["lua-nucleo.log"] = "lua-nucleo/log.lua";
          ["lua-nucleo.math"] = "lua-nucleo/math.lua";
          ["lua-nucleo.misc"] = "lua-nucleo/misc.lua";
