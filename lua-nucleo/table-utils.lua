@@ -1070,6 +1070,108 @@ end
 
 --------------------------------------------------------------------------------
 
+local tifindallpermutations
+do
+  --- Finds all permutations of elements in the input linear array table `t`
+  -- and puts them into the `results` table.
+  -- @param t Input linear array table.
+  -- @param results All found permutations will be placed here.
+  -- @return None
+  -- @local
+  -- @usage
+  -- local tifindallpermutations
+  --       = import 'lua-nucleo/table-utils.lua'
+  --       {
+  --         'tifindallpermutations'
+  --       }
+  --
+  -- local permutations0 = tifindallpermutations({ })
+  -- -- permutations0 is { } here
+  --
+  -- local permutations1 = tifindallpermutations({ 1 }, { { 1 } })
+  -- -- permutations1 is { { 1 } } here
+  --
+  -- local permutations2 = tifindallpermutations({ 1, 2 })
+  -- -- permutations2 is { { 1, 2 }, { 2, 1 } }
+  --
+  -- local permutations3 = tifindallpermutations({ 1, 2, 3 })
+  -- -- permutations3 is
+  -- -- {
+  -- --   { 2, 3, 1 },
+  -- --   { 3, 2, 1 },
+  -- --   { 1, 3, 2 },
+  -- --   { 3, 1, 2 },
+  -- --   { 1, 2, 3 },
+  -- --   { 2, 1, 3 }
+  -- -- }
+  --
+  -- local permutations4 = tifindallpermutations({ 1, 2, 3, 4 })
+  -- -- permutations4 is
+  -- -- {
+  -- --   { 3, 4, 2, 1 },
+  -- --   { 4, 3, 2, 1 },
+  -- --   { 2, 4, 3, 1 },
+  -- --   { 4, 2, 3, 1 },
+  -- --   { 2, 3, 4, 1 },
+  -- --   { 3, 2, 4, 1 },
+  -- --   { 3, 4, 1, 2 },
+  -- --   { 4, 3, 1, 2 },
+  -- --   { 1, 4, 3, 2 },
+  -- --   { 4, 1, 3, 2 },
+  -- --   { 1, 3, 4, 2 },
+  -- --   { 3, 1, 4, 2 },
+  -- --   { 2, 4, 1, 3 },
+  -- --   { 4, 2, 1, 3 },
+  -- --   { 1, 4, 2, 3 },
+  -- --   { 4, 1, 2, 3 },
+  -- --   { 1, 2, 4, 3 },
+  -- --   { 2, 1, 4, 3 },
+  -- --   { 2, 3, 1, 4 },
+  -- --   { 3, 2, 1, 4 },
+  -- --   { 1, 3, 2, 4 },
+  -- --   { 3, 1, 2, 4 },
+  -- --   { 1, 2, 3, 4 },
+  -- --   { 2, 1, 3, 4 }
+  -- -- }
+  tifindallpermutations = function(t, results)
+    arguments(
+        'table', t,
+        'table', results
+      )
+
+    if #t == 0 then
+      return
+    elseif #t == 1 then
+      results[#results + 1] = { t[1] }
+      return
+    elseif #t == 2 then
+      results[#results + 1] = { t[1], t[2] }
+      results[#results + 1] = { t[2], t[1] }
+      return
+    end
+
+    for i = 1, #t do
+      local rest = { }
+      local rest_permutations = { }
+      for j = 1, #t do
+        if j ~= i then
+          rest[#rest + 1] = t[j]
+        end
+      end
+
+      tifindallpermutations(rest, rest_permutations)
+
+      for j = 1, #rest_permutations do
+        local permutation = rest_permutations[j]
+        permutation[#permutation + 1] = t[i]
+        results[#results + 1] = permutation
+      end
+    end
+  end
+end
+
+--------------------------------------------------------------------------------
+
 return
 {
   empty_table = empty_table;
@@ -1137,4 +1239,5 @@ return
   tkvlist_to_hash = tkvlist_to_hash;
   tmerge_many = tmerge_many;
   tdeepfilter = tdeepfilter;
+  tifindallpermutations = tifindallpermutations;
 }
