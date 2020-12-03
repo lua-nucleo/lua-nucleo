@@ -4,22 +4,43 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+--require 'lua-nucleo.strict'
+--require 'lua-nucleo.import'
+
+if declare then
+  declare('LUA51')
+  declare('LUA52')
+  declare('LUA53')
+  declare('LUA54')
+  declare('jit')
+end
+
 LUA51 = _VERSION == 'Lua 5.1'
 LUA52 = _VERSION == 'Lua 5.2'
 LUA53 = _VERSION == 'Lua 5.3'
 LUA54 = _VERSION == 'Lua 5.4'
 
 if LUA53 or LUA54 then
-  unpack = table.unpack
-  loadstring = load
+  --declare('unpack')
+  --unpack = table.unpack
+
+  --declare('loadstring')
+  --loadstring = load
 end
 
 if LUA52 or LUA53 or LUA54 then
-  newproxy = require 'lua-nucleo.newproxy'
-  setfenv = function(chunk, env)
-    return load(chunk, nil, nil, env)
-  end
+  --declare('newproxy')
+  --newproxy = require 'lua-nucleo.newproxy'
+
+  --declare('setfenv')
+  --setfenv = function(chunk, env)
+  --  return load(chunk, nil, nil, env)
+  --end
 end
+
+--declare('posix')
+--posix = require 'posix'
+
 
 -- WARNING: do not use import in this file for the test purity reasons.
 local run_tests = assert(assert(assert(loadfile('lua-nucleo/suite.lua'))()).run_tests)
@@ -43,7 +64,7 @@ end
 parameters_list.seed_value = 12345
 
 
-local pattern = select(n, ...) or ""
+local pattern = select(n, ...) or "0190"
 assert(type(pattern) == "string")
 
 local low_level_tests = { }
