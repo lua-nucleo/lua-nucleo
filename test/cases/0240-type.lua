@@ -16,6 +16,12 @@ local ensure,
 
 local type_imports = import 'lua-nucleo/type.lua' ()
 
+local newproxy
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'newproxy'
+      }
+
 --------------------------------------------------------------------------------
 
 local test = make_suite("type", type_imports)

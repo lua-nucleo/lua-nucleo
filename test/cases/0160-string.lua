@@ -6,6 +6,14 @@
 
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
+local loadstring,
+      newproxy
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'loadstring',
+        'newproxy'
+      }
+
 local arguments
       = import 'lua-nucleo/args.lua'
       {

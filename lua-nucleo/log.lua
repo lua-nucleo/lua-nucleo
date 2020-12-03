@@ -18,11 +18,17 @@
 
 --------------------------------------------------------------------------------
 
-local type, setmetatable, tostring, select, assert, unpack
-    = type, setmetatable, tostring, select, assert, unpack
+local type, setmetatable, tostring, select, assert
+    = type, setmetatable, tostring, select, assert
 
 local os_time, os_date
     = os.time, os.date
+
+local unpack
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'unpack'
+      }
 
 --------------------------------------------------------------------------------
 

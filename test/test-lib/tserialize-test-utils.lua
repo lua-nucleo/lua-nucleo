@@ -5,6 +5,12 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+local loadstring
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'loadstring'
+      }
+
 local tdeepequals = import 'lua-nucleo/tdeepequals.lua' { 'tdeepequals' }
 local tserialize = import 'lua-nucleo/tserialize.lua' { 'tserialize' }
 local escape_string = import 'lua-nucleo/string.lua' { 'escape_string' }
