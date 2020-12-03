@@ -23,6 +23,12 @@ local tdeepequals,
         'tnormalize'
       }
 
+local tifindallpermutations
+      = import 'lua-nucleo/table-utils.lua'
+      {
+        'tifindallpermutations'
+      }
+
 local assert_is_number
       = import 'lua-nucleo/typeassert.lua'
       {
@@ -436,6 +442,124 @@ local ensure_strlist = function(
          expected_suffix, ...
 end
 
+--- Checks if the `actual` string is constructed by the elements of
+-- the `expected_elements_list` linear string array table. Expected that
+-- elements are joined together with the `expected_sep` in between and not
+-- necessarily have the same order as in the `expected_elements_list`. Also,
+-- expected that the constructed list is prefixed by the `expected_prefix` and
+-- terminated by the `expected_suffix`.
+-- <br />
+-- Returns all the arguments intact cutting the `msg` at beginning on success.
+-- <br />
+-- Raises the error on fail.
+-- <br />
+-- Best for complex short lists.
+-- <br />
+-- <br />
+-- <b>How it works:</b> `tifindallpermutations` for the `expected_elements_list`
+-- then build a table array containing all possible `actual`s using
+-- `expected_prefix`, `expected_sep`, `expected_suffix` for each resulted
+-- permutation. The `ensure_strvariant` is invoked as
+-- `ensure_strvariant(msg, actual, expected_actuals)`
+-- @tparam string msg Failing message that will be used in the error message if
+--         the check fails.
+-- @tparam string actual A string to check.
+-- @tparam string expected_prefix Expected prefix. Expected that the
+--         `actual` must start with the `expected_prefix`.
+-- @tparam string[] expected_elements_list Expected elements list. Expected that
+--         `expected_elements_list` elements exist in the `actual`
+--         whatever the original order from the `expected_elements_list`.
+-- @tparam string expected_sep Expected separator. Expected that this
+--         separator is used to join list elements together.
+-- @tparam string expected_suffix Expected suffix / footer. Expected that the
+--         `actual` ends with the `expected_suffix`.
+-- @tparam any[] ... Custom arguments.
+-- @raise `ensure_strpermutations failed error` if the check fails.
+-- @treturn string `actual` intact.
+-- @treturn string `expected_prefix` intact.
+-- @treturn string[] `expected_elements_list` intact.
+-- @treturn string `expected_sep` intact.
+-- @treturn string `expected_suffix` intact.
+-- @treturn any[] ... The rest of the arguments intact.
+-- @usage
+-- local ensure_strpermutations
+--       = import 'lua-nucleo/ensure.lua'
+--       {
+--         'ensure_strpermutations'
+--       }
+--
+-- -- will pass without errors:
+-- ensure_strlist(
+--     'output check', "('a'+'b'+'c')", "('", { 'a', 'b', 'c' }) "'+'", "')"
+--   )
+-- ensure_strlist(
+--     'output check', "('a'+'c'+'b')", "('", { 'a', 'b', 'c' }) "'+'", "')"
+--   )
+-- ensure_strlist(
+--     'output check', "('c'+'a'+'b')", "('", { 'a', 'b', 'c' }) "'+'", "')"
+--   )
+-- ensure_strlist(
+--     'output check', "('b'+'a'+'c')", "('", { 'a', 'b', 'c' }) "'+'", "')"
+--   )
+-- ensure_strlist(
+--     'output check', "('b'+'c'+'a')", "('", { 'a', 'b', 'c' }) "'+'", "')"
+-- )
+--
+-- -- wrong separator:
+-- -- ensure_strlist(
+-- --     'output check', "('a'+'b'+'c')", "('", { 'a', 'b', 'c' }) "' + '", "')"
+-- --   )
+--
+-- -- wrong prefix:
+-- -- ensure_strlist(
+-- --     'output check', "['a'+'b'+'c')", "('", { 'a', 'b', 'c' }) "'+'", "')"
+-- --   )
+--
+-- -- wrong suffix:
+-- -- ensure_strlist(
+-- --     'output check', "('a'+'b'+'c')", "('", { 'a', 'b', 'c' }) "'+'", "');"
+-- --   )
+--
+-- -- missing elements:
+-- -- ensure_strlist(
+-- --     'output check', "('a'+'b')", "('", { 'a', 'b', 'c' }) "'+'", "');"
+-- --   )
+--
+-- -- excess elements:
+-- -- ensure_strlist(
+-- --     'output check', "('a'+'b'+'c')", "('", { 'a', 'b' }) "'+'", "');"
+-- --   )
+local ensure_strpermutations = function(
+  msg,
+  actual,
+  expected_prefix,
+  expected_elements_list,
+  expected_sep,
+  expected_suffix,
+  ...
+)
+  local expected_elements_list_permutations = { }
+  tifindallpermutations(
+    expected_elements_list, expected_elements_list_permutations
+  )
+
+  local expected_variants = { }
+  for i = 1, #expected_elements_list_permutations do
+    local p = expected_elements_list_permutations[i]
+    local expected = expected_prefix
+    for j = 1, #p do
+      if j > 1 then
+        expected = expected .. expected_sep
+      end
+      expected = expected .. tostring(p[j])
+    end
+    expected = expected .. expected_suffix
+    expected_variants[#expected_variants + 1] = expected
+  end
+
+  return ensure_strvariant(msg, actual, expected_variants)
+end
+
 --------------------------------------------------------------------------------
 
 --- @param msg
@@ -624,6 +748,7 @@ return
   ensure_strequals = ensure_strequals;
   ensure_strvariant = ensure_strvariant;
   ensure_strlist = ensure_strlist;
+  ensure_strpermutations = ensure_strpermutations;
   ensure_error = ensure_error;
   ensure_error_with_substring = ensure_error_with_substring;
   ensure_fails_with_substring = ensure_fails_with_substring;
