@@ -14,14 +14,14 @@ local jit = jit
 local ensure,
       ensure_equals,
       ensure_strequals,
-      ensure_tequals,
+      ensure_strvariant,
       ensure_fails_with_substring
       = import 'lua-nucleo/ensure.lua'
       {
         'ensure',
         'ensure_equals',
         'ensure_strequals',
-        'ensure_tequals',
+        'ensure_strvariant',
         'ensure_fails_with_substring'
       }
 
@@ -34,6 +34,12 @@ local tpretty_ex,
         'tpretty_ex',
         'tpretty',
         'tpretty_ordered'
+      }
+
+local tifindallpermutations
+      = import 'lua-nucleo/table-utils.lua'
+      {
+        'tifindallpermutations'
       }
 
 --------------------------------------------------------------------------------
@@ -138,84 +144,117 @@ end)
 test "tpretty_ex-bug-concat-nil-full" (function()
   -- TODO: systematic solution required
   -- https://github.com/lua-nucleo/lua-nucleo/issues/18
-  local s1
-  if jit ~= nil then
-    s1 = [[
-{
-  result =
+
+  local garden_fields =
+  {
+    'views_total = "INTEGER";\n';
+    'unique_visits_total = "INTEGER";\n';
+    'id = "GARDEN_ID";\n';
+    'views_yesterday = "INTEGER";\n';
+    'unique_visits_yesterday = "INTEGER";\n';
+  }
+  local garden_field_permutations = { }
+  tifindallpermutations(garden_fields, garden_field_permutations)
+
+  local result_permutations = { }
+  for i = 1, #garden_field_permutations do
+    local p = garden_field_permutations[i]
+    result_permutations[#result_permutations + 1] =
+[[  result =
   {
     stats =
     {
       garden =
       {
-        views_total = "INTEGER";
-        unique_visits_yesterday = "INTEGER";
-        id = "GARDEN_ID";
-        views_yesterday = "INTEGER";
-        unique_visits_total = "INTEGER";
+        ]] .. p[1] .. [[
+        ]] .. p[2] .. [[
+        ]] .. p[3] .. [[
+        ]] .. p[4] .. [[
+        ]] .. p[5] .. [[
       };
     };
   };
+]]
+  end
+
+  local expected_variants = { }
+  for i = 1, #result_permutations do
+    expected_variants[#expected_variants + 1] = [[
+{
+]] .. result_permutations[i] .. [[
   events = { };
 }]]
-  else
-    s1 = [[
+    expected_variants[#expected_variants + 1] = [[
 {
-  result =
-  {
-    stats =
-    {
-      garden =
-      {
-        views_total = "INTEGER";
-        unique_visits_total = "INTEGER";
-        id = "GARDEN_ID";
-        views_yesterday = "INTEGER";
-        unique_visits_yesterday = "INTEGER";
-      };
-    };
-  };
   events = { };
+]] .. result_permutations[i] .. [[
 }]]
   end
 
-  local s2 = [[
-{
-  result =
-  {
-    money_real = "MONEY_REAL";
-    money_referral = "MONEY_REFERRAL";
-    money_game = "MONEY_GAME";
-  };
-  events = { };
-}]]
-
-  ensure_strequals(
+  ensure_strvariant(
       "first result matches expected",
       ensure(
           "render first",
           tpretty_ex(
               pairs,
-              ensure("parse", loadstring("return " .. s1))(),
+              ensure("parse", loadstring("return " .. expected_variants[1]))(),
               "  ",
               80
             )
         ),
-      s1
+      expected_variants
     )
 
-  ensure_strequals(
-      "second result matches expected",
+  ------------------------------------------------------------------------------
+
+  local result_fields =
+  {
+    'money_real = "MONEY_REAL";\n';
+    'money_referral = "MONEY_REFERRAL";\n';
+    'money_game = "MONEY_GAME";\n';
+  }
+  local result_field_permutations = { }
+  tifindallpermutations(result_fields, result_field_permutations)
+
+  result_permutations = { }
+  for i = 1, #result_field_permutations do
+    local p = result_field_permutations[i]
+    result_permutations[#result_permutations + 1] =
+[[  result =
+  {
+    ]] .. p[1] .. [[
+    ]] .. p[2] .. [[
+    ]] .. p[3] .. [[
+  };
+]]
+  end
+
+  expected_variants = { }
+  for i = 1, #result_permutations do
+    expected_variants[#expected_variants + 1] = [[
+{
+]] .. result_permutations[i] .. [[
+  events = { };
+}]]
+    expected_variants[#expected_variants + 1] = [[
+{
+  events = { };
+]] .. result_permutations[i] .. [[
+}]]
+  end
+
+  ensure_strvariant(
+      "first result matches expected",
       ensure(
-          "render second",
+          "render first",
           tpretty_ex(
               pairs,
-              ensure("parse", loadstring("return " .. s2))(),
+              ensure("parse", loadstring("return " .. expected_variants[1]))(),
               "  ",
               80
             )
         ),
-      s2
+      expected_variants
     )
 end)
 
