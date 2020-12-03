@@ -30,7 +30,7 @@ local ensure,
       ensure_equals,
       ensure_returns,
       ensure_error,
-      ensure_error_with_substring,
+      ensure_strpermutations,
       ensure_fails_with_substring
       = import 'lua-nucleo/ensure.lua'
       {
@@ -38,7 +38,7 @@ local ensure,
         'ensure_equals',
         'ensure_returns',
         'ensure_error',
-        'ensure_error_with_substring',
+        'ensure_strpermutations',
         'ensure_fails_with_substring'
       }
 
@@ -674,14 +674,18 @@ do
 
   assert(nok == 0, "0 tests must be successful")
   assert(#errs == 1, "1 test must fail")
-  assert(
-      errs[1].err == "Suite `complex-factory-function-input-test-2' failed:\n"
-                  .. " * Test `[completeness check]':"
-                  .. " detected untested imports:"
-                  .. " make_some, make_another:method2,"
-                  .. " make_another:method3\n",
-      "expected fail message must match"
-    )
+
+  ensure_strpermutations(
+    "expected fail message must match",
+    errs[1].err,
+    "Suite `complex-factory-function-input-test-2' failed:\n"
+      .. " * Test `[completeness check]':"
+      .. " detected untested imports: ",
+    { "make_some", "make_another:method2", "make_another:method3" },
+    ", ",
+    "\n"
+  )
+
   assert(
       suite_tests_results == 3,
       "suite_tests_results must be set to 3"
