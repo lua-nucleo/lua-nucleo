@@ -4,6 +4,10 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+-- WARNING! Many of these tests fail at unpredictable times on Lua 5.3 and
+-- always fail on Lua 5.2
+-- See https://github.com/lua-nucleo/lua-nucleo/issues/56
+
 local arguments,
       method_arguments,
       optional_arguments
