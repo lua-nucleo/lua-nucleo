@@ -6,14 +6,6 @@
 
 local make_suite = assert(loadfile('test/test-lib/init/strict-import-as-require.lua'))(...)
 
-local shell_write,
-      shell_read
-      = import 'lua-aplicado/shell.lua'
-      {
-        'shell_write',
-        'shell_read'
-      }
-
 local ensure_equals
       = import 'lua-nucleo/ensure.lua'
       {
@@ -27,6 +19,24 @@ local test = make_suite("code_foreign_globals_luajit2")
 test:TODO "write tests"
 
 --------------------------------------------------------------------------------
+
+local is_lua_aplicado_shell_found, err =
+  pcall(import, 'lua-aplicado/shell.lua')
+
+if not is_lua_aplicado_shell_found then
+  test:BROKEN 'global_variable__PROMPT_error_on_load_in_interactive_mode'
+  return
+end
+
+--------------------------------------------------------------------------------
+
+local shell_write,
+      shell_read
+      = import 'lua-aplicado/shell.lua'
+      {
+        'shell_write',
+        'shell_read'
+      }
 
 -- TODO: Add check for reading stderr and stdstr
 --       https://github.com/lua-aplicado/lua-aplicado/issues/34
