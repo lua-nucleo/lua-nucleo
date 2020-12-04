@@ -41,6 +41,8 @@ local test = make_suite("misc", misc)
 
 --------------------------------------------------------------------------------
 
+-- fails on Lua 5.2
+-- see https://github.com/lua-nucleo/lua-nucleo/issues/57
 test:test_for "unique_object" (function()
   -- A bit silly, but how to test it better?
   local N = 100
