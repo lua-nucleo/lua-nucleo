@@ -25,12 +25,14 @@ do
         -- Serialize numeric indices
 
         local next_i = 0
-        for i, v in ipairs(t) do -- TODO: Lua 5.2 warning. Rewrite.
-          if i > 1 then -- TODO: Move condition out of the loop
-            cat(",")
+        if #t > 0 then
+          for i, v in ipairs(t) do -- TODO: Lua 5.2 warning. Rewrite.
+            if i > 1 then -- TODO: Move condition out of the loop
+              cat(",")
+            end
+            impl(v, cat, visited)
+            next_i = i
           end
-          impl(v, cat, visited)
-          next_i = i
         end
         next_i = next_i + 1
 
