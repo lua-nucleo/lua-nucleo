@@ -6,12 +6,6 @@
 
 local make_suite = assert(loadfile('test/test-lib/init/strict-import-as-require.lua'))(...)
 
-local shell_write
-      = import 'lua-aplicado/shell.lua'
-      {
-        'shell_write'
-      }
-
 local ensure_equals
       = import 'lua-nucleo/ensure.lua'
       {
@@ -25,6 +19,23 @@ local test = make_suite("code_foreign_globals_lua5_1")
 test:TODO "write tests"
 
 --------------------------------------------------------------------------------
+
+local is_lua_aplicado_shell_found, err =
+  pcall(import, 'lua-aplicado/shell.lua')
+
+if not is_lua_aplicado_shell_found then
+  print('WARNING: lua-aplicado shell module load error: ' .. tostring(err))
+  print('WARNING: skipping the tests')
+  return
+end
+
+--------------------------------------------------------------------------------
+
+local shell_write
+      = import 'lua-aplicado/shell.lua'
+      {
+        'shell_write'
+      }
 
 -- TODO: Add check for reading stderr and stdstr
 --       https://github.com/lua-aplicado/lua-aplicado/issues/34
