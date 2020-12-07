@@ -5,9 +5,14 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
-local newproxy = newproxy
 local math_random, math_pi = math.random, math.pi
 local coroutine_create = coroutine.create
+
+local newproxy
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'newproxy'
+      }
 
 local invariant,
       remove_nil_arguments

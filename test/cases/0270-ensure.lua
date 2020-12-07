@@ -4,7 +4,13 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
-local pcall, loadstring, error = pcall, loadstring, error
+local pcall, error = pcall, error
+
+local loadstring
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'loadstring'
+      }
 
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
@@ -12,6 +18,8 @@ local ensure,
       ensure_equals,
       ensure_tequals,
       ensure_strequals,
+      ensure_strvariant,
+      ensure_strpermutations,
       ensure_error,
       ensure_error_with_substring,
       ensure_fails_with_substring,
@@ -24,6 +32,8 @@ local ensure,
         'ensure_equals',
         'ensure_tequals',
         'ensure_strequals',
+        'ensure_strvariant',
+        'ensure_strpermutations',
         'ensure_error',
         'ensure_error_with_substring',
         'ensure_fails_with_substring',
@@ -348,6 +358,136 @@ end)
 
 --------------------------------------------------------------------------------
 
+test:tests_for "ensure_strvariant"
+
+local ensure_strvariant_test = function(expected_success, actual, expected)
+  local res, err = pcall(ensure_strvariant, "inner msg", actual, expected)
+  if not expected_success then
+    ensure("should throw error", not res)
+    ensure(
+        "should report the complaint",
+        err:find("ensure_strvariant failed")
+      )
+  else
+    ensure("should not throw error", res)
+  end
+end
+
+test:case "ensure_strvariant_simple" (function()
+  ensure_strvariant_test(false, "string1", nil)
+  ensure_strvariant_test(true, nil, nil)
+  ensure_strvariant_test(true, "", "")
+  ensure_strvariant_test(true, "str", "str")
+  ensure_strvariant_test(false, "str", "str2")
+  ensure_strvariant_test(false, "str2", "str")
+  ensure_strvariant_test(false, nil, "str")
+
+  ensure_strvariant_test(true, "str", { "str" })
+  ensure_strvariant_test(true, "str", { "123", "str" })
+  ensure_strvariant_test(false, "str", { "123", "str2" })
+  ensure_strvariant_test(false, "str", { "123", "str2", "str3" })
+  ensure_strvariant_test(true, "str3", { "123", "str2", "str3" })
+end)
+
+--------------------------------------------------------------------------------
+
+test:tests_for "ensure_strpermutations"
+
+local ensure_strpermutations_test = function(
+  expected_success,
+  actual,
+  expected_prefix,
+  expected_elements_list,
+  expected_sep,
+  expected_suffix
+)
+  local res, err = pcall(
+      ensure_strpermutations,
+      "inner msg",
+      actual,
+      expected_prefix,
+      expected_elements_list,
+      expected_sep,
+      expected_suffix
+    )
+  if not expected_success then
+    ensure("should throw error", not res)
+    ensure(
+        "should report the complaint",
+        err:find("ensure_strvariant failed")
+      )
+  else
+    ensure("should not throw error", res)
+  end
+end
+
+test:case "ensure_strpermutations_simple" (function()
+  local abc_arr = { "a", "b", "c" }
+  ensure_strpermutations_test(true, "abc", "", abc_arr,"","")
+  ensure_strpermutations_test(false, "abd", "", abc_arr,"","")
+  ensure_strpermutations_test(true, "acb", "", abc_arr,"","")
+  ensure_strpermutations_test(true, "cab", "", abc_arr,"","")
+  ensure_strpermutations_test(true, "bac", "", abc_arr,"","")
+  ensure_strpermutations_test(true, "bca", "", abc_arr,"","")
+
+  ------------------------------------------------------------------------------
+
+  ensure_strpermutations_test(false, "abc", "!", abc_arr,"","")
+  ensure_strpermutations_test(false, "acb", "!", abc_arr,"","")
+  ensure_strpermutations_test(false, "cab", "!", abc_arr,"","")
+  ensure_strpermutations_test(false, "bac", "!", abc_arr,"","")
+  ensure_strpermutations_test(false, "bca", "!", abc_arr,"","")
+
+  ensure_strpermutations_test(true, "!abc", "!", abc_arr,"","")
+  ensure_strpermutations_test(true, "!acb", "!", abc_arr,"","")
+  ensure_strpermutations_test(true, "!cab", "!", abc_arr,"","")
+  ensure_strpermutations_test(true, "!bac", "!", abc_arr,"","")
+  ensure_strpermutations_test(true, "!bca", "!", abc_arr,"","")
+
+  ------------------------------------------------------------------------------
+
+  ensure_strpermutations_test(false, "abc", "", abc_arr,"","!")
+  ensure_strpermutations_test(false, "acb", "", abc_arr,"","!")
+  ensure_strpermutations_test(false, "cab", "", abc_arr,"","!")
+  ensure_strpermutations_test(false, "bac", "", abc_arr,"","!")
+  ensure_strpermutations_test(false, "bca", "", abc_arr,"","!")
+
+  ensure_strpermutations_test(true, "abc!", "", abc_arr,"","!")
+  ensure_strpermutations_test(true, "acb!", "", abc_arr,"","!")
+  ensure_strpermutations_test(true, "cab!", "", abc_arr,"","!")
+  ensure_strpermutations_test(true, "bac!", "", abc_arr,"","!")
+  ensure_strpermutations_test(true, "bca!", "", abc_arr,"","!")
+
+  ------------------------------------------------------------------------------
+
+  ensure_strpermutations_test(false, "abc", "", abc_arr,",","")
+  ensure_strpermutations_test(false, "acb", "", abc_arr,",","")
+  ensure_strpermutations_test(false, "cab", "", abc_arr,",","")
+  ensure_strpermutations_test(false, "bac", "", abc_arr,",","")
+  ensure_strpermutations_test(false, "bca", "", abc_arr,",","")
+
+  ensure_strpermutations_test(true, "a,b,c", "", abc_arr,",","")
+  ensure_strpermutations_test(true, "a,c,b", "", abc_arr,",","")
+  ensure_strpermutations_test(true, "c,a,b", "", abc_arr,",","")
+  ensure_strpermutations_test(true, "b,a,c", "", abc_arr,",","")
+  ensure_strpermutations_test(true, "b,c,a", "", abc_arr,",","")
+  ------------------------------------------------------------------------------
+
+  ensure_strpermutations_test(false, "abc", "('", abc_arr,"'+'","')")
+  ensure_strpermutations_test(false, "acb", "('", abc_arr,"'+'","')")
+  ensure_strpermutations_test(false, "cab", "('", abc_arr,"'+'","')")
+  ensure_strpermutations_test(false, "bac", "('", abc_arr,"'+'","')")
+  ensure_strpermutations_test(false, "bca", "('", abc_arr,"'+'","')")
+
+  ensure_strpermutations_test(true, "('a'+'b'+'c')", "('", abc_arr,"'+'","')")
+  ensure_strpermutations_test(true, "('a'+'c'+'b')", "('", abc_arr,"'+'","')")
+  ensure_strpermutations_test(true, "('c'+'a'+'b')", "('", abc_arr,"'+'","')")
+  ensure_strpermutations_test(true, "('b'+'a'+'c')", "('", abc_arr,"'+'","')")
+  ensure_strpermutations_test(true, "('b'+'c'+'a')", "('", abc_arr,"'+'","')")
+end)
+
+--------------------------------------------------------------------------------
+
 -- TODO: Write tests
 --       https://github.com/lua-nucleo/lua-nucleo/issues/13
 test:UNTESTED "ensure"
@@ -355,5 +495,6 @@ test:UNTESTED "ensure_equals"
 test:UNTESTED "ensure_tdeepequals"
 test:UNTESTED "ensure_returns"
 test:UNTESTED "ensure_strequals"
+test:UNTESTED "ensure_strlist"
 test:UNTESTED "ensure_aposteriori_probability"
 test:UNTESTED "ensure_tequals"

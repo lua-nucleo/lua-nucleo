@@ -5,8 +5,8 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
-local error, tostring, pcall, type, pairs, select, next
-    = error, tostring, pcall, type, pairs, select, next
+local error, tostring, pcall, type, pairs, ipairs, select, next
+    = error, tostring, pcall, type, pairs, ipairs, select, next
 
 local math_min, math_max, math_abs = math.min, math.max, math.abs
 local string_char = string.char
@@ -21,6 +21,12 @@ local tdeepequals,
         'tstr',
         'taccumulate',
         'tnormalize'
+      }
+
+local tifindallpermutations
+      = import 'lua-nucleo/table-utils.lua'
+      {
+        'tifindallpermutations'
       }
 
 local assert_is_number
@@ -223,6 +229,124 @@ end
 
 --------------------------------------------------------------------------------
 
+local ensure_strvariant = function(msg, actual, expected, ...)
+  local confirmed = false
+
+  if expected == nil then
+    confirmed = actual == nil
+  elseif type(expected) == 'string' then
+    confirmed = actual == expected
+  elseif type(expected) == 'table' then
+    for i = 1, #expected do
+      if actual == expected[i] then
+        confirmed = true
+        break
+      end
+    end
+  end
+
+  if confirmed then
+    return actual, expected, ...
+  end
+
+  local expected_str
+  if expected == nil then
+    expected_str = 'nil'
+  elseif type(expected) == 'string' then
+    expected_str = expected
+  elseif type(expected) == 'table' then
+    expected_str = table.concat(expected, ' or ')
+  else
+    expected_str = 'unexpected type of the expected value: ' .. type(expected)
+  end
+
+  error(
+      "ensure_strvariant failed: " .. msg .. ":\n"
+      .. strdiff_msg(actual, expected)
+      .. "\nactual:\n" .. tostring(actual)
+      .. "\nexpected:\n" .. expected_str
+    )
+end
+
+--------------------------------------------------------------------------------
+
+local ensure_strlist = function(
+  msg,
+  actual,
+  expected_prefix,
+  expected_elements_list,
+  expected_sep,
+  expected_suffix,
+  ...
+)
+  ensure_strequals(msg, actual:sub(1, 1), expected_prefix)
+  ensure_strequals(msg, actual:sub(-1), expected_suffix)
+
+  local actual_joined = actual:sub(2, -2)
+
+  local missed_elements = { }
+  local excess_elements = { }
+  for _, elem in ipairs(expected_elements_list) do
+    missed_elements[elem] = true
+  end
+
+  for elem in actual_joined:gmatch('([^' .. expected_sep .. ']+)') do
+    if missed_elements[elem] then
+      missed_elements[elem] = nil
+    else
+      excess_elements[#excess_elements + 1] = elem
+    end
+  end
+
+  for elem, _ in pairs(missed_elements) do
+    error(
+      msg .. ': expected element is not found: ' .. tostring(elem)
+    )
+  end
+
+  for _, elem in ipairs(excess_elements) do
+    error(
+      msg .. ': excess element is found: ' .. tostring(elem)
+    )
+  end
+
+  return actual, expected_prefix, expected_elements_list, expected_sep,
+         expected_suffix, ...
+end
+
+local ensure_strpermutations = function(
+  msg,
+  actual,
+  expected_prefix,
+  expected_elements_list,
+  expected_sep,
+  expected_suffix,
+  ...
+)
+  local expected_elements_list_permutations = { }
+  tifindallpermutations(
+    expected_elements_list, expected_elements_list_permutations
+  )
+
+  local expected_variants = { }
+  for i = 1, #expected_elements_list_permutations do
+    local p = expected_elements_list_permutations[i]
+    local expected = expected_prefix
+    for j = 1, #p do
+      if j > 1 then
+        expected = expected .. expected_sep
+      end
+      expected = expected .. tostring(p[j])
+    end
+    expected = expected .. expected_suffix
+    expected_variants[#expected_variants + 1] = expected
+  end
+
+  return ensure_strvariant(msg, actual, expected_variants)
+end
+
+--------------------------------------------------------------------------------
+
 local ensure_error = function(msg, expected_message, res, actual_message, ...)
   if res ~= nil then
     error(
@@ -384,6 +508,9 @@ return
   ensure_tequals = ensure_tequals;
   ensure_tdeepequals = ensure_tdeepequals;
   ensure_strequals = ensure_strequals;
+  ensure_strvariant = ensure_strvariant;
+  ensure_strlist = ensure_strlist;
+  ensure_strpermutations = ensure_strpermutations;
   ensure_error = ensure_error;
   ensure_error_with_substring = ensure_error_with_substring;
   ensure_fails_with_substring = ensure_fails_with_substring;
