@@ -5,7 +5,18 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
-local newproxy = newproxy
+local unpack = unpack or table.unpack
+local newproxy = newproxy or select(
+    2,
+    unpack({
+        xpcall(require, function() end,'newproxy')
+      })
+  )
+
+if not newproxy then
+  error('newproxy is required for this module')
+end
+
 local math_random, math_pi = math.random, math.pi
 local coroutine_create = coroutine.create
 
@@ -57,7 +68,10 @@ local make_value_generators = function(features)
       (not features["no-numbers"]) and invariant(1/0) or nil,
       (not features["no-numbers"]) and invariant(-1/0) or nil,
       invariant(""),
-      invariant("The Answer to the Ultimate Question of Life, the Universe, and Everything"),
+      invariant(
+        "The Answer to the Ultimate Question of Life, the Universe, "
+        .. "and Everything"
+      ),
       invariant("embedded\0zero"),
       invariant("multiline\nstring"),
       -- TODO: Random_string().
