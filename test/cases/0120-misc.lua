@@ -4,6 +4,10 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+local newproxy = newproxy
+
+--------------------------------------------------------------------------------
+
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
 --------------------------------------------------------------------------------
@@ -84,9 +88,11 @@ test 'collect_all_garbage-userdata' (function()
   do
     -- No garbage except our userdata.
     -- Checking that both userdata GC cycles would be run
-    local ud = newproxy()
-    debug.setmetatable(ud, { __gc = function() userdata_collected = true end })
-    cache[ud] = true
+    local obj, setmetatable =
+      newproxy and newproxy() or { },
+      newproxy and debug.setmetatable or setmetatable
+    setmetatable(obj, { __gc = function() userdata_collected = true end })
+    cache[obj] = true
 
     ensure_equals("userdata not collected", userdata_collected, false)
     ensure_equals("all objects are cached", tcount_elements(cache), 1)
@@ -113,9 +119,11 @@ test 'collect_all_garbage-complex' (function()
     local t = { }
     cache[t] = true
 
-    local ud = newproxy()
-    debug.setmetatable(ud, { __gc = function() userdata_collected = true end })
-    cache[ud] = true
+    local obj, setmetatable =
+      newproxy and newproxy() or { },
+      newproxy and debug.setmetatable or setmetatable
+    setmetatable(obj, { __gc = function() userdata_collected = true end })
+    cache[obj] = true
 
     ensure_equals("userdata not collected", userdata_collected, false)
     ensure_equals("all objects are cached", tcount_elements(cache), 2)
