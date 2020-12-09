@@ -5,6 +5,12 @@
 --------------------------------------------------------------------------------
 
 local unpack = unpack or table.unpack
+local newproxy = newproxy or select(
+    2,
+    unpack({
+        xpcall(require, function() end,'newproxy')
+      })
+  )
 
 --------------------------------------------------------------------------------
 
@@ -71,11 +77,16 @@ local make_priority_queue,
         'make_priority_queue'
       }
 
+local is_value_generators_loaded, err =
+  pcall(import, 'test/test-lib/value_generators.lua')
+
 local make_value_generators
-      = import 'test/test-lib/value_generators.lua'
-      {
-        'make_value_generators'
-      }
+if is_value_generators_loaded then
+  make_value_generators = import 'test/test-lib/value_generators.lua'
+  {
+    'make_value_generators'
+  }
+end
 
 --------------------------------------------------------------------------------
 
@@ -249,47 +260,54 @@ end)
 
 --------------------------------------------------------------------------------
 
-test "single-invalid-priority-type" (function()
-  local priority_queue = ensure("created priority queue", make_priority_queue())
+if newproxy then
+  test "single-invalid-priority-type" (function()
+    local priority_queue =
+      ensure("created priority queue", make_priority_queue())
 
-  local value = 42
+    local value = 42
 
-  ensure_fails_with_substring(
-      "priority cannot be of 'nil' type",
-      function() priority_queue:insert(nil, value) end,
-      "expected `number', got `nil'"
-    )
+    ensure_fails_with_substring(
+        "priority cannot be of 'nil' type",
+        function() priority_queue:insert(nil, value) end,
+        "expected `number', got `nil'"
+      )
 
-  ensure_fails_with_substring(
-      "priority cannot be of 'string' type",
-      function() priority_queue:insert("the string", value) end,
-      "expected `number', got `string'"
-    )
+    ensure_fails_with_substring(
+        "priority cannot be of 'string' type",
+        function() priority_queue:insert("the string", value) end,
+        "expected `number', got `string'"
+      )
 
-  ensure_fails_with_substring(
-      "priority cannot be of 'table' type",
-      function() priority_queue:insert({}, value) end,
-      "expected `number', got `table'"
-    )
+    ensure_fails_with_substring(
+        "priority cannot be of 'table' type",
+        function() priority_queue:insert({}, value) end,
+        "expected `number', got `table'"
+      )
 
-  ensure_fails_with_substring(
-      "priority cannot be of 'function' type",
-      function() priority_queue:insert(function() end, value) end,
-      "expected `number', got `function'"
-    )
+    ensure_fails_with_substring(
+        "priority cannot be of 'function' type",
+        function() priority_queue:insert(function() end, value) end,
+        "expected `number', got `function'"
+      )
 
-  ensure_fails_with_substring(
-      "priority cannot be of 'coroutine' type",
-      function() priority_queue:insert(coroutine.create(function() end), value) end,
-      "expected `number', got `thread'"
-    )
+    ensure_fails_with_substring(
+        "priority cannot be of 'coroutine' type",
+        function()
+          priority_queue:insert(coroutine.create(function() end), value)
+        end,
+        "expected `number', got `thread'"
+      )
 
-  ensure_fails_with_substring(
-      "priority cannot be of 'userdata' type",
-      function() priority_queue:insert(newproxy(), value) end,
-      "expected `number', got `userdata'"
-    )
-end)
+    ensure_fails_with_substring(
+        "priority cannot be of 'userdata' type",
+        function() priority_queue:insert(newproxy(), value) end,
+        "expected `number', got `userdata'"
+      )
+  end)
+else
+  test:BROKEN "single-invalid-priority-type"
+end
 
 --------------------------------------------------------------------------------
 
@@ -344,27 +362,32 @@ test "many-elements-random-hardcoded" (function()
   check_insert_pop_elements(elements)
 end)
 
-test "many-elements-random-generated" (function()
-  local priority_queue = ensure("created priority queue", make_priority_queue())
+if make_value_generators then
+  test "many-elements-random-generated" (function()
+    local priority_queue =
+      ensure("created priority queue", make_priority_queue())
 
-  local value_generators = make_value_generators(tset({ "userdata" }))
+    local value_generators = make_value_generators(tset({ "userdata" }))
 
-  local MIN_ELEMENTS = 0
-  local MAX_ELEMENTS = 1e4
+    local MIN_ELEMENTS = 0
+    local MAX_ELEMENTS = 1e4
 
-  local MIN_PRIORITY = 0
-  local MAX_PRIORITY = 1e3
+    local MIN_PRIORITY = 0
+    local MAX_PRIORITY = 1e3
 
-  local elements = tgenerate_n(
-      math.random(MIN_ELEMENTS, MAX_ELEMENTS),
-      function()
-        return
-        {
-          p = math.random(MIN_PRIORITY, MAX_PRIORITY);
-          v = value_generators[math.random(#value_generators)]();
-        }
-      end
-    )
+    local elements = tgenerate_n(
+        math.random(MIN_ELEMENTS, MAX_ELEMENTS),
+        function()
+          return
+          {
+            p = math.random(MIN_PRIORITY, MAX_PRIORITY);
+            v = value_generators[math.random(#value_generators)]();
+          }
+        end
+      )
 
-  check_insert_pop_elements(elements)
-end)
+    check_insert_pop_elements(elements)
+  end)
+else
+  test:BROKEN "many-elements-random-generated"
+end
