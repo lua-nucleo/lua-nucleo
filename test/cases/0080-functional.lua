@@ -5,6 +5,12 @@
 --------------------------------------------------------------------------------
 
 local unpack = unpack or table.unpack
+local newproxy = newproxy or select(
+    2,
+    unpack({
+        xpcall(require, function() end,'newproxy')
+      })
+  )
 
 --------------------------------------------------------------------------------
 
@@ -71,56 +77,60 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:test_for "identity" (function()
-  local e_nil,
-        e_boolean,
-        e_number,
-        e_string,
-        e_table,
-        e_function,
-        e_thread,
-        e_userdata =
-        nil,
-        true,
-        42,
-        "identity",
-        { 42 },
-        function() end,
-        coroutine.create(function() end),
-        newproxy()
+if newproxy then
+  test:test_for "identity" (function()
+    local e_nil,
+          e_boolean,
+          e_number,
+          e_string,
+          e_table,
+          e_function,
+          e_thread,
+          e_userdata =
+          nil,
+          true,
+          42,
+          "identity",
+          { 42 },
+          function() end,
+          coroutine.create(function() end),
+          newproxy()
 
-  local a_nil,
-        a_boolean,
-        a_number,
-        a_string,
-        a_table,
-        a_function,
-        a_thread,
-        a_userdata,
-        a_nothing =
-        identity(
-            e_nil,
-            e_boolean,
-            e_number,
-            e_string,
-            e_table,
-            e_function,
-            e_thread,
-            e_userdata
-          )
+    local a_nil,
+          a_boolean,
+          a_number,
+          a_string,
+          a_table,
+          a_function,
+          a_thread,
+          a_userdata,
+          a_nothing =
+          identity(
+              e_nil,
+              e_boolean,
+              e_number,
+              e_string,
+              e_table,
+              e_function,
+              e_thread,
+              e_userdata
+            )
 
-  ensure_equals("nil", a_nil, e_nil)
-  ensure_equals("boolean", a_boolean, e_boolean)
-  ensure_equals("number", a_number, e_number)
-  ensure_equals("string", a_string, e_string)
-  ensure_equals("table", a_table, e_table) -- Note direct equality
-  ensure_equals("function", a_function, e_function)
-  ensure_equals("thread", a_thread, e_thread)
-  ensure_equals("userdata", a_userdata, e_userdata)
+    ensure_equals("nil", a_nil, e_nil)
+    ensure_equals("boolean", a_boolean, e_boolean)
+    ensure_equals("number", a_number, e_number)
+    ensure_equals("string", a_string, e_string)
+    ensure_equals("table", a_table, e_table) -- Note direct equality
+    ensure_equals("function", a_function, e_function)
+    ensure_equals("thread", a_thread, e_thread)
+    ensure_equals("userdata", a_userdata, e_userdata)
 
-  ensure_equals("no extra args", a_nothing, nil)
-end)
-
+    ensure_equals("no extra args", a_nothing, nil)
+  end)
+else
+  test:tests_for "identity"
+  test:BROKEN "identity"
+end
 --------------------------------------------------------------------------------
 
 test:test_for "less_than" (function()
@@ -131,30 +141,35 @@ test:test_for "less_than" (function()
   ensure_equals("'aa' not less than 'a'", less_than("aa", "a"), false)
 end)
 
-test:test_for "invariant" (function()
-  local data =
-  {
-    n = 8; -- Storing size explicitly due to hole in table.
-    nil;
-    true;
-    42;
-    "invariant";
-    { 42 };
-    function() end;
-    coroutine.create(function() end);
-    newproxy();
-  }
+if newproxy then
+  test:test_for "invariant" (function()
+    local data =
+    {
+      n = 8; -- Storing size explicitly due to hole in table.
+      nil;
+      true;
+      42;
+      "invariant";
+      { 42 };
+      function() end;
+      coroutine.create(function() end);
+      newproxy();
+    }
 
-  for i = 1, data.n do
-    local inv = invariant(data[i])
-    assert(type(inv) == "function")
-    ensure_equals(
-        "invariant "..type(data[i]),
-        inv(),
-        data[i]
-      )
-  end
-end)
+    for i = 1, data.n do
+      local inv = invariant(data[i])
+      assert(type(inv) == "function")
+      ensure_equals(
+          "invariant "..type(data[i]),
+          inv(),
+          data[i]
+        )
+    end
+  end)
+else
+  test:tests_for "invariant"
+  test:BROKEN "invariant"
+end
 
 --------------------------------------------------------------------------------
 
