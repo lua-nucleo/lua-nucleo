@@ -4,8 +4,15 @@
 -- This file is a part of lua-nucleo library
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
-
 local newproxy = newproxy
+if not newproxy then
+  local status
+  status, newproxy = xpcall(require, function() end, 'newproxy')
+  if not status then
+    error('can\'t load newproxy module: ' .. tostring(newproxy))
+  end
+end
+
 local math_random, math_pi = math.random, math.pi
 local coroutine_create = coroutine.create
 
