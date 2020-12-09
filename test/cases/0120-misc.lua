@@ -84,9 +84,12 @@ test 'collect_all_garbage-userdata' (function()
   do
     -- No garbage except our userdata.
     -- Checking that both userdata GC cycles would be run
-    local ud = newproxy()
-    debug.setmetatable(ud, { __gc = function() userdata_collected = true end })
-    cache[ud] = true
+    local table = { }
+    debug.setmetatable(
+        table,
+        { __gc = function() userdata_collected = true end }
+      )
+    cache[table] = true
 
     ensure_equals("userdata not collected", userdata_collected, false)
     ensure_equals("all objects are cached", tcount_elements(cache), 1)
@@ -113,9 +116,12 @@ test 'collect_all_garbage-complex' (function()
     local t = { }
     cache[t] = true
 
-    local ud = newproxy()
-    debug.setmetatable(ud, { __gc = function() userdata_collected = true end })
-    cache[ud] = true
+    local table = { }
+    debug.setmetatable(
+        table,
+        { __gc = function() userdata_collected = true end }
+      )
+    cache[table] = true
 
     ensure_equals("userdata not collected", userdata_collected, false)
     ensure_equals("all objects are cached", tcount_elements(cache), 2)
