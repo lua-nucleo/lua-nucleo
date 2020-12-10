@@ -5,6 +5,12 @@
 --------------------------------------------------------------------------------
 
 local unpack = unpack or table.unpack
+local newproxy = newproxy or select(
+    2,
+    unpack({
+        xpcall(require, function() end,'newproxy')
+      })
+  )
 
 --------------------------------------------------------------------------------
 
@@ -1589,23 +1595,28 @@ test:group "tclone"
 
 --------------------------------------------------------------------------------
 
-test "tclone-nontable" (function()
-  ensure_equals("noarg", tclone(), nil) -- Arbitrary limitation. This allowed to fail if is implemented in C.
-  ensure_equals("nil", tclone(nil), nil)
-  ensure_equals("boolean-false", tclone(false), false)
-  ensure_equals("boolean-true", tclone(true), true)
-  ensure_equals("number", tclone(42), 42)
-  ensure_equals("string", tclone("a"), "a")
+if newproxy then
+  test "tclone-nontable" (function()
+    ensure_equals("noarg", tclone(), nil) -- Arbitrary limitation. This allowed to
+                                          -- fail if is implemented in C.
+    ensure_equals("nil", tclone(nil), nil)
+    ensure_equals("boolean-false", tclone(false), false)
+    ensure_equals("boolean-true", tclone(true), true)
+    ensure_equals("number", tclone(42), 42)
+    ensure_equals("string", tclone("a"), "a")
 
-  local f = function() end
-  ensure_equals("function", tclone(f), f)
+    local f = function() end
+    ensure_equals("function", tclone(f), f)
 
-  local c = coroutine.create(function() end)
-  ensure_equals("function", tclone(c), c)
+    local c = coroutine.create(function() end)
+    ensure_equals("function", tclone(c), c)
 
-  local u = newproxy()
-  ensure_equals("function", tclone(u), u)
-end)
+    local u = newproxy()
+    ensure_equals("function", tclone(u), u)
+  end)
+else
+  test:BROKEN "tclone-nontable"
+end
 
 do
   local check_tclone = function(name, value, expected)
