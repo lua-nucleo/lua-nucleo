@@ -9,8 +9,8 @@
 
 --------------------------------------------------------------------------------
 
-local setmetatable, setfenv, xpcall, loadstring
-    = setmetatable, setfenv, xpcall, loadstring
+local setmetatable, setfenv, xpcall, loadstring, load, debug
+    = setmetatable, setfenv, xpcall, loadstring, load, debug
 
 --------------------------------------------------------------------------------
 
@@ -45,13 +45,20 @@ do
   end
 end
 
-local do_in_environment = function(chunk, env)
+local do_in_environment = function(chunk, env, chunkname)
   arguments(
       "function", chunk,
       "table", env
     )
+  optional_arguments(
+      "string", chunkname
+    )
 
-  setfenv(chunk, env)
+  if setfenv then
+    setfenv(chunk, env)
+  else
+    chunk = load(chunk, chunkname or '[sandbox]', nil, env)
+  end
 
   -- TODO: Add deadlock and memory protection
   -- TODO: Restore environment?
@@ -66,7 +73,13 @@ local dostring_in_environment = function(code, env, chunkname)
       "table", env
     )
 
-  local fn, err = loadstring(code, chunkname)
+  local fn, err
+  if loadstring then
+    fn, err = loadstring(code, chunkname)
+  else
+    fn, err = load(code, chunkname, 't', env)
+  end
+
   if not fn then
     return nil, err
   end
