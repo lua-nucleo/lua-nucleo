@@ -4,6 +4,16 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+local unpack = unpack or table.unpack
+local newproxy = newproxy or select(
+    2,
+    unpack({
+        xpcall(require, function() end, 'newproxy')
+      })
+  )
+
+--------------------------------------------------------------------------------
+
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
 declare 'jit'
@@ -192,7 +202,9 @@ local declare_tests = function(tested_fn_name, serialization_fn)
     check_tbl_ok("tstr table with metatable", tbl_with_metatable, '{}')
   end)
 
-  test(tested_fn_name .. "-non-serializable") (function ()
+  test:BROKEN_IF(not newproxy)(
+    tested_fn_name .. "-non-serializable"
+  ) (function ()
     local fn = function() end;
     local thread = create_thread(function() end)
     local userdata = newproxy()
@@ -211,7 +223,9 @@ local declare_tests = function(tested_fn_name, serialization_fn)
         "userdata deserialization failed")()
   end)
 
-  test(tested_fn_name .. "-table-with-non-serializable-values") (function ()
+  test:BROKEN_IF(not newproxy)(
+    tested_fn_name .. "-table-with-non-serializable-values"
+  ) (function ()
     local fn = function() end;
     local thread = create_thread(function() end)
     local userdata = newproxy()
@@ -223,7 +237,9 @@ local declare_tests = function(tested_fn_name, serialization_fn)
       )
   end)
 
-  test(tested_fn_name .. "-table-with-non-serializable-keys") (function ()
+  test:BROKEN_IF(not newproxy)(
+    tested_fn_name .. "-table-with-non-serializable-keys"
+  ) (function ()
     local fn = function() end;
     local thread = create_thread(function() end)
     local userdata = newproxy()
