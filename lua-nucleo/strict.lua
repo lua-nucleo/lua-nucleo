@@ -51,6 +51,8 @@ declare('_PROMPT2')
 -- NOTE: declare global variables for Lua versions compatibility
 declare('unpack')
 declare('newproxy')
+declare('loadstring')
+declare('setfenv')
 
 setmetatable(_G, {
   __index = function(t, k)
