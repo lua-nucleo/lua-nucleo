@@ -4,6 +4,16 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+local unpack = unpack or table.unpack
+local newproxy = newproxy or select(
+    2,
+    unpack({
+        xpcall(require, function() end, 'newproxy')
+      })
+  )
+
+--------------------------------------------------------------------------------
+
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
 local ensure,
@@ -35,7 +45,7 @@ test:tests_for 'is_nil'
 
 --------------------------------------------------------------------------------
 
-test "all_predicates" (function()
+test:BROKEN_IF(not newproxy) "all_predicates" (function()
   local is = type_imports
 
   local values =
