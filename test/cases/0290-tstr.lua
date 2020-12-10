@@ -4,6 +4,16 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+local unpack = unpack or table.unpack
+local newproxy = newproxy or select(
+    2,
+    unpack({
+        xpcall(require, function() end,'newproxy')
+      })
+  )
+
+--------------------------------------------------------------------------------
+
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
 declare 'jit'
@@ -192,52 +202,57 @@ local declare_tests = function(tested_fn_name, serialization_fn)
     check_tbl_ok("tstr table with metatable", tbl_with_metatable, '{}')
   end)
 
-  test(tested_fn_name .. "-non-serializable") (function ()
-    local fn = function() end;
-    local thread = create_thread(function() end)
-    local userdata = newproxy()
-    ensure("tstr function", serialization_fn(fn):find("function:"))
-    ensure("tstr thread", serialization_fn(thread):find("thread:"))
-    ensure("tstr userdata", serialization_fn(userdata):find("userdata:"))
-    assert(
-        loadstring('return ' .. serialization_fn(fn)),
-        "function deserialization failed"
-      )()
-    assert(
-        loadstring('return ' .. serialization_fn(thread)),
-        "thread deserialization failed")()
-    assert(
-        loadstring('return ' .. serialization_fn(userdata)),
-        "userdata deserialization failed")()
-  end)
+  if newproxy then
+    test(tested_fn_name .. "-non-serializable") (function ()
+      local fn = function() end;
+      local thread = create_thread(function() end)
+      local userdata = newproxy()
+      ensure("tstr function", serialization_fn(fn):find("function:"))
+      ensure("tstr thread", serialization_fn(thread):find("thread:"))
+      ensure("tstr userdata", serialization_fn(userdata):find("userdata:"))
+      assert(
+          loadstring('return ' .. serialization_fn(fn)),
+          "function deserialization failed"
+        )()
+      assert(
+          loadstring('return ' .. serialization_fn(thread)),
+          "thread deserialization failed")()
+      assert(
+          loadstring('return ' .. serialization_fn(userdata)),
+          "userdata deserialization failed")()
+    end)
 
-  test(tested_fn_name .. "-table-with-non-serializable-values") (function ()
-    local fn = function() end;
-    local thread = create_thread(function() end)
-    local userdata = newproxy()
-    local tbl = { fn, thread, userdata }
-    check_deserialization(
-        "tstr table with non-serializable values: deserialization",
-        tbl,
-        tdeepequals
-      )
-  end)
+    test(tested_fn_name .. "-table-with-non-serializable-values") (function ()
+      local fn = function() end;
+      local thread = create_thread(function() end)
+      local userdata = newproxy()
+      local tbl = { fn, thread, userdata }
+      check_deserialization(
+          "tstr table with non-serializable values: deserialization",
+          tbl,
+          tdeepequals
+        )
+    end)
 
-  test(tested_fn_name .. "-table-with-non-serializable-keys") (function ()
-    local fn = function() end;
-    local thread = create_thread(function() end)
-    local userdata = newproxy()
-    local tbl = { }
-    tbl[fn] = { 1 }
-    tbl[thread] = { 2 }
-    tbl[userdata] = { 3 }
-    check_deserialization(
-        "tstr table with non-serializable keys: deserialization",
-        tbl,
-        tdeepequals
-      )
-  end)
-
+    test(tested_fn_name .. "-table-with-non-serializable-keys") (function ()
+      local fn = function() end;
+      local thread = create_thread(function() end)
+      local userdata = newproxy()
+      local tbl = { }
+      tbl[fn] = { 1 }
+      tbl[thread] = { 2 }
+      tbl[userdata] = { 3 }
+      check_deserialization(
+          "tstr table with non-serializable keys: deserialization",
+          tbl,
+          tdeepequals
+        )
+    end)
+  else
+    test:BROKEN(tested_fn_name .. "-non-serializable")
+    test:BROKEN(tested_fn_name .. "-table-with-non-serializable-values")
+    test:BROKEN(tested_fn_name .. "-table-with-non-serializable-keys")
+  end
   -- Test based on real bug scenario
   -- #3836
   test(tested_fn_name .. "-serialize-inf-bug") (function ()
