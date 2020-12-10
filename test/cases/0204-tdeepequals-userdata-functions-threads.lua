@@ -5,11 +5,23 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+local unpack = unpack or table.unpack
+local newproxy = newproxy or select(
+    2,
+    unpack({
+        xpcall(require, function() end, 'newproxy')
+      })
+  )
+
+--------------------------------------------------------------------------------
+
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
-local check_ok = import 'test/test-lib/tdeepequals-test-utils.lua' { 'check_ok' }
+local check_ok =
+  import 'test/test-lib/tdeepequals-test-utils.lua' { 'check_ok' }
 
-local collect_all_garbage = import 'lua-nucleo/misc.lua' { 'collect_all_garbage' }
+local collect_all_garbage =
+  import 'lua-nucleo/misc.lua' { 'collect_all_garbage' }
 
 ---------------------------------------------------------------------------
 
@@ -17,7 +29,7 @@ local test = make_suite("userdata, functions, threads")
 
 ---------------------------------------------------------------------------
 
-test "1" (function()
+test:BROKEN_IF(not newproxy) "1" (function()
   local changed = 0
   local mt = {__gc = function() changed = 1 end}
   local userdata1 = newproxy()
@@ -35,15 +47,15 @@ test "1" (function()
   assert(changed == 1,"Garbage not collected!!!")
 end)
 
-test "2" (function()
+test:BROKEN_IF(not newproxy) "2" (function()
   local userdata1 = newproxy()
-  local userdata2 = newproxy()
+  local userdata2 = newproxy() -- TODO: typo below or forgotten copy-paste?
   local u = {userdata1,userdata1}
   local v = {userdata1,userdata1}
   check_ok(u, v, true)
 end)
 
-test "3" (function()
+test:BROKEN_IF(not newproxy) "3" (function()
   local udt = newproxy()
   local thr = coroutine.create(function() end)
   local u = {udt}
@@ -51,7 +63,7 @@ test "3" (function()
   check_ok(u, v, false)
 end)
 
-test "4" (function()
+test:BROKEN_IF(not newproxy) "4" (function()
   local udt = newproxy()
   local thr = coroutine.create(function() end)
   local fnc = function() end
@@ -60,7 +72,7 @@ test "4" (function()
   check_ok(u, v, false)
 end)
 
-test "5" (function()
+test:BROKEN_IF(not newproxy) "5" (function()
   local udt = newproxy()
   local thr = coroutine.create(function() end)
   local fnc = function() end
@@ -69,7 +81,7 @@ test "5" (function()
   check_ok(u, v, false)
 end)
 
-test "6" (function()
+test:BROKEN_IF(not newproxy) "6" (function()
   local udt = newproxy()
   local thr = coroutine.create(function() end)
   local u = {[udt] = thr, [thr] = udt}
@@ -77,7 +89,7 @@ test "6" (function()
   check_ok(u, v, true)
 end)
 
-test "7" (function()
+test:BROKEN_IF(not newproxy) "7" (function()
   local udt = newproxy()
   local thr = coroutine.create(function() end)
   local fnc = function() end
@@ -86,7 +98,7 @@ test "7" (function()
   check_ok(u, v, true)
 end)
 
-test "8" (function()
+test:BROKEN_IF(not newproxy) "8" (function()
   local udt = newproxy()
   local thr = coroutine.create(function() end)
   local fnc = function() end
@@ -95,7 +107,7 @@ test "8" (function()
   check_ok(u, v, true)
 end)
 
-test "9" (function()
+test:BROKEN_IF(not newproxy) "9" (function()
   local udt = newproxy()
   local thr = coroutine.create(function() end)
   local fnc = function() end
