@@ -2,8 +2,18 @@
 -- typeassert.lua: tests for Lua type assertions
 -- This file is a part of lua-nucleo library
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
+--------------------------------------------------------------------------------
+
+local unpack = unpack or table.unpack
+local newproxy = newproxy or select(
+    2,
+    unpack({
+        xpcall(require, function() end, 'newproxy')
+      })
+  )
 
 --------------------------------------------------------------------------------
+
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
 local ensure,
@@ -39,7 +49,7 @@ test:tests_for 'assert_is_nil'
 
 --------------------------------------------------------------------------------
 
-test "all_assertions" (function()
+test:BROKEN_IF(not newproxy) "all_assertions" (function()
   local is = typeassert_imports
 
   local values =
