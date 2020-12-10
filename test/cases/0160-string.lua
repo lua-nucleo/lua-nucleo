@@ -11,6 +11,9 @@ local newproxy = newproxy or select(
         xpcall(require, function() end,'newproxy')
       })
   )
+local loadstring = loadstring or function(code, chunkname)
+  return load(code, chunkname, 't')
+end
 
 --------------------------------------------------------------------------------
 
