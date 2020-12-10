@@ -4,6 +4,14 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+local loadstring
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'loadstring'
+      }
+
+--------------------------------------------------------------------------------
+
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
 local check_ok = import 'test/test-lib/tserialize-test-utils.lua' { 'check_ok' }

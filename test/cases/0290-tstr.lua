@@ -24,6 +24,12 @@ local math_pi = math.pi
 local setmetatable = setmetatable
 local create_thread = coroutine.create
 
+local loadstring
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'loadstring'
+      }
+
 local ensure,
       ensure_equals,
       ensure_strequals,

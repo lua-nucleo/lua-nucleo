@@ -6,10 +6,18 @@
 
 local pairs = pairs
 
+--------------------------------------------------------------------------------
+
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
 declare 'jit'
 local jit = jit
+
+local loadstring
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'loadstring'
+      }
 
 local ensure,
       ensure_equals,
