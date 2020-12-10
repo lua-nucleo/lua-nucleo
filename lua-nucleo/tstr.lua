@@ -9,7 +9,7 @@ local pairs, ipairs, type, tostring = pairs, ipairs, type, tostring
 local table_concat = table.concat
 local string_match, string_format = string.match, string.format
 
-local lua51_keywords = import 'lua-nucleo/language.lua' { 'lua51_keywords' }
+local lua_keywords = import 'lua-nucleo/language.lua' { 'lua_keywords' }
 local serialize_number = import 'lua-nucleo/string.lua' { 'serialize_number' }
 
 local tstr, tstr_cat
@@ -47,7 +47,7 @@ do
 
             -- TODO: Need "%q" analogue, which would put quotes
             --       only if string does not match regexp below
-            if not lua51_keywords[k] and string_match(k, "^[%a_][%a%d_]*$") then
+            if not lua_keywords[k] and string_match(k, "^[%a_][%a%d_]*$") then
               cat(k) cat("=")
             else
               cat(string_format("[%q]=", k))

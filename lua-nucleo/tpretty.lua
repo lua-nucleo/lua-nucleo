@@ -9,7 +9,7 @@ local pairs, ipairs, type, tostring = pairs, ipairs, type, tostring
 local table_concat = table.concat
 local string_match, string_format = string.match, string.format
 
-local lua51_keywords = import 'lua-nucleo/language.lua' { 'lua51_keywords' }
+local lua_keywords = import 'lua-nucleo/language.lua' { 'lua_keywords' }
 local make_prettifier = import 'lua-nucleo/prettifier.lua' { 'make_prettifier' }
 local is_table = import 'lua-nucleo/type.lua' { 'is_table' }
 local tstr = import 'lua-nucleo/tstr.lua' { 'tstr' }
@@ -54,7 +54,7 @@ do
             prettifier:key_start()
             -- TODO: Need "%q" analogue, which would put quotes
             --       only if string does not match regexp below
-            if not lua51_keywords[k] and string_match(k, "^[%a_][%a%d_]*$") then
+            if not lua_keywords[k] and string_match(k, "^[%a_][%a%d_]*$") then
               cat(k)
             else
               cat(string_format("[%q]", k))

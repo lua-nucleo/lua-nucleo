@@ -20,7 +20,7 @@ do
   local table_concat, table_remove = table.concat, table.remove
   local string_format, string_match = string.format, string.match
 
-  local lua51_keywords = import 'lua-nucleo/language.lua' { 'lua51_keywords' }
+  local lua_keywords = import 'lua-nucleo/language.lua' { 'lua_keywords' }
   local serialize_number = import 'lua-nucleo/string.lua' { 'serialize_number' }
 
   local cur_buf
@@ -115,7 +115,7 @@ do
               --check if we can use the short notation
               -- eg {a=3,b=5} istead of {["a"]=3,["b"]=5}
               if
-                not lua51_keywords[k] and string_match(k, "^[%a_][%a%d_]*$")
+                not lua_keywords[k] and string_match(k, "^[%a_][%a%d_]*$")
               then
                 cat(k); cat("=")
               else
@@ -181,7 +181,7 @@ do
             --check if we can use the short notation
             -- eg {a=3,b=5} istead of {["a"]=3,["b"]=5}
             if
-              not lua51_keywords[k] and string_match(k, "^[%a_][%a%d_]*$")
+              not lua_keywords[k] and string_match(k, "^[%a_][%a%d_]*$")
             then
               cat(k); cat("=")
             else
