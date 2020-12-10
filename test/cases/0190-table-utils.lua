@@ -5,6 +5,12 @@
 --------------------------------------------------------------------------------
 
 local unpack = unpack or table.unpack
+local newproxy = newproxy or select(
+    2,
+    unpack({
+        xpcall(require, function() end, 'newproxy')
+      })
+  )
 
 --------------------------------------------------------------------------------
 
@@ -1589,8 +1595,9 @@ test:group "tclone"
 
 --------------------------------------------------------------------------------
 
-test "tclone-nontable" (function()
-  ensure_equals("noarg", tclone(), nil) -- Arbitrary limitation. This allowed to fail if is implemented in C.
+test:BROKEN_IF(not newproxy) "tclone-nontable" (function()
+  ensure_equals("noarg", tclone(), nil) -- Arbitrary limitation. This allowed to
+                                        -- fail if is implemented in C.
   ensure_equals("nil", tclone(nil), nil)
   ensure_equals("boolean-false", tclone(false), false)
   ensure_equals("boolean-true", tclone(true), true)
