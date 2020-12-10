@@ -7,12 +7,12 @@
 
 local type, pairs, error, tostring = type, pairs, error, tostring
 
-local lua51_types = import 'lua-nucleo/language.lua' { 'lua51_types' }
+local lua_types = import 'lua-nucleo/language.lua' { 'lua_types' }
 
 local result =
 {
   assert_is_type = function(val, msg)
-    return (lua51_types[val] == true)
+    return (lua_types[val] == true)
        and val
         or error(
              (msg or "assertion failed")
@@ -59,7 +59,7 @@ local result =
   end
 }
 
-for type_name, _ in pairs(lua51_types) do
+for type_name, _ in pairs(lua_types) do
   local assert_name = "assert_is_"..type_name
   if not result[assert_name] then
 

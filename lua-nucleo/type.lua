@@ -7,7 +7,7 @@
 
 local type, pairs, assert = type, pairs, assert
 
-local lua51_types = import 'lua-nucleo/language.lua' { 'lua51_types' }
+local lua_types = import 'lua-nucleo/language.lua' { 'lua_types' }
 
 local type_aliases =
 {
@@ -16,10 +16,10 @@ local type_aliases =
 
 local result =
 {
-  is_type = function(v) return lua51_types[v] == true end;
+  is_type = function(v) return lua_types[v] == true end;
 }
 
-for type_name, _ in pairs(lua51_types) do
+for type_name, _ in pairs(lua_types) do
   result["is_"..type_name] = function(v) return type(v) == type_name end
 end
 
