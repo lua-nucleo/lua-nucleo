@@ -16,6 +16,12 @@ local newproxy = newproxy or select(
 
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
+local loadstring
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'loadstring'
+      }
+
 local arguments
       = import 'lua-nucleo/args.lua'
       {
@@ -1389,8 +1395,7 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:tests_for "tjson_simple"
-test:BROKEN_IF(not newproxy) "tjson_simple" (function()
+test:test_for("tjson_simple"):BROKEN_IF(not newproxy) (function()
   -- Helpers
   local coroutine_create = coroutine.create
   local ensure_tjson_fails = function(msg, data, error_msg)
