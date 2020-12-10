@@ -5,6 +5,9 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+local loadstring, load, assert, type, import
+    = loadstring, load, assert, type, import
+
 local tdeepequals = import 'lua-nucleo/tdeepequals.lua' { 'tdeepequals' }
 local tserialize = import 'lua-nucleo/tserialize.lua' { 'tserialize' }
 local escape_string = import 'lua-nucleo/string.lua' { 'escape_string' }
@@ -22,7 +25,7 @@ local check_fn_ok = function(eq, ...)
   print(escape_string(saved:sub(1, 100)))
   ]] -- commented due to massive output
   local ne, expected = pack (...)
-  local nl, loaded = pack(assert(loadstring(saved))())
+  local nl, loaded = pack(assert((loadstring or load)(saved))())
   ensure_equals("Returned values quantity", ne, nl)
   assert(eq(expected, loaded), "tserialize produced wrong table!")
   return saved
