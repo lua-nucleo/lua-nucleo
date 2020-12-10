@@ -7,7 +7,7 @@
 
 -- TODO: Separate arguments() and method_arguments() to other module?
 
-local lua51_types = import 'lua-nucleo/language.lua' { 'lua51_types' }
+local lua_types = import 'lua-nucleo/language.lua' { 'lua_types' }
 
 local type, select, error, tostring = type, select, error, tostring
 
@@ -54,7 +54,7 @@ do
       local expected_type, value = select(i, ...)
 
       if type(value) ~= expected_type then
-        if not lua51_types[expected_type] then
+        if not lua_types[expected_type] then
           error(
               "argument #" .. ((i + 1) * 0.5) .. ": bad expected type `"
               .. tostring(expected_type) .. "'",
