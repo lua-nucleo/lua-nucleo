@@ -5,8 +5,8 @@
 --------------------------------------------------------------------------------
 
 local make_suite = select(1, ...)
-local test = make_suite("single-BROKEN-IF-broken-strict-mode-suite", { })
-test:set_strict_mode(true)
+local test = make_suite("single-BROKEN-IF-broken-unstrict-mode-suite", { })
+test:set_strict_mode(false)
 test:BROKEN_IF(true) "to_test" (function()
   suite_tests_results = suite_tests_results + 1
 end)

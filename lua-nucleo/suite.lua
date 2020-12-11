@@ -332,6 +332,18 @@ do
     end)
   end
 
+  local BROKEN_IF = function(self, is_broken)
+    assert(type(self) == "table", "bad self")
+    assert(type(is_broken) == "boolean", "bad is_broken")
+    return function(msg)
+      if is_broken then
+        return BROKEN(self, msg)
+      else
+        return self(msg)
+      end
+    end
+  end
+
   local UNTESTED = function(self, import_name)
     assert(type(self) == "table", "bad self")
     assert(type(import_name) == "string", "bad import name")
@@ -532,6 +544,7 @@ do
           UNTESTED = UNTESTED;
           TODO = TODO;
           BROKEN = BROKEN;
+          BROKEN_IF = BROKEN_IF;
           SLOW = SLOW;
           factory = factory;
           method = method;
