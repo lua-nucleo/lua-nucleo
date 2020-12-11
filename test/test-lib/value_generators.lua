@@ -64,7 +64,10 @@ local make_value_generators = function(features)
       (not features["no-numbers"]) and invariant(1/0) or nil,
       (not features["no-numbers"]) and invariant(-1/0) or nil,
       invariant(""),
-      invariant("The Answer to the Ultimate Question of Life, the Universe, and Everything"),
+      invariant(
+        "The Answer to the Ultimate Question of Life, the Universe, "
+        .. "and Everything"
+      ),
       invariant("embedded\0zero"),
       invariant("multiline\nstring"),
       -- TODO: Random_string().
