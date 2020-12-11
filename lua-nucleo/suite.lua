@@ -313,7 +313,6 @@ do
   local function tests_for(self, import_name)
     assert(type(self) == "table", "bad self")
     assert(type(import_name) == "string", "bad import name")
-    check_duplicate(self, import_name)
     check_name(self, import_name)
     return function(import_name) return tests_for(self, import_name) end
   end
