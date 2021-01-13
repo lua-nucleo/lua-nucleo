@@ -290,4 +290,8 @@ return
     type = 'cases';
     path = 'test/cases/0640-quicksort.lua';
   };
+  {
+    type = 'cases';
+    path = 'test/cases/0650-legacy.lua';
+  };
 }
