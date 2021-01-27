@@ -5,6 +5,49 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+-- for documentation purposes only:
+if false then
+  --- Hashset of Lua 5.1 language keywords (table where the key is a keyword
+  -- string and the value is the `true` boolean).
+  local lua51_keywords = { }
+
+  --- Hashset of Lua 5.2 language keywords (table where the key is a keyword
+  -- string and the value is the `true` boolean).
+  local lua52_keywords = { }
+
+  --- Hashset of Lua 5.3 language keywords (table where the key is a keyword
+  -- string and the value is the `true` boolean). Equals to `lua52_keywords`.
+  local lua53_keywords = { }
+
+  --- Hashset of Lua 5.4 language keywords (table where the key is a keyword
+  -- string and the value is the `true` boolean). Equals to `lua52_keywords`.
+  local lua54_keywords = { }
+
+  --- Hashset of currently running Lua version types (table where the key is a
+  -- keyword string and the value is the `true` boolean).
+  local lua_keywords = { }
+
+  --- Hashset of Lua 5.1 types (table where the key is the type name string and
+  -- the value is the `true` boolean).
+  local lua51_types = { }
+
+  --- Hashset of Lua 5.2 types (table where the key is the type name string and
+  -- the value is the `true` boolean). Equals to `lua51_types`.
+  local lua52_types = { }
+
+  --- Hashset of Lua 5.3 types (table where the key is the type name string and
+  -- the value is the `true` boolean). Equals to `lua51_types`.
+  local lua53_types = { }
+
+  --- Hashset of Lua 5.4 types (table where the key is the type name string and
+  -- the value is the `true` boolean). Equals to `lua51_types`.
+  local lua54_types = { }
+
+  --- Hashset of currently running Lua version types (table where the key is the
+  -- type name string and the value is the `true` boolean).
+  local lua_types = { }
+end
+
 local lua51_keywords =
 {
   ["and"] = true,    ["break"] = true,  ["do"] = true,
