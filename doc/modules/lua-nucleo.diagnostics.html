@@ -38,10 +38,7 @@
 
 
 <h2>Modules</h2>
-<ul>
-  <li><a href="../modules/key_value_store.key_value_store_ophash.html">key_value_store.key_value_store_ophash</a></li>
-  <li><a href="../modules/key_value_store.key_value_store_simple.html">key_value_store.key_value_store_simple</a></li>
-  <li><a href="../modules/key_value_store.key_value_store_sophisticated.html">key_value_store.key_value_store_sophisticated</a></li>
+<ul class="nowrap">
   <li><a href="../modules/lua-nucleo.algorithm.html">lua-nucleo.algorithm</a></li>
   <li><a href="../modules/lua-nucleo.args.html">lua-nucleo.args</a></li>
   <li><a href="../modules/lua-nucleo.assert.html">lua-nucleo.assert</a></li>
@@ -65,6 +62,9 @@
   <li><a href="../modules/lua-nucleo.functional.html">lua-nucleo.functional</a></li>
   <li><a href="../modules/lua-nucleo.import.html">lua-nucleo.import</a></li>
   <li><a href="../modules/lua-nucleo.init.html">lua-nucleo.init</a></li>
+  <li><a href="../modules/key_value_store.key_value_store_ophash.html">key_value_store.key_value_store_ophash</a></li>
+  <li><a href="../modules/key_value_store.key_value_store_simple.html">key_value_store.key_value_store_simple</a></li>
+  <li><a href="../modules/key_value_store.key_value_store_sophisticated.html">key_value_store.key_value_store_sophisticated</a></li>
   <li><a href="../modules/lua-nucleo.language.html">lua-nucleo.language</a></li>
   <li><a href="../modules/lua-nucleo.log.html">lua-nucleo.log</a></li>
   <li><a href="../modules/lua-nucleo.math.html">lua-nucleo.math</a></li>
@@ -83,8 +83,8 @@
   <li><a href="../modules/lua-nucleo.strict.html">lua-nucleo.strict</a></li>
   <li><a href="../modules/lua-nucleo.string.html">lua-nucleo.string</a></li>
   <li><a href="../modules/lua-nucleo.suite.html">lua-nucleo.suite</a></li>
-  <li><a href="../modules/lua-nucleo.table.html">lua-nucleo.table</a></li>
   <li><a href="../modules/lua-nucleo.table-utils.html">lua-nucleo.table-utils</a></li>
+  <li><a href="../modules/lua-nucleo.table.html">lua-nucleo.table</a></li>
   <li><a href="../modules/lua-nucleo.tdeepequals.html">lua-nucleo.tdeepequals</a></li>
   <li><a href="../modules/lua-nucleo.testing.decorator.html">lua-nucleo.testing.decorator</a></li>
   <li><a href="../modules/lua-nucleo.times_queue.html">lua-nucleo.times_queue</a></li>
@@ -97,10 +97,10 @@
   <li><a href="../modules/lua-nucleo.util.anim.interpolator.html">lua-nucleo.util.anim.interpolator</a></li>
   <li><a href="../modules/test.test-lib.generate-test-list.html">test.test-lib.generate-test-list</a></li>
   <li><a href="../modules/test.test-lib.import.html">test.test-lib.import</a></li>
-  <li><a href="../modules/test.test-lib.init.no-suite.html">test.test-lib.init.no-suite</a></li>
   <li><a href="../modules/test.test-lib.init.no-suite-no-import.html">test.test-lib.init.no-suite-no-import</a></li>
-  <li><a href="../modules/test.test-lib.init.strict.html">test.test-lib.init.strict</a></li>
+  <li><a href="../modules/test.test-lib.init.no-suite.html">test.test-lib.init.no-suite</a></li>
   <li><a href="../modules/test.test-lib.init.strict-import-as-require.html">test.test-lib.init.strict-import-as-require</a></li>
+  <li><a href="../modules/test.test-lib.init.strict.html">test.test-lib.init.strict</a></li>
   <li><a href="../modules/test.test-lib.table.html">test.test-lib.table</a></li>
   <li><a href="../modules/test.test-lib.tdeepequals-test-utils.html">test.test-lib.tdeepequals-test-utils</a></li>
   <li><a href="../modules/test.test-lib.tserialize-test-utils.html">test.test-lib.tserialize-test-utils</a></li>
@@ -112,13 +112,12 @@
 <div id="content">
 
 <h1>Module <code>lua-nucleo.diagnostics</code></h1>
-
 <p>Various code diagnostics utilities</p>
 <p>
  This file is a part of lua-nucleo library</p>
     <h3>Info:</h3>
     <ul>
-        <li><strong>Copyright</strong>: lua-nucleo authors (see file `COPYRIGHT` for the license)</li>
+        <li><strong>Copyright</strong>: lua-nucleo authors (see file <code>COPYRIGHT</code> for the license)</li>
     </ul>
 
 
@@ -132,7 +131,7 @@
 <h2><a href="#Local_Functions">Local Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#capture_source_location">capture_source_location&nbsp;( [level=1])</a></td>
+	<td class="name" nowrap><a href="#capture_source_location">capture_source_location ([level=1])</a></td>
 	<td class="summary">Captures location in source code at given call stack level.</td>
 	</tr>
 </table>
@@ -141,7 +140,8 @@
 <br/>
 
 
-    <h2><a name="Tables"></a>Tables</h2>
+    <h2 class="section-header "><a name="Tables"></a>Tables</h2>
+
     <dl class="function">
     <dt>
     <a name = "SourceLocation"></a>
@@ -150,17 +150,21 @@
     <dd>
     Source code location
 
+
     <h3>Fields:</h3>
     <ul>
         <li><span class="parameter">source</span>
-            <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
-         exact source filename</li>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         exact source filename
+        </li>
         <li><span class="parameter">file</span>
-            <span class="types"><a class="type" href="../modules/lua-nucleo.string.html">string</a></span>
-         short source filename</li>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         short source filename
+        </li>
         <li><span class="parameter">line</span>
             <span class="types"><span class="type">int</span></span>
-         line number in the source file</li>
+         line number in the source file
+        </li>
     </ul>
 
 
@@ -169,35 +173,39 @@
 
 </dd>
 </dl>
-    <h2><a name="Local_Functions"></a>Local Functions</h2>
+    <h2 class="section-header "><a name="Local_Functions"></a>Local Functions</h2>
+
     <dl class="function">
     <dt>
     <a name = "capture_source_location"></a>
-    <strong>capture_source_location&nbsp;( [level=1])</strong>
+    <strong>capture_source_location ([level=1])</strong>
     </dt>
     <dd>
     Captures location in source code at given call stack level.
-<p> Returns `nil` if requested call stack `level` is larger than
+<p> Returns <code>nil</code> if requested call stack <code>level</code> is larger than
  number of functions currently in the call stack.
+
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">level</span>
             <span class="types"><span class="type">int</span></span>
-         call stack level</li>
+         call stack level
+         (<em>default</em> 1)
+        </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-          <span class="types"><a class="type" href="../modules/lua-nucleo.diagnostics.html#SourceLocation">SourceLocation</a></span>
+           <span class="types"><a class="type" href="../modules/lua-nucleo.diagnostics.html#SourceLocation">SourceLocation</a></span>
         Source code location.
     </ol>
 
 
-    <h3>see also:</h3>
+    <h3>See also:</h3>
     <ul>
-         <a href="http://www.lua.org/manual/5.1/manual.html#pdf-debug.getinfo">debug.getinfo</a>
+         <a href="https://www.lua.org/manual/5.1/manual.html#pdf-debug.getinfo">debug.getinfo</a>
     </ul>
 
 
@@ -208,7 +216,8 @@
 </div> <!-- id="content" -->
 </div> <!-- id="main" -->
 <div id="about">
-<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3.12</a></i>
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-01-27 12:35:08 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
