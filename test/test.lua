@@ -162,4 +162,9 @@ if #low_level_errors > 0 then
   for i = 1, #low_level_errors do
     print(low_level_errors[i])
   end
+  print()
+  print("--------------------------------------------------------------------------------")
+  print("--- End of dumping error messages from failing tests ---------------------------")
+  print("--------------------------------------------------------------------------------")
+  print()
 end
