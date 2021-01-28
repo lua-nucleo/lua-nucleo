@@ -99,6 +99,10 @@ return
     path = 'test/suite/0173-filter-test-names.lua';
   };
   {
+    type = 'suite';
+    path = 'test/suite/0174-suite-BLOCKED_IF.lua';
+  };
+  {
     type = 'cases';
     path = 'test/cases/0180-table.lua';
   };

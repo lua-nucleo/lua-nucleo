@@ -89,6 +89,9 @@ do
   local single_test_mt =
   {
     __call = add_test;
+    __tostring = function(self)
+      return self.name
+    end;
   }
 
   make_single_test = function(test_adder_fn)
@@ -98,6 +101,10 @@ do
         {
           with = with;
           add_test = add_test;
+
+          -- public fields
+
+          name = "noname";
 
           -- fields
           decorators_ = { };
@@ -334,13 +341,36 @@ do
   local BROKEN_IF = function(self, is_broken)
     assert(type(self) == "table", "bad self")
     assert(type(is_broken) == "boolean", "bad is_broken")
-    return function(msg)
-      if is_broken then
-        return BROKEN(self, msg)
-      else
-        return self(msg)
+    local mt =
+    {
+      __call = function(call_self, arg)
+        local is_string_call = type(arg) == "string"
+        if is_broken then
+          if is_string_call then
+            check_name(call_self, arg)
+          end
+          return BROKEN(
+            call_self,
+            tostring(call_self.name or arg) .. ": conditionally broken"
+          )
+        end
+
+        if is_string_call then
+          return call_self:test_for(arg)
+        end
+
+        return call_self(arg)
+      end;
+      __index = self;
+    }
+    local result = { }
+    if is_broken then
+      result.test_for = function(inner_self, name)
+        mt.__call(self, name)
+        return function() end
       end
     end
+    return setmetatable(result, mt)
   end
 
   local UNTESTED = function(self, import_name)
@@ -371,7 +401,13 @@ do
     assert(type(self) == "table", "bad self")
     assert(type(name) == "string", "bad import name")
     check_name(self, name)
-    return self:test(name)
+    local test = self:test(name)
+
+    local mt = getmetatable(test)
+    mt.__index = self
+    setmetatable(test, mt)
+
+    return test
   end
 
   local set_up = function(self, fn)
@@ -393,7 +429,7 @@ do
     assert(type(name) == "string", "bad import name")
     check_duplicate(self, name)
 
-    return make_single_test(function(fn)
+    local res = make_single_test(function(fn)
       assert(type(fn) == "function", "bad callback")
       -- filter tests
       -- NB: we explicitly let simple list of names so that one could
@@ -406,6 +442,10 @@ do
       else
       end
     end)
+
+    res.name = name
+
+    return res
   end
 
   local add_methods = function(self, methods_list)

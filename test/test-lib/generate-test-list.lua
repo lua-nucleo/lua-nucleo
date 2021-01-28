@@ -38,6 +38,7 @@ end
 
 -- parsing input string
 local input_string = select(1, ...)
+print("$$$$$$$$$$$ input_string", input_string)
 local lib_path, case_paths, file_to_save, extension
 if input_string ~= nil then
   local input_table = { }

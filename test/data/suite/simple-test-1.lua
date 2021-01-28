@@ -12,6 +12,7 @@ assert(type(test) == "table", "suite object 'test' is table'")
 assert(pcall(function() test "a" (false) end) == false)
 
 assert(suite_tests_results.to_call['1'] == true)
+
 test '1' (function()
   if suite_tests_results.next_i ~= 1 then
     suite_tests_results.next_i = false

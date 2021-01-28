@@ -7,7 +7,6 @@
 -- WARNING: do not use import in this file for the test purity reasons.
 local run_tests = assert(assert(assert(loadfile('lua-nucleo/suite.lua'))()).run_tests)
 
-
 -- TODO: Also preserve random number generator's seed
 --       (save it and restore between suites)
 -- https://github.com/lua-nucleo/lua-nucleo/issues/10
@@ -62,23 +61,50 @@ if pattern ~= "" then
 end
 
 local run_low_level_tests = function(test_list)
+  local shell_read
   local is_shell_found, shell = pcall(require, "lua-aplicado.shell")
-  if not is_shell_found then
+  if is_shell_found then
+    shell_read = assert(shell.shell_read)
+  else
     local err = shell
     local error_message = "failed to link up with lua-aplicado:\n" .. err
-    if parameters_list.strict_mode then
-      error(error_message)
-    else
-      print(
-          "WARNING: " .. error_message .. "\n"
-          .. "skipping low-level tests"
-        )
+    print("WARNING: " .. error_message)
+    print("WARNING: using ah-hoc shell read")
+
+    shell_read = function(...)
+      local args = { ... }
+      local cmd = '"'
+      for i = 1, #args do
+        cmd = cmd .. args[i]
+        if i ~= #args then
+          cmd = cmd .. '" "'
+        end
+      end
+      cmd = cmd .. '" 2>&1'
+      cmd = cmd .. ' ; echo $?'
+
+      print('cmd', cmd)
+
+      local handle = assert(io.popen(cmd, 'r'))
+      local lines = { }
+      for line in handle:lines() do
+        lines[#lines + 1] = line
+      end
+      handle:close()
+
+      local status = tonumber(lines[#lines])
+      lines[#lines] = ''
+      local output = table.concat(lines, '\n')
+
+      print(output)
+
+      if status ~= 0 then
+        error(output)
+      end
+
+      return output
     end
-
-    return 0, { }
   end
-
-  local shell_read = assert(shell.shell_read)
 
   local get_interpreter = function(name)
     local ok, lua = pcall(shell_read, "which", name)

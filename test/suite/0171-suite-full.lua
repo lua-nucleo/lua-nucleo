@@ -432,11 +432,16 @@ do
 
   assert(nok == 0, "0 tests must be successful")
   assert(#errs == 1, "1 test must fail")
+  print('@@---------------------------------------------------------------------')
+  print(errs[1].err)
+  print('@@---------------------------------------------conditionally broken------------------------')
   assert(
     errs[1].err ==
       "Suite `single-BROKEN-IF-broken-strict-mode-suite' failed:\n"
         .. " * Test `[STRICT MODE]': detected TODOs:\n"
-        .. "   -- BROKEN TEST: to_test\n"
+        .. "   -- BROKEN TEST: to_test1\n"
+        .. "   -- BROKEN TEST: to_test2\n"
+        .. "   -- BROKEN TEST: to_test3\n"
         .. "\n",
     "expected fail message must match"
   )
