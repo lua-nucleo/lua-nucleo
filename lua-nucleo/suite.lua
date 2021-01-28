@@ -332,6 +332,48 @@ do
     end)
   end
 
+  local BROKEN_IF = function(self, is_broken)
+    assert(type(self) == "table", "bad self")
+    assert(type(is_broken) == "boolean", "bad is_broken")
+
+    local mt =
+    {
+      __call = function(call_self, arg)
+        if not is_broken then
+          return self(arg)
+        end
+
+        if is_broken then
+          return BROKEN(
+            call_self,
+            tostring(call_self.name or arg) .. ": conditionally broken"
+          )
+        end
+
+        if type(arg) == "string" then
+          return call_self:test(arg)
+        end
+
+        return call_self(arg)
+      end;
+      __index = self;
+    }
+
+    local result = { }
+
+    if is_broken then
+      result.test_for = function(_, name)
+        check_name(self, name)
+        return BROKEN(
+          self,
+          tostring(name) .. ": conditionally broken"
+        )
+      end
+    end
+
+    return setmetatable(result, mt)
+  end
+
   local UNTESTED = function(self, import_name)
     assert(type(self) == "table", "bad self")
     assert(type(import_name) == "string", "bad import name")
@@ -532,6 +574,7 @@ do
           UNTESTED = UNTESTED;
           TODO = TODO;
           BROKEN = BROKEN;
+          BROKEN_IF = BROKEN_IF;
           SLOW = SLOW;
           factory = factory;
           method = method;
