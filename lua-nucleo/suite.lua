@@ -99,6 +99,10 @@ do
           with = with;
           add_test = add_test;
 
+          -- public fields
+
+          name = "noname";
+
           -- fields
           decorators_ = { };
           test_adder_fn_ = test_adder_fn;
@@ -424,7 +428,7 @@ do
     assert(type(name) == "string", "bad import name")
     check_duplicate(self, name)
 
-    return make_single_test(function(fn)
+    local result = make_single_test(function(fn)
       assert(type(fn) == "function", "bad callback")
       -- filter tests
       -- NB: we explicitly let simple list of names so that one could
@@ -437,6 +441,10 @@ do
       else
       end
     end)
+
+    result.name = name
+
+    return result
   end
 
   local add_methods = function(self, methods_list)
