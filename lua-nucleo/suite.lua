@@ -406,7 +406,13 @@ do
     assert(type(self) == "table", "bad self")
     assert(type(name) == "string", "bad import name")
     check_name(self, name)
-    return self:test(name)
+    local test = self:test(name)
+
+    local mt = getmetatable(test)
+    mt.__index = self
+    setmetatable(test, mt)
+
+    return test
   end
 
   local set_up = function(self, fn)
