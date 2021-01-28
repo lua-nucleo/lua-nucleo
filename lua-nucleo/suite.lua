@@ -341,14 +341,16 @@ do
   local BROKEN_IF = function(self, is_broken)
     assert(type(self) == "table", "bad self")
     assert(type(is_broken) == "boolean", "bad is_broken")
+
     local mt =
     {
       __call = function(call_self, arg)
         local is_string_call = type(arg) == "string"
+        if not is_broken then
+          return self(arg)
+        end
+
         if is_broken then
-          if is_string_call then
-            check_name(call_self, arg)
-          end
           return BROKEN(
             call_self,
             tostring(call_self.name or arg) .. ": conditionally broken"
@@ -366,8 +368,11 @@ do
     local result = { }
     if is_broken then
       result.test_for = function(inner_self, name)
-        mt.__call(self, name)
-        return function() end
+        check_name(self, name)
+        return BROKEN(
+          self,
+          tostring(name) .. ": conditionally broken"
+        )
       end
     end
     return setmetatable(result, mt)

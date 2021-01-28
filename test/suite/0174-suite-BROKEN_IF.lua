@@ -76,8 +76,9 @@ do
   assert(
     errs[1].err ==
       "Suite `single-BROKEN-IF-broken-strict-mode-suite' failed:\n"
+        .. " * Test `[completeness check]': detected untested imports: intentionally_missing_test\n"
         .. " * Test `[STRICT MODE]': detected TODOs:\n"
-        .. "   -- BROKEN TEST: intentionally_broken_test1: conditionally broken\n"
+        .. "   -- BROKEN TEST: intentionally_missing_test: conditionally broken\n"
         .. "   -- BROKEN TEST: intentionally_broken_test2: conditionally broken\n"
         .. "   -- BROKEN TEST: intentionally_broken_test3: conditionally broken\n"
         .. "\n",
@@ -85,40 +86,65 @@ do
   )
 end
 
---do
---  print("\nSingle BROKEN_IF strict mode suite (non-broken):")
---
---  local nok, errs = run_tests(
---    { "test/data/suite/single-BROKEN-IF-non-broken-strict-mode-suite.lua" },
---    parameters_list
---  )
---
---  assert(nok == 1, "1 tests must be successful")
---  assert(#errs == 0, "0 test must fail")
---end
---
---do
---  print("\nSingle BROKEN_IF unstrict mode suite (broken):")
---
---  local nok, errs = run_tests(
---    { "test/data/suite/single-BROKEN-IF-broken-unstrict-mode-suite.lua" },
---    parameters_list
---  )
---
---  assert(nok == 1, "1 tests must be successful")
---  assert(#errs == 0, "0 test must fail")
---end
---
---do
---  print("\nSingle BROKEN_IF unstrict mode suite (non-broken):")
---
---  local nok, errs = run_tests(
---    { "test/data/suite/single-BROKEN-IF-non-broken-unstrict-mode-suite.lua" },
---    parameters_list
---  )
---
---  assert(nok == 1, "1 tests must be successful")
---  assert(#errs == 0, "0 test must fail")
---end
+do
+  print("\nSingle BROKEN_IF strict mode suite (non-broken):")
+
+  suite_tests_results = 0
+  local nok, errs = run_tests(
+    { "test/data/suite/single-BROKEN-IF-non-broken-strict-mode-suite.lua" },
+    parameters_list
+  )
+
+  assert(
+      suite_tests_results == 2,
+      "2 tests results must be collected, actual: "
+        .. tostring(suite_tests_results)
+    )
+  assert(nok == 1, "1 tests must be successful, actual: " .. tostring(nok))
+  assert(#errs == 0, "0 test must fail, actual: " .. tostring(#errs))
+end
+
+do
+  print("\nSingle BROKEN_IF unstrict mode suite (broken):")
+
+  suite_tests_results = 0
+  local nok, errs = run_tests(
+    { "test/data/suite/single-BROKEN-IF-broken-unstrict-mode-suite.lua" },
+    parameters_list
+  )
+
+  assert(
+      suite_tests_results == 0,
+      "0 tests results must be collected, actual: "
+        .. tostring(suite_tests_results)
+    )
+  assert(nok == 0, "0 tests must be successful, actual: " .. tostring(nok))
+  assert(#errs == 1, "1 test must fail, actual: " .. tostring(#errs))
+
+  assert(
+    errs[1].err ==
+      "Suite `single-BROKEN-IF-broken-unstrict-mode-suite' failed:\n"
+        .. " * Test `[completeness check]': detected untested imports: intentionally_missing_test\n",
+    "expected fail message must match"
+  )
+end
+
+do
+  print("\nSingle BROKEN_IF unstrict mode suite (non-broken):")
+
+  suite_tests_results = 0
+  local nok, errs = run_tests(
+    { "test/data/suite/single-BROKEN-IF-non-broken-unstrict-mode-suite.lua" },
+    parameters_list
+  )
+
+  assert(
+      suite_tests_results == 3,
+      "3 tests results must be collected, actual: "
+        .. tostring(suite_tests_results)
+    )
+  assert(nok == 1, "1 tests must be successful, actual: " .. tostring(nok))
+  assert(#errs == 0, "0 test must fail, actual: " .. tostring(#errs))
+end
 
 print("------> BROKEN_IF suite tests suite PASSED")

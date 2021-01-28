@@ -423,67 +423,6 @@ do
 end
 
 do
-  print("\nSingle BROKEN_IF strict mode suite (broken):")
-
-  local nok, errs = run_tests(
-    { "test/data/suite/single-BROKEN-IF-broken-strict-mode-suite.lua" },
-    parameters_list
-  )
-
-  assert(nok == 0, "0 tests must be successful")
-  assert(#errs == 1, "1 test must fail")
-  print('@@---------------------------------------------------------------------')
-  print(errs[1].err)
-  print('@@---------------------------------------------conditionally broken------------------------')
-  assert(
-    errs[1].err ==
-      "Suite `single-BROKEN-IF-broken-strict-mode-suite' failed:\n"
-        .. " * Test `[STRICT MODE]': detected TODOs:\n"
-        .. "   -- BROKEN TEST: to_test1\n"
-        .. "   -- BROKEN TEST: to_test2\n"
-        .. "   -- BROKEN TEST: to_test3\n"
-        .. "\n",
-    "expected fail message must match"
-  )
-end
-
-do
-  print("\nSingle BROKEN_IF strict mode suite (non-broken):")
-
-  local nok, errs = run_tests(
-    { "test/data/suite/single-BROKEN-IF-non-broken-strict-mode-suite.lua" },
-    parameters_list
-  )
-
-  assert(nok == 1, "1 tests must be successful")
-  assert(#errs == 0, "0 test must fail")
-end
-
-do
-  print("\nSingle BROKEN_IF unstrict mode suite (broken):")
-
-  local nok, errs = run_tests(
-    { "test/data/suite/single-BROKEN-IF-broken-unstrict-mode-suite.lua" },
-    parameters_list
-  )
-
-  assert(nok == 1, "1 tests must be successful")
-  assert(#errs == 0, "0 test must fail")
-end
-
-do
-  print("\nSingle BROKEN_IF unstrict mode suite (non-broken):")
-
-  local nok, errs = run_tests(
-    { "test/data/suite/single-BROKEN-IF-non-broken-unstrict-mode-suite.lua" },
-    parameters_list
-  )
-
-  assert(nok == 1, "1 tests must be successful")
-  assert(#errs == 0, "0 test must fail")
-end
-
-do
   print("\nSingle TODO unstrict mode suite:")
 
   local nok, errs = run_tests(

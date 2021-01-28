@@ -96,7 +96,8 @@ local run_low_level_tests = function(test_list)
       lines[#lines] = ''
       local output = table.concat(lines, '\n')
 
-      print(output)
+      print('####################### output:', output)
+      print('####################### status:', tostring(status))
 
       if status ~= 0 then
         error(output)
@@ -182,10 +183,14 @@ if #low_level_errors > 0 then
   print("Failed low-level and suite:", #low_level_errors)
   print()
   print("Dumping error messages from failing tests:")
-  print()
   print("--------------------------------------------------------------------------------")
   print()
   for i = 1, #low_level_errors do
     print(low_level_errors[i])
   end
+  print()
+  print("--------------------------------------------------------------------------------")
+  print("--- End of dumping error messages from failing tests ---------------------------")
+  print("--------------------------------------------------------------------------------")
+  print()
 end

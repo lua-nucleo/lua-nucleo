@@ -100,7 +100,7 @@ return
   };
   {
     type = 'suite';
-    path = 'test/suite/0174-suite-BLOCKED_IF.lua';
+    path = 'test/suite/0174-suite-BROKEN_IF.lua';
   };
   {
     type = 'cases';
