@@ -65,6 +65,8 @@ local expected =
 {
   ["_PROMPT"] = true;
   ["_PROMPT2"] = true;
+  ["unpack"] = true;
+  ["newproxy"] = true;
   ["good_1"] = true;
   ["good_2"] = true;
   ["good_3"] = true;
