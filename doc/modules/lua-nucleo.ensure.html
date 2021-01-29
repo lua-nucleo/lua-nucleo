@@ -30,6 +30,10 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Local_Functions">Local Functions</a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -61,6 +65,7 @@
   <li><a href="../modules/key_value_store.key_value_store_simple.html">key_value_store.key_value_store_simple</a></li>
   <li><a href="../modules/key_value_store.key_value_store_sophisticated.html">key_value_store.key_value_store_sophisticated</a></li>
   <li><a href="../modules/lua-nucleo.language.html">lua-nucleo.language</a></li>
+  <li><a href="../modules/lua-nucleo.legacy.html">lua-nucleo.legacy</a></li>
   <li><a href="../modules/lua-nucleo.log.html">lua-nucleo.log</a></li>
   <li><a href="../modules/lua-nucleo.math.html">lua-nucleo.math</a></li>
   <li><a href="../modules/lua-nucleo.misc.html">lua-nucleo.misc</a></li>
@@ -116,18 +121,759 @@
     </ul>
 
 
+<h2><a href="#Local_Functions">Local Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#ensure">ensure (msg, value, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ensure_equals">ensure_equals (msg, actual, expected)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ensure_is">ensure_is (msg, value, expected_type)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ensure_tequals">ensure_tequals (msg, actual, expected)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ensure_tdeepequals">ensure_tdeepequals (msg, actual, expected)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ensure_strequals">ensure_strequals (msg, actual, expected, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ensure_strvariant">ensure_strvariant (msg, actual, expected, ...)</a></td>
+	<td class="summary">Checks if the <code>actual</code> string exists in the <code>expected</code> linear string array.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ensure_strlist">ensure_strlist (msg, actual, expected_prefix, expected_elements_list, expected_sep, expected_suffix, ...)</a></td>
+	<td class="summary">Checks if the <code>actual</code> string is constructed by the elements of
+ the <code>expected_elements_list</code> linear string array table.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ensure_strpermutations">ensure_strpermutations (msg, actual, expected_prefix, expected_elements_list, expected_sep, expected_suffix, ...)</a></td>
+	<td class="summary">Checks if the <code>actual</code> string is constructed by the elements of
+ the <code>expected_elements_list</code> linear string array table.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ensure_error">ensure_error (msg, expected_message, res, actual_message)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ensure_error_with_substring">ensure_error_with_substring (msg, substring, res, err)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ensure_fails_with_substring">ensure_fails_with_substring (msg, fn, substring)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ensure_has_substring">ensure_has_substring (msg, str, substring)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ensure_aposteriori_probability">ensure_aposteriori_probability (num_runs, weights, stats, max_acceptable_diff)</a></td>
+	<td class="summary">We want 99.9% probability of success
+ Would not work for high-contrast weights.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ensure_returns">ensure_returns (msg, num, expected, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2 class="section-header "><a name="Local_Functions"></a>Local Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "ensure"></a>
+    <strong>ensure (msg, value, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">msg</span>
+
+        </li>
+        <li><span class="parameter">value</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ensure_equals"></a>
+    <strong>ensure_equals (msg, actual, expected)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">msg</span>
+
+        </li>
+        <li><span class="parameter">actual</span>
+
+        </li>
+        <li><span class="parameter">expected</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ensure_is"></a>
+    <strong>ensure_is (msg, value, expected_type)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">msg</span>
+
+        </li>
+        <li><span class="parameter">value</span>
+
+        </li>
+        <li><span class="parameter">expected_type</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ensure_tequals"></a>
+    <strong>ensure_tequals (msg, actual, expected)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">msg</span>
+
+        </li>
+        <li><span class="parameter">actual</span>
+
+        </li>
+        <li><span class="parameter">expected</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ensure_tdeepequals"></a>
+    <strong>ensure_tdeepequals (msg, actual, expected)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">msg</span>
+
+        </li>
+        <li><span class="parameter">actual</span>
+
+        </li>
+        <li><span class="parameter">expected</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ensure_strequals"></a>
+    <strong>ensure_strequals (msg, actual, expected, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">msg</span>
+
+        </li>
+        <li><span class="parameter">actual</span>
+
+        </li>
+        <li><span class="parameter">expected</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ensure_strvariant"></a>
+    <strong>ensure_strvariant (msg, actual, expected, ...)</strong>
+    </dt>
+    <dd>
+    Checks if the <code>actual</code> string exists in the <code>expected</code> linear string array.
+ <br />
+ Returns all the arguments intact cutting the <code>msg</code> at beginning on success.
+ <br />
+ Raises the error on fail.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">msg</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Failing message that will be used in the error message if
+                    the check fails.
+        </li>
+        <li><span class="parameter">actual</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         A string to check.
+        </li>
+        <li><span class="parameter">expected</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string[]</a></span>
+         The linear array table of strings.
+        </li>
+        <li><span class="parameter">...</span>
+            <span class="types"><span class="type">any[]</span></span>
+         Custom arguments.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+        <code>actual</code> intact.</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string[]</a></span>
+        <code>expected</code> intact.</li>
+        <li>
+           <span class="types"><span class="type">any[]</span></span>
+        ... The rest of the arguments intact.</li>
+    </ol>
+
+    <h3>Raises:</h3>
+    <code>ensure_strvariant failed error</code> if unable to find the <code>actual</code> string
+        in <code>expected</code>.
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> ensure_strvariant
+      = import <span class="string">'lua-nucleo/ensure.lua'</span>
+      {
+        <span class="string">'ensure_strvariant'</span>
+      }
+
+<span class="comment">-- will pass without errors:
+</span>ensure_strvariant(<span class="string">'find elem1'</span>, <span class="string">'elem1'</span>, { <span class="string">'elem0'</span>, <span class="string">'elem1'</span>, <span class="string">'elem2'</span> })
+
+<span class="comment">-- will throw the error:
+</span>ensure_strvariant(
+    <span class="string">'find the_element_that_cannot_be_found'</span>,
+    <span class="string">'the_element_that_cannot_be_found'</span>,
+    { <span class="string">'elem0'</span>, <span class="string">'elem1'</span>, <span class="string">'elem2'</span> }
+  )
+</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "ensure_strlist"></a>
+    <strong>ensure_strlist (msg, actual, expected_prefix, expected_elements_list, expected_sep, expected_suffix, ...)</strong>
+    </dt>
+    <dd>
+    Checks if the <code>actual</code> string is constructed by the elements of
+ the <code>expected_elements_list</code> linear string array table.  Expected that
+ elements are joined together with the <code>expected_sep</code> in between and not
+ necessarily have the same order as in the <code>expected_elements_list</code>. Also,
+ expected that the constructed list is prefixed by the <code>expected_prefix</code> and
+ terminated by the <code>expected_suffix</code>.
+ <br />
+ Returns all the arguments intact cutting the <code>msg</code> at beginning on success.
+ <br />
+ Raises the error on fail.
+ <br />
+ Best for simple long lists.
+ <br />
+ <br />
+ <b>How it works:</b> cut <code>expected_prefix</code> and <code>expected_suffix</code> from the
+ <code>actual</code> and break by <code>expected_sep</code>. Then find missing and excess elements
+ in two array traverses. Raises the error if found any.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">msg</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Failing message that will be used in the error message if
+         the check fails.
+        </li>
+        <li><span class="parameter">actual</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         A string to check.
+        </li>
+        <li><span class="parameter">expected_prefix</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Expected prefix. Expected that the
+         <code>actual</code> must start with the <code>expected_prefix</code>.
+        </li>
+        <li><span class="parameter">expected_elements_list</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string[]</a></span>
+         Expected elements list. Expected that
+         <code>expected_elements_list</code> elements exist in the <code>actual</code>
+         whatever the original order from the <code>expected_elements_list</code>.
+        </li>
+        <li><span class="parameter">expected_sep</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Expected separator character. Expected that this
+         separator is used to join list elements together.
+        </li>
+        <li><span class="parameter">expected_suffix</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Expected suffix character. Expected that the
+         <code>actual</code> ends with the <code>expected_suffix</code>.
+        </li>
+        <li><span class="parameter">...</span>
+            <span class="types"><span class="type">any[]</span></span>
+         Custom arguments.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+        <code>actual</code> intact.</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+        <code>expected_prefix</code> intact.</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string[]</a></span>
+        <code>expected_elements_list</code> intact.</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+        <code>expected_sep</code> intact.</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+        <code>expected_suffix</code> intact.</li>
+        <li>
+           <span class="types"><span class="type">any[]</span></span>
+        ... The rest of the arguments intact.</li>
+    </ol>
+
+    <h3>Raises:</h3>
+    <code>ensure_strlist failed error</code> if the check fails.
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> ensure_strlist
+      = import <span class="string">'lua-nucleo/ensure.lua'</span>
+      {
+        <span class="string">'ensure_strlist'</span>
+      }
+
+<span class="comment">-- will pass without errors:
+</span>ensure_strlist(
+    <span class="string">'output check'</span>,
+    <span class="string">'(a,b,c,d,e)'</span>,
+    <span class="string">'('</span>,
+    { <span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>, <span class="string">'d'</span>, <span class="string">'e'</span> },
+    <span class="string">','</span>,
+    <span class="string">')'</span>
+  )
+
+<span class="comment">-- will fail because the real separator is ', ':
+</span><span class="comment">-- ensure_strlist(
+</span><span class="comment">--     'output check',
+</span><span class="comment">--     '(a, b, c, d, e)',
+</span><span class="comment">--     '(',
+</span><span class="comment">--     { 'a', 'b', 'c', 'd', 'e' },
+</span><span class="comment">--     ',',
+</span><span class="comment">--     ')'
+</span><span class="comment">--   )
+</span>
+<span class="comment">-- will pass without errors:
+</span>ensure_strlist(
+    <span class="string">'output check'</span>,
+    <span class="string">'1+b*c+m^2/2'</span>,
+    <span class="string">''</span>,
+    { <span class="string">'1'</span>, <span class="string">'b*c'</span>, <span class="string">'m^2/2'</span> },
+    <span class="string">'+'</span>,
+    <span class="string">''</span>
+  )
+</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "ensure_strpermutations"></a>
+    <strong>ensure_strpermutations (msg, actual, expected_prefix, expected_elements_list, expected_sep, expected_suffix, ...)</strong>
+    </dt>
+    <dd>
+    Checks if the <code>actual</code> string is constructed by the elements of
+ the <code>expected_elements_list</code> linear string array table.  Expected that
+ elements are joined together with the <code>expected_sep</code> in between and not
+ necessarily have the same order as in the <code>expected_elements_list</code>. Also,
+ expected that the constructed list is prefixed by the <code>expected_prefix</code> and
+ terminated by the <code>expected_suffix</code>.
+ <br />
+ Returns all the arguments intact cutting the <code>msg</code> at beginning on success.
+ <br />
+ Raises the error on fail.
+ <br />
+ Best for complex short lists.
+ <br />
+ <br />
+ <b>How it works:</b> <code>tifindallpermutations</code> for the <code>expected_elements_list</code>
+ then build a table array containing all possible <code>actual</code>s using
+ <code>expected_prefix</code>, <code>expected_sep</code>, <code>expected_suffix</code> for each resulted
+ permutation. The <a href="../modules/lua-nucleo.ensure.html#ensure_strvariant">ensure_strvariant</a> is invoked as
+ <code>ensure_strvariant(msg, actual, expected_actuals)</code>
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">msg</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Failing message that will be used in the error message if
+         the check fails.
+        </li>
+        <li><span class="parameter">actual</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         A string to check.
+        </li>
+        <li><span class="parameter">expected_prefix</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Expected prefix. Expected that the
+         <code>actual</code> must start with the <code>expected_prefix</code>.
+        </li>
+        <li><span class="parameter">expected_elements_list</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string[]</a></span>
+         Expected elements list. Expected that
+         <code>expected_elements_list</code> elements exist in the <code>actual</code>
+         whatever the original order from the <code>expected_elements_list</code>.
+        </li>
+        <li><span class="parameter">expected_sep</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Expected separator. Expected that this
+         separator is used to join list elements together.
+        </li>
+        <li><span class="parameter">expected_suffix</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Expected suffix / footer. Expected that the
+         <code>actual</code> ends with the <code>expected_suffix</code>.
+        </li>
+        <li><span class="parameter">...</span>
+            <span class="types"><span class="type">any[]</span></span>
+         Custom arguments.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+        <code>actual</code> intact.</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+        <code>expected_prefix</code> intact.</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string[]</a></span>
+        <code>expected_elements_list</code> intact.</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+        <code>expected_sep</code> intact.</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+        <code>expected_suffix</code> intact.</li>
+        <li>
+           <span class="types"><span class="type">any[]</span></span>
+        ... The rest of the arguments intact.</li>
+    </ol>
+
+    <h3>Raises:</h3>
+    <code>ensure_strpermutations failed error</code> if the check fails.
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> ensure_strpermutations
+      = import <span class="string">'lua-nucleo/ensure.lua'</span>
+      {
+        <span class="string">'ensure_strpermutations'</span>
+      }
+
+<span class="comment">-- will pass without errors:
+</span>ensure_strlist(
+    <span class="string">'output check'</span>, <span class="string">"('a'+'b'+'c')"</span>, <span class="string">"('"</span>, { <span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span> }) <span class="string">"'+'"</span>, <span class="string">"')"</span>
+  )
+ensure_strlist(
+    <span class="string">'output check'</span>, <span class="string">"('a'+'c'+'b')"</span>, <span class="string">"('"</span>, { <span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span> }) <span class="string">"'+'"</span>, <span class="string">"')"</span>
+  )
+ensure_strlist(
+    <span class="string">'output check'</span>, <span class="string">"('c'+'a'+'b')"</span>, <span class="string">"('"</span>, { <span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span> }) <span class="string">"'+'"</span>, <span class="string">"')"</span>
+  )
+ensure_strlist(
+    <span class="string">'output check'</span>, <span class="string">"('b'+'a'+'c')"</span>, <span class="string">"('"</span>, { <span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span> }) <span class="string">"'+'"</span>, <span class="string">"')"</span>
+  )
+ensure_strlist(
+    <span class="string">'output check'</span>, <span class="string">"('b'+'c'+'a')"</span>, <span class="string">"('"</span>, { <span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span> }) <span class="string">"'+'"</span>, <span class="string">"')"</span>
+)
+
+<span class="comment">-- wrong separator:
+</span><span class="comment">-- ensure_strlist(
+</span><span class="comment">--     'output check', "('a'+'b'+'c')", "('", { 'a', 'b', 'c' }) "' + '", "')"
+</span><span class="comment">--   )
+</span>
+<span class="comment">-- wrong prefix:
+</span><span class="comment">-- ensure_strlist(
+</span><span class="comment">--     'output check', "['a'+'b'+'c')", "('", { 'a', 'b', 'c' }) "'+'", "')"
+</span><span class="comment">--   )
+</span>
+<span class="comment">-- wrong suffix:
+</span><span class="comment">-- ensure_strlist(
+</span><span class="comment">--     'output check', "('a'+'b'+'c')", "('", { 'a', 'b', 'c' }) "'+'", "');"
+</span><span class="comment">--   )
+</span>
+<span class="comment">-- missing elements:
+</span><span class="comment">-- ensure_strlist(
+</span><span class="comment">--     'output check', "('a'+'b')", "('", { 'a', 'b', 'c' }) "'+'", "');"
+</span><span class="comment">--   )
+</span>
+<span class="comment">-- excess elements:
+</span><span class="comment">-- ensure_strlist(
+</span><span class="comment">--     'output check', "('a'+'b'+'c')", "('", { 'a', 'b' }) "'+'", "');"
+</span><span class="comment">--   )</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "ensure_error"></a>
+    <strong>ensure_error (msg, expected_message, res, actual_message)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">msg</span>
+
+        </li>
+        <li><span class="parameter">expected_message</span>
+
+        </li>
+        <li><span class="parameter">res</span>
+
+        </li>
+        <li><span class="parameter">actual_message</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ensure_error_with_substring"></a>
+    <strong>ensure_error_with_substring (msg, substring, res, err)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">msg</span>
+
+        </li>
+        <li><span class="parameter">substring</span>
+
+        </li>
+        <li><span class="parameter">res</span>
+
+        </li>
+        <li><span class="parameter">err</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ensure_fails_with_substring"></a>
+    <strong>ensure_fails_with_substring (msg, fn, substring)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">msg</span>
+
+        </li>
+        <li><span class="parameter">fn</span>
+
+        </li>
+        <li><span class="parameter">substring</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ensure_has_substring"></a>
+    <strong>ensure_has_substring (msg, str, substring)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">msg</span>
+
+        </li>
+        <li><span class="parameter">str</span>
+
+        </li>
+        <li><span class="parameter">substring</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ensure_aposteriori_probability"></a>
+    <strong>ensure_aposteriori_probability (num_runs, weights, stats, max_acceptable_diff)</strong>
+    </dt>
+    <dd>
+    We want 99.9% probability of success
+ Would not work for high-contrast weights.  Use for tests only.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">num_runs</span>
+
+        </li>
+        <li><span class="parameter">weights</span>
+
+        </li>
+        <li><span class="parameter">stats</span>
+
+        </li>
+        <li><span class="parameter">max_acceptable_diff</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ensure_returns"></a>
+    <strong>ensure_returns (msg, num, expected, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">msg</span>
+
+        </li>
+        <li><span class="parameter">num</span>
+
+        </li>
+        <li><span class="parameter">expected</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2021-01-27 12:35:08 </i>
+<i style="float:right;">Last updated 2021-01-29 19:42:37 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
