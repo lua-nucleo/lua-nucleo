@@ -10,6 +10,7 @@ local tserialize = import 'lua-nucleo/tserialize.lua' { 'tserialize' }
 local escape_string = import 'lua-nucleo/string.lua' { 'escape_string' }
 local ensure_equals = import 'lua-nucleo/ensure.lua' { 'ensure_equals' }
 local pack = import 'lua-nucleo/args.lua' { 'pack' }
+local loadstring = import 'lua-nucleo/legacy.lua' { 'loadstring' }
 
 local check_fn_ok = function(eq, ...)
   local saved = tserialize(...)
