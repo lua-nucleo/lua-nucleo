@@ -9,10 +9,16 @@
 
 --------------------------------------------------------------------------------
 
-local setmetatable, setfenv, xpcall, loadstring
-    = setmetatable, setfenv, xpcall, loadstring
+local setmetatable, setfenv, xpcall, debug_traceback
+    = setmetatable, setfenv, xpcall, debug.traceback
 
 --------------------------------------------------------------------------------
+
+local loadstring
+      = import 'lua-nucleo/legacy.lua'
+      {
+        'loadstring'
+      }
 
 local arguments,
       optional_arguments,
@@ -56,7 +62,7 @@ local do_in_environment = function(chunk, env)
   -- TODO: Add deadlock and memory protection
   -- TODO: Restore environment?
 
-  return xpcall(chunk, debug.traceback)
+  return xpcall(chunk, debug_traceback)
 end
 
 -- TODO: Add option to forbid loading bytecode (on by default)
