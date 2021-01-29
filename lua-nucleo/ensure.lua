@@ -35,8 +35,12 @@ local make_checker
         'make_checker'
       }
 
--- TODO: Write tests for this one
+-- TODO: Write tests for the function below
 --       https://github.com/lua-nucleo/lua-nucleo/issues/13
+
+--- @param msg
+-- @param value
+-- @param ...
 local ensure = function(msg, value, ...)
   if not value then
     error(
@@ -48,8 +52,12 @@ local ensure = function(msg, value, ...)
   return value, ...
 end
 
--- TODO: Write tests for this one
+-- TODO: Write tests for the function below
 --       https://github.com/lua-nucleo/lua-nucleo/issues/13
+
+--- @param msg
+-- @param actual
+-- @param expected
 local ensure_equals = function(msg, actual, expected)
   return
       (actual ~= expected)
@@ -63,6 +71,9 @@ local ensure_equals = function(msg, actual, expected)
       or actual -- NOTE: Should be last to allow false and nil values.
 end
 
+--- @param msg
+-- @param value
+-- @param expected_type
 local ensure_is = function(msg, value, expected_type)
   local actual = type(value)
   return
@@ -77,8 +88,12 @@ local ensure_is = function(msg, value, expected_type)
       or value -- NOTE: Should be last to allow false and nil values.
 end
 
--- TODO: Write tests for this one
+-- TODO: Write tests for the function below
 --       https://github.com/lua-nucleo/lua-nucleo/issues/13
+
+--- @param msg
+-- @param actual
+-- @param expected
 local ensure_tequals = function(msg, actual, expected)
   if type(expected) ~= "table" then
     error(
@@ -130,6 +145,9 @@ local ensure_tequals = function(msg, actual, expected)
   return actual
 end
 
+--- @param msg
+-- @param actual
+-- @param expected
 local ensure_tdeepequals = function(msg, actual, expected)
   -- Heavy! Use ensure_tequals if possible
   if not tdeepequals(actual, expected) then
@@ -208,6 +226,10 @@ end
 
 --------------------------------------------------------------------------------
 
+--- @param msg
+-- @param actual
+-- @param expected
+-- @param ...
 local ensure_strequals = function(msg, actual, expected, ...)
   if actual == expected then
     return actual, expected, ...
@@ -223,6 +245,11 @@ end
 
 --------------------------------------------------------------------------------
 
+--- @param msg
+-- @param expected_message
+-- @param res
+-- @param actual_message
+-- @param ...local ensure_error = function(msg, expected_message, res, actual_message, ...)
 local ensure_error = function(msg, expected_message, res, actual_message, ...)
   if res ~= nil then
     error(
@@ -238,6 +265,10 @@ end
 
 --------------------------------------------------------------------------------
 
+--- @param msg
+-- @param substring
+-- @param res
+-- @param err
 local ensure_error_with_substring = function(msg, substring, res, err)
   if res ~= nil then
     error(
@@ -262,6 +293,9 @@ end
 
 --------------------------------------------------------------------------------
 
+--- @param msg
+-- @param fn
+-- @param substring
 local ensure_fails_with_substring = function(msg, fn, substring)
   local res, err = pcall(fn)
 
@@ -288,6 +322,9 @@ end
 
 --------------------------------------------------------------------------------
 
+--- @param msg
+-- @param str
+-- @param substring
 local ensure_has_substring = function(msg, str, substring)
   if type(str) ~= "string" then
     error(
@@ -310,8 +347,12 @@ end
 
 --------------------------------------------------------------------------------
 
--- We want 99.9% probability of success
+--- We want 99.9% probability of success
 -- Would not work for high-contrast weights. Use for tests only.
+-- @param num_runs
+-- @param weights
+-- @param stats
+-- @param max_acceptable_diff
 local ensure_aposteriori_probability = function(num_runs, weights, stats, max_acceptable_diff)
   ensure_equals("total sum check", taccumulate(stats), num_runs)
 
@@ -343,6 +384,10 @@ local ensure_aposteriori_probability = function(num_runs, weights, stats, max_ac
   ensure_equals("no extra data", next(aposteriori_probs), nil)
 end
 
+--- @param msg
+-- @param num
+-- @param expected
+-- @param ...
 local ensure_returns = function(msg, num, expected, ...)
   local checker = make_checker()
   -- Explicit check to separate no-return-values from all-nils
