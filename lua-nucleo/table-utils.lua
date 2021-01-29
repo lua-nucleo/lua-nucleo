@@ -44,7 +44,7 @@ local assert_is_table
 
 --------------------------------------------------------------------------------
 
--- Warning: it is possible to corrupt this with rawset and debug.setmetatable.
+--- Warning: it is possible to corrupt this with rawset and debug.setmetatable.
 local empty_table = setmetatable(
     { },
     {
@@ -56,6 +56,9 @@ local empty_table = setmetatable(
     }
   )
 
+--- @param t
+-- @param s
+-- @param ...
 local function toverride_many(t, s, ...)
   if s then
     for k, v in pairs(s) do
@@ -68,6 +71,9 @@ local function toverride_many(t, s, ...)
   return t
 end
 
+--- @param t
+-- @param s
+-- @param ...
 local function tappend_many(t, s, ...)
   if s then
     for k, v in pairs(s) do
@@ -85,6 +91,9 @@ local function tappend_many(t, s, ...)
   return t
 end
 
+--- @param t
+-- @param s
+-- @param ...
 local function tijoin_many(t, s, ...)
   if s then
     -- Note: can't use ipairs() since we want to support tijoin_many(t, t)
@@ -99,7 +108,8 @@ local function tijoin_many(t, s, ...)
   return t
 end
 
--- Keys are ordered in undetermined order
+--- Keys are ordered in undetermined order
+-- @param t
 local tkeys = function(t)
   local r = { }
 
@@ -110,7 +120,8 @@ local tkeys = function(t)
   return r
 end
 
--- Values are ordered in undetermined order
+--- Values are ordered in undetermined order
+-- @param t
 local tvalues = function(t)
   local r = { }
 
@@ -121,7 +132,8 @@ local tvalues = function(t)
   return r
 end
 
--- Keys and values are ordered in undetermined order
+--- Keys and values are ordered in undetermined order
+-- @param t
 local tkeysvalues = function(t)
   local keys, values = { }, { }
 
@@ -133,8 +145,9 @@ local tkeysvalues = function(t)
   return keys, values
 end
 
--- If table contains multiple keys with the same value,
+--- If table contains multiple keys with the same value,
 -- only one key is stored in the result, picked in undetermined way.
+-- @param t
 local tflip = function(t)
   local r = { }
 
@@ -145,8 +158,9 @@ local tflip = function(t)
   return r
 end
 
--- If table contains multiple keys with the same value,
+--- If table contains multiple keys with the same value,
 -- only one key is stored in the result, picked in undetermined way.
+-- @param t
 local tflip_inplace = function(t)
   for k, v in pairs(t) do
     t[v] = k
@@ -155,8 +169,9 @@ local tflip_inplace = function(t)
   return t
 end
 
--- If table contains multiple keys with the same value,
+--- If table contains multiple keys with the same value,
 -- only the last such key (highest one) is stored in the result.
+-- @param t
 local tiflip = function(t)
   local r = { }
 
@@ -167,6 +182,7 @@ local tiflip = function(t)
   return r
 end
 
+--- @param t
 local tset = function(t)
   local r = { }
 
@@ -177,6 +193,7 @@ local tset = function(t)
   return r
 end
 
+--- @param t
 local tiset = function(t)
   local r = { }
 
@@ -187,6 +204,9 @@ local tiset = function(t)
   return r
 end
 
+--- @param t
+-- @param a
+-- @param ...
 local function tiinsert_args(t, a, ...)
   if a ~= nil then
     t[#t + 1] = a
@@ -197,6 +217,9 @@ local function tiinsert_args(t, a, ...)
   return t
 end
 
+--- @param fn
+-- @param t
+-- @param ...
 local timap_inplace = function(fn, t, ...)
   for i = 1, #t do
     t[i] = fn(t[i], ...)
@@ -205,6 +228,9 @@ local timap_inplace = function(fn, t, ...)
   return t
 end
 
+--- @param fn
+-- @param t
+-- @param ...
 local timap = function(fn, t, ...)
   local r = { }
   for i = 1, #t do
@@ -213,6 +239,9 @@ local timap = function(fn, t, ...)
   return r
 end
 
+--- @param fn
+-- @param t
+-- @param ...
 local timap_sliding = function(fn, t, ...)
   local r = {}
 
@@ -223,12 +252,16 @@ local timap_sliding = function(fn, t, ...)
   return r
 end
 
+--- @param fn
+-- @param t
+-- @param ...
 local tiwalk = function(fn, t, ...)
   for i = 1, #t do
     fn(t[i], ...)
   end
 end
 
+--- @param fn
 local tiwalker = function(fn)
   return function(t)
     for i = 1, #t do
@@ -237,6 +270,8 @@ local tiwalker = function(fn)
   end
 end
 
+--- @param fn
+-- @param t
 local twalk_pairs = function(fn, t)
   for k, v in pairs(t) do
     fn(k, v)
@@ -259,11 +294,15 @@ local tequals = function(lhs, rhs)
   return true
 end
 
+--- @param t
 local tiunique = function(t)
   return tkeys(tiflip(t))
 end
 
--- Deprecated, use tgenerate_1d_linear instead
+--- Deprecated, use tgenerate_1d_linear instead
+-- @param n
+-- @param generator
+-- @param ...
 local tgenerate_n = function(n, generator, ...)
   local r = { }
   for i = 1, n do
@@ -272,6 +311,9 @@ local tgenerate_n = function(n, generator, ...)
   return r
 end
 
+--- @param n
+-- @param fn
+-- @param ...
 local tgenerate_1d_linear = function(n, fn, ...)
   local r = { }
   for i = 1, n do
@@ -280,6 +322,10 @@ local tgenerate_1d_linear = function(n, fn, ...)
   return r
 end
 
+--- @param w
+--- @param h
+-- @param fn
+-- @param ...
 local tgenerate_2d_linear = function(w, h, fn, ...)
   local r = { }
   for y = 1, h do
@@ -290,6 +336,8 @@ local tgenerate_2d_linear = function(w, h, fn, ...)
   return r
 end
 
+--- @param t
+-- @param init
 local taccumulate = function(t, init)
   local sum = init or 0
   for k, v in pairs(t) do
@@ -310,10 +358,16 @@ do
     return r
   end
 
+  --- @param t
+  -- @param sum
+  -- @local
   tnormalize = function(t, sum)
     return impl(t, { }, sum)
   end
 
+  --- @param t
+  -- @param sum
+  -- @local
   tnormalize_inplace = function(t, sum)
     return impl(t, t, sum)
   end
@@ -340,12 +394,16 @@ do
     return r
   end
 
+  --- @param t
+  -- @local
   tclone = function(t)
     return impl(t, { })
   end
 end
 
--- Slow
+--- Slow
+-- @param t
+-- @local
 local tcount_elements = function(t)
   local n = 0
   for _ in pairs(t) do
@@ -354,6 +412,8 @@ local tcount_elements = function(t)
   return n
 end
 
+--- @param fn
+-- @param t
 local tremap_to_array = function(fn, t)
   local r = { }
   for k, v in pairs(t) do
@@ -362,6 +422,9 @@ local tremap_to_array = function(fn, t)
   return r
 end
 
+--- @param fn
+-- @param t
+-- @param ...
 local tmap_values = function(fn, t, ...)
   local r = { }
   for k, v in pairs(t) do
@@ -372,6 +435,7 @@ end
 
 --------------------------------------------------------------------------------
 
+--- @param t
 local torderedset = function(t)
   local r = { }
 
@@ -390,8 +454,10 @@ local torderedset = function(t)
   return r
 end
 
--- Returns false if item already exists
--- Returns true otherwise
+--- @param t
+-- @param v
+-- @return[1] false if item already exists
+-- @return[2] true otherwise
 local torderedset_insert = function(t, v)
   -- See torderedset() for motivation
   assert(type(v) ~= "number", "can't insert number into ordered set")
@@ -407,9 +473,11 @@ local torderedset_insert = function(t, v)
   return false
 end
 
--- Returns false if item didn't existed
--- Returns true otherwise
--- Note this operation is really slow
+--- Note this operation is really slow
+-- @param t
+-- @param v
+-- @return[1] false if item didn't existed
+-- @return[2] true otherwise
 local torderedset_remove = function(t, v)
   -- See torderedset() for motivation
   assert(type(v) ~= "number", "can't remove number from ordered set")
@@ -429,11 +497,14 @@ end
 
 --------------------------------------------------------------------------------
 
--- Handles subtables (is "deep").
--- Does not support recursive defaults tables
--- WARNING: Uses tclone()! Do not use on tables with metatables!
 local twithdefaults
 do
+  --- Handles subtables (is "deep").
+  -- Does not support recursive defaults tables
+  -- WARNING: Uses tclone()! Do not use on tables with metatables!
+  -- @param t
+  -- @param defaults
+  -- @local
   twithdefaults = function(t, defaults)
     for k, d in pairs(defaults) do
       local v = t[k]
@@ -453,6 +524,9 @@ end
 
 --------------------------------------------------------------------------------
 
+--- @param pred
+-- @param t
+-- @param ...
 local tifilter = function(pred, t, ...)
   local r = { }
   for i = 1, #t do
@@ -466,6 +540,8 @@ end
 
 --------------------------------------------------------------------------------
 
+--- @param value
+-- @param t
 local tsetof = function(value, t)
   local r = { }
 
@@ -478,6 +554,7 @@ end
 
 --------------------------------------------------------------------------------
 
+--- @param ...
 local tset_many = function(...)
   local r = { }
 
@@ -491,6 +568,8 @@ local tset_many = function(...)
 end
 
 -- TODO: Pick a better name?
+
+--- @param t
 local tidentityset = function(t)
   local r = { }
 
@@ -503,6 +582,8 @@ end
 
 --------------------------------------------------------------------------------
 
+--- @param t
+-- @param key
 local timapofrecords = function(t, key)
   local r = { }
 
@@ -514,6 +595,7 @@ local timapofrecords = function(t, key)
   return r
 end
 
+--- @param t
 local tivalues = function(t)
   local r = { }
 
@@ -526,15 +608,20 @@ end
 
 --------------------------------------------------------------------------------
 
--- NOTE: Optimized to be fast at simple value indexing.
---       Slower on initialization and on table value fetching.
--- WARNING: This does not protect userdata.
 local treadonly, treadonly_ex
 do
   local newindex = function()
     error("attempted to change read-only table")
   end
 
+  --- NOTE: Optimized to be fast at simple value indexing.
+  --       Slower on initialization and on table value fetching.
+  -- WARNING: This does not protect userdata.
+  -- @param value
+  -- @param callbacks
+  -- @param tostring_fn
+  -- @param disable_nil
+  -- @local
   treadonly = function(value, callbacks, tostring_fn, disable_nil)
     callbacks = callbacks or empty_table
     if disable_nil == nil then
@@ -588,13 +675,23 @@ do
     return setmetatable({ }, mt)
   end
 
-  -- Changes to second return value are guaranteed to affect first one
+  --- Changes to second return value are guaranteed to affect first one
+  -- NOTE: Optimized to be fast at simple value indexing.
+  --       Slower on initialization and on table value fetching.
+  -- WARNING: This does not protect userdata.
+  -- @param value
+  -- @param callbacks
+  -- @param tostring_fn
+  -- @param disable_nil
+  -- @local
   treadonly_ex = function(value, ...)
     local protected = treadonly(value, ...)
     return protected, value
   end
 end
 
+--- @param fn
+-- @param t
 local tmap_kv = function(fn, t)
   local r = { }
   for k, v in pairs(t) do
@@ -604,6 +701,8 @@ local tmap_kv = function(fn, t)
   return r
 end
 
+--- @param t
+-- @param key_name
 local tmapofrecordgroups = function(t, key_name)
   local r = { }
   for k, v in pairs(t) do
@@ -620,6 +719,8 @@ local tmapofrecordgroups = function(t, key_name)
   return r
 end
 
+--- @param t
+-- @param key_name
 local timapofrecordgroups = function(t, key_name)
   local r = { }
   for i = 1, #t do
@@ -636,6 +737,8 @@ local timapofrecordgroups = function(t, key_name)
   return r
 end
 
+--- @param t
+-- @param k
 local tilistofrecordfields = function(t, k)
   local r = { }
   for i = 1, #t do
@@ -646,6 +749,10 @@ local tilistofrecordfields = function(t, k)
   return r
 end
 
+--- @param t
+-- @param n
+-- @param count
+-- @param random
 local tipermute_inplace = function(t, n, count, random)
   n = n or #t
   count = count or n
@@ -659,6 +766,9 @@ local tipermute_inplace = function(t, n, count, random)
   return t
 end
 
+--- @param t
+-- @param key_name
+-- @param value_name
 local tkvtorecordlist = function(t, key_name, value_name)
   local result = { }
   for k, v in pairs(t) do
@@ -667,6 +777,10 @@ local tkvtorecordlist = function(t, key_name, value_name)
   return result
 end
 
+--- @param t
+-- @param k
+-- @param nextk
+-- @param ...
 local function tgetpath(t, k, nextk, ...)
   if k == nil then
     return nil
@@ -703,6 +817,9 @@ do
     return impl(nargs - 1, dest[key], ...)
   end
 
+  --- @param dest
+  -- @param ...
+  -- @local
   tsetpath = function(dest, ...)
     local nargs = select("#", ...)
     if nargs == 0 then
@@ -736,6 +853,10 @@ do
     return impl(nargs - 1, value, dest[key], ...)
   end
 
+  --- @param value
+  -- @param dest
+  -- @param ...
+  -- @local
   tsetpathvalue = function(value, dest, ...)
     local nargs = select("#", ...)
     if nargs == 0 then
@@ -747,6 +868,10 @@ do
 end
 
 -- TODO: rename to tislice
+
+--- @param t
+-- @param start_i
+-- @param end_i
 local tslice = function(t, start_i, end_i)
   local r = { }
 
@@ -759,6 +884,8 @@ local tslice = function(t, start_i, end_i)
   return r
 end
 
+--- @param t
+-- @param ...
 local tarraylisttohashlist = function(t, ...)
   local r = { }
   local nargs = select("#", ...)
@@ -777,6 +904,8 @@ local tarraylisttohashlist = function(t, ...)
   return r
 end
 
+--- @param t
+-- @param ...
 local tarraytohash = function(t, ...)
   local r = { }
   local nargs = select("#", ...)
@@ -791,10 +920,13 @@ local tarraytohash = function(t, ...)
   return r
 end
 
+--- @param t
 local tisempty = function(t)
   return next(t) == nil
 end
 
+--- @param t
+-- @param v
 local tifindvalue_nonrecursive = function(t, v)
   for i = 1, #t do
     if t[i] == v then
@@ -804,6 +936,7 @@ local tifindvalue_nonrecursive = function(t, v)
   return false
 end
 
+--- @param t
 local tkvlist2kvpairs = function(t)
   local r = { }
   for i = 1, #t, 2 do
@@ -815,6 +948,9 @@ local tkvlist2kvpairs = function(t)
   return r
 end
 
+--- @param t
+-- @param f
+-- @param strict
 local tfilterkeylist = function(t, f, strict)
   strict = strict or false
   local r = { }
@@ -830,6 +966,9 @@ local tfilterkeylist = function(t, f, strict)
   return r
 end
 
+--- @param fn
+-- @param t
+-- @param ...
 local tkvmap_unpack = function(fn, t, ...)
   local r = { }
   for k, v in pairs(t) do
@@ -843,6 +982,7 @@ local tkvmap_unpack = function(fn, t, ...)
   return unpack(r)
 end
 
+--- @param t
 local tkvlist_to_hash = function(t)
   local r = { }
   for i = 1, #t, 2 do
@@ -851,13 +991,15 @@ local tkvlist_to_hash = function(t)
   return r
 end
 
+--- @param ...
 local tmerge_many = function(...)
   return toverride_many({ }, ...)
 end
 
 local TISARRAY_NOT_OBJ = 'tisarray.not'
 
--- Makes table to be treated as JSON object in tisarray()
+--- Makes table to be treated as JSON object in tisarray()
+-- @param t
 local tisarray_not = function(t)
   if getmetatable(t) then 
     error('tisarray_not: tables with metatables are not supported') 
@@ -866,9 +1008,10 @@ local tisarray_not = function(t)
   return setmetatable(t, { __metatable = TISARRAY_NOT_OBJ })
 end
 
--- Returns true is a table is an array
--- Returns false otherwise
--- Note the empty table is treated as an array
+--- Note the empty table is treated as an array
+-- @return[1] true if a table is an array
+-- @return[2] false otherwise
+-- @param t
 local tisarray = function(t)
   if getmetatable(t) == TISARRAY_NOT_OBJ then 
     return false
@@ -917,6 +1060,9 @@ do
     return r
   end
 
+  --- @param predicate
+  -- @param t
+  -- @local
   tdeepfilter = function(predicate, t)
     return impl(predicate, t, { })
   end
