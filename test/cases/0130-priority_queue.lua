@@ -292,7 +292,9 @@ test:BROKEN_IF(not newproxy) "single-invalid-priority-type" (function()
 
   ensure_fails_with_substring(
       "priority cannot be of 'coroutine' type",
-      function() priority_queue:insert(coroutine.create(function() end), value) end,
+      function()
+        priority_queue:insert(coroutine.create(function() end), value)
+      end,
       "expected `number', got `thread'"
     )
 
