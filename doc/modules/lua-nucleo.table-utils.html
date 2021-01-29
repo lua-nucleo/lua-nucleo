@@ -30,6 +30,11 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Fields">Fields</a></li>
+<li><a href="#Local_Functions">Local Functions</a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -61,6 +66,7 @@
   <li><a href="../modules/key_value_store.key_value_store_simple.html">key_value_store.key_value_store_simple</a></li>
   <li><a href="../modules/key_value_store.key_value_store_sophisticated.html">key_value_store.key_value_store_sophisticated</a></li>
   <li><a href="../modules/lua-nucleo.language.html">lua-nucleo.language</a></li>
+  <li><a href="../modules/lua-nucleo.legacy.html">lua-nucleo.legacy</a></li>
   <li><a href="../modules/lua-nucleo.log.html">lua-nucleo.log</a></li>
   <li><a href="../modules/lua-nucleo.math.html">lua-nucleo.math</a></li>
   <li><a href="../modules/lua-nucleo.misc.html">lua-nucleo.misc</a></li>
@@ -116,18 +122,1901 @@
     </ul>
 
 
+<h2><a href="#Fields">Fields</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#empty_table">empty_table</a></td>
+	<td class="summary">Warning: it is possible to corrupt this with rawset and debug.setmetatable.</td>
+	</tr>
+</table>
+<h2><a href="#Local_Functions">Local Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#toverride_many">toverride_many (t, s, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tappend_many">tappend_many (t, s, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tijoin_many">tijoin_many (t, s, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tkeys">tkeys (t)</a></td>
+	<td class="summary">Keys are ordered in undetermined order</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tvalues">tvalues (t)</a></td>
+	<td class="summary">Values are ordered in undetermined order</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tkeysvalues">tkeysvalues (t)</a></td>
+	<td class="summary">Keys and values are ordered in undetermined order</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tflip">tflip (t)</a></td>
+	<td class="summary">If table contains multiple keys with the same value,
+ only one key is stored in the result, picked in undetermined way.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tflip_inplace">tflip_inplace (t)</a></td>
+	<td class="summary">If table contains multiple keys with the same value,
+ only one key is stored in the result, picked in undetermined way.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tiflip">tiflip (t)</a></td>
+	<td class="summary">If table contains multiple keys with the same value,
+ only the last such key (highest one) is stored in the result.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tset">tset (t)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tiset">tiset (t)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tiinsert_args">tiinsert_args (t, a, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#timap_inplace">timap_inplace (fn, t, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#timap">timap (fn, t, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#timap_sliding">timap_sliding (fn, t, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tiwalk">tiwalk (fn, t, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tiwalker">tiwalker (fn)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#twalk_pairs">twalk_pairs (fn, t)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tiunique">tiunique (t)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tgenerate_n">tgenerate_n (n, generator, ...)</a></td>
+	<td class="summary">Deprecated, use tgenerate_1d_linear instead</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tgenerate_1d_linear">tgenerate_1d_linear (n, fn, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tgenerate_2d_linear">tgenerate_2d_linear (w, h, fn, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#taccumulate">taccumulate (t, init)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tnormalize">tnormalize (t, sum)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tnormalize_inplace">tnormalize_inplace (t, sum)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tclone">tclone (t)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tcount_elements">tcount_elements (t)</a></td>
+	<td class="summary">Slow</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tremap_to_array">tremap_to_array (fn, t)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tmap_values">tmap_values (fn, t, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#torderedset">torderedset (t)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#torderedset_insert">torderedset_insert (t, v)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#torderedset_remove">torderedset_remove (t, v)</a></td>
+	<td class="summary">Note this operation is really slow</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#twithdefaults">twithdefaults (t, defaults)</a></td>
+	<td class="summary">Handles subtables (is "deep").</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tifilter">tifilter (pred, t, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tsetof">tsetof (value, t)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tset_many">tset_many (...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tidentityset">tidentityset (t)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#timapofrecords">timapofrecords (t, key)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tivalues">tivalues (t)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#treadonly">treadonly (value, callbacks, tostring_fn, disable_nil)</a></td>
+	<td class="summary">NOTE: Optimized to be fast at simple value indexing.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#treadonly_ex">treadonly_ex (value, callbacks, tostring_fn, disable_nil)</a></td>
+	<td class="summary">Changes to second return value are guaranteed to affect first one
+ NOTE: Optimized to be fast at simple value indexing.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tmap_kv">tmap_kv (fn, t)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tmapofrecordgroups">tmapofrecordgroups (t, key_name)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#timapofrecordgroups">timapofrecordgroups (t, key_name)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tilistofrecordfields">tilistofrecordfields (t, k)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tipermute_inplace">tipermute_inplace (t, n, count, random)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tkvtorecordlist">tkvtorecordlist (t, key_name, value_name)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tgetpath">tgetpath (t, k, nextk, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tsetpath">tsetpath (dest, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tsetpathvalue">tsetpathvalue (value, dest, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tslice">tslice (t, start_i, end_i)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tarraylisttohashlist">tarraylisttohashlist (t, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tarraytohash">tarraytohash (t, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tisempty">tisempty (t)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tifindvalue_nonrecursive">tifindvalue_nonrecursive (t, v)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tkvlist2kvpairs">tkvlist2kvpairs (t)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tfilterkeylist">tfilterkeylist (t, f, strict)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tkvmap_unpack">tkvmap_unpack (fn, t, ...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tkvlist_to_hash">tkvlist_to_hash (t)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tmerge_many">tmerge_many (...)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tisarray_not">tisarray_not (t)</a></td>
+	<td class="summary">Makes table to be treated as JSON object in tisarray()</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tisarray">tisarray (t)</a></td>
+	<td class="summary">Note the empty table is treated as an array</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tdeepfilter">tdeepfilter (predicate, t)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tifindallpermutations">tifindallpermutations (t, results)</a></td>
+	<td class="summary">Finds all permutations of elements in the input linear array table <code>t</code>
+ and puts them into the <code>results</code> table.</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2 class="section-header "><a name="Fields"></a>Fields</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "empty_table"></a>
+    <strong>empty_table</strong>
+    </dt>
+    <dd>
+    Warning: it is possible to corrupt this with rawset and debug.setmetatable.
+
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Local_Functions"></a>Local Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "toverride_many"></a>
+    <strong>toverride_many (t, s, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">s</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tappend_many"></a>
+    <strong>tappend_many (t, s, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">s</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tijoin_many"></a>
+    <strong>tijoin_many (t, s, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">s</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tkeys"></a>
+    <strong>tkeys (t)</strong>
+    </dt>
+    <dd>
+    Keys are ordered in undetermined order
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tvalues"></a>
+    <strong>tvalues (t)</strong>
+    </dt>
+    <dd>
+    Values are ordered in undetermined order
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tkeysvalues"></a>
+    <strong>tkeysvalues (t)</strong>
+    </dt>
+    <dd>
+    Keys and values are ordered in undetermined order
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tflip"></a>
+    <strong>tflip (t)</strong>
+    </dt>
+    <dd>
+    If table contains multiple keys with the same value,
+ only one key is stored in the result, picked in undetermined way.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tflip_inplace"></a>
+    <strong>tflip_inplace (t)</strong>
+    </dt>
+    <dd>
+    If table contains multiple keys with the same value,
+ only one key is stored in the result, picked in undetermined way.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tiflip"></a>
+    <strong>tiflip (t)</strong>
+    </dt>
+    <dd>
+    If table contains multiple keys with the same value,
+ only the last such key (highest one) is stored in the result.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tset"></a>
+    <strong>tset (t)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tiset"></a>
+    <strong>tiset (t)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tiinsert_args"></a>
+    <strong>tiinsert_args (t, a, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">a</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "timap_inplace"></a>
+    <strong>timap_inplace (fn, t, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">fn</span>
+
+        </li>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "timap"></a>
+    <strong>timap (fn, t, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">fn</span>
+
+        </li>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "timap_sliding"></a>
+    <strong>timap_sliding (fn, t, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">fn</span>
+
+        </li>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tiwalk"></a>
+    <strong>tiwalk (fn, t, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">fn</span>
+
+        </li>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tiwalker"></a>
+    <strong>tiwalker (fn)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">fn</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "twalk_pairs"></a>
+    <strong>twalk_pairs (fn, t)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">fn</span>
+
+        </li>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tiunique"></a>
+    <strong>tiunique (t)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tgenerate_n"></a>
+    <strong>tgenerate_n (n, generator, ...)</strong>
+    </dt>
+    <dd>
+    Deprecated, use tgenerate_1d_linear instead
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">n</span>
+
+        </li>
+        <li><span class="parameter">generator</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tgenerate_1d_linear"></a>
+    <strong>tgenerate_1d_linear (n, fn, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">n</span>
+
+        </li>
+        <li><span class="parameter">fn</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tgenerate_2d_linear"></a>
+    <strong>tgenerate_2d_linear (w, h, fn, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">w</span>
+
+        </li>
+        <li><span class="parameter">h</span>
+
+        </li>
+        <li><span class="parameter">fn</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "taccumulate"></a>
+    <strong>taccumulate (t, init)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">init</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tnormalize"></a>
+    <strong>tnormalize (t, sum)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">sum</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tnormalize_inplace"></a>
+    <strong>tnormalize_inplace (t, sum)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">sum</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tclone"></a>
+    <strong>tclone (t)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tcount_elements"></a>
+    <strong>tcount_elements (t)</strong>
+    </dt>
+    <dd>
+    Slow
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tremap_to_array"></a>
+    <strong>tremap_to_array (fn, t)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">fn</span>
+
+        </li>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tmap_values"></a>
+    <strong>tmap_values (fn, t, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">fn</span>
+
+        </li>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "torderedset"></a>
+    <strong>torderedset (t)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "torderedset_insert"></a>
+    <strong>torderedset_insert (t, v)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">v</span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        false if item already exists
+    </ol>
+     <h3>Or</h3>
+    <ol>
+
+        true otherwise
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "torderedset_remove"></a>
+    <strong>torderedset_remove (t, v)</strong>
+    </dt>
+    <dd>
+    Note this operation is really slow
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">v</span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        false if item didn't existed
+    </ol>
+     <h3>Or</h3>
+    <ol>
+
+        true otherwise
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "twithdefaults"></a>
+    <strong>twithdefaults (t, defaults)</strong>
+    </dt>
+    <dd>
+    Handles subtables (is "deep").
+ Does not support recursive defaults tables
+ WARNING: Uses tclone()! Do not use on tables with metatables!
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">defaults</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tifilter"></a>
+    <strong>tifilter (pred, t, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pred</span>
+
+        </li>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tsetof"></a>
+    <strong>tsetof (value, t)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+
+        </li>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tset_many"></a>
+    <strong>tset_many (...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tidentityset"></a>
+    <strong>tidentityset (t)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "timapofrecords"></a>
+    <strong>timapofrecords (t, key)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">key</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tivalues"></a>
+    <strong>tivalues (t)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "treadonly"></a>
+    <strong>treadonly (value, callbacks, tostring_fn, disable_nil)</strong>
+    </dt>
+    <dd>
+    NOTE: Optimized to be fast at simple value indexing.
+       Slower on initialization and on table value fetching.
+ WARNING: This does not protect userdata.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+
+        </li>
+        <li><span class="parameter">callbacks</span>
+
+        </li>
+        <li><span class="parameter">tostring_fn</span>
+
+        </li>
+        <li><span class="parameter">disable_nil</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "treadonly_ex"></a>
+    <strong>treadonly_ex (value, callbacks, tostring_fn, disable_nil)</strong>
+    </dt>
+    <dd>
+    Changes to second return value are guaranteed to affect first one
+ NOTE: Optimized to be fast at simple value indexing.
+       Slower on initialization and on table value fetching.
+ WARNING: This does not protect userdata.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+
+        </li>
+        <li><span class="parameter">callbacks</span>
+
+        </li>
+        <li><span class="parameter">tostring_fn</span>
+
+        </li>
+        <li><span class="parameter">disable_nil</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tmap_kv"></a>
+    <strong>tmap_kv (fn, t)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">fn</span>
+
+        </li>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tmapofrecordgroups"></a>
+    <strong>tmapofrecordgroups (t, key_name)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">key_name</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "timapofrecordgroups"></a>
+    <strong>timapofrecordgroups (t, key_name)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">key_name</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tilistofrecordfields"></a>
+    <strong>tilistofrecordfields (t, k)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">k</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tipermute_inplace"></a>
+    <strong>tipermute_inplace (t, n, count, random)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">n</span>
+
+        </li>
+        <li><span class="parameter">count</span>
+
+        </li>
+        <li><span class="parameter">random</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tkvtorecordlist"></a>
+    <strong>tkvtorecordlist (t, key_name, value_name)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">key_name</span>
+
+        </li>
+        <li><span class="parameter">value_name</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tgetpath"></a>
+    <strong>tgetpath (t, k, nextk, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">k</span>
+
+        </li>
+        <li><span class="parameter">nextk</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tsetpath"></a>
+    <strong>tsetpath (dest, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">dest</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tsetpathvalue"></a>
+    <strong>tsetpathvalue (value, dest, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+
+        </li>
+        <li><span class="parameter">dest</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tslice"></a>
+    <strong>tslice (t, start_i, end_i)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">start_i</span>
+
+        </li>
+        <li><span class="parameter">end_i</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tarraylisttohashlist"></a>
+    <strong>tarraylisttohashlist (t, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tarraytohash"></a>
+    <strong>tarraytohash (t, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tisempty"></a>
+    <strong>tisempty (t)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tifindvalue_nonrecursive"></a>
+    <strong>tifindvalue_nonrecursive (t, v)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">v</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tkvlist2kvpairs"></a>
+    <strong>tkvlist2kvpairs (t)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tfilterkeylist"></a>
+    <strong>tfilterkeylist (t, f, strict)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">f</span>
+
+        </li>
+        <li><span class="parameter">strict</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tkvmap_unpack"></a>
+    <strong>tkvmap_unpack (fn, t, ...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">fn</span>
+
+        </li>
+        <li><span class="parameter">t</span>
+
+        </li>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tkvlist_to_hash"></a>
+    <strong>tkvlist_to_hash (t)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tmerge_many"></a>
+    <strong>tmerge_many (...)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tisarray_not"></a>
+    <strong>tisarray_not (t)</strong>
+    </dt>
+    <dd>
+    Makes table to be treated as JSON object in tisarray()
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tisarray"></a>
+    <strong>tisarray (t)</strong>
+    </dt>
+    <dd>
+    Note the empty table is treated as an array
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        true if a table is an array
+    </ol>
+     <h3>Or</h3>
+    <ol>
+
+        false otherwise
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tdeepfilter"></a>
+    <strong>tdeepfilter (predicate, t)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">predicate</span>
+
+        </li>
+        <li><span class="parameter">t</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tifindallpermutations"></a>
+    <strong>tifindallpermutations (t, results)</strong>
+    </dt>
+    <dd>
+    Finds all permutations of elements in the input linear array table <code>t</code>
+ and puts them into the <code>results</code> table.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+         Input linear array table.
+        </li>
+        <li><span class="parameter">results</span>
+         All found permutations will be placed here.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> tifindallpermutations
+      = import <span class="string">'lua-nucleo/table-utils.lua'</span>
+      {
+        <span class="string">'tifindallpermutations'</span>
+      }
+
+<span class="keyword">local</span> permutations0 = tifindallpermutations({ })
+<span class="comment">-- permutations0 is { } here
+</span>
+<span class="keyword">local</span> permutations1 = tifindallpermutations({ <span class="number">1</span> }, { { <span class="number">1</span> } })
+<span class="comment">-- permutations1 is { { 1 } } here
+</span>
+<span class="keyword">local</span> permutations2 = tifindallpermutations({ <span class="number">1</span>, <span class="number">2</span> })
+<span class="comment">-- permutations2 is { { 1, 2 }, { 2, 1 } }
+</span>
+<span class="keyword">local</span> permutations3 = tifindallpermutations({ <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> })
+<span class="comment">-- permutations3 is
+</span><span class="comment">-- {
+</span><span class="comment">--   { 2, 3, 1 },
+</span><span class="comment">--   { 3, 2, 1 },
+</span><span class="comment">--   { 1, 3, 2 },
+</span><span class="comment">--   { 3, 1, 2 },
+</span><span class="comment">--   { 1, 2, 3 },
+</span><span class="comment">--   { 2, 1, 3 }
+</span><span class="comment">-- }
+</span>
+<span class="keyword">local</span> permutations4 = tifindallpermutations({ <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span> })
+<span class="comment">-- permutations4 is
+</span><span class="comment">-- {
+</span><span class="comment">--   { 3, 4, 2, 1 },
+</span><span class="comment">--   { 4, 3, 2, 1 },
+</span><span class="comment">--   { 2, 4, 3, 1 },
+</span><span class="comment">--   { 4, 2, 3, 1 },
+</span><span class="comment">--   { 2, 3, 4, 1 },
+</span><span class="comment">--   { 3, 2, 4, 1 },
+</span><span class="comment">--   { 3, 4, 1, 2 },
+</span><span class="comment">--   { 4, 3, 1, 2 },
+</span><span class="comment">--   { 1, 4, 3, 2 },
+</span><span class="comment">--   { 4, 1, 3, 2 },
+</span><span class="comment">--   { 1, 3, 4, 2 },
+</span><span class="comment">--   { 3, 1, 4, 2 },
+</span><span class="comment">--   { 2, 4, 1, 3 },
+</span><span class="comment">--   { 4, 2, 1, 3 },
+</span><span class="comment">--   { 1, 4, 2, 3 },
+</span><span class="comment">--   { 4, 1, 2, 3 },
+</span><span class="comment">--   { 1, 2, 4, 3 },
+</span><span class="comment">--   { 2, 1, 4, 3 },
+</span><span class="comment">--   { 2, 3, 1, 4 },
+</span><span class="comment">--   { 3, 2, 1, 4 },
+</span><span class="comment">--   { 1, 3, 2, 4 },
+</span><span class="comment">--   { 3, 1, 2, 4 },
+</span><span class="comment">--   { 1, 2, 3, 4 },
+</span><span class="comment">--   { 2, 1, 3, 4 }
+</span><span class="comment">-- }</span></pre>
+    </ul>
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2021-01-27 12:35:08 </i>
+<i style="float:right;">Last updated 2021-01-29 19:42:37 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
