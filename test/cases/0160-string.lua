@@ -4,6 +4,16 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+local unpack = unpack or table.unpack
+local newproxy = newproxy or select(
+    2,
+    unpack({
+        xpcall(require, function() end, 'newproxy')
+      })
+  )
+
+--------------------------------------------------------------------------------
+
 local make_suite = assert(loadfile('test/test-lib/init/strict.lua'))(...)
 
 local arguments
@@ -1379,7 +1389,8 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:test_for "tjson_simple" (function()
+test:tests_for "tjson_simple"
+test:BROKEN_IF(not newproxy) "tjson_simple" (function()
   -- Helpers
   local coroutine_create = coroutine.create
   local ensure_tjson_fails = function(msg, data, error_msg)
@@ -1412,9 +1423,15 @@ test:test_for "tjson_simple" (function()
   ensure_tjson_unsupported_type(newproxy())
 
   -- Unsupported values: NaN, +Inf, -Inf
-  ensure_tjson_fails('unsupported value', 1/0, "tjson_simple: `Inf' value not supported")
-  ensure_tjson_fails('unsupported value', -1/0, "tjson_simple: `Inf' value not supported")
-  ensure_tjson_fails('unsupported value', 0/0, "tjson_simple: `NaN' value not supported")
+  ensure_tjson_fails(
+      'unsupported value', 1/0, "tjson_simple: `Inf' value not supported"
+    )
+  ensure_tjson_fails(
+      'unsupported value', -1/0, "tjson_simple: `Inf' value not supported"
+    )
+  ensure_tjson_fails(
+      'unsupported value', 0/0, "tjson_simple: `NaN' value not supported"
+    )
 
   -- Tables
   ensure_strequals(
@@ -1462,5 +1479,3 @@ test:test_for "tjson_simple" (function()
       "tjson_simple: non-string keys are not supported"
     )
 end)
-
---------------------------------------------------------------------------------
