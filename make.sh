@@ -15,18 +15,25 @@ fi
 echo "----> Generating rockspecs"
 lua etc/rockspec/generate.lua scm-1 > rockspec/lua-nucleo-scm-1.rockspec
 
-echo "----> Remove a rock"
-sudo luarocks remove --force lua-nucleo || true
+reinstall() {
+  LUAROCKS="$1"
 
-echo "----> Making rocks"
-sudo luarocks make rockspec/lua-nucleo-scm-1.rockspec
+  echo "----> Remove a rock"
+  ${LUAROCKS} remove --force lua-nucleo || true
 
-case "${1:-}" in
-  --no-restart) ;; # Do nothing
-  *)
-    echo "----> Restarting multiwatch and LJ2"
-    sudo killall multiwatch || true ; sudo killall luajit2 || true
-  ;;
-esac
+  echo "----> Making rocks"
+  "$LUAROCKS" make rockspec/lua-nucleo-scm-1.rockspec
+}
+
+if [[ "$@" == *--local* ]] ; then
+  reinstall luarocks
+else
+  reinstall "sudo luarocks"
+fi
+
+if [[ "$@" != *--no-restart* ]] ; then
+  echo "----> Restarting multiwatch and LJ2"
+  sudo killall multiwatch || true ; sudo killall luajit2 || true
+fi
 
 echo "----> OK"
