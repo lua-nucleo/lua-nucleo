@@ -7,7 +7,7 @@ Dependencies
 ------------
 
 Lua-Núcleo itself does not have external dependencies
-except for Lua 5.1 itself.
+except for Lua (>= 5.1) itself.
 
 The tests are dependent on `luafilesystem` and `lua-aplicado`:
 
