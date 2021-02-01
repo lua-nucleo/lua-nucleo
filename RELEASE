@@ -1,0 +1,28 @@
+# Prepare working tree for release
+
+1. Add an entry to the `HISTORY` file with the version name, release date and
+   what's new in the new version.
+2. Update copyright dates if needed:
+    - `COPYRIGHT` file;
+    - `_COPYRIGHT` exported constant in the main module.
+3. Update version in `_VERSION` exported constant in the main module.
+4. Regenerate exports list (performed by `./make.sh`)
+5. Generate `scm-1` rockspec (performed by `./make.sh`)
+6. Generate `VERSION-1` rockspec, where VERSION is the version to be released.
+   Example:
+   ```
+   lua etc/rockspec/generate.lua 1.1.0-1 > rockspec/lua-nucleo-1.1.0-1.rockspec
+   ````
+7. Regenerate API docs: `./make-doc.sh`
+8. Make sure that all the changes is in the working tree.
+9. Tag the working tree head with the version name, e.g. `v1.1.0`.
+10. Push tag to origin.
+
+# Publish on [LuaRocks.org](https://luarocks.org)
+
+`luarocks upload rockspec/lua-nucleo-VERSION-1.rockspec`, where VERSION is the
+version to be released.
+
+See also:
+- https://github.com/luarocks/luarocks/wiki/creating-a-rock#publishing-your-code-online
+- https://luarocks.org/upload
