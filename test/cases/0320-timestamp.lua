@@ -14,6 +14,7 @@ local get_day_timestamp,
       get_quarter_timestamp,
       get_minute_timestamp,
       get_decasecond_timestamp,
+      unpack_timestamp,
       exports
       = import 'lua-nucleo/timestamp.lua'
       {
@@ -22,7 +23,8 @@ local get_day_timestamp,
         'get_tomorrow_timestamp',
         'get_quarter_timestamp',
         'get_minute_timestamp',
-        'get_decasecond_timestamp'
+        'get_decasecond_timestamp',
+        'unpack_timestamp'
       }
 
 local ensure_equals,
@@ -165,3 +167,5 @@ test:test_for 'get_decasecond_timestamp' (function()
     )
 
 end)
+
+test:UNTESTED 'unpack_timestamp'

@@ -95,6 +95,32 @@ local get_decasecond_timestamp = function(timestamp)
   return os_time(t)
 end
 
+--- Convert Unix time to the (year, month, day, hour, minute, second) tuple.
+-- @tparam[opt=<code>os_time()</code>] number timestamp Optional timestamp in
+--                                     the Unix/POSIX time format.
+-- @treturn number,number,number,number,number,number Year, month, day of month,
+--          hour, minute and second of the timestamp was being provided or
+--          the current time if not.
+-- @usage
+-- local unpack_timestamp
+--       = import 'lua-nucleo/timestamp.lua'
+--       {
+--         'unpack_timestamp'
+--       }
+--
+-- local push_date = function(year, month, day, hour, minute, second)
+--   -- do something
+-- end
+--
+-- push_date(unpack_timestamp())
+local unpack_timestamp = function(timestamp)
+  timestamp = timestamp or os_time()
+
+  local t = os.date("*t", timestamp)
+
+  return t.year, t.month, t.day, t.hour, t.min, t.sec
+end
+
 --------------------------------------------------------------------------------
 
 return
@@ -105,4 +131,5 @@ return
   get_quarter_timestamp = get_quarter_timestamp;
   get_minute_timestamp = get_minute_timestamp;
   get_decasecond_timestamp = get_decasecond_timestamp;
+  unpack_timestamp = unpack_timestamp;
 }
