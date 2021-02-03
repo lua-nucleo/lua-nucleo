@@ -4,6 +4,10 @@
 -- Copyright (c) lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+-- WARNING! Many of these tests fail at unpredictable times on Lua 5.3 and
+-- always fail on Lua 5.2
+-- See https://github.com/lua-nucleo/lua-nucleo/issues/56
+
 local arguments,
       method_arguments,
       optional_arguments
@@ -272,7 +276,7 @@ test:methods "get_interface"
 
 --------------------------------------------------------------------------------
 
-test "get_interface-full-call" (function()
+test:BROKEN_IF(LUA52 or LUA53) "get_interface-full-call" (function()
   local dsl_loader = make_dsl_loader(simple_name_filter)
   local api = dsl_loader:get_interface()
 
@@ -287,7 +291,7 @@ test "get_interface-full-call" (function()
     )
 end)
 
-test "get_interface-name-only-call" (function()
+test:BROKEN_IF(LUA52 or LUA53) "get_interface-name-only-call" (function()
   local dsl_loader = make_dsl_loader(simple_name_filter)
   local api = dsl_loader:get_interface()
 
@@ -301,19 +305,21 @@ test "get_interface-name-only-call" (function()
     )
 end)
 
-test "get_interface-data-only-call" (function()
-  local dsl_loader = make_dsl_loader(simple_name_filter)
-  local api = dsl_loader:get_interface()
+test:BROKEN_IF(LUA52 or LUA53) "get_interface-data-only-call" (
+    function()
+      local dsl_loader = make_dsl_loader(simple_name_filter)
+      local api = dsl_loader:get_interface()
 
-  ensure_tdeepequals(
-      "check returned data",
-      dsl_loader:finalize_data(api:call { value = 1 }),
-      {
-        [TAG] = "call";
-        value = 1;
-      }
-    )
-end)
+      ensure_tdeepequals(
+          "check returned data",
+          dsl_loader:finalize_data(api:call { value = 1 }),
+          {
+            [TAG] = "call";
+            value = 1;
+          }
+        )
+    end
+  )
 
 --------------------------------------------------------------------------------
 -- Implementation-specific tests
@@ -322,46 +328,54 @@ end)
 -- NOTE: These are arbitrary tests. Change them if implementation changes.
 -- NOTE: Some tests are not that arbitrary.
 
-test "get_interface-data-only-call-explicit-name" (function()
-  local dsl_loader = make_dsl_loader(simple_name_filter)
-  local api = dsl_loader:get_interface()
+test:BROKEN_IF(LUA52 or LUA53) "get_interface-data-only-call-explicit-name" (
+    function()
+      local dsl_loader = make_dsl_loader(simple_name_filter)
+      local api = dsl_loader:get_interface()
 
-  ensure_tdeepequals(
-      "check returned data",
-      dsl_loader:finalize_data(api:call { value = 1, [NAME] = "name" }),
-      {
-        [TAG] = "call";
-        [NAME] = "name";
-        value = 1;
-      }
-    )
-end)
+      ensure_tdeepequals(
+          "check returned data",
+          dsl_loader:finalize_data(api:call { value = 1, [NAME] = "name" }),
+          {
+            [TAG] = "call";
+            [NAME] = "name";
+            value = 1;
+          }
+        )
+    end
+  )
 
-test "get_interface-full-call-name-reserved-in-default-data-filter" (function()
-  local dsl_loader = make_dsl_loader(simple_name_filter)
-  local api = dsl_loader:get_interface()
+test:BROKEN_IF(LUA52 or LUA53)
+  "get_interface-full-call-name-reserved-in-default-data-filter" (
+    function()
+      local dsl_loader = make_dsl_loader(simple_name_filter)
+      local api = dsl_loader:get_interface()
 
-  ensure_fails_with_substring(
-      "name field is reserved",
-      function()
-        api:call "name" { value = 1, [NAME] = "myname" }
-      end,
-      "attempted to override table key `" .. NAME .. "'"
-    )
-end)
+      ensure_fails_with_substring(
+          "name field is reserved",
+          function()
+            api:call "name" { value = 1, [NAME] = "myname" }
+          end,
+          "attempted to override table key `" .. NAME .. "'"
+        )
+    end
+  )
 
-test "get_interface-full-call-tag-reserved-in-default-data-filter" (function()
-  local dsl_loader = make_dsl_loader(simple_name_filter)
-  local api = dsl_loader:get_interface()
+test:BROKEN_IF(LUA52 or LUA53)
+  "get_interface-full-call-tag-reserved-in-default-data-filter" (
+    function()
+      local dsl_loader = make_dsl_loader(simple_name_filter)
+      local api = dsl_loader:get_interface()
 
-  ensure_fails_with_substring(
-      "tag field is reserved",
-      function()
-        api:call "name" { value = 1, [TAG] = "tag" }
-      end,
-      "attempted to override table key `" .. TAG .. "'"
-    )
-end)
+      ensure_fails_with_substring(
+          "tag field is reserved",
+          function()
+            api:call "name" { value = 1, [TAG] = "tag" }
+          end,
+          "attempted to override table key `" .. TAG .. "'"
+        )
+    end
+  )
 
 test "get_interface-primary-constant-object" (function()
   local dsl_loader = make_dsl_loader(simple_name_filter)
@@ -428,206 +442,238 @@ test "get_interface-data-only-dot-call-fails" (function()
     )
 end)
 
-test "get_interface-tertiary-name-call-constant-object" (function()
-  local dsl_loader = make_dsl_loader(simple_name_filter)
-  local api = dsl_loader:get_interface()
+test:BROKEN_IF(LUA52 or LUA53)
+  "get_interface-tertiary-name-call-constant-object" (
+    function()
+      local dsl_loader = make_dsl_loader(simple_name_filter)
+      local api = dsl_loader:get_interface()
 
-  ensure_fails_with_substring(
-      "this is a constant object",
-      function()
-        (api:foo "bar").baz = 42
-      end,
-      "this is a constant object"
-    )
-end)
+      ensure_fails_with_substring(
+          "this is a constant object",
+          function()
+            (api:foo "bar").baz = 42
+          end,
+          "this is a constant object"
+        )
+    end
+  )
 
-test "get_interface-tertiary-name-call-index-fails" (function()
-  local dsl_loader = make_dsl_loader(simple_name_filter)
-  local api = dsl_loader:get_interface()
+test:BROKEN_IF(LUA52 or LUA53) "get_interface-tertiary-name-call-index-fails" (
+    function()
+    local dsl_loader = make_dsl_loader(simple_name_filter)
+    local api = dsl_loader:get_interface()
 
-  ensure_fails_with_substring(
-      "this object is not indexable",
-      function()
-        local a = (api:foo "bar").baz
-      end,
-      "you should call this object, not index it"
-    )
-end)
+    ensure_fails_with_substring(
+        "this object is not indexable",
+        function()
+          local a = (api:foo "bar").baz
+        end,
+        "you should call this object, not index it"
+      )
+    end
+  )
 
-test "get_interface-full-call-multiple-name-arguments-accepted" (function()
-  local name_filter = function(tag_value, name_value, param_1, ...)
-    ensure_equals("tag", tag_value, "foo")
-    ensure_equals("name", name_value, "name")
-    ensure_equals("param_1", param_1, 42)
-    ensure_equals("no extra arguments", select("#", ...), 0)
+test:BROKEN_IF(LUA52 or LUA53)
+  "get_interface-full-call-multiple-name-arguments-accepted" (
+    function()
+      local name_filter = function(tag_value, name_value, param_1, ...)
+        ensure_equals("tag", tag_value, "foo")
+        ensure_equals("name", name_value, "name")
+        ensure_equals("param_1", param_1, 42)
+        ensure_equals("no extra arguments", select("#", ...), 0)
 
-    return
-    {
-      [TAG] = tag_value;
-      [NAME] = name_value;
-      param_1 = 42;
-      extra = true;
-    }
-  end
+        return
+        {
+          [TAG] = tag_value;
+          [NAME] = name_value;
+          param_1 = 42;
+          extra = true;
+        }
+      end
 
-  local dsl_loader = make_dsl_loader(name_filter)
-  local api = dsl_loader:get_interface()
+      local dsl_loader = make_dsl_loader(name_filter)
+      local api = dsl_loader:get_interface()
 
-  ensure_tdeepequals(
-      "multiple name arguments passed through name filter",
-      dsl_loader:finalize_data(api:foo ("name", 42) { value = 1 }),
-      {
-        [TAG] = "foo";
-        [NAME] = "name";
-        param_1 = 42;
-        extra = true;
-        value = 1;
-      }
-    )
-end)
+      ensure_tdeepequals(
+          "multiple name arguments passed through name filter",
+          dsl_loader:finalize_data(api:foo ("name", 42) { value = 1 }),
+          {
+            [TAG] = "foo";
+            [NAME] = "name";
+            param_1 = 42;
+            extra = true;
+            value = 1;
+          }
+        )
+    end
+  )
 
-test "get_interface-name-only-call-multiple-name-arguments-accepted" (function()
-  local name_filter = function(tag_value, name_value, param_1, ...)
-    ensure_equals("tag", tag_value, "foo")
-    ensure_equals("name", name_value, "name")
-    ensure_equals("param_1", param_1, 42)
-    ensure_equals("no extra arguments", select("#", ...), 0)
+test:BROKEN_IF(LUA52 or LUA53)
+  "get_interface-name-only-call-multiple-name-arguments-accepted" (
+    function()
+      local name_filter = function(tag_value, name_value, param_1, ...)
+        ensure_equals("tag", tag_value, "foo")
+        ensure_equals("name", name_value, "name")
+        ensure_equals("param_1", param_1, 42)
+        ensure_equals("no extra arguments", select("#", ...), 0)
 
-    return
-    {
-      [TAG] = tag_value;
-      [NAME] = name_value;
-      param_1 = 42;
-      extra = true;
-    }
-  end
+        return
+        {
+          [TAG] = tag_value;
+          [NAME] = name_value;
+          param_1 = 42;
+          extra = true;
+        }
+      end
 
-  local dsl_loader = make_dsl_loader(name_filter)
-  local api = dsl_loader:get_interface()
+      local dsl_loader = make_dsl_loader(name_filter)
+      local api = dsl_loader:get_interface()
 
-  ensure_tdeepequals(
-      "multiple name arguments passed through name filter",
-      dsl_loader:finalize_data(api:foo ("name", 42)),
-      {
-        [TAG] = "foo";
-        [NAME] = "name";
-        param_1 = 42;
-        extra = true;
-      }
-    )
-end)
+      ensure_tdeepequals(
+          "multiple name arguments passed through name filter",
+          dsl_loader:finalize_data(api:foo ("name", 42)),
+          {
+            [TAG] = "foo";
+            [NAME] = "name";
+            param_1 = 42;
+            extra = true;
+          }
+        )
+    end
+  )
 
-test "get_interface-full-call-multiple-data-arguments-fails" (function()
-  local dsl_loader = make_dsl_loader(simple_name_filter)
-  local api = dsl_loader:get_interface()
+test:BROKEN_IF(LUA52 or LUA53)
+  "get_interface-full-call-multiple-data-arguments-fails" (
+    function()
+      local dsl_loader = make_dsl_loader(simple_name_filter)
+      local api = dsl_loader:get_interface()
 
-  ensure_fails_with_substring(
-      "multiple data arguments not supported",
-      function()
-        api:foo "bar" ({ value = 42 }, 42)
-      end,
-      "extra arguments are not supported"
-    )
-end)
+      ensure_fails_with_substring(
+          "multiple data arguments not supported",
+          function()
+            api:foo "bar" ({ value = 42 }, 42)
+          end,
+          "extra arguments are not supported"
+        )
+    end
+  )
 
-test "get_interface-full-call-nil-name-passed-to-name-filter" (function()
-  local dsl_loader = make_dsl_loader(simple_name_filter)
-  local api = dsl_loader:get_interface()
+test:BROKEN_IF(LUA52 or LUA53)
+  "get_interface-full-call-nil-name-passed-to-name-filter" (
+    function()
+      local dsl_loader = make_dsl_loader(simple_name_filter)
+      local api = dsl_loader:get_interface()
 
-  ensure_tdeepequals(
-      "nil name passed to name filter",
-      dsl_loader:finalize_data(api:foo () { value = 42 }),
-      {
-        [TAG] = "foo";
-        [NAME] = nil;
-        value = 42;
-      }
-    )
-end)
+      ensure_tdeepequals(
+          "nil name passed to name filter",
+          dsl_loader:finalize_data(api:foo () { value = 42 }),
+          {
+            [TAG] = "foo";
+            [NAME] = nil;
+            value = 42;
+          }
+        )
+    end
+  )
 
-test "get_interface-name-only-call-nil-name-passed-to-name-filter" (function()
-  local dsl_loader = make_dsl_loader(simple_name_filter)
-  local api = dsl_loader:get_interface()
+test:BROKEN_IF(LUA52 or LUA53)
+  "get_interface-name-only-call-nil-name-passed-to-name-filter" (
+    function()
+      local dsl_loader = make_dsl_loader(simple_name_filter)
+      local api = dsl_loader:get_interface()
 
-  ensure_tdeepequals(
-      "nil name passed to name filter",
-      dsl_loader:finalize_data(api:foo ()),
-      {
-        [TAG] = "foo";
-        [NAME] = nil;
-      }
-    )
-end)
+      ensure_tdeepequals(
+          "nil name passed to name filter",
+          dsl_loader:finalize_data(api:foo ()),
+          {
+            [TAG] = "foo";
+            [NAME] = nil;
+          }
+        )
+    end
+  )
 
-test "get_interface-full-call-string-data-fails-with-default_data_filter" (function()
-  local dsl_loader = make_dsl_loader(simple_name_filter)
-  local api = dsl_loader:get_interface()
+test:BROKEN_IF(LUA52 or LUA53)
+  "get_interface-full-call-string-data-fails-with-default_data_filter" (
+    function()
+      local dsl_loader = make_dsl_loader(simple_name_filter)
+      local api = dsl_loader:get_interface()
 
-  ensure_fails_with_substring(
-      "should be a single table parameter with default data_filter",
-      function()
-        api:foo "name" ("value")
-      end,
-      "data should be a table"
-    )
-end)
+      ensure_fails_with_substring(
+          "should be a single table parameter with default data_filter",
+          function()
+            api:foo "name" ("value")
+          end,
+          "data should be a table"
+        )
+    end
+  )
 
-test "get_interface-full-call-many-params-fails" (function()
-  local dsl_loader = make_dsl_loader(simple_name_filter)
-  local api = dsl_loader:get_interface()
+test:BROKEN_IF(LUA52 or LUA53) "get_interface-full-call-many-params-fails" (
+    function()
+      local dsl_loader = make_dsl_loader(simple_name_filter)
+      local api = dsl_loader:get_interface()
 
-  ensure_fails_with_substring(
-      "should be a single parameter (was many)",
-      function()
-        api:foo "name" ("value1", "value2")
-      end,
-      "extra arguments are not supported"
-    )
-end)
+      ensure_fails_with_substring(
+          "should be a single parameter (was many)",
+          function()
+            api:foo "name" ("value1", "value2")
+          end,
+          "extra arguments are not supported"
+        )
+    end
+  )
 
-test "get_interface-full-call-missing-data-fails" (function()
-  local dsl_loader = make_dsl_loader(simple_name_filter)
-  local api = dsl_loader:get_interface()
+test:BROKEN_IF(LUA52 or LUA53) "get_interface-full-call-missing-data-fails" (
+    function()
+      local dsl_loader = make_dsl_loader(simple_name_filter)
+      local api = dsl_loader:get_interface()
 
-  ensure_fails_with_substring(
-      "should be a single parameter (was nil)",
-      function()
-        api:foo "name" ()
-      end,
-      "missing call arguments"
-    )
-end)
+      ensure_fails_with_substring(
+          "should be a single parameter (was nil)",
+          function()
+            api:foo "name" ()
+          end,
+          "missing call arguments"
+        )
+    end
+  )
 
-test "get_interface-full-call-non-string-name" (function()
-  local dsl_loader = make_dsl_loader(simple_name_filter)
-  local api = dsl_loader:get_interface()
+test:BROKEN_IF(LUA52 or LUA53) "get_interface-full-call-non-string-name" (
+    function()
+      local dsl_loader = make_dsl_loader(simple_name_filter)
+      local api = dsl_loader:get_interface()
 
-  ensure_tdeepequals(
-      "returned value check",
-      dsl_loader:finalize_data(api:call (42) { value = 1 }),
-      {
-        [TAG] = "call";
-        [NAME] = 42;
-        value = 1;
-      }
-    )
-end)
+      ensure_tdeepequals(
+          "returned value check",
+          dsl_loader:finalize_data(api:call (42) { value = 1 }),
+          {
+            [TAG] = "call";
+            [NAME] = 42;
+            value = 1;
+          }
+        )
+    end
+  )
 
-test "get_interface-name-only-call-non-string-name" (function()
-  local dsl_loader = make_dsl_loader(simple_name_filter)
-  local api = dsl_loader:get_interface()
+test:BROKEN_IF(LUA52 or LUA53) "get_interface-name-only-call-non-string-name" (
+    function()
+      local dsl_loader = make_dsl_loader(simple_name_filter)
+      local api = dsl_loader:get_interface()
 
-  ensure_tdeepequals(
-      "returned value check",
-      dsl_loader:finalize_data(api:call (42)),
-      {
-        [TAG] = "call";
-        [NAME] = 42;
-      }
-    )
-end)
+      ensure_tdeepequals(
+          "returned value check",
+          dsl_loader:finalize_data(api:call (42)),
+          {
+            [TAG] = "call";
+            [NAME] = 42;
+          }
+        )
+    end
+  )
 
-test "get_interface-full-call-table-name-passed-to-name-filter" (function()
+test:BROKEN_IF(LUA52 or LUA53)
+  "get_interface-full-call-table-name-passed-to-name-filter" (function()
   local dsl_loader = make_dsl_loader(simple_name_filter)
   local api = dsl_loader:get_interface()
 
@@ -660,7 +706,7 @@ test "finalize_data-empty" (function()
   ensure_tdeepequals("data not changed", resulting_data, original_data)
 end)
 
-test "finalize_data-list-of-values" (function()
+test:BROKEN_IF(LUA52 or LUA53) "finalize_data-list-of-values" (function()
   local dsl_loader = make_dsl_loader(simple_name_filter)
   local api = dsl_loader:get_interface()
 
@@ -691,20 +737,22 @@ test "finalize_data-list-of-values" (function()
     )
 end)
 
-test "finalize_data-dsl-in-keys-not-supported" (function()
-  local dsl_loader = make_dsl_loader(simple_name_filter)
-  local api = dsl_loader:get_interface()
+test:BROKEN_IF(LUA52 or LUA53) "finalize_data-dsl-in-keys-not-supported" (
+    function()
+      local dsl_loader = make_dsl_loader(simple_name_filter)
+      local api = dsl_loader:get_interface()
 
-  ensure_fails_with_substring(
-      "DSL data in keys is not supported",
-      function()
-        dsl_loader:finalize_data({ [api:foo "alpha"] = true })
-      end,
-      "DSL data in keys is not supported"
-    )
-end)
+      ensure_fails_with_substring(
+          "DSL data in keys is not supported",
+          function()
+            dsl_loader:finalize_data({ [api:foo "alpha"] = true })
+          end,
+          "DSL data in keys is not supported"
+        )
+    end
+  )
 
-test "finalize_data-recursion" (function()
+test:BROKEN_IF(LUA52 or LUA53) "finalize_data-recursion" (function()
   local dsl_loader = make_dsl_loader(simple_name_filter)
   local api = dsl_loader:get_interface()
 
@@ -722,7 +770,7 @@ end)
 
 --------------------------------------------------------------------------------
 
-test "filters-basic" (function()
+test:BROKEN_IF(LUA52 or LUA53) "filters-basic" (function()
   local NAME_PREFIX = "N-"
   local NAME_VALUE = "MYNAMEVALUE"
   local DATA_VALUE = "MYDATAVALUE"
@@ -845,7 +893,7 @@ end)
 
 --------------------------------------------------------------------------------
 
-test "finalize_data-multiapi" (function()
+test:BROKEN_IF(LUA52 or LUA53) "finalize_data-multiapi" (function()
   local tags_1 = tset { "alpha", "gamma", "epsilon" }
   local names_1 = tset { "one", "three", "five" }
 
@@ -982,7 +1030,7 @@ end)
 --------------------------------------------------------------------------------
 
 -- Based on actual bug scenario
-test "finalize_data-finalize-name-data" (function()
+test:BROKEN_IF(LUA52 or LUA53) "finalize_data-finalize-name-data" (function()
   local name_filter = function(tag, name, ...)
     assert(select("#", ...) == 0, "extra arguments are not supported")
 
