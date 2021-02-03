@@ -7,6 +7,12 @@
 
 local os_time, os_date = os.time, os.date
 
+local make_time_table
+      = import 'lua-nucleo/datetime-utils.lua'
+      {
+        'make_time_table'
+      }
+
 --------------------------------------------------------------------------------
 
 ---
@@ -121,6 +127,56 @@ local unpack_timestamp = function(timestamp)
   return t.year, t.month, t.day, t.hour, t.min, t.sec
 end
 
+--- Parses the input string according to datetime format. Calculates a
+-- Unit/POSIX timestamp using parsed values.
+-- @tparam string str A string to be parsed.
+-- @tparam[opt=<code>"^(%d%d)%.(%d%d)%.(%d%d%d%d) (%d%d):(%d%d):(%d%d)"</code>]
+-- string format
+-- A format to be used by the parser in a form of the Lua string pattern where
+-- first 6 six captures should be defined in the following order:
+-- <ul>
+-- <li>day of month</li>
+-- <li>month number by count</li>
+-- <li>four digits year</li>
+-- <li>24h format hour</li>
+-- <li>minute</li>
+-- <li>second</li>
+-- </ul>
+-- Each of the captures should be parsable to number.
+-- @treturn[1] number Resulted timestamp.
+-- @treturn[2] nil If parse errors are occurred.
+-- @usage
+-- local make_timestamp_from_string
+--       = import 'lua-nucleo/timestamp.lua'
+--       {
+--         'make_timestamp_from_string'
+--       }
+--
+-- local time1 = make_timestamp_from_string('04.02.2021 09:18:03')
+--
+-- local format = '^d=(%d+),m=(%d+),y=(%d+) time="(%d%d):(%d%d):(%d%d)"'
+-- local time2 = make_timestamp_from_string(
+--     'd=4,m=2,y=2021 time="09:18:03"',
+--     format
+--   )
+local make_timestamp_from_string = function(str, format)
+  format = format or "^(%d%d)%.(%d%d)%.(%d%d%d%d) (%d%d):(%d%d):(%d%d)"
+
+  local dom, mon, y, h, m, s = str:match(format)
+  if s == nil then
+    return nil
+  end
+
+  return os.time(make_time_table(
+    tonumber(dom),
+    tonumber(mon),
+    tonumber(y),
+    tonumber(h),
+    tonumber(m),
+    tonumber(s)
+  ))
+end
+
 --------------------------------------------------------------------------------
 
 return
@@ -132,4 +188,5 @@ return
   get_minute_timestamp = get_minute_timestamp;
   get_decasecond_timestamp = get_decasecond_timestamp;
   unpack_timestamp = unpack_timestamp;
+  make_timestamp_from_string = make_timestamp_from_string;
 }
