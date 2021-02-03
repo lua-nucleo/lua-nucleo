@@ -39,7 +39,11 @@ local test = make_suite("misc", misc)
 
 --------------------------------------------------------------------------------
 
-test:test_for "unique_object" (function()
+local is_lua52_or_lua53 = _VERSION == 'Lua 5.2' or _VERSION == 'Lua 5.3'
+
+-- fails on Lua 5.2 and sometimes on Lua 5.3
+-- see https://github.com/lua-nucleo/lua-nucleo/issues/57
+test:test_for("unique_object"):BROKEN_IF(is_lua52_or_lua53) (function()
   -- A bit silly, but how to test it better?
   local N = 100
 
