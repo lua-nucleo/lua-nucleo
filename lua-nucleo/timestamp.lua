@@ -179,8 +179,16 @@ end
 
 --------------------------------------------------------------------------------
 
+--- Unix/POSIX time of the latest possible point of time in the future beyond
+-- which calculations are impossible by the module.
+local MAX_TIMESTAMP = 2^31 - 1;
+
+--------------------------------------------------------------------------------
+
 return
 {
+  MAX_TIMESTAMP = MAX_TIMESTAMP;
+
   get_day_timestamp = get_day_timestamp;
   get_yesterday_timestamp = get_yesterday_timestamp;
   get_tomorrow_timestamp = get_tomorrow_timestamp;
