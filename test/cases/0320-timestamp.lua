@@ -187,3 +187,4 @@ test:test_for 'make_timestamp_from_string' (function()
 end)
 
 test:UNTESTED 'unpack_timestamp'
+test:UNTESTED 'MAX_TIMESTAMP'
