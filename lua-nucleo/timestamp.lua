@@ -9,6 +9,9 @@ local os_time, os_date = os.time, os.date
 
 --------------------------------------------------------------------------------
 
+---
+-- @tparam number timestamp
+-- @treturn number,number
 local get_day_timestamp = function(timestamp)
   timestamp = timestamp or os_time()
 
@@ -22,6 +25,9 @@ local get_day_timestamp = function(timestamp)
   return os_time(time_table), timestamp
 end
 
+---
+-- @tparam number timestamp
+-- @treturn number,number
 local get_yesterday_timestamp = function(timestamp)
   timestamp = timestamp or os_time()
   local time_table = os_date("*t", timestamp)
@@ -30,6 +36,9 @@ local get_yesterday_timestamp = function(timestamp)
   return get_day_timestamp(os_time(time_table))
 end
 
+---
+-- @tparam number timestamp
+-- @treturn number,number
 local get_tomorrow_timestamp = function(timestamp)
   timestamp = timestamp or os_time()
   local time_table = os_date("*t", timestamp)
@@ -38,6 +47,9 @@ local get_tomorrow_timestamp = function(timestamp)
   return get_day_timestamp(os_time(time_table))
 end
 
+---
+-- @tparam number timestamp
+-- @treturn number
 local get_quarter_timestamp = function(timestamp)
   timestamp = timestamp or os_time()
 
@@ -57,6 +69,9 @@ local get_quarter_timestamp = function(timestamp)
   return os_time(t)
 end
 
+---
+-- @tparam number timestamp
+-- @treturn number
 local get_minute_timestamp = function(timestamp)
   timestamp = timestamp or os_time()
 
@@ -67,6 +82,9 @@ local get_minute_timestamp = function(timestamp)
   return os_time(t)
 end
 
+---
+-- @tparam number timestamp
+-- @treturn number
 local get_decasecond_timestamp = function(timestamp)
   timestamp = timestamp or os_time()
 
