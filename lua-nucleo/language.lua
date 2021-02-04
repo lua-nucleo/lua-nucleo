@@ -46,6 +46,15 @@ if false then
   --- Hashset of currently running Lua version types (table where the key is the
   -- type name string and the value is the `true` boolean).
   local lua_types = { }
+
+  --- <code>true</code>, if running inside Lua 5.1 VM
+  local is_lua51 = _VERSION == 'Lua 5.1'
+  --- <code>true</code>, if running inside Lua 5.2 VM
+  local is_lua52 = _VERSION == 'Lua 5.2'
+  --- <code>true</code>, if running inside Lua 5.3 VM
+  local is_lua53 = _VERSION == 'Lua 5.3'
+  --- <code>true</code>, if running inside Lua 5.4 VM
+  local is_lua54 = _VERSION == 'Lua 5.4'
 end
 
 local lua51_keywords =
@@ -89,9 +98,14 @@ local language =
   lua54_types = lua51_types;
 }
 
-for m = 1, 4 do
+local minor_version_start = 1
+local minor_version_end = 4
+
+for m = minor_version_start, minor_version_end do
   m = tostring(m)
-  if _VERSION == 'Lua 5.' .. m then
+  local is_on_m_version = _VERSION == 'Lua 5.' .. m
+  language['is_lua5' .. m] = is_on_m_version
+  if is_on_m_version then
     language.lua_types = language['lua5' .. m .. '_types']
     language.lua_keywords = language['lua5' .. m .. '_keywords']
     break
