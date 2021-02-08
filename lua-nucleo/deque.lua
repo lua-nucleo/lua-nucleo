@@ -43,8 +43,12 @@ do
     return table_remove(self, 1)
   end
 
+  -- Not letting user to affect us with setting self[0] on construction
   local pop_back = function(self)
-    return table_remove(self)
+    if #self > 0 then
+      return table_remove(self)
+    end
+    return nil
   end
 
   local mt =
