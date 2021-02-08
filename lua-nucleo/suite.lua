@@ -385,6 +385,16 @@ do
     self:TODO("write tests for `" .. import_name .. "'")
   end
 
+  local DEPRECATED = function(self, import_name)
+    assert(type(self) == "table", "bad self")
+    assert(type(import_name) == "string", "bad import name")
+    check_duplicate(self, import_name)
+    check_name(self, import_name)
+    self:TODO(
+        "`" .. import_name .. "' is marked as DEPRECATED and won't be tested"
+      )
+  end
+
   local SLOW = function(self, name)
     assert(type(self) == "table", "bad self")
     assert(type(name) == "string", "bad import name")
@@ -585,6 +595,7 @@ do
           set_skip_slow_tests = set_skip_slow_tests;
           set_relevant_test_names = set_relevant_test_names;
           UNTESTED = UNTESTED;
+          DEPRECATED = DEPRECATED;
           TODO = TODO;
           BROKEN = BROKEN;
           BROKEN_IF = BROKEN_IF;
