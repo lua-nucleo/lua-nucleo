@@ -24,14 +24,15 @@ do
 
         -- Serialize numeric indices
 
-        for i = 1, #t do
-          if i > 1 then -- TODO: Move condition out of the loop
+        local next_i = 0
+        while t[next_i + 1] ~= nil and next_i < #t do
+          next_i = next_i + 1
+          if next_i > 1 then -- TODO: Move condition out of the loop
             cat(",")
           end
-          impl(t[i], cat, visited)
+          impl(t[next_i], cat, visited)
         end
-
-        local next_i = #t + 1
+        next_i = next_i + 1
 
         -- Serialize hash part
         -- Skipping comma only at first element if there is no numeric part.
