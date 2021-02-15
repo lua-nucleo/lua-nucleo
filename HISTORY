@@ -1,3 +1,103 @@
+Version 1.1.0 (2021-04-23)
+==========================
+
+Additions and improvements:
+
+    Lua up to 5.4 support is added.
+
+    make.sh:
+      Updating list-exports only if a rock is installed.
+      Allow local luarocks installation with "--local" option.
+
+    args:
+      Fix argument number format in error messages.
+
+    datetime-utils (new module):
+      make_time_table is added.
+      get_days_in_month is added.
+      get_day_of_week is added.
+      day_of_week_name_to_number is added.
+      month_name_to_number is added.
+
+    deque:
+      pop_back is fixed.
+
+    dsl/common_load_schema:
+      A heuristics to find a source location for dsl node is added.
+
+    ensure:
+      ensure_strvariant is added.
+      ensure_strlist is added.
+      ensure_strpermutations is added.
+    
+    enumenator (new module):
+      make_enumerator_from_set is added.
+      make_enumerator_from_interval is added.
+
+    language:
+      Exports are added: lua52_types, lua52_keywords, lua53_types,
+      lua53_keywords, lua54_types, lua54_keywords, lua_types, lua_keywords.
+
+    legacy (new module):
+      loadstring is added.
+
+    language:
+      Support all current Lua versions >= 5.1
+
+    prettifier:
+      Colors support.
+      New hooks are added:
+        key_finish,
+        string_start, string_finish
+        number_start, number_finish
+        boolean_start, boolean_finish
+        before_open_curly_brace, after_open_curly_brace
+        before_closed_curly_brace, after_closed_curly_brace
+
+    sandbox:
+      Fix loadstring for Lua > 5.1
+
+    strict:
+      Add 'newproxy' to globals.
+      Declare globals for Lua versions compatibility: loadstring and setfenv.
+
+    suite:
+      test:DEPRECATED is added.
+      test:BROKEN_IF is added.
+      Allow test_for chains.
+      Store test name in the test instance.
+
+    table-utils:
+      tdeepfilter is added.
+      tisarray_not is added.
+      tifindallpermutations is added.
+
+    tdeepequals:
+      tless_kv: optimization is made.
+      tmore: prevent crashes fix is made.
+
+    timestamp:
+      MAX_TIMESTAMP is added.
+      make_timestamp_from_string is added.
+      unpack_timestamp is added.
+
+    tpretty:
+      Colors support.
+      Fix serializing tables with overloaded __index.
+
+    tserialize:
+      Replace ipairs to fix serialization with holes in Lua >= 5.3
+
+    tstr:
+      Fix serialization with metatables.
+      Fix serializing linear arrays with gaps.
+
+    Test framework is enhanced, new extensions are added.
+
+    More tests are added (including tests for new features).
+
+    Documentation is updated.
+
 Version 1.0.0 (2016-12-15)
 ==========================
 
