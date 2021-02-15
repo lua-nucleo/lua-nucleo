@@ -30,6 +30,10 @@ return
   {
     { "lua-nucleo/log.lua", w = 0 };
   };
+  MAX_TIMESTAMP =
+  {
+    { "lua-nucleo/timestamp.lua", w = 0 };
+  };
   amap =
   {
     { "lua-nucleo/args.lua", w = 0 };
@@ -162,6 +166,10 @@ return
   {
     { "lua-nucleo/string.lua", w = 0 };
   };
+  day_of_week_name_to_number =
+  {
+    { "lua-nucleo/datetime-utils.lua", w = 0 };
+  };
   decoraror_checker_helper =
   {
     { "lua-nucleo/testing/decorators.lua", w = 0 };
@@ -238,6 +246,18 @@ return
   {
     { "lua-nucleo/ensure.lua", w = 0 };
   };
+  ensure_strlist =
+  {
+    { "lua-nucleo/ensure.lua", w = 0 };
+  };
+  ensure_strpermutations =
+  {
+    { "lua-nucleo/ensure.lua", w = 0 };
+  };
+  ensure_strvariant =
+  {
+    { "lua-nucleo/ensure.lua", w = 0 };
+  };
   ensure_tdeepequals =
   {
     { "lua-nucleo/ensure.lua", w = 0 };
@@ -286,9 +306,17 @@ return
   {
     { "lua-nucleo/log.lua", w = 0 };
   };
+  get_day_of_week =
+  {
+    { "lua-nucleo/datetime-utils.lua", w = 0 };
+  };
   get_day_timestamp =
   {
     { "lua-nucleo/timestamp.lua", w = 0 };
+  };
+  get_days_in_month =
+  {
+    { "lua-nucleo/datetime-utils.lua", w = 0 };
   };
   get_decasecond_timestamp =
   {
@@ -402,6 +430,10 @@ return
   {
     { "lua-nucleo/dsl/walk_data_with_schema.lua", w = 0 };
   };
+  loadstring =
+  {
+    { "lua-nucleo/legacy.lua", w = 0 };
+  };
   looped_linear_interpolator =
   {
     { "lua-nucleo/util/anim/interpolator.lua", w = 0 };
@@ -423,6 +455,38 @@ return
     { "lua-nucleo/language.lua", w = 0 };
   };
   lua51_types =
+  {
+    { "lua-nucleo/language.lua", w = 0 };
+  };
+  lua52_keywords =
+  {
+    { "lua-nucleo/language.lua", w = 0 };
+  };
+  lua52_types =
+  {
+    { "lua-nucleo/language.lua", w = 0 };
+  };
+  lua53_keywords =
+  {
+    { "lua-nucleo/language.lua", w = 0 };
+  };
+  lua53_types =
+  {
+    { "lua-nucleo/language.lua", w = 0 };
+  };
+  lua54_keywords =
+  {
+    { "lua-nucleo/language.lua", w = 0 };
+  };
+  lua54_types =
+  {
+    { "lua-nucleo/language.lua", w = 0 };
+  };
+  lua_keywords =
+  {
+    { "lua-nucleo/language.lua", w = 0 };
+  };
+  lua_types =
   {
     { "lua-nucleo/language.lua", w = 0 };
   };
@@ -449,6 +513,14 @@ return
   make_dsl_loader =
   {
     { "lua-nucleo/dsl/dsl_loader.lua", w = 0 };
+  };
+  make_enumerator_from_interval =
+  {
+    { "lua-nucleo/enumerator.lua", w = 0 };
+  };
+  make_enumerator_from_set =
+  {
+    { "lua-nucleo/enumerator.lua", w = 0 };
   };
   make_generator_mt =
   {
@@ -498,13 +570,25 @@ return
   {
     { "lua-nucleo/stack_with_factory.lua", w = 0 };
   };
+  make_time_table =
+  {
+    { "lua-nucleo/datetime-utils.lua", w = 0 };
+  };
   make_timed_queue =
   {
     { "lua-nucleo/timed_queue.lua", w = 0 };
   };
+  make_timestamp_from_string =
+  {
+    { "lua-nucleo/timestamp.lua", w = 0 };
+  };
   method_arguments =
   {
     { "lua-nucleo/args.lua", w = 0 };
+  };
+  month_name_to_number =
+  {
+    { "lua-nucleo/datetime-utils.lua", w = 0 };
   };
   nargs =
   {
@@ -598,6 +682,10 @@ return
   {
     { "lua-nucleo/tdeepequals.lua", w = 0 };
   };
+  tdeepfilter =
+  {
+    { "lua-nucleo/table-utils.lua", w = 0 };
+  };
   tequals =
   {
     { "lua-nucleo/table-utils.lua", w = 0 };
@@ -635,6 +723,10 @@ return
     { "lua-nucleo/table-utils.lua", w = 0 };
   };
   tifilter =
+  {
+    { "lua-nucleo/table-utils.lua", w = 0 };
+  };
+  tifindallpermutations =
   {
     { "lua-nucleo/table-utils.lua", w = 0 };
   };
@@ -687,6 +779,10 @@ return
     { "lua-nucleo/table-utils.lua", w = 0 };
   };
   tisarray =
+  {
+    { "lua-nucleo/table-utils.lua", w = 0 };
+  };
+  tisarray_not =
   {
     { "lua-nucleo/table-utils.lua", w = 0 };
   };
@@ -881,6 +977,10 @@ return
   unique_object =
   {
     { "lua-nucleo/misc.lua", w = 0 };
+  };
+  unpack_timestamp =
+  {
+    { "lua-nucleo/timestamp.lua", w = 0 };
   };
   upper_bound =
   {
