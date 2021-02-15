@@ -30,6 +30,10 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Local_Functions">Local Functions</a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -42,7 +46,7 @@
   <li><a href="../modules/lua-nucleo.code.foreign-global.lua5_1.html">lua-nucleo.code.foreign-global.lua5_1</a></li>
   <li><a href="../modules/lua-nucleo.code.foreign-global.luajit2.html">lua-nucleo.code.foreign-global.luajit2</a></li>
   <li><a href="../modules/lua-nucleo.code.globals.html">lua-nucleo.code.globals</a></li>
-  <li><strong>lua-nucleo.code.profile</strong></li>
+  <li><a href="../modules/lua-nucleo.code.profile.html">lua-nucleo.code.profile</a></li>
   <li><a href="../modules/lua-nucleo.coro.html">lua-nucleo.coro</a></li>
   <li><a href="../modules/lua-nucleo.datetime-utils.html">lua-nucleo.datetime-utils</a></li>
   <li><a href="../modules/lua-nucleo.deque.html">lua-nucleo.deque</a></li>
@@ -54,7 +58,7 @@
   <li><a href="../modules/lua-nucleo.dsl.tagged-tree.html">lua-nucleo.dsl.tagged-tree</a></li>
   <li><a href="../modules/lua-nucleo.dsl.walk_data_with_schema.html">lua-nucleo.dsl.walk_data_with_schema</a></li>
   <li><a href="../modules/lua-nucleo.ensure.html">lua-nucleo.ensure</a></li>
-  <li><a href="../modules/lua-nucleo.enumerator.html">lua-nucleo.enumerator</a></li>
+  <li><strong>lua-nucleo.enumerator</strong></li>
   <li><a href="../modules/lua-nucleo.factory.html">lua-nucleo.factory</a></li>
   <li><a href="../modules/lua-nucleo.functional.html">lua-nucleo.functional</a></li>
   <li><a href="../modules/lua-nucleo.import.html">lua-nucleo.import</a></li>
@@ -109,8 +113,8 @@
 
 <div id="content">
 
-<h1>Module <code>lua-nucleo.code.profile</code></h1>
-<p>Lua-nucleo exports profile</p>
+<h1>Module <code>lua-nucleo.enumerator</code></h1>
+<p>Enuminator tools</p>
 <p>
  This file is a part of lua-nucleo library</p>
     <h3>Info:</h3>
@@ -119,11 +123,193 @@
     </ul>
 
 
+<h2><a href="#Local_Functions">Local Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#enuminator.get_first">enuminator.get_first (self)</a></td>
+	<td class="summary">Returns minimum value.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#enuminator.get_next">enuminator.get_next (self, value)</a></td>
+	<td class="summary">Returns next value for the given value.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#enuminator.contains">enuminator.contains (self, value)</a></td>
+	<td class="summary">Checks if the value has the next value.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#make_enumerator_from_set">make_enumerator_from_set (values)</a></td>
+	<td class="summary">Makes enumerator from set.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#make_enumerator_from_interval">make_enumerator_from_interval (first, last)</a></td>
+	<td class="summary">Makes enumerator based on the passed interval boundaries with a step of 1.</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2 class="section-header "><a name="Local_Functions"></a>Local Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "enuminator.get_first"></a>
+    <strong>enuminator.get_first (self)</strong>
+    </dt>
+    <dd>
+    Returns minimum value.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">enuminator</span></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        Minimum value
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "enuminator.get_next"></a>
+    <strong>enuminator.get_next (self, value)</strong>
+    </dt>
+    <dd>
+    Returns next value for the given value.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">enuminator</span></span>
+
+        </li>
+        <li><span class="parameter">value</span>
+            <span class="types"><span class="type">number</span></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        Next value.
+    </ol>
+     <h3>Or</h3>
+    <ol>
+
+           <span class="types"><span class="type">nil</span></span>
+        If value is bigger than the maximum.
+    </ol>
+
+    <h3>Raises:</h3>
+    Error if no next value is found.
+
+
+
+</dd>
+    <dt>
+    <a name = "enuminator.contains"></a>
+    <strong>enuminator.contains (self, value)</strong>
+    </dt>
+    <dd>
+    Checks if the value has the next value.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">enuminator</span></span>
+
+        </li>
+        <li><span class="parameter">value</span>
+            <span class="types"><span class="type">number</span></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        True, if <code>self</code> contains.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "make_enumerator_from_set"></a>
+    <strong>make_enumerator_from_set (values)</strong>
+    </dt>
+    <dd>
+    Makes enumerator from set.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">values</span>
+            <span class="types"><span class="type">number[]</span></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">enuminator</span></span>
+        instance.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "make_enumerator_from_interval"></a>
+    <strong>make_enumerator_from_interval (first, last)</strong>
+    </dt>
+    <dd>
+    Makes enumerator based on the passed interval boundaries with a step of 1.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">first</span>
+            <span class="types"><span class="type">number</span></span>
+         Interval start.
+        </li>
+        <li><span class="parameter">last</span>
+            <span class="types"><span class="type">number</span></span>
+         Interval end.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">enuminator</span></span>
+        instance.
+    </ol>
+
+
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->
