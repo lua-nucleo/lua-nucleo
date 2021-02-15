@@ -11,7 +11,7 @@
 6. Generate `VERSION-1` rockspec, where VERSION is the version to be released.
    Example:
    ```
-   lua etc/rockspec/generate.lua 1.1.0-1 > rockspec/lua-nucleo-1.1.0-1.rockspec
+   lua etc/rockspec/generate.lua 1.1.0-1 v1.1.0 > rockspec/lua-nucleo-1.1.0-1.rockspec
    ````
 7. Regenerate API docs: `./make-doc.sh`
 8. Make sure that all the changes is in the working tree.
