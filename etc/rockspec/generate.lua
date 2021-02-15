@@ -36,12 +36,15 @@ end
 local files = find_all_files("lua-nucleo", "^.*%.lua$")
 table.sort(files)
 
+local version = select(1, ...) or "scm-1"
+local branch = select(2, ...) or "master"
+
 io.stdout:write([[
 package = "lua-nucleo"
-version = "]] .. (select(1, ...) or "scm-1") .. [["
+version = "]] .. version .. [["
 source = {
    url = "git://github.com/lua-nucleo/lua-nucleo.git",
-   branch = "master"
+   branch = "]] .. branch .. [["
 }
 description = {
    summary = "A random collection of core and utility level Lua libraries",
