@@ -15,8 +15,8 @@
 
 local tserialize
 do
-  local pairs, type, ipairs, tostring, select
-      = pairs, type, ipairs, tostring, select
+  local pairs, type, tostring, select
+      = pairs, type, tostring, select
   local table_concat, table_remove = table.concat, table.remove
   local string_format, string_match = string.format, string.match
 
@@ -26,6 +26,38 @@ do
   local cur_buf
   local cat = function(v)
     cur_buf[#cur_buf + 1] = v
+  end
+
+  local function general_iterator(tbl, i)
+    i = i + 1
+    local v = tbl[i]
+    if v ~= nil then
+      return i, v
+    end
+  end
+
+  local function metatable_iterator(tbl, i)
+    i = i + 1
+    local v = rawget(tbl, i)
+    if v ~= nil then
+      return i, v
+    end
+  end
+
+  -- Starting from Lua 5.3, size of the array tables with holes is different
+  -- that in older versions and is really undetermined as the Lua manual
+  -- always been said. This affects native `ipair` iterator and breaks
+  -- serialization of some tables with holes in Lua >= 5.3. To resolve it,
+  -- we introduce modified ipairs iterator that gets rid of that uncertainty.
+  -- `ipairs_raw` iterates the table starting from the first element until
+  -- the `nil` element is found. Access is made via `rawget` if the input table
+  -- has metatable, and via table key accessor otherwise.
+  local function ipairs_raw(list)
+    if getmetatable(list) then
+      return metatable_iterator, list, 0
+    end
+
+    return general_iterator, list, 0
   end
 
   local function explode_rec(t, add, vis, added)
@@ -89,7 +121,7 @@ do
         cat("{")
         -- Serialize numeric indices
         local next_i = 0
-        for i, v in ipairs(t) do
+        for i, v in ipairs_raw(t) do
           next_i = i
           if not (rec_info[i] or rec_info[v]) then
             if i ~= 1 then cat(",") end
@@ -164,7 +196,7 @@ do
         cat("{")
         -- Serialize numeric indices
         local next_i = 0
-        for i, v in ipairs(t) do
+        for i, v in ipairs_raw(t) do
           next_i = i
           if i ~= 1 then cat(",") end
           recursive_proceed_simple(v, added)
