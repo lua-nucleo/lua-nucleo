@@ -1,8 +1,8 @@
 package = "lua-nucleo"
-version = "scm-1"
+version = "1.1.0-1"
 source = {
    url = "git://github.com/lua-nucleo/lua-nucleo.git",
-   branch = "master"
+   branch = "v1.1.0"
 }
 description = {
    summary = "A random collection of core and utility level Lua libraries",

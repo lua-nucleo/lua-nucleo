@@ -48,6 +48,7 @@
   <li><a href="../modules/lua-nucleo.code.globals.html">lua-nucleo.code.globals</a></li>
   <li><a href="../modules/lua-nucleo.code.profile.html">lua-nucleo.code.profile</a></li>
   <li><a href="../modules/lua-nucleo.coro.html">lua-nucleo.coro</a></li>
+  <li><a href="../modules/lua-nucleo.datetime-utils.html">lua-nucleo.datetime-utils</a></li>
   <li><a href="../modules/lua-nucleo.deque.html">lua-nucleo.deque</a></li>
   <li><a href="../modules/lua-nucleo.diagnostics.html">lua-nucleo.diagnostics</a></li>
   <li><a href="../modules/lua-nucleo.dsl.common_load_schema.html">lua-nucleo.dsl.common_load_schema</a></li>
@@ -57,6 +58,7 @@
   <li><a href="../modules/lua-nucleo.dsl.tagged-tree.html">lua-nucleo.dsl.tagged-tree</a></li>
   <li><a href="../modules/lua-nucleo.dsl.walk_data_with_schema.html">lua-nucleo.dsl.walk_data_with_schema</a></li>
   <li><strong>lua-nucleo.ensure</strong></li>
+  <li><a href="../modules/lua-nucleo.enumerator.html">lua-nucleo.enumerator</a></li>
   <li><a href="../modules/lua-nucleo.factory.html">lua-nucleo.factory</a></li>
   <li><a href="../modules/lua-nucleo.functional.html">lua-nucleo.functional</a></li>
   <li><a href="../modules/lua-nucleo.import.html">lua-nucleo.import</a></li>
@@ -369,16 +371,16 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">msg</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          Failing message that will be used in the error message if
                     the check fails.
         </li>
         <li><span class="parameter">actual</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          A string to check.
         </li>
         <li><span class="parameter">expected</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string[]</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string[]</a></span>
          The linear array table of strings.
         </li>
         <li><span class="parameter">...</span>
@@ -390,10 +392,10 @@
     <h3>Returns:</h3>
     <ol>
         <li>
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
         <code>actual</code> intact.</li>
         <li>
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string[]</a></span>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string[]</a></span>
         <code>expected</code> intact.</li>
         <li>
            <span class="types"><span class="type">any[]</span></span>
@@ -421,8 +423,7 @@
     <span class="string">'find the_element_that_cannot_be_found'</span>,
     <span class="string">'the_element_that_cannot_be_found'</span>,
     { <span class="string">'elem0'</span>, <span class="string">'elem1'</span>, <span class="string">'elem2'</span> }
-  )
-</pre>
+  )</pre>
     </ul>
 
 </dd>
@@ -453,32 +454,32 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">msg</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          Failing message that will be used in the error message if
          the check fails.
         </li>
         <li><span class="parameter">actual</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          A string to check.
         </li>
         <li><span class="parameter">expected_prefix</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          Expected prefix. Expected that the
          <code>actual</code> must start with the <code>expected_prefix</code>.
         </li>
         <li><span class="parameter">expected_elements_list</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string[]</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string[]</a></span>
          Expected elements list. Expected that
          <code>expected_elements_list</code> elements exist in the <code>actual</code>
          whatever the original order from the <code>expected_elements_list</code>.
         </li>
         <li><span class="parameter">expected_sep</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          Expected separator character. Expected that this
          separator is used to join list elements together.
         </li>
         <li><span class="parameter">expected_suffix</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          Expected suffix character. Expected that the
          <code>actual</code> ends with the <code>expected_suffix</code>.
         </li>
@@ -491,19 +492,19 @@
     <h3>Returns:</h3>
     <ol>
         <li>
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
         <code>actual</code> intact.</li>
         <li>
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
         <code>expected_prefix</code> intact.</li>
         <li>
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string[]</a></span>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string[]</a></span>
         <code>expected_elements_list</code> intact.</li>
         <li>
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
         <code>expected_sep</code> intact.</li>
         <li>
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
         <code>expected_suffix</code> intact.</li>
         <li>
            <span class="types"><span class="type">any[]</span></span>
@@ -550,8 +551,7 @@
     { <span class="string">'1'</span>, <span class="string">'b*c'</span>, <span class="string">'m^2/2'</span> },
     <span class="string">'+'</span>,
     <span class="string">''</span>
-  )
-</pre>
+  )</pre>
     </ul>
 
 </dd>
@@ -584,32 +584,32 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">msg</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          Failing message that will be used in the error message if
          the check fails.
         </li>
         <li><span class="parameter">actual</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          A string to check.
         </li>
         <li><span class="parameter">expected_prefix</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          Expected prefix. Expected that the
          <code>actual</code> must start with the <code>expected_prefix</code>.
         </li>
         <li><span class="parameter">expected_elements_list</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string[]</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string[]</a></span>
          Expected elements list. Expected that
          <code>expected_elements_list</code> elements exist in the <code>actual</code>
          whatever the original order from the <code>expected_elements_list</code>.
         </li>
         <li><span class="parameter">expected_sep</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          Expected separator. Expected that this
          separator is used to join list elements together.
         </li>
         <li><span class="parameter">expected_suffix</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          Expected suffix / footer. Expected that the
          <code>actual</code> ends with the <code>expected_suffix</code>.
         </li>
@@ -622,19 +622,19 @@
     <h3>Returns:</h3>
     <ol>
         <li>
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
         <code>actual</code> intact.</li>
         <li>
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
         <code>expected_prefix</code> intact.</li>
         <li>
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string[]</a></span>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string[]</a></span>
         <code>expected_elements_list</code> intact.</li>
         <li>
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
         <code>expected_sep</code> intact.</li>
         <li>
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
         <code>expected_suffix</code> intact.</li>
         <li>
            <span class="types"><span class="type">any[]</span></span>
@@ -873,7 +873,7 @@ ensure_strlist(
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2021-01-29 19:42:37 </i>
+<i style="float:right;">Last updated 2021-02-15 11:15:01 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
