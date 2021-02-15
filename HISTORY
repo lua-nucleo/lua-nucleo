@@ -1,3 +1,59 @@
+Version 1.1.0 (2021-02-15)
+==========================
+
+Additions and improvements:
+
+    Lua up to 5.4 support is added.
+
+    make.sh:
+      More strict bash is set.
+      Updating list-exports only if a rock is installed.
+      Allow local luarocks installation with "--local" option.
+
+    datetime-utils (new module):
+      make_time_table is added.
+      get_days_in_month is added.
+      get_day_of_week  is added.
+      day_of_week_name_to_number is added.
+      month_name_to_number is added.
+
+    dsl/common_load_schema:
+      A heuristics to find a source location for dsl node is added.
+
+    ensure:
+      ensure_strvariant is added.
+      ensure_strlist is added.
+      ensure_strpermutations is added.
+    
+    enumenator:
+      make_enumerator_from_set is added.
+      make_enumerator_from_interval is added.
+
+    language:
+      Exports are added: lua52_types, lua52_keywords, lua53_types,
+      lua53_keywords, lua54_types, lua54_keywords, lua_types, lua_keywords.
+
+    legacy (new module):
+      loadstring is added.
+
+    language:
+      update to support all current Lua versions >= 5.1
+
+    table-utils:
+      tdeepfilter is added.
+      tisarray_not is added.
+      tifindallpermutations is added.
+
+    tdeepequals:
+      tless_kv: optimization is made.
+      tmore: prevent crashes fix is made.
+
+    Test framework is enhanced, new extensions are added.
+
+    More tests are added (including tests for new features).
+
+    Documentation is updated.
+
 Version 1.0.0 (2016-12-15)
 ==========================
 
