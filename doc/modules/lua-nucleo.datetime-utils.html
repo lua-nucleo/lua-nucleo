@@ -30,6 +30,10 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Local_Functions">Local Functions</a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -44,7 +48,7 @@
   <li><a href="../modules/lua-nucleo.code.globals.html">lua-nucleo.code.globals</a></li>
   <li><a href="../modules/lua-nucleo.code.profile.html">lua-nucleo.code.profile</a></li>
   <li><a href="../modules/lua-nucleo.coro.html">lua-nucleo.coro</a></li>
-  <li><a href="../modules/lua-nucleo.datetime-utils.html">lua-nucleo.datetime-utils</a></li>
+  <li><strong>lua-nucleo.datetime-utils</strong></li>
   <li><a href="../modules/lua-nucleo.deque.html">lua-nucleo.deque</a></li>
   <li><a href="../modules/lua-nucleo.diagnostics.html">lua-nucleo.diagnostics</a></li>
   <li><a href="../modules/lua-nucleo.dsl.common_load_schema.html">lua-nucleo.dsl.common_load_schema</a></li>
@@ -97,7 +101,7 @@
   <li><a href="../modules/test.test-lib.import.html">test.test-lib.import</a></li>
   <li><a href="../modules/test.test-lib.init.no-suite-no-import.html">test.test-lib.init.no-suite-no-import</a></li>
   <li><a href="../modules/test.test-lib.init.no-suite.html">test.test-lib.init.no-suite</a></li>
-  <li><strong>test.test-lib.init.strict-import-as-require</strong></li>
+  <li><a href="../modules/test.test-lib.init.strict-import-as-require.html">test.test-lib.init.strict-import-as-require</a></li>
   <li><a href="../modules/test.test-lib.init.strict.html">test.test-lib.init.strict</a></li>
   <li><a href="../modules/test.test-lib.table.html">test.test-lib.table</a></li>
   <li><a href="../modules/test.test-lib.tdeepequals-test-utils.html">test.test-lib.tdeepequals-test-utils</a></li>
@@ -109,8 +113,8 @@
 
 <div id="content">
 
-<h1>Module <code>test.test-lib.init.strict-import-as-require</code></h1>
-<p>Test initialization file with import as require</p>
+<h1>Module <code>lua-nucleo.datetime-utils</code></h1>
+<p>Date and time related utilities</p>
 <p>
  This file is a part of lua-nucleo library</p>
     <h3>Info:</h3>
@@ -119,11 +123,206 @@
     </ul>
 
 
+<h2><a href="#Local_Functions">Local Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#make_time_table">make_time_table (dom, mon, y, h, m, s)</a></td>
+	<td class="summary">Converts function arguments to the associative array table and returns it.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#get_days_in_month">get_days_in_month (year, month)</a></td>
+	<td class="summary">Returns number of days in the given month of the given year.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#get_day_of_week">get_day_of_week (timestamp)</a></td>
+	<td class="summary">Returns a day of a week for the given timestamp.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#day_of_week_name_to_number">day_of_week_name_to_number (v)</a></td>
+	<td class="summary">Converts the given string to a day of a week.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#month_name_to_number">month_name_to_number (v)</a></td>
+	<td class="summary">Converts the given string to a month number.</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2 class="section-header "><a name="Local_Functions"></a>Local Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "make_time_table"></a>
+    <strong>make_time_table (dom, mon, y, h, m, s)</strong>
+    </dt>
+    <dd>
+    Converts function arguments to the associative array table and returns it.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">dom</span>
+            <span class="types"><span class="type">number</span></span>
+         A day of a month.
+        </li>
+        <li><span class="parameter">mon</span>
+            <span class="types"><span class="type">number</span></span>
+         Month number by count.
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         Year.
+        </li>
+        <li><span class="parameter">h</span>
+            <span class="types"><span class="type">number</span></span>
+         Hour.
+        </li>
+        <li><span class="parameter">m</span>
+            <span class="types"><span class="type">number</span></span>
+         Minute.
+        </li>
+        <li><span class="parameter">s</span>
+            <span class="types"><span class="type">number</span></span>
+         Second.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         <code>{
+    day = dom;
+    month = mon;
+    year = y;
+    hour = h;
+    min = m;
+    sec = s;
+  }</code>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "get_days_in_month"></a>
+    <strong>get_days_in_month (year, month)</strong>
+    </dt>
+    <dd>
+    Returns number of days in the given month of the given year.
+ (From http://lua-users.org/wiki/DayOfWeekAndDaysInMonthExample)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">year</span>
+            <span class="types"><span class="type">number</span></span>
+         Year.
+        </li>
+        <li><span class="parameter">month</span>
+            <span class="types"><span class="type">number</span></span>
+         Month number by count.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        Number of days in the given month of the given year.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "get_day_of_week"></a>
+    <strong>get_day_of_week (timestamp)</strong>
+    </dt>
+    <dd>
+    Returns a day of a week for the given timestamp.
+ (From http://richard.warburton.it)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">timestamp</span>
+            <span class="types"><span class="type">number</span></span>
+         Unix/POSIX time.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        Day of week, where zero is Sunday.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "day_of_week_name_to_number"></a>
+    <strong>day_of_week_name_to_number (v)</strong>
+    </dt>
+    <dd>
+    Converts the given string to a day of a week.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">v</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Day of week string representation.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        Day of week, where zero is Sunday.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "month_name_to_number"></a>
+    <strong>month_name_to_number (v)</strong>
+    </dt>
+    <dd>
+    Converts the given string to a month number.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">v</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Month string representation.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        Month number by count.
+    </ol>
+
+
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->

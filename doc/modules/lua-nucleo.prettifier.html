@@ -30,6 +30,11 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Instance_functions">Instance functions </a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -44,6 +49,7 @@
   <li><a href="../modules/lua-nucleo.code.globals.html">lua-nucleo.code.globals</a></li>
   <li><a href="../modules/lua-nucleo.code.profile.html">lua-nucleo.code.profile</a></li>
   <li><a href="../modules/lua-nucleo.coro.html">lua-nucleo.coro</a></li>
+  <li><a href="../modules/lua-nucleo.datetime-utils.html">lua-nucleo.datetime-utils</a></li>
   <li><a href="../modules/lua-nucleo.deque.html">lua-nucleo.deque</a></li>
   <li><a href="../modules/lua-nucleo.diagnostics.html">lua-nucleo.diagnostics</a></li>
   <li><a href="../modules/lua-nucleo.dsl.common_load_schema.html">lua-nucleo.dsl.common_load_schema</a></li>
@@ -53,6 +59,7 @@
   <li><a href="../modules/lua-nucleo.dsl.tagged-tree.html">lua-nucleo.dsl.tagged-tree</a></li>
   <li><a href="../modules/lua-nucleo.dsl.walk_data_with_schema.html">lua-nucleo.dsl.walk_data_with_schema</a></li>
   <li><a href="../modules/lua-nucleo.ensure.html">lua-nucleo.ensure</a></li>
+  <li><a href="../modules/lua-nucleo.enumerator.html">lua-nucleo.enumerator</a></li>
   <li><a href="../modules/lua-nucleo.factory.html">lua-nucleo.factory</a></li>
   <li><a href="../modules/lua-nucleo.functional.html">lua-nucleo.functional</a></li>
   <li><a href="../modules/lua-nucleo.import.html">lua-nucleo.import</a></li>
@@ -117,18 +124,594 @@
     </ul>
 
 
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#make_prettifier">make_prettifier (indent, buffer, cols[, colors])</a></td>
+	<td class="summary">Prettifier factory.</td>
+	</tr>
+</table>
+<h2><a href="#Instance_functions">Instance functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#increase_indent">increase_indent ()</a></td>
+	<td class="summary">Increase current indent level.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#decrease_indent">decrease_indent ()</a></td>
+	<td class="summary">Decrease current indent level.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#separator">separator ()</a></td>
+	<td class="summary">Add the separator.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#optional_nl">optional_nl ()</a></td>
+	<td class="summary">Add optional new line.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#terminating_sep">terminating_sep ()</a></td>
+	<td class="summary">Add terminating separator.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#table_start">table_start ()</a></td>
+	<td class="summary">Table start hook.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#table_finish">table_finish ()</a></td>
+	<td class="summary">Table finish hook.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#key_start">key_start ()</a></td>
+	<td class="summary">Key start hook.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#key_start">key_start ()</a></td>
+	<td class="summary">Value start hook.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#key_value_finish">key_value_finish ()</a></td>
+	<td class="summary">Key-value finish hook.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#finished">finished ()</a></td>
+	<td class="summary">Finalize.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#key_finish">key_finish ()</a></td>
+	<td class="summary">Key finish hook.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#string_start">string_start ()</a></td>
+	<td class="summary">String start hook.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#string_finish">string_finish ()</a></td>
+	<td class="summary">String finish hook.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#number_start">number_start ()</a></td>
+	<td class="summary">Number start hook.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#number_finish">number_finish ()</a></td>
+	<td class="summary">Number finish hook.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#boolean_start">boolean_start ()</a></td>
+	<td class="summary">Boolean start hook.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#boolean_finish">boolean_finish ()</a></td>
+	<td class="summary">Boolean finish hook.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#before_open_curly_brace">before_open_curly_brace ()</a></td>
+	<td class="summary">Before open curly brace hook.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#before_closed_curly_brace">before_closed_curly_brace ()</a></td>
+	<td class="summary">Before closed curly brace hook.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#after_open_curly_brace">after_open_curly_brace ()</a></td>
+	<td class="summary">After open curly brace hook.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#after_closed_curly_brace">after_closed_curly_brace ()</a></td>
+	<td class="summary">After closed curly brace hook.</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "make_prettifier"></a>
+    <strong>make_prettifier (indent, buffer, cols[, colors])</strong>
+    </dt>
+    <dd>
+    Prettifier factory.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">indent</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         An indent string to be used.
+        </li>
+        <li><span class="parameter">buffer</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         Table to be used as a buffer.
+        </li>
+        <li><span class="parameter">cols</span>
+            <span class="types"><span class="type">number</span></span>
+         Maximum allowed length of single line.
+        </li>
+        <li><span class="parameter">colors</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         Optional color table. Specify if you want to
+ define custom colors for various element of the output. Note: <code>reset_color</code>
+ must always be specified. Available elements:
+ <ul>
+   <li><code>curly_braces:</code> (string) string that will be inserted before curly
+                                braces</li>
+   <li><code>key:</code> (string) string that will be inserted before table keys</li>
+   <li><code>boolean:</code> (string) string that will be inserted before booleans</li>
+   <li><code>string:</code> (string) string that will be inserted before strings</li>
+   <li><code>number:</code> (string) string that will be inserted before numbers</li>
+   <li><code>reset_color:</code> (string) string that will be inserted after the
+                               entity which has a defined color</li>
+ </ul>
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">prettifier_instance</span></span>
+        Prettifier instance.
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Instance_functions"></a>Instance functions </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "increase_indent"></a>
+    <strong>increase_indent ()</strong>
+    </dt>
+    <dd>
+    Increase current indent level.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "decrease_indent"></a>
+    <strong>decrease_indent ()</strong>
+    </dt>
+    <dd>
+    Decrease current indent level.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "separator"></a>
+    <strong>separator ()</strong>
+    </dt>
+    <dd>
+    Add the separator.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "optional_nl"></a>
+    <strong>optional_nl ()</strong>
+    </dt>
+    <dd>
+    Add optional new line.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "terminating_sep"></a>
+    <strong>terminating_sep ()</strong>
+    </dt>
+    <dd>
+    Add terminating separator.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "table_start"></a>
+    <strong>table_start ()</strong>
+    </dt>
+    <dd>
+    Table start hook.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "table_finish"></a>
+    <strong>table_finish ()</strong>
+    </dt>
+    <dd>
+    Table finish hook.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "key_start"></a>
+    <strong>key_start ()</strong>
+    </dt>
+    <dd>
+    Key start hook.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "key_start"></a>
+    <strong>key_start ()</strong>
+    </dt>
+    <dd>
+    Value start hook.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "key_value_finish"></a>
+    <strong>key_value_finish ()</strong>
+    </dt>
+    <dd>
+    Key-value finish hook.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "finished"></a>
+    <strong>finished ()</strong>
+    </dt>
+    <dd>
+    Finalize.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "key_finish"></a>
+    <strong>key_finish ()</strong>
+    </dt>
+    <dd>
+    Key finish hook.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "string_start"></a>
+    <strong>string_start ()</strong>
+    </dt>
+    <dd>
+    String start hook.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "string_finish"></a>
+    <strong>string_finish ()</strong>
+    </dt>
+    <dd>
+    String finish hook.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "number_start"></a>
+    <strong>number_start ()</strong>
+    </dt>
+    <dd>
+    Number start hook.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "number_finish"></a>
+    <strong>number_finish ()</strong>
+    </dt>
+    <dd>
+    Number finish hook.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "boolean_start"></a>
+    <strong>boolean_start ()</strong>
+    </dt>
+    <dd>
+    Boolean start hook.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "boolean_finish"></a>
+    <strong>boolean_finish ()</strong>
+    </dt>
+    <dd>
+    Boolean finish hook.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "before_open_curly_brace"></a>
+    <strong>before_open_curly_brace ()</strong>
+    </dt>
+    <dd>
+    Before open curly brace hook.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "before_closed_curly_brace"></a>
+    <strong>before_closed_curly_brace ()</strong>
+    </dt>
+    <dd>
+    Before closed curly brace hook.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "after_open_curly_brace"></a>
+    <strong>after_open_curly_brace ()</strong>
+    </dt>
+    <dd>
+    After open curly brace hook.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "after_closed_curly_brace"></a>
+    <strong>after_closed_curly_brace ()</strong>
+    </dt>
+    <dd>
+    After closed curly brace hook.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        None
+    </ol>
+
+
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2021-01-29 19:42:37 </i>
+<i style="float:right;">Last updated 2021-04-22 13:57:02 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

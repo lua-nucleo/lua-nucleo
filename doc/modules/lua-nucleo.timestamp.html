@@ -30,6 +30,11 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Fields">Fields</a></li>
+<li><a href="#Local_Functions">Local Functions</a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -44,6 +49,7 @@
   <li><a href="../modules/lua-nucleo.code.globals.html">lua-nucleo.code.globals</a></li>
   <li><a href="../modules/lua-nucleo.code.profile.html">lua-nucleo.code.profile</a></li>
   <li><a href="../modules/lua-nucleo.coro.html">lua-nucleo.coro</a></li>
+  <li><a href="../modules/lua-nucleo.datetime-utils.html">lua-nucleo.datetime-utils</a></li>
   <li><a href="../modules/lua-nucleo.deque.html">lua-nucleo.deque</a></li>
   <li><a href="../modules/lua-nucleo.diagnostics.html">lua-nucleo.diagnostics</a></li>
   <li><a href="../modules/lua-nucleo.dsl.common_load_schema.html">lua-nucleo.dsl.common_load_schema</a></li>
@@ -53,6 +59,7 @@
   <li><a href="../modules/lua-nucleo.dsl.tagged-tree.html">lua-nucleo.dsl.tagged-tree</a></li>
   <li><a href="../modules/lua-nucleo.dsl.walk_data_with_schema.html">lua-nucleo.dsl.walk_data_with_schema</a></li>
   <li><a href="../modules/lua-nucleo.ensure.html">lua-nucleo.ensure</a></li>
+  <li><a href="../modules/lua-nucleo.enumerator.html">lua-nucleo.enumerator</a></li>
   <li><a href="../modules/lua-nucleo.factory.html">lua-nucleo.factory</a></li>
   <li><a href="../modules/lua-nucleo.functional.html">lua-nucleo.functional</a></li>
   <li><a href="../modules/lua-nucleo.import.html">lua-nucleo.import</a></li>
@@ -117,18 +124,357 @@
     </ul>
 
 
+<h2><a href="#Fields">Fields</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#MAX_TIMESTAMP">MAX_TIMESTAMP</a></td>
+	<td class="summary">Unix/POSIX time of the latest possible point of time in the future beyond
+ which calculations are impossible by the module.</td>
+	</tr>
+</table>
+<h2><a href="#Local_Functions">Local Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#get_day_timestamp">get_day_timestamp (timestamp)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#get_yesterday_timestamp">get_yesterday_timestamp (timestamp)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#get_tomorrow_timestamp">get_tomorrow_timestamp (timestamp)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#get_quarter_timestamp">get_quarter_timestamp (timestamp)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#get_minute_timestamp">get_minute_timestamp (timestamp)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#get_decasecond_timestamp">get_decasecond_timestamp (timestamp)</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#unpack_timestamp">unpack_timestamp ([timestamp=<code>os_time()</code>])</a></td>
+	<td class="summary">Convert Unix time to the (year, month, day, hour, minute, second) tuple.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#make_timestamp_from_string">make_timestamp_from_string (str[, format=<code>"^(%d%d)%.(%d%d)%.(%d%d%d%d) (%d%d):(%d%d):(%d%d)"</code>])</a></td>
+	<td class="summary">Parses the input string according to datetime format.</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2 class="section-header "><a name="Fields"></a>Fields</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "MAX_TIMESTAMP"></a>
+    <strong>MAX_TIMESTAMP</strong>
+    </dt>
+    <dd>
+    Unix/POSIX time of the latest possible point of time in the future beyond
+ which calculations are impossible by the module.
+
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Local_Functions"></a>Local Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "get_day_timestamp"></a>
+    <strong>get_day_timestamp (timestamp)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">timestamp</span>
+            <span class="types"><span class="type">number</span></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number,number</span></span>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "get_yesterday_timestamp"></a>
+    <strong>get_yesterday_timestamp (timestamp)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">timestamp</span>
+            <span class="types"><span class="type">number</span></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number,number</span></span>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "get_tomorrow_timestamp"></a>
+    <strong>get_tomorrow_timestamp (timestamp)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">timestamp</span>
+            <span class="types"><span class="type">number</span></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number,number</span></span>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "get_quarter_timestamp"></a>
+    <strong>get_quarter_timestamp (timestamp)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">timestamp</span>
+            <span class="types"><span class="type">number</span></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "get_minute_timestamp"></a>
+    <strong>get_minute_timestamp (timestamp)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">timestamp</span>
+            <span class="types"><span class="type">number</span></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "get_decasecond_timestamp"></a>
+    <strong>get_decasecond_timestamp (timestamp)</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">timestamp</span>
+            <span class="types"><span class="type">number</span></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "unpack_timestamp"></a>
+    <strong>unpack_timestamp ([timestamp=<code>os_time()</code>])</strong>
+    </dt>
+    <dd>
+    Convert Unix time to the (year, month, day, hour, minute, second) tuple.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">timestamp</span>
+            <span class="types"><span class="type">number</span></span>
+         Optional timestamp in
+                                     the Unix/POSIX time format.
+         (<em>default</em> <code>os_time()</code>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number,number,number,number,number,number</span></span>
+         Year, month, day of month,
+          hour, minute and second of the timestamp was being provided or
+          the current time if not.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> unpack_timestamp
+      = import <span class="string">'lua-nucleo/timestamp.lua'</span>
+      {
+        <span class="string">'unpack_timestamp'</span>
+      }
+
+<span class="keyword">local</span> push_date = <span class="keyword">function</span>(year, month, day, hour, minute, second)
+  <span class="comment">-- do something
+</span><span class="keyword">end</span>
+
+push_date(unpack_timestamp())</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "make_timestamp_from_string"></a>
+    <strong>make_timestamp_from_string (str[, format=<code>"^(%d%d)%.(%d%d)%.(%d%d%d%d) (%d%d):(%d%d):(%d%d)"</code>])</strong>
+    </dt>
+    <dd>
+    Parses the input string according to datetime format.  Calculates a
+ Unit/POSIX timestamp using parsed values.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         A string to be parsed.
+        </li>
+        <li><span class="parameter">format</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+ A format to be used by the parser in a form of the Lua string pattern where
+ first 6 six captures should be defined in the following order:
+ <ul>
+ <li>day of month</li>
+ <li>month number by count</li>
+ <li>four digits year</li>
+ <li>24h format hour</li>
+ <li>minute</li>
+ <li>second</li>
+ </ul>
+ Each of the captures should be parsable to number.
+         (<em>default</em> <code>"^(%d%d)%.(%d%d)%.(%d%d%d%d) (%d%d):(%d%d):(%d%d)"</code>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        Resulted timestamp.
+    </ol>
+     <h3>Or</h3>
+    <ol>
+
+           <span class="types"><span class="type">nil</span></span>
+        If parse errors are occurred.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> make_timestamp_from_string
+      = import <span class="string">'lua-nucleo/timestamp.lua'</span>
+      {
+        <span class="string">'make_timestamp_from_string'</span>
+      }
+
+<span class="keyword">local</span> time1 = make_timestamp_from_string(<span class="string">'04.02.2021 09:18:03'</span>)
+
+<span class="keyword">local</span> format = <span class="string">'^d=(%d+),m=(%d+),y=(%d+) time="(%d%d):(%d%d):(%d%d)"'</span>
+<span class="keyword">local</span> time2 = make_timestamp_from_string(
+    <span class="string">'d=4,m=2,y=2021 time="09:18:03"'</span>,
+    format
+  )</pre>
+    </ul>
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2021-01-29 19:42:37 </i>
+<i style="float:right;">Last updated 2021-04-22 13:57:02 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
