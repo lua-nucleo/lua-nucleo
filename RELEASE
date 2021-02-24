@@ -6,20 +6,25 @@
     - `COPYRIGHT` file;
     - `_COPYRIGHT` exported constant in the main module.
 3. Update version in `_VERSION` exported constant in the main module.
-4. Regenerate tests list (performed by `./make.sh`)
-5. Regenerate exports list (performed by `./make.sh`)
-6. Generate `scm-1` rockspec (performed by `./make.sh`)
-7. Generate `VERSION-1` rockspec, where VERSION is the version to be released.
+4. Make sure that all authors are listed in `AUTHORS` file. To get authors list 
+   from git tree, use the command:
+   ```
+   git log --format="%aN <%ae>" | sort | uniq
+   ```
+5. Regenerate tests list (performed by `./make.sh`)
+6. Regenerate exports list (performed by `./make.sh`)
+7. Generate `scm-1` rockspec (performed by `./make.sh`)
+8. Generate `VERSION-1` rockspec, where VERSION is the version to be released.
    Example:
    ```
    lua etc/rockspec/generate.lua 1.1.0-1 v1.1.0 > rockspec/lua-nucleo-1.1.0-1.rockspec
    ````
-8. Regenerate API docs: `./make-doc.sh`
-9. Make sure that all the changes is in the working tree.
-10. Last check that all tests are passed OK in latest Lua 5.1, Lua 5.2, Lua 5.3
+9. Regenerate API docs: `./make-doc.sh`
+10. Make sure that all the changes is in the working tree.
+11. Last check that all tests are passed OK in latest Lua 5.1, Lua 5.2, Lua 5.3
     Lua 5.4
-10. Tag the working tree head with the version name, e.g. `v1.1.0`.
-11. Push tag to origin.
+12. Tag the working tree head with the version name, e.g. `v1.1.0`.
+13. Push tag to origin.
 
 # Publish on [LuaRocks.org](https://luarocks.org)
 
