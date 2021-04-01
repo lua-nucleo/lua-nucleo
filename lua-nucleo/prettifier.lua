@@ -65,7 +65,8 @@ do
       local pos = #self.buffer + 1
       self.buffer[pos] = subst_line[TERMINATING_SEPARATOR]
       local num = #positions + 1
-      positions[num], levels[num], types[num] = pos, level, TERMINATING_SEPARATOR
+      positions[num], levels[num], types[num] =
+        pos, level, TERMINATING_SEPARATOR
     end
 
     local table_start = function(self)
@@ -101,7 +102,10 @@ do
       self:terminating_sep()
       local pos = #self.buffer + 1
       self.buffer[pos] = "}"
-      if father_table_pos > 0 and types[father_table_pos] == TABLE_BEGIN_LINE then
+      if
+        father_table_pos > 0
+        and types[father_table_pos] == TABLE_BEGIN_LINE
+      then
         prev_table_len = countlen(self.buffer, positions[father_table_pos], pos)
         local len = prev_table_len + level * #self.indent
         if len > self.cols then
@@ -158,11 +162,11 @@ do
 
       local mode = MODE_LINE
       for i = 1, #positions do
-        local pos, level, stype = positions[i], levels[i], types[i]
+        local pos, pos_level, stype = positions[i], levels[i], types[i]
         if stype == TABLE_BEGIN_LINE then
           mode = MODE_LINE
           -- Hack.
-          if i > 1 and level > 1 then
+          if i > 1 and pos_level > 1 then
             -- TODO: FIXME: do this only if there is enough space left
             --       on the line. Otherwise convert table to multiline.
             -- Bring short table back on the line with key.
@@ -195,7 +199,7 @@ do
         elseif stype == TABLE_END then
           mode = MODE_MULTILINE
         elseif mode == MODE_MULTILINE then
-          self.buffer[pos] = subst_multiline[stype] .. indent_cache[level]
+          self.buffer[pos] = subst_multiline[stype] .. indent_cache[pos_level]
         end
       end
     end
