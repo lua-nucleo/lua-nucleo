@@ -19,7 +19,6 @@ local ordered_pairs = import 'lua-nucleo/tdeepequals.lua' { 'ordered_pairs' }
 
 local tpretty_ex, tpretty, tpretty_ordered
 do
-  local add = ""
   local function impl(iterator, t, cat, prettifier, visited)
     local t_type = type(t)
     if t_type == "table" then
@@ -118,7 +117,6 @@ do
       )
 
     local buf = {}
-    local sptable = {}
     -- make_prettifier works with external buf, so special formatter cat
     -- is used instead of make_concatter
     local cat = function(v) buf[#buf + 1] = v end
