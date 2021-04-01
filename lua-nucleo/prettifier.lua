@@ -39,11 +39,11 @@ do
     local prev_table_pos = -1
     local prev_table_len = 0
 
-    local increase_indent = function(self)
+    local increase_indent = function(_)
       level = level + 1
     end
 
-    local decrease_indent = function(self)
+    local decrease_indent = function(_)
       level = level - 1
     end
 
@@ -65,7 +65,8 @@ do
       local pos = #self.buffer + 1
       self.buffer[pos] = subst_line[TERMINATING_SEPARATOR]
       local num = #positions + 1
-      positions[num], levels[num], types[num] = pos, level, TERMINATING_SEPARATOR
+      positions[num], levels[num], types[num] =
+        pos, level, TERMINATING_SEPARATOR
     end
 
     local table_start = function(self)
@@ -101,7 +102,8 @@ do
       self:terminating_sep()
       local pos = #self.buffer + 1
       self.buffer[pos] = "}"
-      if father_table_pos > 0 and types[father_table_pos] == TABLE_BEGIN_LINE then
+      if father_table_pos > 0 and
+        types[father_table_pos] == TABLE_BEGIN_LINE then
         prev_table_len = countlen(self.buffer, positions[father_table_pos], pos)
         local len = prev_table_len + level * #self.indent
         if len > self.cols then
@@ -137,7 +139,7 @@ do
       end
     end
 
-    local key_value_finish = function(self)
+    local key_value_finish = function(_)
       -- Do nothing
     end
 
@@ -157,8 +159,9 @@ do
         )
 
       local mode = MODE_LINE
+      local pos, stype
       for i = 1, #positions do
-        local pos, level, stype = positions[i], levels[i], types[i]
+        pos, level, stype = positions[i], levels[i], types[i]
         if stype == TABLE_BEGIN_LINE then
           mode = MODE_LINE
           -- Hack.
