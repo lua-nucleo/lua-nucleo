@@ -5,11 +5,23 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+local assert_is_string,
+      assert_is_table
+      = import 'lua-nucleo/typeassert.lua'
+      {
+        'assert_is_string',
+        'assert_is_table'
+      }
+
 -- TODO: WTF?!?!?! Do not re-create everything each time!
 
 local make_prettifier
 do
-  make_prettifier = function(indent, buffer, cols)
+  make_prettifier = function(indent, buffer, cols, colors)
+    if colors then
+      assert_is_table(colors)
+    end
+
     local countlen = function(buf, start, finish)
       local count = 0
       for i = start, finish do
@@ -45,6 +57,10 @@ do
 
     local decrease_indent = function(_)
       level = level - 1
+    end
+
+    local cat = function(self, item)
+      self.buffer[#self.buffer + 1] = item
     end
 
     local separator = function(self)
@@ -84,8 +100,12 @@ do
         self:optional_nl()
       end
       self:increase_indent()
+
+      self:before_open_curly_brace()
       local pos = #self.buffer + 1
       self.buffer[pos] = "{"
+      self:after_open_curly_brace()
+
       local num = #positions + 1
       positions[num], levels[num], types[num] = pos, level, TABLE_BEGIN_LINE
       if father_table_pos > 0 then
@@ -100,8 +120,15 @@ do
     local table_finish = function(self)
       self:decrease_indent()
       self:terminating_sep()
+
+      self:before_closed_curly_brace()
       local pos = #self.buffer + 1
       self.buffer[pos] = "}"
+      self:after_closed_curly_brace()
+
+      if colors then
+        self.buffer[pos + 1] = colors.reset_color
+      end
       if father_table_pos > 0 and
         types[father_table_pos] == TABLE_BEGIN_LINE then
         prev_table_len = countlen(self.buffer, positions[father_table_pos], pos)
@@ -120,7 +147,7 @@ do
 
       -- compensate off-by-one in finish() where key replaced with
       -- separator or indentation
-      self.buffer[#self.buffer + 1] = "";
+      self.buffer[#self.buffer + 1] = ""
     end
 
     local value_start = function(self)
@@ -203,11 +230,12 @@ do
       end
     end
 
-    return
+    local prettifier =
     {
       indent = indent;
       buffer = buffer;
       cols = cols;
+      colors = colors;
       increase_indent  = increase_indent;
       decrease_indent  = decrease_indent;
       separator        = separator;
@@ -220,6 +248,43 @@ do
       key_value_finish = key_value_finish;
       finished         = finished;
     }
+
+    local make_colorizer = function(color_id)
+      return function()
+        if prettifier.colors and prettifier.colors[color_id] then
+          cat(prettifier, prettifier.colors[color_id])
+        end
+      end
+    end
+
+    local make_color_resetter = function(color_id)
+      return function()
+        if prettifier.colors and prettifier.colors[color_id] and prettifier.colors.reset_color then
+          cat(prettifier, prettifier.colors.reset_color)
+        end
+      end
+    end
+
+    local reset_color = make_colorizer('reset_color')
+    prettifier.string_start = make_colorizer('string')
+    prettifier.string_finish = make_color_resetter('string')
+    prettifier.number_start = make_colorizer('number')
+    prettifier.number_finish = make_color_resetter('number')
+    prettifier.boolean_start = make_colorizer('boolean')
+    prettifier.boolean_finish = make_color_resetter('boolean')
+    prettifier.nil_start = make_colorizer('nil_value')
+    prettifier.nil_finish = make_color_resetter('nil_value')
+    prettifier.key_finish = reset_color
+    prettifier.before_open_bracket = make_colorizer('brackets')
+    prettifier.before_closed_bracket = prettifier.before_open_bracket
+    prettifier.after_open_bracket = make_color_resetter('brackets')
+    prettifier.after_closed_bracket = prettifier.after_open_bracket
+    prettifier.before_open_curly_brace = make_colorizer('curly_braces')
+    prettifier.before_closed_curly_brace = prettifier.before_open_curly_brace
+    prettifier.after_open_curly_brace = make_color_resetter('curly_braces')
+    prettifier.after_closed_curly_brace = prettifier.after_open_curly_brace
+
+    return prettifier
   end
 end
 
