@@ -126,9 +126,6 @@ do
       self.buffer[pos] = "}"
       self:after_closed_curly_brace()
 
-      if colors then
-        self.buffer[pos + 1] = colors.reset_color
-      end
       if father_table_pos > 0 and
         types[father_table_pos] == TABLE_BEGIN_LINE then
         prev_table_len = countlen(self.buffer, positions[father_table_pos], pos)
@@ -144,6 +141,10 @@ do
 
     local key_start = function(self)
       prev_table_pos = -1
+
+      if self.colors and self.colors.key then
+        cat(self, self.colors.key)
+      end
 
       -- compensate off-by-one in finish() where key replaced with
       -- separator or indentation
@@ -259,13 +260,13 @@ do
 
     local make_color_resetter = function(color_id)
       return function()
-        if prettifier.colors and prettifier.colors[color_id] and prettifier.colors.reset_color then
+        if prettifier.colors and prettifier.colors[color_id]
+          and prettifier.colors.reset_color then
           cat(prettifier, prettifier.colors.reset_color)
         end
       end
     end
 
-    local reset_color = make_colorizer('reset_color')
     prettifier.string_start = make_colorizer('string')
     prettifier.string_finish = make_color_resetter('string')
     prettifier.number_start = make_colorizer('number')
@@ -274,7 +275,7 @@ do
     prettifier.boolean_finish = make_color_resetter('boolean')
     prettifier.nil_start = make_colorizer('nil_value')
     prettifier.nil_finish = make_color_resetter('nil_value')
-    prettifier.key_finish = reset_color
+    prettifier.key_finish = make_color_resetter('key')
     prettifier.before_open_bracket = make_colorizer('brackets')
     prettifier.before_closed_bracket = prettifier.before_open_bracket
     prettifier.after_open_bracket = make_color_resetter('brackets')

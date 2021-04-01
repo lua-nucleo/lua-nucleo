@@ -76,15 +76,16 @@ do
               end
               need_comma = true
               prettifier:key_start()
-              prettifier:before_open_bracket()
+              --prettifier:before_open_bracket()
               cat("[")
-              prettifier:after_open_bracket()
+              --prettifier:after_open_bracket()
               prettifier.colors = nil
               impl(iterator, k, cat, prettifier, visited)
               prettifier.colors = colors
-              prettifier:before_closed_bracket()
+              --prettifier:before_closed_bracket()
               cat("]")
-              prettifier:after_closed_bracket()
+              prettifier:key_finish()
+              --prettifier:after_closed_bracket()
               prettifier:value_start()
               impl(iterator, v, cat, prettifier, visited)
               prettifier:key_value_finish()

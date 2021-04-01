@@ -34,29 +34,96 @@ local test = make_suite("tpretty-color")
 
 --------------------------------------------------------------------------------
 
+test "test tpretty color simple curly braces" (function ()
+  local colors =
+  {
+    curly_braces = '<~>';
+    reset_color = '</>';
+  }
+
+  ensure_equals(
+      'colorized properly',
+      tpretty({}, nil, nil, colors),
+      '<~>{ </> <~>}</>'
+    )
+
+  local obj =
+  {
+    { };
+    [{ }] = { };
+  }
+  local expected = '<~>{</>\n'
+                .. '  <~>{ </> <~>}</>;\n'
+                .. '  [\n'
+                .. '  { }] = \n'
+                .. '  <~>{ </> <~>}</>;\n'
+                .. '<~>}</>'
+  local actual = tpretty(obj, nil, nil, colors)
+
+  ensure_equals('colorized properly', actual, expected)
+end)
+
+test "test tpretty color simple key" (function ()
+  local colors =
+  {
+    key = '<key>';
+    reset_color = '</>';
+  }
+
+  local obj =
+  {
+    { field = 123 };
+    { [{ field = 456 }] = 789 };
+    { [555] = 777 };
+    { [true] = false };
+  }
+
+  local expected = [[{
+  { <key>field</> = 123 };
+  {
+    <key>[
+    { field = 456 }]</> = 789;
+  };
+  { <key>[555]</> = 777 };
+  { <key>[true]</> = false };
+}]]
+
+  local actual = tpretty(obj, nil, nil, colors)
+
+  ensure_equals('colorized properly', actual, expected)
+end)
+
 test "test tpretty color simple boolean" (function ()
   local colors =
   {
-    boolean = '[bool]';
-    --key = '[key]';
-    --curly_braces = '[~]';
-    --brackets = '[L]';
-    --string = '[str]';
-    --number = '[num]';
-    --nil_value = '[nil]';
-    reset_color = '[/]';
+    boolean = '<bool>';
+    reset_color = '</>';
   }
 
-  local ar = {[true] = false}
   local obj =
   {
     true;
     false;
-    [true] = 123;
-    [{true, false}] = {false, true};
-    [ar] = '???';
+    { [true] = 123 };
+    { [{ true, false }] = { false, true } };
+    { [{ [true] = false }] = 'str' };
   }
 
-  --print(tpretty(obj, nil, nil, nil))
-  print(tpretty(obj, '--->', 120, colors))
+  local expected = [[{
+  <bool>true</>;
+  <bool>false</>;
+  { [true] = 123 };
+  {
+    [
+    { true, false }] = { <bool>false</>, <bool>true</> };
+  };
+  {
+    [
+    { [true] = false }] = "str";
+  };
+}]]
+
+  local actual = tpretty(obj, nil, nil, colors)
+
+  ensure_equals('colorized properly', actual, expected)
 end)
