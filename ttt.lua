@@ -74,10 +74,8 @@ local colors =
   boolean = ansi.light_cyan;
   key = ansi.cyan;
   curly_braces = ansi.white;
-  brackets = ansi.white;
   string = ansi.green;
   number = ansi.light_blue;
-  nil_value = ansi.magenta;
   reset_color = ansi.reset_color;
 }
 
@@ -85,20 +83,33 @@ local colors =
 --declare('getfenv')
 --require('mobdebug').start('192.168.2.95')
 
-local colors =
-{
-  boolean = '<bool>';
-  reset_color = '</>';
-}
+--local colors =
+--{
+--  curly_braces = '<~>';
+--  key = '<key>';
+--  boolean = '<bool>';
+--  string = '<str>';
+--  number = '<num>';
+--  reset_color = '</>';
+--}
 
-local ar = {[true] = false}
-local obj =
-{
+local obj = {
+  { };
+  456;
+  'str1';
   true;
   false;
+  [{ }] = { };
+  { field = 123 };
+  { [{ field = 456 }] = 789 };
+  { [555] = 777 };
+  { [true] = false };
   { [true] = 123 };
-  { [{true, false}] = {false, true} };
-  { [ar] = 'str' };
+  { [{ true, false }] = { false, true } };
+  { [{ [true] = false }] = 'str' };
+  { a = 'str3' };
+  { ['str 4'] = 'str5' };
+  [789] = 12;
 }
 
 --print(tpretty(t, nil, nil, colors))

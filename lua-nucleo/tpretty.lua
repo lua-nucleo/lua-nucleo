@@ -107,10 +107,6 @@ do
       prettifier:boolean_start()
       cat(tostring(t))
       prettifier:boolean_finish()
-    elseif t == nil then
-      prettifier:nil_start()
-      cat("nil")
-      prettifier:nil_finish()
     else
       -- Note this converts non-serializable types to strings
       prettifier:string_start()

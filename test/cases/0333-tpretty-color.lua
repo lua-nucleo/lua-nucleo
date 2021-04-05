@@ -127,3 +127,117 @@ test "test tpretty color simple boolean" (function ()
 
   ensure_equals('colorized properly', actual, expected)
 end)
+
+test "test tpretty color simple string" (function ()
+  local colors =
+  {
+    string = '<str>';
+    reset_color = '</>';
+  }
+
+  local obj =
+  {
+    'str1';
+    'str2';
+    { a = 'str3' };
+    { ['str 4'] = 'str5' };
+  }
+
+  local expected = [[{
+  <str>"str1"</>;
+  <str>"str2"</>;
+  { a = <str>"str3"</> };
+  { ["str 4"] = <str>"str5"</> };
+}]]
+
+  local actual = tpretty(obj, nil, nil, colors)
+
+  ensure_equals('colorized properly', actual, expected)
+end)
+
+test "test tpretty color simple number" (function ()
+  local colors =
+  {
+    number = '<num>';
+    reset_color = '</>';
+  }
+
+  local obj =
+  {
+    123;
+    456;
+    [789] = 12;
+  }
+
+  local expected = '{ <num>123</>, <num>456</>, [789] = <num>12</> }'
+  local actual = tpretty(obj, nil, nil, colors)
+  ensure_equals('colorized properly', actual, expected)
+end)
+
+test "test tpretty color complex" (function ()
+  local colors =
+  {
+    curly_braces = '<~>';
+    key = '<key>';
+    boolean = '<bool>';
+    string = '<str>';
+    number = '<num>';
+    reset_color = '</>';
+  }
+
+  local obj = {
+    { };
+    456;
+    'str1';
+    true;
+    false;
+    { [{ }] = { } } ;
+    { field = 123 };
+    { [{ field = 456 }] = 789 };
+    { [555] = 777 };
+    { [true] = false };
+    { [true] = 123 };
+    { [{ true, false }] = { false, true } };
+    { [{ [true] = false }] = 'str' };
+    { a = 'str3' };
+    { ['str 4'] = 'str5' };
+    [789] = 12;
+  }
+
+  local expected = [[<~>{</>
+  <~>{ </> <~>}</>;
+  <num>456</>;
+  <str>"str1"</>;
+  <bool>true</>;
+  <bool>false</>;
+  <~>{</>
+    <key>[
+    { }]</> =]] .. ' \n' .. [[
+    <~>{ </> <~>}</>;
+  <~>}</>;
+  <~>{ </><key>field</> = <num>123</> <~>}</>;
+  <~>{</>
+    <key>[
+    { field = 456 }]</> = <num>789</>;
+  <~>}</>;
+  <~>{ </><key>[555]</> = <num>777</> <~>}</>;
+  <~>{ </><key>[true]</> = <bool>false</> <~>}</>;
+  <~>{ </><key>[true]</> = <num>123</> <~>}</>;
+  <~>{</>
+    <key>[
+    { true, false }]</> =]] .. ' \n' .. [[
+    <~>{ </><bool>false</>, <bool>true</> <~>}</>;
+  <~>}</>;
+  <~>{</>
+    <key>[
+    { [true] = false }]</> = <str>"str"</>;
+  <~>}</>;
+  <~>{ </><key>a</> = <str>"str3"</> <~>}</>;
+  <~>{ </><key>["str 4"]</> = <str>"str5"</> <~>}</>;
+  <key>[789]</> = <num>12</>;
+<~>}</>]]
+
+  local actual = tpretty(obj, nil, nil, colors)
+
+  ensure_equals('colorized properly', actual, expected)
+end)
