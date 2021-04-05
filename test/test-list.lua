@@ -192,11 +192,19 @@ return
   };
   {
     type = 'cases';
+    path = 'test/cases/0325-datetime-utils.lua';
+  };
+  {
+    type = 'cases';
     path = 'test/cases/0330-tpretty.lua';
   };
   {
     type = 'cases';
     path = 'test/cases/0331-prettifier.lua';
+  };
+  {
+    type = 'cases';
+    path = 'test/cases/0333-tpretty-color.lua';
   };
   {
     type = 'low-level';
@@ -289,6 +297,10 @@ return
   {
     type = 'cases';
     path = 'test/cases/0640-quicksort.lua';
+  };
+  {
+    type = 'cases';
+    path = 'test/cases/0650-enumerator.lua';
   };
   {
     type = 'cases';
