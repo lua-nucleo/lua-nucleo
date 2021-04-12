@@ -5,21 +5,26 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
-local arguments
+local arguments,
+      optional_arguments
       = import 'lua-nucleo/args.lua'
       {
-        'arguments'
+        'arguments',
+        'optional_arguments'
       }
 
 -- TODO: WTF?!?!?! Do not re-create everything each time!
 
 local make_prettifier
 do
-  make_prettifier = function(indent, buffer, cols)
+  make_prettifier = function(indent, buffer, cols, colors)
     arguments(
       'string', indent,
       'table', buffer,
       'number', cols
+    )
+    optional_arguments(
+      'table', colors
     )
 
     local countlen = function(buf, start, finish)
@@ -221,6 +226,7 @@ do
       indent = indent;
       buffer = buffer;
       cols = cols;
+      colors = colors;
       increase_indent  = increase_indent;
       decrease_indent  = decrease_indent;
       separator        = separator;
