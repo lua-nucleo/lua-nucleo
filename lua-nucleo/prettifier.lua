@@ -28,8 +28,8 @@ do
     local MODE_LINE = 7
     local MODE_MULTILINE = 8
 
-    local subst_multiline = { ";\n", "\n", ";\n", " =\n" }
-    local subst_line = { ", ", "", " ", " = " }
+    local subst_multiline = { ';\n', '\n', ';\n', ' =\n' }
+    local subst_line = { ', ', '', ' ', ' = ' }
 
     local level = 0
     local positions = { }
@@ -85,7 +85,7 @@ do
       end
       self:increase_indent()
       local pos = #self.buffer + 1
-      self.buffer[pos] = "{"
+      self.buffer[pos] = '{'
       local num = #positions + 1
       positions[num], levels[num], types[num] = pos, level, TABLE_BEGIN_LINE
       if father_table_pos > 0 then
@@ -101,7 +101,7 @@ do
       self:decrease_indent()
       self:terminating_sep()
       local pos = #self.buffer + 1
-      self.buffer[pos] = "}"
+      self.buffer[pos] = '}'
       if
         father_table_pos > 0
         and types[father_table_pos] == TABLE_BEGIN_LINE
@@ -122,7 +122,7 @@ do
 
       -- compensate off-by-one in finish() where key replaced with
       -- separator or indentation
-      self.buffer[#self.buffer + 1] = "";
+      self.buffer[#self.buffer + 1] = '';
     end
 
     local value_start = function(self)
@@ -135,7 +135,7 @@ do
           len = prev_table_len
         end
       end
-      self.buffer[pos] = " = "
+      self.buffer[pos] = ' = '
       if len + level * #self.indent > self.cols then
         self:optional_nl()
       end
@@ -172,13 +172,13 @@ do
             -- Bring short table back on the line with key.
             if
               types[i - 1] == OPTIONAL_NEWLINE and
-              self.buffer[pos - 2] == " = "
+              self.buffer[pos - 2] == ' = '
             then
-              self.buffer[pos - 1] = ""
+              self.buffer[pos - 1] = ''
             end
           end
 
-          self.buffer[pos] = "{ " -- TODO: Should be done via subst_*
+          self.buffer[pos] = '{ ' -- TODO: Should be done via subst_*
 
           -- TODO: Get rid of this.
           if
@@ -186,14 +186,14 @@ do
             positions[i + 1] + 1 == positions[i + 2]
           then
             -- handle special case - empty table
-            self.buffer[pos + 2] = "" -- replace TERMINATING_SEPARATOR
+            self.buffer[pos + 2] = '' -- replace TERMINATING_SEPARATOR
           end
         elseif stype == TABLE_BEGIN_MULTILINE then
           mode = MODE_MULTILINE
           -- TODO: FIXME: This should already be done by subst_*
           if pos > 2 then
-            if self.buffer[pos - 2] == " = " then
-              self.buffer[pos - 2] = " ="
+            if self.buffer[pos - 2] == ' = ' then
+              self.buffer[pos - 2] = ' ='
             end
           end
         elseif stype == TABLE_END then
