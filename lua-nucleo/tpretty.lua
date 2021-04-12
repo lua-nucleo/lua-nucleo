@@ -21,6 +21,7 @@ local tpretty_ex, tpretty, tpretty_ordered
 do
   local function impl(iterator, t, cat, prettifier, visited)
     local t_type = type(t)
+    local colors = prettifier.colors
     if t_type == "table" then
       if not visited[t] then
         visited[t] = true
@@ -30,15 +31,17 @@ do
         -- Serialize numeric indices
 
         local next_i = 0
-        for i, v in ipairs(t) do
-          if i > 1 then -- TODO: Move condition out of the loop
-            prettifier:separator()
+        if #t > 0 then
+          for i, v in ipairs(t) do
+            if i > 1 then -- TODO: Move condition out of the loop
+              prettifier:separator()
+            end
+            impl(iterator, v, cat, prettifier, visited)
+            next_i = i
           end
-          impl(iterator, v, cat, prettifier, visited)
-          next_i = i
         end
 
-        local next_i = next_i + 1
+        next_i = next_i + 1
 
         -- Serialize hash part
         -- Skipping comma only at first element if there is no numeric part.
@@ -58,6 +61,7 @@ do
             else
               cat(string_format("[%q]", k))
             end
+            prettifier:key_finish()
             prettifier:value_start()
             impl(iterator, v, cat, prettifier, visited)
             prettifier:key_value_finish()
@@ -73,8 +77,11 @@ do
               need_comma = true
               prettifier:key_start()
               cat("[")
+              prettifier.colors = nil
               impl(iterator, k, cat, prettifier, visited)
+              prettifier.colors = colors
               cat("]")
+              prettifier:key_finish()
               prettifier:value_start()
               impl(iterator, v, cat, prettifier, visited)
               prettifier:key_value_finish()
@@ -89,18 +96,22 @@ do
         cat('"table (recursive)"')
       end
     elseif t_type == "number" then
+      prettifier:number_start()
       cat(number_to_string(t))
+      prettifier:number_finish()
     elseif t_type == "boolean" then
+      prettifier:boolean_start()
       cat(tostring(t))
-    elseif t == nil then
-      cat("nil")
+      prettifier:boolean_finish()
     else
       -- Note this converts non-serializable types to strings
+      prettifier:string_start()
       cat(string_format("%q", tostring(t)))
+      prettifier:string_finish()
     end
   end
 
-  tpretty_ex = function(iterator, t, indent, cols)
+  tpretty_ex = function(iterator, t, indent, cols, colors)
     indent = indent or "  "
     cols = cols or 80 --standard screen width
 
@@ -120,18 +131,18 @@ do
     -- make_prettifier works with external buf, so special formatter cat
     -- is used instead of make_concatter
     local cat = function(v) buf[#buf + 1] = v end
-    local pr = make_prettifier(indent, buf, cols)
+    local pr = make_prettifier(indent, buf, cols, colors)
     impl(iterator, t, cat, pr, {})
     pr:finished()
     return table_concat(buf)
   end
 
-  tpretty = function(t, indent, cols)
-    return tpretty_ex(pairs, t, indent, cols)
+  tpretty = function(t, indent, cols, colors)
+    return tpretty_ex(pairs, t, indent, cols, colors)
   end
 
-  tpretty_ordered = function(t, indent, cols)
-    return tpretty_ex(ordered_pairs, t, indent, cols)
+  tpretty_ordered = function(t, indent, cols, colors)
+    return tpretty_ex(ordered_pairs, t, indent, cols, colors)
   end
 end
 
