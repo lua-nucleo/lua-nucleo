@@ -5,11 +5,21 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+local assert_is_table
+      = import 'lua-nucleo/typeassert.lua'
+      {
+        'assert_is_table'
+      }
+
 -- TODO: WTF?!?!?! Do not re-create everything each time!
 
 local make_prettifier
 do
-  make_prettifier = function(indent, buffer, cols)
+  make_prettifier = function(indent, buffer, cols, colors)
+    if colors then
+      assert_is_table(colors)
+    end
+
     local countlen = function(buf, start, finish)
       local count = 0
       for i = start, finish do
@@ -209,6 +219,7 @@ do
       indent = indent;
       buffer = buffer;
       cols = cols;
+      colors = colors;
       increase_indent  = increase_indent;
       decrease_indent  = decrease_indent;
       separator        = separator;
