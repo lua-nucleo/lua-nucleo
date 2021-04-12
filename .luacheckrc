@@ -8,3 +8,4 @@ include_files =
   'lua-nucleo/**/*.lua',
   'test/**/*.lua',
 }
+ignore = { '212/self' }
