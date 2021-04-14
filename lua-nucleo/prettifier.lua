@@ -252,6 +252,17 @@ do
       end
     end
 
+    local make_color_resetter = function(color_id)
+      return function()
+        if prettifier.colors and prettifier.colors[color_id] then
+          if not prettifier.colors.reset_color then
+            error('the reset color must be defined')
+          end
+          cat(prettifier, prettifier.colors.reset_color)
+        end
+      end
+    end
+
     return prettifier
   end
 end
