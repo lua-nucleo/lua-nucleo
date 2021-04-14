@@ -5,11 +5,23 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
+local arguments
+      = import 'lua-nucleo/args.lua'
+      {
+        'arguments'
+      }
+
 -- TODO: WTF?!?!?! Do not re-create everything each time!
 
 local make_prettifier
 do
   make_prettifier = function(indent, buffer, cols)
+    arguments(
+      'string', indent,
+      'table', buffer,
+      'number', cols
+    )
+
     local countlen = function(buf, start, finish)
       local count = 0
       for i = start, finish do
