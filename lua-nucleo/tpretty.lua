@@ -21,7 +21,7 @@ local tpretty_ex, tpretty, tpretty_ordered
 do
   local function impl(iterator, t, cat, prettifier, visited)
     local t_type = type(t)
-    if t_type == "table" then
+    if t_type == 'table' then
       if not visited[t] then
         visited[t] = true
 
@@ -45,7 +45,7 @@ do
         local need_comma = (next_i > 1)
         for k, v in iterator(t) do
           local k_type = type(k)
-          if k_type == "string" then
+          if k_type == 'string' then
             if need_comma then
               prettifier:separator()
             end
@@ -53,17 +53,17 @@ do
             prettifier:key_start()
             -- TODO: Need "%q" analogue, which would put quotes
             --       only if string does not match regexp below
-            if not lua_keywords[k] and string_match(k, "^[%a_][%a%d_]*$") then
+            if not lua_keywords[k] and string_match(k, '^[%a_][%a%d_]*$') then
               cat(k)
             else
-              cat(string_format("[%q]", k))
+              cat(string_format('[%q]', k))
             end
             prettifier:value_start()
             impl(iterator, v, cat, prettifier, visited)
             prettifier:key_value_finish()
           else
             if
-              k_type ~= "number" or -- non-string non-number
+              k_type ~= 'number' or -- non-string non-number
               k >= next_i or k < 1 or -- integer key in hash part of the table
               k % 1 ~= 0 -- non-integer key
             then
@@ -72,9 +72,9 @@ do
               end
               need_comma = true
               prettifier:key_start()
-              cat("[")
+              cat('[')
               impl(iterator, k, cat, prettifier, visited)
-              cat("]")
+              cat(']')
               prettifier:value_start()
               impl(iterator, v, cat, prettifier, visited)
               prettifier:key_value_finish()
@@ -88,20 +88,20 @@ do
         -- Note this loses information on recursive tables
         cat('"table (recursive)"')
       end
-    elseif t_type == "number" then
+    elseif t_type == 'number' then
       cat(number_to_string(t))
-    elseif t_type == "boolean" then
+    elseif t_type == 'boolean' then
       cat(tostring(t))
     elseif t == nil then
-      cat("nil")
+      cat('nil')
     else
       -- Note this converts non-serializable types to strings
-      cat(string_format("%q", tostring(t)))
+      cat(string_format('%q', tostring(t)))
     end
   end
 
   tpretty_ex = function(iterator, t, indent, cols)
-    indent = indent or "  "
+    indent = indent or '  '
     cols = cols or 80 --standard screen width
 
     if not is_table(t) then
@@ -110,10 +110,10 @@ do
 
     arguments(
         -- all arguments should be listed, even though t is checked before
-        "function", iterator,
+        'function', iterator,
         --"table", t
-        "string", indent,
-        "number", cols
+        'string', indent,
+        'number', cols
       )
 
     local buf = {}
