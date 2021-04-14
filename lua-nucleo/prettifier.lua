@@ -268,6 +268,11 @@ do
     prettifier.boolean_start = make_colorizer('boolean')
     prettifier.boolean_finish = make_color_resetter('boolean')
 
+    prettifier.before_open_curly_brace = make_colorizer('curly_braces')
+    prettifier.before_closed_curly_brace = prettifier.before_open_curly_brace
+    prettifier.after_open_curly_brace = make_color_resetter('curly_braces')
+    prettifier.after_closed_curly_brace = prettifier.after_open_curly_brace
+
     return prettifier
   end
 end
