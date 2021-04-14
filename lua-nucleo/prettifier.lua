@@ -5,10 +5,12 @@
 -- @copyright lua-nucleo authors (see file `COPYRIGHT` for the license)
 --------------------------------------------------------------------------------
 
-local assert_is_table
-      = import 'lua-nucleo/typeassert.lua'
+local arguments,
+      optional_arguments
+      = import 'lua-nucleo/args.lua'
       {
-        'assert_is_table'
+        'arguments',
+        'optional_arguments'
       }
 
 -- TODO: WTF?!?!?! Do not re-create everything each time!
@@ -16,9 +18,14 @@ local assert_is_table
 local make_prettifier
 do
   make_prettifier = function(indent, buffer, cols, colors)
-    if colors then
-      assert_is_table(colors)
-    end
+    arguments(
+      'string', indent,
+      'table', buffer,
+      'number', cols
+    )
+    optional_arguments(
+      'table', colors
+    )
 
     local countlen = function(buf, start, finish)
       local count = 0
