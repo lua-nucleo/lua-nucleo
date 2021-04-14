@@ -218,7 +218,7 @@ do
       end
     end
 
-    return
+    local prettifier =
     {
       indent = indent;
       buffer = buffer;
@@ -236,6 +236,16 @@ do
       key_value_finish = key_value_finish;
       finished         = finished;
     }
+
+    local make_colorizer = function(color_id)
+      return function()
+        if prettifier.colors and prettifier.colors[color_id] then
+          cat(prettifier, prettifier.colors[color_id])
+        end
+      end
+    end
+
+    return prettifier
   end
 end
 
