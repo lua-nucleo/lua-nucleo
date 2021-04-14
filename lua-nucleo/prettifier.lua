@@ -98,8 +98,12 @@ do
         self:optional_nl()
       end
       self:increase_indent()
+
+      self:before_open_curly_brace()
       local pos = #self.buffer + 1
       self.buffer[pos] = '{'
+      self:after_open_curly_brace()
+
       local num = #positions + 1
       positions[num], levels[num], types[num] = pos, level, TABLE_BEGIN_LINE
       if father_table_pos > 0 then
@@ -114,8 +118,12 @@ do
     local table_finish = function(self)
       self:decrease_indent()
       self:terminating_sep()
+
+      self:before_closed_curly_brace()
       local pos = #self.buffer + 1
       self.buffer[pos] = '}'
+      self:after_closed_curly_brace()
+
       if
         father_table_pos > 0
         and types[father_table_pos] == TABLE_BEGIN_LINE
