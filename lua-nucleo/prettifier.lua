@@ -245,6 +245,15 @@ do
       end
     end
 
+    local make_color_resetter = function(color_id)
+      return function()
+        if prettifier.colors and prettifier.colors[color_id]
+          and prettifier.colors.reset_color then
+          cat(prettifier, prettifier.colors.reset_color)
+        end
+      end
+    end
+
     return prettifier
   end
 end
