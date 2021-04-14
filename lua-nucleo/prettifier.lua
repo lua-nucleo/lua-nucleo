@@ -258,6 +258,9 @@ do
       end
     end
 
+    -- Note: prettifier.key_start is already set
+    prettifier.key_finish = make_color_resetter('key')
+
     return prettifier
   end
 end
