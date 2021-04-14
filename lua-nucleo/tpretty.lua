@@ -30,12 +30,14 @@ do
         -- Serialize numeric indices
 
         local next_i = 0
-        for i, v in ipairs(t) do
-          if i > 1 then -- TODO: Move condition out of the loop
-            prettifier:separator()
+        if #t > 0 then
+          for i = 1, #t do
+            if i > 1 then -- TODO: Move condition out of the loop
+              prettifier:separator()
+            end
+            impl(iterator, t[i], cat, prettifier, visited)
+            next_i = i
           end
-          impl(iterator, v, cat, prettifier, visited)
-          next_i = i
         end
 
         next_i = next_i + 1

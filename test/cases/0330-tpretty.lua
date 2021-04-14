@@ -444,6 +444,36 @@ test "tpretty-simple" (function()
   )
 end)
 
+test 'tpretty-index-overload' (function()
+  local mt =
+  {
+    __index = function()
+      return 42
+    end;
+  }
+
+  local obj = setmetatable({ }, mt)
+  ensure_strequals(
+    'result matches expected',
+    tpretty(obj),
+    '{ }'
+  )
+
+  obj = setmetatable({ 1, 2, 3 }, mt)
+  ensure_strequals(
+    'result matches expected',
+    tpretty(obj),
+    '{ 1, 2, 3 }'
+  )
+
+  obj = setmetatable({ a = 1 }, mt)
+  ensure_strequals(
+    'result matches expected',
+    tpretty(obj),
+    '{ a = 1 }'
+  )
+end)
+
 --------------------------------------------------------------------------------
 
 test:group "tpretty_ordered"
