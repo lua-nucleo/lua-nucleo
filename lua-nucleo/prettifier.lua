@@ -270,6 +270,13 @@ do
     -- Note: prettifier.key_start is already set
     prettifier.key_finish = make_color_resetter('key')
 
+    prettifier.string_start = make_colorizer('string')
+    prettifier.string_finish = make_color_resetter('string')
+    prettifier.number_start = make_colorizer('number')
+    prettifier.number_finish = make_color_resetter('number')
+    prettifier.boolean_start = make_colorizer('boolean')
+    prettifier.boolean_finish = make_color_resetter('boolean')
+
     return prettifier
   end
 end
