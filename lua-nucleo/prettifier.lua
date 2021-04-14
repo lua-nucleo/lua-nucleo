@@ -141,6 +141,10 @@ do
     local key_start = function(self)
       prev_table_pos = -1
 
+      if self.colors and self.colors.key then
+        cat(self, self.colors.key)
+      end
+
       -- compensate off-by-one in finish() where key replaced with
       -- separator or indentation
       cat(self, '')
