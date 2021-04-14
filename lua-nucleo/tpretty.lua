@@ -100,7 +100,7 @@ do
     end
   end
 
-  tpretty_ex = function(iterator, t, indent, cols)
+  tpretty_ex = function(iterator, t, indent, cols, colors)
     indent = indent or '  '
     cols = cols or 80 --standard screen width
 
@@ -120,18 +120,18 @@ do
     -- make_prettifier works with external buf, so special formatter cat
     -- is used instead of make_concatter
     local cat = function(v) buf[#buf + 1] = v end
-    local pr = make_prettifier(indent, buf, cols)
+    local pr = make_prettifier(indent, buf, cols, colors)
     impl(iterator, t, cat, pr, {})
     pr:finished()
     return table_concat(buf)
   end
 
-  tpretty = function(t, indent, cols)
-    return tpretty_ex(pairs, t, indent, cols)
+  tpretty = function(t, indent, cols, colors)
+    return tpretty_ex(pairs, t, indent, cols, colors)
   end
 
-  tpretty_ordered = function(t, indent, cols)
-    return tpretty_ex(ordered_pairs, t, indent, cols)
+  tpretty_ordered = function(t, indent, cols, colors)
+    return tpretty_ex(ordered_pairs, t, indent, cols, colors)
   end
 end
 
