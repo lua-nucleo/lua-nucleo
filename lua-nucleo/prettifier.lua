@@ -57,6 +57,10 @@ do
       level = level - 1
     end
 
+    local cat = function(self, item)
+      self.buffer[#self.buffer + 1] = item
+    end
+
     local separator = function(self)
       local pos = #self.buffer + 1
       self.buffer[pos] = subst_line[SEPARATOR]
@@ -132,7 +136,7 @@ do
 
       -- compensate off-by-one in finish() where key replaced with
       -- separator or indentation
-      self.buffer[#self.buffer + 1] = '';
+      cat(self, '')
     end
 
     local value_start = function(self)
