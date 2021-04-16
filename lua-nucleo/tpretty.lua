@@ -60,6 +60,7 @@ do
             else
               cat(string_format('[%q]', k))
             end
+            prettifier:key_finish()
             prettifier:value_start()
             impl(iterator, v, cat, prettifier, visited)
             prettifier:key_value_finish()
@@ -77,6 +78,7 @@ do
               cat('[')
               impl(iterator, k, cat, prettifier, visited)
               cat(']')
+              prettifier:key_finish()
               prettifier:value_start()
               impl(iterator, v, cat, prettifier, visited)
               prettifier:key_value_finish()
