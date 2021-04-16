@@ -21,6 +21,7 @@ local tpretty_ex, tpretty, tpretty_ordered
 do
   local function impl(iterator, t, cat, prettifier, visited)
     local t_type = type(t)
+    local colors = prettifier.colors
     if t_type == 'table' then
       if not visited[t] then
         visited[t] = true
@@ -76,7 +77,9 @@ do
               need_comma = true
               prettifier:key_start()
               cat('[')
+              prettifier.colors = nil
               impl(iterator, k, cat, prettifier, visited)
+              prettifier.colors = colors
               cat(']')
               prettifier:key_finish()
               prettifier:value_start()
