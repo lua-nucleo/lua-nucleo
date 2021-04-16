@@ -93,14 +93,18 @@ do
         cat('"table (recursive)"')
       end
     elseif t_type == 'number' then
+      prettifier:number_start()
       cat(number_to_string(t))
+      prettifier:number_finish()
     elseif t_type == 'boolean' then
+      prettifier:boolean_start()
       cat(tostring(t))
-    elseif t == nil then
-      cat('nil')
+      prettifier:boolean_finish()
     else
       -- Note this converts non-serializable types to strings
+      prettifier:string_start()
       cat(string_format('%q', tostring(t)))
+      prettifier:string_finish()
     end
   end
 
