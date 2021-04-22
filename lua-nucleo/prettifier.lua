@@ -17,6 +17,24 @@ local arguments,
 
 local make_prettifier
 do
+  --- Prettifier factory.
+  -- @tparam string indent An indent string to be used.
+  -- @tparam table buffer Table to be used as a buffer.
+  -- @tparam number cols Maximum allowed length of single line.
+  -- @tparam[opt] table colors Optional color table. Specify if you want to
+  -- define custom colors for various element of the output. Note: `reset_color`
+  -- must always be specified. Available elements:
+  -- <ul>
+  --   <li>`curly_braces:` (string) string that will be inserted before curly
+  --                                braces</li>
+  --   <li>`key:` (string) string that will be inserted before table keys</li>
+  --   <li>`boolean:` (string) string that will be inserted before booleans</li>
+  --   <li>`string:` (string) string that will be inserted before strings</li>
+  --   <li>`number:` (string) string that will be inserted before numbers</li>
+  --   <li>`reset_color:` (string) string that will be inserted after the
+  --                               entity which has a defined color</li>
+  -- </ul>
+  -- @treturn prettifier_instance Prettifier instance.
   make_prettifier = function(indent, buffer, cols, colors)
     arguments(
       'string', indent,
@@ -56,10 +74,19 @@ do
     local prev_table_pos = -1
     local prev_table_len = 0
 
+    --- Instance functions
+    -- @section instance_function
+
+    --- Increase current indent level.
+    -- @function prettifier:increase_indent
+    -- @return None
     local increase_indent = function(self)
       level = level + 1
     end
 
+    --- Decrease current indent level.
+    -- @function prettifier:decrease_indent
+    -- @return None
     local decrease_indent = function(self)
       level = level - 1
     end
@@ -68,6 +95,9 @@ do
       self.buffer[#self.buffer + 1] = item
     end
 
+    --- Add the separator.
+    -- @function prettifier:separator
+    -- @return None
     local separator = function(self)
       local pos = #self.buffer + 1
       self.buffer[pos] = subst_line[SEPARATOR]
@@ -75,6 +105,9 @@ do
       positions[num], levels[num], types[num] = pos, level, SEPARATOR
     end
 
+    --- Add optional new line.
+    -- @function prettifier:optional_nl
+    -- @return None
     local optional_nl = function(self)
       local pos = #self.buffer + 1
       self.buffer[pos] = subst_line[OPTIONAL_NEWLINE]
@@ -82,6 +115,9 @@ do
       positions[num], levels[num], types[num] = pos, level, OPTIONAL_NEWLINE
     end
 
+    --- Add terminating separator.
+    -- @function prettifier:terminating_sep
+    -- @return None
     local terminating_sep = function(self)
       local pos = #self.buffer + 1
       self.buffer[pos] = subst_line[TERMINATING_SEPARATOR]
@@ -90,6 +126,9 @@ do
         pos, level, TERMINATING_SEPARATOR
     end
 
+    --- Table start hook.
+    -- @function prettifier:table_start
+    -- @return None
     local table_start = function(self)
       if -- Hack.
         not
@@ -122,6 +161,9 @@ do
       self:optional_nl()
     end
 
+    --- Table finish hook.
+    -- @function prettifier:table_finish
+    -- @return None
     local table_finish = function(self)
       self:decrease_indent()
       self:terminating_sep()
@@ -146,6 +188,9 @@ do
       father_table_pos = -1
     end
 
+    --- Key start hook.
+    -- @function prettifier:key_start
+    -- @return None
     local key_start = function(self)
       prev_table_pos = -1
 
@@ -158,6 +203,9 @@ do
       cat(self, '')
     end
 
+    --- Value start hook.
+    -- @function prettifier:key_start
+    -- @return None
     local value_start = function(self)
       local pos = #self.buffer + 1
       local len = 1
@@ -174,6 +222,9 @@ do
       end
     end
 
+    --- Key-value finish hook.
+    -- @function prettifier:key_value_finish
+    -- @return None
     local key_value_finish = function(self)
       -- Do nothing
     end
@@ -187,6 +238,9 @@ do
       end
     }
 
+    --- Finalize.
+    -- @function prettifier:finished
+    -- @return None
     local finished = function(self)
       local indent_cache = setmetatable(
           { indent = self.indent },
@@ -276,24 +330,61 @@ do
     end
 
     -- Note: prettifier.key_start is already set
+
+    --- Key finish hook.
+    -- @function prettifier.key_finish
+    -- @return None
     prettifier.key_finish = make_color_resetter('key')
 
+    --- String start hook.
+    -- @function prettifier.string_start
+    -- @return None
     prettifier.string_start = make_colorizer('string')
+    --- String finish hook.
+    -- @function prettifier.string_finish
+    -- @return None
     prettifier.string_finish = make_color_resetter('string')
+
+    --- Number start hook.
+    -- @function prettifier.number_start
+    -- @return None
     prettifier.number_start = make_colorizer('number')
+    --- Number finish hook.
+    -- @function prettifier.number_finish
+    -- @return None
     prettifier.number_finish = make_color_resetter('number')
+
+    --- Boolean start hook.
+    -- @function prettifier.boolean_start
+    -- @return None
     prettifier.boolean_start = make_colorizer('boolean')
+    --- Boolean finish hook.
+    -- @function prettifier.boolean_finish
+    -- @return None
     prettifier.boolean_finish = make_color_resetter('boolean')
 
+    --- Before open curly brace hook.
+    -- @function prettifier.before_open_curly_brace
+    -- @return None
     prettifier.before_open_curly_brace = make_colorizer('curly_braces')
+    --- Before closed curly brace hook.
+    -- @function prettifier.before_closed_curly_brace
+    -- @return None
     prettifier.before_closed_curly_brace = prettifier.before_open_curly_brace
+    --- After open curly brace hook.
+    -- @function prettifier.after_open_curly_brace
+    -- @return None
     prettifier.after_open_curly_brace = make_color_resetter('curly_braces')
+    --- After closed curly brace hook.
+    -- @function prettifier.after_closed_curly_brace
+    -- @return None
     prettifier.after_closed_curly_brace = prettifier.after_open_curly_brace
 
     return prettifier
   end
 end
 
+--- @export
 return
 {
   make_prettifier = make_prettifier;
