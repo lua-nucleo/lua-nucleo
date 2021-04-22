@@ -111,6 +111,25 @@ do
     end
   end
 
+  --- Generate pretty representation of the table `t`.
+  -- @tparam function iterator Iterator to be used when traversing the table.
+  -- @tparam table t Table to render.
+  -- @tparam[opt='  '] string indent An indent string to be used.
+  -- @tparam[opt=80] number cols Maximum allowed length of single line.
+  -- @tparam[opt] table colors Optional color table. Specify if you want to
+  -- define custom colors for various element of the output. Note: `reset_color`
+  -- must always be specified. Available elements:
+  -- <ul>
+  --   <li>`curly_braces:` (string) string that will be inserted before curly
+  --                                braces</li>
+  --   <li>`key:` (string) string that will be inserted before table keys</li>
+  --   <li>`boolean:` (string) string that will be inserted before booleans</li>
+  --   <li>`string:` (string) string that will be inserted before strings</li>
+  --   <li>`number:` (string) string that will be inserted before numbers</li>
+  --   <li>`reset_color:` (string) string that will be inserted after the
+  --                               entity which has a defined color</li>
+  -- </ul>
+  -- @treturn string Prettified representation of the table.
   tpretty_ex = function(iterator, t, indent, cols, colors)
     indent = indent or '  '
     cols = cols or 80 --standard screen width
@@ -137,10 +156,28 @@ do
     return table_concat(buf)
   end
 
+  --- Generate pretty representation of the table `t` using `pairs` iterator for
+  -- traversing the table.
+  -- @tparam table t Table to render.
+  -- @tparam[opt='  '] string indent An indent string to be used.
+  -- @tparam[opt=80] number cols Maximum allowed length of single line.
+  -- @tparam[opt] table colors Optional color table. See @{tpretty_ex} for
+  --                           details.
+  -- @treturn string Prettified representation of the table.
   tpretty = function(t, indent, cols, colors)
     return tpretty_ex(pairs, t, indent, cols, colors)
   end
 
+  --- Generate pretty representation of the table `t` using
+  -- `tdeepequals.ordered_pairs`
+  -- iterator for traversing the table.
+  -- @tparam table t Table to render.
+  -- @tparam[opt='  '] string indent An indent string to be used.
+  -- @tparam[opt=80] number cols Maximum allowed length of single line.
+  -- @tparam[opt] table colors Optional color table. See @{tpretty_ex} for
+  --                           details.
+  -- @treturn string Prettified representation of the table.
+  -- @see tdeepequals.ordered_pairs
   tpretty_ordered = function(t, indent, cols, colors)
     return tpretty_ex(ordered_pairs, t, indent, cols, colors)
   end
