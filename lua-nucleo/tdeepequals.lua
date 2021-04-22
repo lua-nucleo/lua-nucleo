@@ -230,24 +230,29 @@ do
   end
 end
 
+--- tdeepequals
 local tdeepequals = function(t1, t2)
   return tmore(t1, t2) == 0
 end
 
+--- tless
 local tless = function(lhs, rhs)
   return tmore(lhs, rhs) < 0
 end
 
+--- less_kv
 local less_kv = function(lhs, rhs)
   return (lhs.k < rhs.k) or (lhs.k == rhs.k and lhs.v < rhs.v)
 end
 
+--- tless_kv
 local tless_kv = function(lhs, rhs)
   local kless = tmore(lhs.k, rhs.k)
   return (kless < 0)
     or (kless == 0 and tmore(lhs.v, rhs.v) < 0)
 end
 
+--- tsort_kv
 -- WARNING: Slow!
 local tsort_kv = function(t, less)
   less = less or tless_kv
@@ -262,6 +267,9 @@ local tsort_kv = function(t, less)
   return r
 end
 
+--- Create iterator for table `t` that traverses keys in alphabetical order.
+-- @tparam table t Table to traverse.
+-- @return Iterator.
 local ordered_pairs = function(t)
   local keys = { }
   for k, _ in pairs(t) do
@@ -281,6 +289,7 @@ local ordered_pairs = function(t)
   return ordered_next, t, nil
 end
 
+--- @export
 return
 {
   tdeepequals = tdeepequals;
