@@ -219,6 +219,28 @@ local fill_curly_placeholders = function(str, dict)
   return fill_placeholders_ex("%${(.-)}", str, dict)
 end
 
+--- Expands variables like %{varname} or %{varname=defaultvalue} with values from dictionary or defaults.
+-- @tparam string str Input string, containing variables to expand
+-- @tparam table dict Dictionary, containing variables's values
+-- @treturn string A result string, where variables substituted with values or defaults
+-- @usage fill_placeholders_with_defaults("a = %{a=43}, b = %{b=44}", { a = 42 })
+--   returns "a = 42, b = 44"
+local fill_placeholders_with_defaults = function (str, dict)
+  local res = (str:gsub("(%%%b{})", function(param)
+    return (param:gsub("^%%{(.+)}$", function(param)
+      local value = dict[param]
+      if value then
+        return value
+      end
+
+      local param, default = param:match('^([^=]+)=(.*)$')
+      return param and (dict[param] or default)
+    end))
+  end))
+  return res
+end
+
+
 --- Convert non-hierarchical table into string.
 --
 -- Values of key and value are concatted using custom glue `kv_glue`.
@@ -556,6 +578,7 @@ return
   fill_placeholders_ex = fill_placeholders_ex;
   fill_placeholders = fill_placeholders;
   fill_curly_placeholders = fill_curly_placeholders;
+  fill_placeholders_with_defaults = fill_placeholders_with_defaults;
   cdata_wrap = cdata_wrap;
   cdata_cat = cdata_cat;
   split_by_char = split_by_char;

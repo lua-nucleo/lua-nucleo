@@ -55,6 +55,7 @@ local make_concatter,
       fill_placeholders_ex,
       fill_placeholders,
       fill_curly_placeholders,
+      fill_placeholders_with_defaults,
       cdata_wrap,
       cdata_cat,
       split_by_char,
@@ -83,6 +84,7 @@ local make_concatter,
         'fill_placeholders_ex',
         'fill_placeholders',
         'fill_curly_placeholders',
+        'fill_placeholders_with_defaults',
         'cdata_wrap',
         'cdata_cat',
         'split_by_char',
@@ -894,6 +896,81 @@ test:test_for "fill_curly_placeholders" (function()
       "extra right brace",
       fill_curly_placeholders("`${a}'}", { a = 42 }),
       "`42'}"
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+test:test_for "fill_placeholders_with_defaults" (function()
+  ensure_strequals(
+      "both empty",
+      fill_placeholders_with_defaults("", { }),
+      ""
+    )
+  ensure_strequals(
+      "empty dict",
+      fill_placeholders_with_defaults("test", { }),
+      "test"
+    )
+  ensure_strequals(
+      "empty str",
+      fill_placeholders_with_defaults("", { a = 42 }),
+      ""
+    )
+  ensure_strequals(
+      "missing key",
+      fill_placeholders_with_defaults("%{b}", { a = 42 }),
+      "%{b}"
+    )
+  ensure_strequals(
+      "format with $",
+      fill_placeholders_with_defaults("${a}", { a = 42 }),
+      "${a}"
+    )
+  ensure_strequals(
+      "bad format",
+      fill_placeholders_with_defaults("%a", { a = 42 }),
+      "%a"
+    )
+  ensure_strequals(
+      "missing right brace",
+      fill_placeholders_with_defaults("%a}", { a = 42 }),
+      "%a}"
+    )
+  ensure_strequals(
+      "missing left brace",
+      fill_placeholders_with_defaults("%{a", { a = 42 }),
+      "%{a"
+    )
+  ensure_strequals(
+      "extra key",
+      fill_placeholders_with_defaults("a = `%{a}'", { a = 42, b = 43 }),
+      "a = `42'"
+    )
+  ensure_strequals(
+      "two keys",
+      fill_placeholders_with_defaults("`%{key}' = `%{value}'", { key = "a", value = 42 }),
+      "`a' = `42'"
+    )
+  ensure_strequals(
+      "with default",
+      fill_placeholders_with_defaults("%{a=43}", { a = 42 }),
+      "42"
+    )
+  ensure_strequals(
+      "with default, missing key",
+      fill_placeholders_with_defaults("%{a=43}", { b = 42 }),
+      "43"
+    )
+  ensure_strequals(
+      "empty default",
+      fill_placeholders_with_defaults("%{a=}", { a = 42}),
+      "42"
+    )
+  ensure_strequals(
+      "empty default, missing key",
+      fill_placeholders_with_defaults("%{a=}", { b = 42}),
+      ""
     )
 end)
 
