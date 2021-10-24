@@ -131,7 +131,7 @@ local split_by_char = function(str, delimiter)
   if str == "" then
     return { }
   end
-  
+
   local sep = delimiter:byte()
   local result = { }
   local pos = 1
@@ -467,6 +467,16 @@ end
 
 local tjson_simple
 do
+  local pretty_need = false
+  local sp_num = 0
+
+  local pretty_print = function(cat, plus)
+    if pretty_need == nil then return end
+    sp_num = sp_num + plus
+    local str1 = string.rep (' ', sp_num)
+    cat('\n'..str1)
+  end
+
   local cat_value = function(cat, v, v_type)
     if v_type == "string" then
       cat (escape_for_json(v))
@@ -498,17 +508,25 @@ do
     visited[t] = true
 
     if tisarray(t) then
+      pretty_print(cat, 0)
       cat '['
+      pretty_print(cat, 2)
+
       if #t > 0 then -- Suppress joining for empty array
         impl(cat, t[1], visited)
         for i = 2, #t do -- Implicit conversion to zero-based array.
-          cat ','
+          cat ','    -- mass enumeration, if need \n, put here
           impl(cat, t[i], visited)
         end
       end
+
+      pretty_print(cat, -2)
       cat ']'
     else
+      pretty_print(cat, 0)
       cat '{'
+      pretty_print(cat, 2)
+
       local need_comma = false
       for k, v in pairs(t) do
         local k_type = type(k)
@@ -517,12 +535,15 @@ do
         end
         if need_comma then
           cat ','
+          pretty_print(cat, 0)
         end
         cat_value(cat, k, k_type)
         cat ':'
         impl(cat, v, visited)
         need_comma = true
       end
+
+      pretty_print(cat, -2)
       cat '}'
     end
 
@@ -535,13 +556,16 @@ do
   -- without gaps becomes arrays. Value types nil, NaN, +Inf, -Inf is not
   -- supported.
   -- @tparam table t Table without self-references
+  -- @tparam bool pretty_need_ flag for enable pretty print
   -- @treturn string A result string
   -- @usage tjson_simple({a = 1, b = 2})
   --   returns '{"a":1,"b":2}'
   -- @local here
-  tjson_simple = function(t)
+  tjson_simple = function(t, pretty_need_)
+    pretty_need = pretty_need_
     local cat, concat = make_concatter()
     impl(cat, t, { })
+    pretty_print(cat, 0)
     return concat()
   end
 end
