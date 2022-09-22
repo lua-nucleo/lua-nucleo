@@ -283,7 +283,7 @@ local ordered_pairs = function(t)
   local ordered_next = function(t)
     local key = keys[i]
     i = i + 1
-    return key, t[key]
+    return key, key ~= nil and t[key] or nil
   end
 
   return ordered_next, t, nil
