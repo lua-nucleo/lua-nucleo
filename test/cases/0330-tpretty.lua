@@ -532,3 +532,7 @@ test "tpretty-ordered" (function()
       expected
     )
 end)
+
+test "tpretty-ordered-globals" (function()
+  tpretty_ordered(_G)
+end)
