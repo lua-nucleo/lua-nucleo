@@ -536,3 +536,17 @@ end)
 test "tpretty-ordered-globals" (function()
   tpretty_ordered(_G)
 end)
+
+test "tpretty-ordered-with-nil-key-failure" (function()
+  local table_that_dont_like_nil_keys = setmetatable(
+    { },
+    {
+      __index = function(self, key)
+        if key == nil then
+          error('The `nil` key is passed to __index')
+        end
+      end
+    }
+  )
+  tpretty_ordered(table_that_dont_like_nil_keys)
+end)
