@@ -1825,11 +1825,25 @@ end)
 test "tslice_table_contains_nil" (function()
   local t = { 1, nil, 3, nil, nil, 6 }
 
-  ensure_tequals(
+  if #t == 1 then
+    ensure_tequals(
+      "input table contains nil",
+      tslice(t, 1, 6),
+      { 1 }
+    )
+  elseif #t == 3 then
+    ensure_tequals(
+      "input table contains nil",
+      tslice(t, 1, 6),
+      { 1, nil, 3 }
+    )
+  else
+    ensure_tequals(
       "input table contains nil",
       tslice(t, 1, 6),
       { 1, nil, 3, nil, nil, 6 }
     )
+  end
 end)
 
 --------------------------------------------------------------------------------
