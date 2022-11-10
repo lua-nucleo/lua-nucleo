@@ -14,13 +14,15 @@ local string_char = string.char
 local tdeepequals,
       tstr,
       taccumulate,
-      tnormalize
+      tnormalize,
+      tequals
       = import 'lua-nucleo/table.lua'
       {
         'tdeepequals',
         'tstr',
         'taccumulate',
-        'tnormalize'
+        'tnormalize',
+        'tequals'
       }
 
 local tifindallpermutations
@@ -149,6 +151,93 @@ local ensure_tequals = function(msg, actual, expected)
   end
 
   return actual
+end
+
+--- Checks if the `actual` table shallowly equals to one of the expected tables
+-- from the `expected` linear tables array.
+-- <br />
+-- Returns all the arguments intact cutting the `msg` at beginning on success.
+-- <br />
+-- Raises the error on fail.
+-- @tparam string msg Failing message that will be used in the error message if
+--                    the check fails.
+-- @tparam table actual A table to check.
+-- @tparam table[] expected The linear array table of tables.
+-- @tparam any[] ... Custom arguments.
+-- @raise `ensure_tvariantequals failed error` if unable to find the `actual`
+-- table in `expected`.
+-- @treturn table `actual` intact.
+-- @treturn table[] `expected` intact.
+-- @treturn any[] ... The rest of the arguments intact.
+-- @usage
+-- local ensure_tvariantequals
+--       = import 'lua-nucleo/ensure.lua'
+--       {
+--         'ensure_tvariantequals'
+--       }
+--
+-- -- will pass without errors:
+-- ensure_tvariantequals(
+--   'the table is found in the expected tables list',
+--   { 1, 2 },
+--   {
+--     { 1 },
+--     { 1, 2 },
+--     { 1, 2, 3 }
+--   }
+--  )
+--
+-- -- will throw the error:
+-- ensure_tvariantequals(
+--   'the table is found in the expected tables list',
+--   { 2 },
+--   {
+--     { 1 },
+--     { 1, 2 },
+--     { 1, 2, 3 }
+--   }
+--  )
+local ensure_tvariantequals = function(msg, actual, expected, ...)
+  if type(expected) ~= "table" then
+    error(
+      "ensure_tvariantequals failed: " .. msg
+        .. ": bad expected type, must be `table', got `"
+        .. type(expected) .. "'",
+      2
+    )
+  end
+
+  for expected_key, expected_variant in pairs(expected) do
+    if type(expected_variant) ~= "table" then
+      error(
+        "ensure_tvariantequals failed: " .. msg
+          .. ": bad expected[" .. expected_key
+          .. "] type, must be `table', got `" .. type(expected_variant) .. "'",
+        2
+      )
+    end
+  end
+
+  if type(actual) ~= "table" then
+    error(
+      "ensure_tvariantequals failed: " .. msg
+        .. ": bad actual type, expected `table', got `"
+        .. type(actual) .. "'",
+      2
+    )
+  end
+
+  for _, expected_variant in pairs(expected) do
+    if tequals(actual, expected_variant) then
+      return actual, expected, ...
+    end
+  end
+
+  error(
+    "ensure_tvariantequals failed: " .. msg .. ":"
+      .. "\nactual: " .. tstr(actual)
+      .. "\nexpected one of: " .. tstr(expected)
+  )
 end
 
 --- @param msg
@@ -744,6 +833,7 @@ return
   ensure_equals = ensure_equals;
   ensure_is = ensure_is;
   ensure_tequals = ensure_tequals;
+  ensure_tvariantequals = ensure_tvariantequals;
   ensure_tdeepequals = ensure_tdeepequals;
   ensure_strequals = ensure_strequals;
   ensure_strvariant = ensure_strvariant;
