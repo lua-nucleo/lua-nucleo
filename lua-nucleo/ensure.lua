@@ -158,7 +158,7 @@ end
 -- <br />
 -- Returns all the arguments intact cutting the `msg` at beginning on success.
 -- <br />
--- Raises the error on fail.
+-- Raises an error on fail.
 -- @tparam string msg Failing message that will be used in the error message if
 --                    the check fails.
 -- @tparam table actual A table to check.
@@ -187,7 +187,7 @@ end
 --   }
 --  )
 --
--- -- will throw the error:
+-- -- will throw an error:
 -- ensure_tvariantequals(
 --   'the table is found in the expected tables list',
 --   { 2 },
@@ -344,7 +344,7 @@ end
 -- <br />
 -- Returns all the arguments intact cutting the `msg` at beginning on success.
 -- <br />
--- Raises the error on fail.
+-- Raises an error on fail.
 -- @tparam string msg Failing message that will be used in the error message if
 --                    the check fails.
 -- @tparam string actual A string to check.
@@ -365,7 +365,7 @@ end
 -- -- will pass without errors:
 -- ensure_strvariant('find elem1', 'elem1', { 'elem0', 'elem1', 'elem2' })
 --
--- -- will throw the error:
+-- -- will throw an error:
 -- ensure_strvariant(
 --     'find the_element_that_cannot_be_found',
 --     'the_element_that_cannot_be_found',
@@ -419,14 +419,14 @@ end
 -- <br />
 -- Returns all the arguments intact cutting the `msg` at beginning on success.
 -- <br />
--- Raises the error on fail.
+-- Raises an error on fail.
 -- <br />
 -- Best for simple long lists.
 -- <br />
 -- <br />
 -- <b>How it works:</b> cut `expected_prefix` and `expected_suffix` from the
 -- `actual` and break by `expected_sep`. Then find missing and excess elements
--- in two array traverses. Raises the error if found any.
+-- in two array traverses. Raises an error if found any.
 -- @tparam string msg Failing message that will be used in the error message if
 --         the check fails.
 -- @tparam string actual A string to check.
@@ -540,7 +540,7 @@ end
 -- <br />
 -- Returns all the arguments intact cutting the `msg` at beginning on success.
 -- <br />
--- Raises the error on fail.
+-- Raises an error on fail.
 -- <br />
 -- Best for complex short lists.
 -- <br />
