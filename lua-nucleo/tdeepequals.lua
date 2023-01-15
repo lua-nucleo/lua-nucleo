@@ -269,14 +269,17 @@ end
 
 --- Create iterator for table `t` that traverses keys in alphabetical order.
 -- @tparam table t Table to traverse.
+-- @tparam[opt] function less Less function, `tless` by default
 -- @return Iterator.
-local ordered_pairs = function(t)
+local ordered_pairs = function(t, less)
+  less = less or tless
+
   local keys = { }
   for k, _ in pairs(t) do
     keys[#keys + 1] = k
   end
 
-  table_sort(keys, tless)
+  table_sort(keys, less)
 
   -- TODO: Try to move that out of this function.
   local i = 1
