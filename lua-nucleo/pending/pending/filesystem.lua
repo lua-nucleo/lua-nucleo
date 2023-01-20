@@ -1,3 +1,5 @@
+-- luacheck: globals import
+
 -- TODO: This file contains functions from lua-aplicado/filesystem.lua
 --       Replace them there with a standard deprecation shim
 

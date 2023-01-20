@@ -10,13 +10,22 @@ local is_function,
         'is_table'
       }
 
-local identity,
-      compose
+local identity
       = import 'lua-nucleo/functional.lua'
       {
         'identity',
         'compose'
       }
+
+local tifindvalue_nonrecursive
+      = import 'lua-nucleo/table-utils.lua'
+      {
+        'tifindvalue_nonrecursive'
+      }
+
+local tstr = import 'lua-nucleo/tstr.lua' { 'tstr' }
+
+local ordered_pairs = import 'lua-nucleo/tdeepequals.lua' { 'ordered_pairs' }
 
 local fill_curly_placeholders_numkeys
       = import 'lua-nucleo/pending/string.lua'
@@ -30,12 +39,18 @@ local maybe_call
         'maybe_call'
       }
 
+local tgetpatht
+      = import 'lua-nucleo/pending/table-utils.lua'
+      {
+        'tgetpatht'
+      }
+
 local function translate(raw, schema, result, ...)
   if is_function(schema) then
     return schema(raw, ...) -- Special case for handling array table content
   end
 
-  for k, v in pairs(schema) do
+  for k, v in ordered_pairs(schema) do -- For easier diagnostics.
     if is_function(k) then
       k = k(raw, ...)
     end
@@ -69,7 +84,7 @@ do
     local args = { ... }
 
     return function(raw)
-      return mutator(raw[raw_key], table.unpack(args))
+      return mutator(tgetpatht(raw, raw_key), table.unpack(args))
     end
   end
 
@@ -118,7 +133,15 @@ do
 
     return function(raw)
       local result = { }
-      for i = 1, #raw[raw_key] do
+
+      local map = tgetpatht(raw, raw_key)
+      if not is_table(map) then
+        error(
+          'M: found bad map at `' .. tstr(raw_key) .. '`: ' .. tostring(map), 2
+        )
+      end
+
+      for i = 1, #map do
         result[#result + 1] = translate(raw, schema, { }, i, table.unpack(args))
       end
       return result
@@ -132,7 +155,7 @@ do
     local args = { ... }
 
     return function(raw, i)
-      return mutator(raw[raw_key][i], table.unpack(args))
+      return mutator(tgetpatht(raw, raw_key)[i], table.unpack(args))
     end
   end
 
@@ -194,9 +217,31 @@ do
     return v .. '%'
   end
 
+  mutators.unpercent_str = function(v)
+    return v:gsub('^(%d+)%%$', '%1')
+  end
+
   mutators.lookup = function(table, key)
     return function(v)
       return table[v][key]
+    end
+  end
+
+  mutators.has = function(needle)
+    return function(v)
+      if v == nil then
+        return false -- For convenience.
+      end
+
+      if not is_table(v) then
+        error(
+          'has: cannot search for `' .. tostring(needle) .. '`'
+          .. ' in non-table ' .. tostring(v),
+          2
+        )
+      end
+
+      return tifindvalue_nonrecursive(v, needle)
     end
   end
 
