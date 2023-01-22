@@ -17,10 +17,12 @@ local identity
         'compose'
       }
 
-local tifindvalue_nonrecursive
+local tifindvalue_nonrecursive,
+      tisempty
       = import 'lua-nucleo/table-utils.lua'
       {
-        'tifindvalue_nonrecursive'
+        'tifindvalue_nonrecursive',
+        'tisempty'
       }
 
 local tstr = import 'lua-nucleo/tstr.lua' { 'tstr' }
@@ -96,9 +98,16 @@ do
 
     return function(raw)
       if v_capture(raw) then
+        if is_table(if_true) then
+          if_true = translator(if_true)
+        end
         return mutator(maybe_call(if_true, raw), table.unpack(args))
       end
-      return mutator(maybe_call(if_false, raw), table.unpack(args))
+
+      if is_table(if_false) then
+        if_false = translator(if_false)
+      end
+    return mutator(maybe_call(if_false, raw), table.unpack(args))
     end
   end
 
@@ -178,6 +187,18 @@ do
     end
   end
 
+  -- optional table, nil if empty
+  captures.O = function(schema)
+    local fn = translator(schema)
+    return function(...)
+      local result = fn(...)
+      if is_table(result) and tisempty(result) then
+        return nil
+      end
+      return result
+    end
+  end
+
   -- String placeholders
   captures.S = function(template, mutator, ...)
     mutator = mutator or identity
@@ -210,6 +231,21 @@ do
   mutators.equals = function(value)
     return function(v)
       return v == value
+    end
+  end
+
+  mutators.not_equals = function(value)
+    return function(v)
+      return v ~= value
+    end
+  end
+
+  mutators.default = function(value)
+    return function(v)
+      if v ~= nil then
+        return v
+      end
+      return value
     end
   end
 
