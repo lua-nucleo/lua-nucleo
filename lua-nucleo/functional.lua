@@ -22,6 +22,8 @@ local pack
         'pack'
       }
 
+local is_function = import 'lua-nucleo/type.lua' { 'is_function' }
+
 local do_nothing = function() end
 
 local identity = function(...) return ... end
@@ -126,6 +128,14 @@ local compose_many = function(...)
   end
 end
 
+local maybe_call = function(fn, ...)
+  if is_function(fn) then
+    return fn(...)
+  end
+
+  return fn, ...
+end
+
 return
 {
   do_nothing = do_nothing;
@@ -141,4 +151,5 @@ return
   args_proxy = args_proxy;
   compose = compose;
   compose_many = compose_many;
+  maybe_call = maybe_call;
 }
