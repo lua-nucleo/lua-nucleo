@@ -47,6 +47,7 @@ local do_nothing,
       args_proxy,
       compose,
       compose_many,
+      maybe_call,
       functional_exports
       = import 'lua-nucleo/functional.lua'
       {
@@ -62,7 +63,8 @@ local do_nothing,
         'remove_nil_arguments',
         'args_proxy',
         'compose',
-        'compose_many'
+        'compose_many',
+        'maybe_call'
       }
 
 --------------------------------------------------------------------------------
@@ -592,6 +594,28 @@ test:case "compose_many_negative_test" (function()
       "check type mismatch",
       function() compose_many(stub, nil, stub)() end,
       "`function' expected, got `nil'"
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+test:test_for "maybe_call" (function()
+  local test_string = "string"
+
+  ensure_returns(
+      "maybe call not a function",
+      1, { test_string },
+      maybe_call(test_string)
+    )
+
+  local test_function = function(number)
+    return number * 2
+  end
+
+  ensure_returns(
+      "maybe call function",
+      1, { 2 },
+      maybe_call(test_function, 1)
     )
 end)
 
