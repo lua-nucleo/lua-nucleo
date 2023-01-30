@@ -24,6 +24,10 @@ return
   };
   {
     type = 'cases';
+    path = 'test/cases/0041-compatibility.lua';
+  };
+  {
+    type = 'cases';
     path = 'test/cases/0050-coro.lua';
   };
   {
