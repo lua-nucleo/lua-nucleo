@@ -12,11 +12,13 @@ local string_byte, string_char = string.byte, string.char
 local assert, pairs, type = assert, pairs, type
 
 local tidentityset,
-      tisarray
+      tisarray,
+      tkeys
       = import 'lua-nucleo/table-utils.lua'
       {
         'tidentityset',
-        'tisarray'
+        'tisarray',
+        'tkeys'
       }
 
 local arguments
@@ -24,6 +26,8 @@ local arguments
       {
         'arguments'
       }
+
+local setfenv = import 'lua-nucleo/compatibility.lua' { 'setfenv' }
 
 local make_concatter -- TODO: rename, is not factory
 do
@@ -546,6 +550,108 @@ do
   end
 end
 
+local maybe_tonumber = function(v)
+  return tonumber(v) or v
+end
+
+-- TODO: Optimize?
+local fill_curly_placeholders_numkeys = function(str, dict)
+  return fill_curly_placeholders(
+    str,
+    setmetatable({ }, {
+      __index = function(_, k)
+        return dict[k] or dict[tonumber(k)]
+      end;
+    })
+  )
+end
+
+local fill_code_placeholders
+do
+  local cache = setmetatable({ }, {
+    __metatable = 'lua-nucleo.string.fill_code_placeholders.cache';
+    __mode = 'k';
+    __index = function(t, k)
+      local v = assert(load('return ' .. k, k))
+      t[k] = v
+      return v
+    end;
+  })
+
+  fill_code_placeholders = function(template, env)
+    return fill_placeholders_ex('%$<(.-)>', template, function(code)
+      return setfenv(cache[code], env)()
+    end)
+  end
+end
+
+local parse_dice_notation = function(str)
+  local a, x, b = str:match('^(%d-)d(%d+)([+-]-%d-)$')
+  if x == '' or x == nil or b == '+' or b == '-' then
+    error('bad dice notation `' .. str .. '`', 2)
+  end
+  if a == '' then
+    a = 1
+  end
+  if b == '' then
+    b = nil
+  end
+
+  return { a = tonumber(a), x = tonumber(x), b = tonumber(b) }
+end
+
+local escape_for_csv = function(str)
+  if str == nil then
+    return ''
+  end
+
+  str = tostring(str):gsub('"', '""')
+
+  if not str:find('[,\n]') then
+    return str
+  end
+
+  return '"' .. str .. '"'
+end
+
+-- Attempts to write RFC-4180 CSV
+local ticsv_simple = function(t, keys, skip_headers, delimiter, newline)
+  if #t == 0 then
+    return ''
+  end
+
+  delimiter = delimiter or ','
+  newline = newline or '\r\n'
+
+  if not keys then
+    keys = tkeys(t[1])
+    table.sort(keys) -- For convenience.
+  end
+
+  local cat, concat = make_concatter()
+
+  if not skip_headers then
+    cat (escape_for_csv(keys[1]))
+    for i = 2, #keys do
+      cat (delimiter) (escape_for_csv(keys[i]))
+    end
+
+    cat (newline)
+  end
+
+  for i = 1, #t do
+    cat (escape_for_csv(t[i][keys[1]]))
+
+    for j = 2, #keys do
+      cat (delimiter) (escape_for_csv(t[i][keys[j]]))
+    end
+
+    cat (newline)
+  end
+
+  return concat()
+end
+
 return
 {
   escape_string = escape_string;
@@ -573,4 +679,10 @@ return
   serialize_number = serialize_number;
   get_escaped_chars_in_ranges = get_escaped_chars_in_ranges;
   tjson_simple = tjson_simple;
+  maybe_tonumber = maybe_tonumber;
+  fill_curly_placeholders_numkeys = fill_curly_placeholders_numkeys;
+  fill_code_placeholders = fill_code_placeholders;
+  parse_dice_notation = parse_dice_notation;
+  escape_for_csv = escape_for_csv;
+  ticsv_simple = ticsv_simple;
 }
