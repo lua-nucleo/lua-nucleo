@@ -550,11 +550,28 @@ do
   end
 end
 
+--- Try to convert input variable into number.
+--
+-- In case of convertation was unsuccessful returns original variable.
+-- @tparam variable v Various type variable
+-- @treturn Number or original variable
+-- @usage maybe_tonumber("1")
+--   returns 1
 local maybe_tonumber = function(v)
   return tonumber(v) or v
 end
 
 -- TODO: Optimize?
+--- Expands variables like ${varname} with values from dictionary.
+--
+-- If string key 'varname' missing in dictionary, then function trying
+-- convert string key to number and found dictionary value with number key.
+-- @tparam string str Input string, containing variables to expand
+-- @tparam table dict Dictionary, containing variables's values
+-- @treturn string A result string, where variables substituted with values
+-- @usage fill_placeholders("a = ${1}", { [1] = 42 })
+--   returns "a = 42"
+-- @see fill_curly_placeholders
 local fill_curly_placeholders_numkeys = function(str, dict)
   return fill_curly_placeholders(
     str,
@@ -566,6 +583,7 @@ local fill_curly_placeholders_numkeys = function(str, dict)
   )
 end
 
+-- TODO: write test & documentation
 local fill_code_placeholders
 do
   local cache = setmetatable({ }, {
@@ -585,6 +603,12 @@ do
   end
 end
 
+--- Parse string with dice notation.
+--
+-- @tparam string str Input string, containing dice notation
+-- @treturn table Dictionary, containing roll parameters
+-- @usage parse_dice_notation("1d6+2")
+--   returns { a = 1, x = 6, b = 2 }
 local parse_dice_notation = function(str)
   local a, x, b = str:match('^(%d-)d(%d+)([+-]-%d-)$')
   if x == '' or x == nil or b == '+' or b == '-' then
@@ -600,6 +624,15 @@ local parse_dice_notation = function(str)
   return { a = tonumber(a), x = tonumber(x), b = tonumber(b) }
 end
 
+--- Escape string for CSV
+--
+-- Enclose string containing line breaks (CRLF), and commas in double-quotes.
+-- Additionally escape a double-quote appeared inside string with another
+-- preceding double-quote.
+-- @tparam string str Input string for escaping
+-- @treturn string Escaped string
+-- @usage escape_for_csv('"a"')
+--   returns '""a""'
 local escape_for_csv = function(str)
   if str == nil then
     return ''
@@ -614,6 +647,7 @@ local escape_for_csv = function(str)
   return '"' .. str .. '"'
 end
 
+-- TODO: write test & documentation
 -- Attempts to write RFC-4180 CSV
 local ticsv_simple = function(t, keys, skip_headers, delimiter, newline)
   if #t == 0 then
