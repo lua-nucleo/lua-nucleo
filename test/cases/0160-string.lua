@@ -73,6 +73,12 @@ local make_concatter,
       serialize_number,
       get_escaped_chars_in_ranges,
       tjson_simple,
+      maybe_tonumber,
+      fill_curly_placeholders_numkeys,
+      fill_code_placeholders,
+      parse_dice_notation,
+      escape_for_csv,
+      ticsv_simple,
       string_exports
       = import 'lua-nucleo/string.lua'
       {
@@ -100,7 +106,13 @@ local make_concatter,
         'number_to_string',
         'serialize_number',
         'get_escaped_chars_in_ranges',
-        'tjson_simple'
+        'tjson_simple',
+        'maybe_tonumber',
+        'fill_curly_placeholders_numkeys',
+        'fill_code_placeholders',
+        'parse_dice_notation',
+        'escape_for_csv',
+        'ticsv_simple'
       }
 
 local ordered_pairs
@@ -1508,3 +1520,147 @@ test:test_for("tjson_simple"):BROKEN_IF(not newproxy) (function()
       "tjson_simple: non-string keys are not supported"
     )
 end)
+
+--------------------------------------------------------------------------------
+
+test:test_for "maybe_tonumber" (function()
+  ensure_strequals("string with number character", maybe_tonumber("1"), 1)
+  ensure_strequals("string with NaN character", maybe_tonumber("a"), "a")
+  ensure_strequals("number", maybe_tonumber(1), 1)
+end)
+
+--------------------------------------------------------------------------------
+
+test:test_for "fill_curly_placeholders_numkeys" (function()
+  ensure_strequals(
+      "dictionary with string key",
+      fill_curly_placeholders_numkeys("a = `${a}'", { a = 42 }),
+      "a = `42'"
+    )
+
+  ensure_strequals(
+      "dictionary with numeric key",
+      fill_curly_placeholders_numkeys("a = `${1}'", { [1] = 42 }),
+      "a = `42'"
+    )
+
+  ensure_strequals(
+      "dictionary without placeholder key",
+      fill_curly_placeholders_numkeys("a = `${1}'", { [2] = 42 }),
+      "a = `${1}'"
+    )
+
+  ensure_strequals(
+      "reuse key",
+      fill_curly_placeholders_numkeys("${1} + ${1} = ${2}", { [1] = 1, [2] = 2 }),
+      "1 + 1 = 2"
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+test:UNTESTED 'fill_code_placeholders'
+
+--------------------------------------------------------------------------------
+
+test:test_for "parse_dice_notation" (function()
+  ensure_fails_with_substring(
+      "empty string",
+      function()
+        parse_dice_notation('')
+      end,
+      "bad dice notation ``"
+    )
+
+  ensure_fails_with_substring(
+      "bad format",
+      function()
+        parse_dice_notation('a')
+      end,
+      "bad dice notation `a`"
+    )
+
+  ensure_fails_with_substring(
+      "proper format with preceding extra character",
+      function()
+        parse_dice_notation(' 3d6')
+      end,
+      "bad dice notation ` 3d6`"
+    )
+
+  ensure_fails_with_substring(
+      "proper format with subsequent extra character",
+      function()
+        parse_dice_notation('3d6 ')
+      end,
+      "bad dice notation `3d6 `"
+    )
+
+  ensure_tequals(
+      "proper format with omitted number of dice to be rolled",
+      parse_dice_notation('d6'),
+      { a = 1, x = 6, b = nil }
+    )
+
+  ensure_tequals(
+      "proper format",
+      parse_dice_notation('3d6'),
+      { a = 3, x = 6, b = nil }
+    )
+
+  ensure_tequals(
+      "proper format with positive modifier",
+      parse_dice_notation('1d6+1'),
+      { a = 1, x = 6, b = 1 }
+    )
+
+  ensure_tequals(
+      "proper format with negative modifier",
+      parse_dice_notation('1d6-2'),
+      { a = 1, x = 6, b = -2 }
+    )
+
+  ensure_tequals(
+      "proper format with multicharacter numbers",
+      parse_dice_notation('33d76+83'),
+      { a = 33, x = 76, b = 83 }
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+test:test_for "escape_for_csv" (function()
+  ensure_strequals(
+      "nil transforms to empty string",
+      escape_for_csv(),
+      ''
+    )
+
+  ensure_strequals(
+      "escape double-quote with another double-quote",
+      escape_for_csv('"a"'),
+      '""a""'
+    )
+
+  ensure_strequals(
+      "string without line breaks, and commas returns as is",
+      escape_for_csv('a b c'),
+      'a b c'
+    )
+
+  ensure_strequals(
+      "string with line break escaped with double-quotes",
+      escape_for_csv('a\nb'),
+      '"a\nb"'
+    )
+
+  ensure_strequals(
+      "string with coma escaped with double-quotes",
+      escape_for_csv('a, b'),
+      '"a, b"'
+    )
+end)
+
+--------------------------------------------------------------------------------
+
+test:UNTESTED 'ticsv_simple'
