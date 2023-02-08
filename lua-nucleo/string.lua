@@ -647,8 +647,33 @@ local escape_for_csv = function(str)
   return '"' .. str .. '"'
 end
 
--- TODO: write test & documentation
--- Attempts to write RFC-4180 CSV
+--- Generate RFC-4180 CSV from table
+--
+-- Generate CSV from key-value {{ x = "a", y = "b" }, { x = "c", y = "d" }}
+-- or keyless {{ "a", "b" }, { "c", "d" }} table with optional custom columns
+-- and line delimiters. If table contains keyless values numeric ascending
+-- column headers will be generated. Additionally columns in generated CVS
+-- can be filtered and/or ordered by optional keys table.
+-- @tparam table t Table with keys values pairs or just values
+-- @tparam[opt={}] table keys Table with header keys for generated CSV
+-- @tparam[opt=false] boolean skip_headers Omit headers in generated CSV
+--                    if true
+-- @tparam[opt=","] string delimiter String for columns delimitation
+-- @tparam[opt="\r\n"] string newline String for lines division
+-- @treturn string A result string, contain generated CSV
+-- @usage
+-- ticsv_simple({{ x = "a", y = "b" }, { x = "c", y = "d" }})
+--   returns 'x,y
+--            a,b
+--            c,d'
+-- ticsv_simple(
+--   {{ "a", "b", "c" }, { "d", "e", "f" }},
+--   { 1, 2 },
+--   true,
+--   ";",
+--   "|"
+-- )
+--   returns 'a;b|d;e|'
 local ticsv_simple = function(t, keys, skip_headers, delimiter, newline)
   if #t == 0 then
     return ''
