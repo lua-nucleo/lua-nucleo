@@ -1663,4 +1663,159 @@ end)
 
 --------------------------------------------------------------------------------
 
-test:UNTESTED 'ticsv_simple'
+test:test_for "ticsv_simple" (function()
+  ensure_strequals(
+      "empty table transforms to empty string",
+      ticsv_simple({}),
+      ''
+    )
+
+  ensure_strequals(
+      "keyless table with numbered by default columns",
+      ticsv_simple({
+          { "a", "c" },
+          { "b", "d" }
+        }
+      ),
+      '1,2\r\n' .. 
+      'a,c\r\n' ..
+      'b,d\r\n'
+    )
+
+  ensure_strequals(
+      "keyless table with skipped headers",
+      ticsv_simple({
+          { "a", "c" },
+          { "b", "d" }
+        },
+        nil,
+        true
+      ),
+      'a,c\r\n' ..
+      'b,d\r\n'
+    )
+
+  ensure_strequals(
+      "keyless table filtered with predefined headers",
+      ticsv_simple({
+          { "a", "c", "e" },
+          { "b", "d", "f" }
+        },
+        { 1, 3 }
+      ),
+      '1,3\r\n' ..
+      'a,e\r\n' ..
+      'b,f\r\n'
+    )
+
+  ensure_strequals(
+      "keyless table sorted with predefined headers",
+      ticsv_simple({
+          { "a", "c", "e" },
+          { "b", "d", "f" }
+        },
+        { 3, 1, 2 }
+      ),
+      '3,1,2\r\n' ..
+      'e,a,c\r\n' ..
+      'f,b,d\r\n'
+    )
+
+
+  ensure_strequals(
+      "key-value table with auto generated headers",
+      ticsv_simple({
+          { x = "a", y = "c" },
+          { x = "b", y = "d" }
+        }
+      ),
+      'x,y\r\n' ..
+      'a,c\r\n' ..
+      'b,d\r\n'
+    )
+
+  ensure_strequals(
+      "key-value table with skipped headers",
+      ticsv_simple({
+          { x = "a", y = "c" },
+          { x = "b", y = "d" }
+        },
+        nil,
+        true
+      ),
+      'a,c\r\n' ..
+      'b,d\r\n'
+    )
+
+  ensure_strequals(
+      "key-value table filtered with predefined headers",
+      ticsv_simple({
+          { x = "a", y = "c", z = "e" },
+          { x = "b", y = "d", z = "f" }
+        },
+        { "x", "z" }
+      ),
+      'x,z\r\n' ..
+      'a,e\r\n' ..
+      'b,f\r\n'
+    )
+
+  ensure_strequals(
+      "key-value table sorted with predefined headers",
+      ticsv_simple({
+          { x = "a", y = "c", z = "e" },
+          { x = "b", y = "d", z = "f" }
+        },
+        { "z", "x", "y" }
+      ),
+      'z,x,y\r\n' ..
+      'e,a,c\r\n' ..
+      'f,b,d\r\n'
+    )
+
+  ensure_strequals(
+      "escaping double-quote in key and value",
+      ticsv_simple({
+          { ['"a'] = 'b"' }
+        }
+      ),
+      '""a\r\n' ..
+      'b""\r\n'
+    )
+
+  ensure_strequals(
+      "escaping line breaks in key and value",
+      ticsv_simple({
+          { ['a\n'] = 'b\n' }
+        }
+      ),
+      '"a\n"\r\n' ..
+      '"b\n"\r\n'
+    )
+
+  ensure_strequals(
+      "table with custom columns delimiter",
+      ticsv_simple({
+          { 'a', 'b' }
+        },
+        nil,
+        true,
+        ";"
+      ),
+      'a;b\r\n'
+    )
+
+  ensure_strequals(
+      "table with custom new line symbol",
+      ticsv_simple({
+          { x = 'a' },
+          { x = 'b' }
+        },
+        nil,
+        true,
+        nil,
+        "|"
+      ),
+      'a|b|'
+    )
+end)
