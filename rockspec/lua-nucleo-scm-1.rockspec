@@ -25,6 +25,7 @@ build = {
          ["lua-nucleo.code.foreign-globals.luajit2"] = "lua-nucleo/code/foreign-globals/luajit2.lua";
          ["lua-nucleo.code.globals"] = "lua-nucleo/code/globals.lua";
          ["lua-nucleo.code.profile"] = "lua-nucleo/code/profile.lua";
+         ["lua-nucleo.compatibility"] = "lua-nucleo/compatibility.lua";
          ["lua-nucleo.coro"] = "lua-nucleo/coro.lua";
          ["lua-nucleo.datetime-utils"] = "lua-nucleo/datetime-utils.lua";
          ["lua-nucleo.deque"] = "lua-nucleo/deque.lua";
