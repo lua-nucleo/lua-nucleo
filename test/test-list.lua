@@ -224,6 +224,10 @@ return
   };
   {
     type = 'cases';
+    path = 'test/cases/0365-ordered_keys.lua';
+  };
+  {
+    type = 'cases';
     path = 'test/cases/0370-ordered_named_cat_manager.lua';
   };
   {
