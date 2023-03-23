@@ -51,6 +51,7 @@ build = {
          ["lua-nucleo.math"] = "lua-nucleo/math.lua";
          ["lua-nucleo.misc"] = "lua-nucleo/misc.lua";
          ["lua-nucleo.module"] = "lua-nucleo/module.lua";
+         ["lua-nucleo.ordered_keys"] = "lua-nucleo/ordered_keys.lua";
          ["lua-nucleo.ordered_named_cat_manager"] = "lua-nucleo/ordered_named_cat_manager.lua";
          ["lua-nucleo.pcall"] = "lua-nucleo/pcall.lua";
          ["lua-nucleo.prettifier"] = "lua-nucleo/prettifier.lua";
