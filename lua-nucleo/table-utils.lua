@@ -1172,6 +1172,7 @@ end
 
 --------------------------------------------------------------------------------
 
+-- TODO: write test & documentation
 local tproxymt = function(...)
   local nargs = select('#', ...)
   local args = { ... }
@@ -1194,6 +1195,13 @@ end
 
 --------------------------------------------------------------------------------
 
+--- Get stored value from data table using table with collection of keys.
+-- @tparam table t Table with data.
+-- @tparam variable path Table with keys or key itself
+-- @treturn variable Value stored in path.
+-- @usage
+-- tgetpatht({ a = { b = 'c' }}, { 'a', 'b' })
+-- returns 'c'
 local tgetpatht = function(t, path)
   if not is_table(path) then
     return t[path] -- For convenience.
