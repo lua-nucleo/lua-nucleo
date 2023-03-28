@@ -109,6 +109,8 @@ local empty_table,
       tkvlist_to_hash,
       tmerge_many,
       tifindallpermutations,
+      tgetpatht,
+      tproxymt,
       table_utils_exports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -176,7 +178,9 @@ local empty_table,
         'tarraytohash',
         'tkvlist_to_hash',
         'tmerge_many',
-        'tifindallpermutations'
+        'tifindallpermutations',
+        'tgetpatht',
+        'tproxymt'        
       }
 
 --------------------------------------------------------------------------------
@@ -2660,6 +2664,53 @@ test "tifindallpermutations-basic" (function()
         { 2, 1, 3, 4 }
       }
     )
+end)
+
+--------------------------------------------------------------------------------
+
+test:UNTESTED 'tproxymt'
+
+--------------------------------------------------------------------------------
+
+test:test_for "tgetpatht" (function()
+  local t1 = { b = 'c' }
+  local t2 = { a = t1 }
+
+  ensure_equals(
+    'empty path',
+    tgetpatht(t2, {}),
+    t2
+  )
+
+  ensure_equals(
+    'not a table inexistent path',
+    tgetpatht(t2, 'd'),
+    nil
+  )
+
+  ensure_equals(
+    'inexistent path in table',
+    tgetpatht(t2, { 'a', 'd' }),
+    nil
+  )
+
+  ensure_equals(
+    'not a table correct path',
+    tgetpatht(t2, 'a'),
+    t1
+  )
+
+  ensure_equals(
+    'correct path in table',
+    tgetpatht(t2, { 'a' }),
+    t1
+  )
+
+  ensure_equals(
+    'deep correct path',
+    tgetpatht(t2, { 'a', 'b' }),
+    'c'
+  )
 end)
 
 --------------------------------------------------------------------------------
