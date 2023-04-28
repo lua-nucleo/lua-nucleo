@@ -79,6 +79,10 @@ return
     path = 'test/cases/0140-random.lua';
   };
   {
+    type = 'cases';
+    path = 'test/cases/0145-record_translator.lua';
+  };
+  {
     type = 'low-level';
     path = 'test/low-level/0150-strict.lua';
   };
