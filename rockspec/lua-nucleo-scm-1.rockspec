@@ -58,6 +58,7 @@ build = {
          ["lua-nucleo.priority_queue"] = "lua-nucleo/priority_queue.lua";
          ["lua-nucleo.quicksort"] = "lua-nucleo/quicksort.lua";
          ["lua-nucleo.random"] = "lua-nucleo/random.lua";
+         ["lua-nucleo.record_translator"] = "lua-nucleo/record_translator.lua";
          ["lua-nucleo.require_and_declare"] = "lua-nucleo/require_and_declare.lua";
          ["lua-nucleo.sandbox"] = "lua-nucleo/sandbox.lua";
          ["lua-nucleo.scoped_cat_tree_manager"] = "lua-nucleo/scoped_cat_tree_manager.lua";
