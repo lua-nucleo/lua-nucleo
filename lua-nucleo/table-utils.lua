@@ -1001,10 +1001,10 @@ local TISARRAY_NOT_OBJ = 'tisarray.not'
 --- Makes table to be treated as JSON object in tisarray()
 -- @param t
 local tisarray_not = function(t)
-  if getmetatable(t) then 
-    error('tisarray_not: tables with metatables are not supported') 
+  if getmetatable(t) then
+    error('tisarray_not: tables with metatables are not supported')
   end
-  
+
   return setmetatable(t, { __metatable = TISARRAY_NOT_OBJ })
 end
 
@@ -1013,7 +1013,7 @@ end
 -- @return[2] false otherwise
 -- @param t
 local tisarray = function(t)
-  if getmetatable(t) == TISARRAY_NOT_OBJ then 
+  if getmetatable(t) == TISARRAY_NOT_OBJ then
     return false
   end
   for k, _ in pairs(t) do

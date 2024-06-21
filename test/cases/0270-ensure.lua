@@ -19,6 +19,7 @@ local loadstring
 local ensure,
       ensure_equals,
       ensure_tequals,
+      ensure_tvariantequals,
       ensure_strequals,
       ensure_strvariant,
       ensure_strpermutations,
@@ -33,6 +34,7 @@ local ensure,
         'ensure',
         'ensure_equals',
         'ensure_tequals',
+        'ensure_tvariantequals',
         'ensure_strequals',
         'ensure_strvariant',
         'ensure_strpermutations',
@@ -48,6 +50,13 @@ local ordered_pairs
       {
         'ordered_pairs'
       }
+
+local newproxy = newproxy or select(
+  2,
+  table.unpack({
+    xpcall(require, function() end, 'newproxy')
+  })
+)
 
 --------------------------------------------------------------------------------
 
@@ -493,6 +502,141 @@ test:case "ensure_strpermutations_simple" (function()
   ensure_strpermutations_test(true, "('b'+'a'+'c')", "('", abc_arr,"'+'","')")
   ensure_strpermutations_test(true, "('b'+'c'+'a')", "('", abc_arr,"'+'","')")
 end)
+
+--------------------------------------------------------------------------------
+
+test:tests_for "ensure_tvariantequals"
+
+do
+  local check = function(msg, actual, expected, is_error_expected)
+    local status, err = pcall(ensure_tvariantequals, msg, actual, expected)
+
+    if is_error_expected then
+      if status then
+        error(msg .. ': error is expected but passed OK')
+      end
+    else
+      if not status then
+        error('error is not expected but thrown: ' .. err)
+      end
+    end
+  end
+
+  local check_ok = function(msg, actual, expected)
+    check(msg, actual, expected, false)
+  end
+
+  local check_fail = function(msg, actual, expected)
+    check(msg, actual, expected, true)
+  end
+
+  test:case "ensure_tvariantequals-basic" (function()
+    check_ok(
+      'basic1',
+      { 1, 2 },
+      {
+        { 1 },
+        { 1, 2 },
+        { 1, 2, 3 }
+      }
+    )
+
+    check_fail(
+      'basic2',
+      { 2 },
+      {
+        { 1 },
+        { 1, 2 },
+        { 1, 2, 3 }
+      }
+    )
+
+    check_ok(
+      'basic3',
+      { a = 1, b = 2 },
+      {
+        { o = 1 },
+        { a = 1, b = 2 },
+        { a = 1, b = 2, c = 3 }
+      }
+    )
+
+    check_fail(
+      'basic4',
+      { a = 1, b = 0 },
+      {
+        { o = 1 },
+        { a = 1, b = 2 },
+        { a = 1, b = 2, c = 3 }
+      }
+    )
+
+    check_ok(
+      'basic5',
+      { 0, a = 1, b = 2 },
+      {
+        { o = 1 },
+        { 0, a = 1, b = 2 },
+        { 2, a = 1, b = 2 }
+      }
+    )
+
+    check_fail(
+      'basic6',
+      { 0, a = 1, b = 2 },
+      {
+        { 0, a = 1 },
+        { 2, a = 1, b = 2 },
+        { a = 1, b = 2, c = 3 }
+      }
+    )
+  end)
+
+  test:case "ensure_tvariantequals-shallow-test" (function()
+    local t = { 1, 2 }
+    check_ok(
+      'shallow1',
+      { 7, t },
+      {
+        { 1 },
+        { 1, 2, 3 },
+        { 7, t }
+      }
+    )
+
+    check_fail(
+      'shallow2',
+      { 7, t },
+      {
+        { 1 },
+        { 1, 2, 3 },
+        { 7, { 1, 2 } }
+      }
+    )
+  end)
+
+  test:case "ensure_tvariantequals-wrong-expected" :BROKEN_IF(not newproxy) (
+    function()
+      local check_wrong = function(name, value)
+        check_fail(
+          'wrong-expected-' .. name,
+          { 7 },
+          {
+            { 1 },
+            { 7 },
+            value
+          }
+        )
+      end
+
+      check_wrong('boolean', true)
+      check_wrong('number', 1)
+      check_wrong('string', 'text')
+      check_wrong('function', function() end)
+      check_wrong('userdata', newproxy())
+    end
+  )
+end
 
 --------------------------------------------------------------------------------
 
